@@ -1,0 +1,7 @@
+# Se generan al construir
+src/
+pkg/
+*.pkg.tar.*
+*.sig
+# Código fuente original: se publica en la Release, no en git
+*.tar.*
