@@ -38,3 +38,16 @@ makepkg -f
 
 Las recetas y `zumo` se publican bajo GPL-3.0-or-later (ver `LICENSE`).
 Cada paquete conserva la licencia de su proyecto original.
+
+## Flujo de trabajo
+
+1. Las recetas se escriben y se suben a este repositorio.
+2. En NaranjOS: `git pull` y `zumo exprime <receta>` (compila, firma y añade al repositorio local).
+3. Los paquetes firmados se publican en la Release `naranjos-core`.
+
+Para usar el repositorio desde cualquier NaranjOS, `/etc/pacman.conf` incluye:
+
+```
+[naranjos-core]
+Server = https://github.com/DYeicob/naranjos-recetas/releases/download/naranjos-core
+```

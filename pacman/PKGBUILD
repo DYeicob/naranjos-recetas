@@ -1,7 +1,7 @@
 # Receta de pacman para NaranjOS (motor de zumo)
 pkgname=pacman
 pkgver=7.1.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Motor de paquetes de NaranjOS (zumo lo usa por dentro)'
 arch=('x86_64')
 url='https://pacman.archlinux.page/'
@@ -9,9 +9,10 @@ license=('GPL-2.0-or-later')
 depends=('bash' 'glibc' 'libarchive' 'curl' 'gpgme' 'openssl' 'gnupg' 'fakeroot')
 makedepends=('meson' 'ninja')
 backup=('etc/pacman.conf' 'etc/makepkg.conf' 'etc/makepkg.conf.d/naranjos.conf')
-source=('pacman-7.1.0.tar.xz' 'pacman.conf' 'naranjos.conf')
+source=('pacman-7.1.0.tar.xz::http://deb.debian.org/debian/pool/main/p/pacman-package-manager/pacman-package-manager_7.1.0.orig.tar.xz'
+        'pacman.conf' 'naranjos.conf')
 sha256sums=('abed8e61942a78717821c914c5a8675e4bbbfddd0673a72d5d83b114edd14f99'
-            '92a69d450e75601b8a9d3474f549377bd5faa0ed3ea3b04c872bbe940c8285a9'
+            '6fb1b4ad0375d19114d59ba40fb54da62c94cfcdf7b967d4e34e8ce77609ea5d'
             '5a06e9d8ed714e6785a447a8246a14faaf6e6c47cc4a6cfb03a4dc1a2d8eb3c2')
 
 build() {
