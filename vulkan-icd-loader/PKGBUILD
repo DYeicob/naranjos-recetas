@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a2.sh a partir de BLFS 13.1-systemd
+pkgname=vulkan-icd-loader
+pkgver=1.4.357.0
+pkgrel=1
+pkgdesc='Cargador de Vulkan'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libx11' 'libxrandr' 'wayland')
+makedepends=('cmake' 'vulkan-headers')
+source=('https://github.com/KhronosGroup/Vulkan-Loader/archive/vulkan-sdk-1.4.357.0/Vulkan-Loader-vulkan-sdk-1.4.357.0.tar.gz')
+sha256sums=('54f2537df22313768da0317dda2abdaaab7711b4081c48c869a79db343d0ae70')
+provides=('libvulkan.so' 'vulkan-loader')
+build()   { cd Vulkan-Loader-vulkan-sdk-$pkgver
+  cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -D CMAKE_SKIP_INSTALL_RPATH=ON -G Ninja
+  ninja -C build; }
+package() { cd Vulkan-Loader-vulkan-sdk-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

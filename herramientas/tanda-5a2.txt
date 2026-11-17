@@ -1,0 +1,9 @@
+libuv
+cmake
+spirv-headers
+spirv-tools
+glslang
+vulkan-headers
+vulkan-icd-loader
+llvm
+spirv-llvm-translator

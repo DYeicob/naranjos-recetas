@@ -1,0 +1,41 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a2.sh a partir de BLFS 13.1-systemd
+pkgname=llvm
+pkgver=22.1.8
+pkgrel=1
+pkgdesc='Compilador LLVM con Clang (lo necesita Mesa para la gráfica Intel)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libffi' 'libxml2' 'zlib' 'zstd')
+makedepends=('cmake' 'python')
+source=('https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.8/llvm-project-22.1.8.src.tar.xz' 'https://www.linuxfromscratch.org/patches/blfs/13.1/llvm-22.1.8-upstream_fix-1.patch')
+sha256sums=('922f1817a0df7b1489272d18134ee0087a8b068828f87ac63b9861b1a9965888' '4a2084f9714f2f3babc0ed58065c3a6b83cd2828ea19aec1518995a6d2376187')
+provides=('llvm-libs' 'clang' 'compiler-rt')
+backup=('etc/clang/clang.cfg' 'etc/clang/clang++.cfg')
+prepare() { cd llvm-project-$pkgver.src
+  patch -Np1 -i "$srcdir/llvm-$pkgver-upstream_fix-1.patch"
+  grep -rl '#!.*python$' | xargs sed -i '1s/python$/python3/'
+  sed 's/utility/tool/' -i llvm/utils/FileCheck/CMakeLists.txt; }
+build()   { cd llvm-project-$pkgver.src
+  CC=gcc CXX=g++ cmake -S llvm -B llvm/build      \
+      -D CMAKE_INSTALL_PREFIX=/usr                \
+      -D CMAKE_SKIP_INSTALL_RPATH=ON              \
+      -D LLVM_ENABLE_FFI=ON                       \
+      -D CMAKE_BUILD_TYPE=Release                 \
+      -D LLVM_BUILD_LLVM_DYLIB=ON                 \
+      -D LLVM_LINK_LLVM_DYLIB=ON                  \
+      -D LLVM_ENABLE_RTTI=ON                      \
+      -D LLVM_TARGETS_TO_BUILD="host;AMDGPU"      \
+      -D LLVM_ENABLE_PROJECTS=clang               \
+      -D LLVM_ENABLE_RUNTIMES=compiler-rt         \
+      -D LLVM_BINUTILS_INCDIR=/usr/include        \
+      -D LLVM_INCLUDE_BENCHMARKS=OFF              \
+      -D CLANG_DEFAULT_PIE_ON_LINUX=ON            \
+      -D CLANG_CONFIG_FILE_SYSTEM_DIR=/etc/clang  \
+      -D LLVM_PARALLEL_LINK_JOBS=4                \
+      -W no-author -G Ninja
+  ninja -C llvm/build; }
+package() { cd llvm-project-$pkgver.src
+  DESTDIR="$pkgdir" ninja -C llvm/build install
+  install -dm755 "$pkgdir/etc/clang"
+  for i in clang clang++; do echo -fstack-protector-strong > "$pkgdir/etc/clang/$i.cfg"; done; }

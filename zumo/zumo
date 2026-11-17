@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 # zumo — gestor de paquetes de NaranjOS (usa pacman por dentro)
-VERSION="0.2.0"
+VERSION="0.2.1"
 
 if [ -t 1 ]; then
   if [ "$TERM" = linux ]; then O=$'\e[0;33m'; else O=$'\e[1;38;5;208m'; fi
@@ -35,9 +35,9 @@ ${B}Consultar${Z}
   ${O}huerfanos${Z}| orphans             Dependencias que ya nadie usa
 
 ${B}Para quien crea paquetes${Z}
-  ${O}exprime${Z}  | build [-i] <receta…>  Construye, firma y añade al repositorio
-                                 (-i: además lo instala). Las recetas se
-                                 buscan en ~/naranjos-recetas
+  ${O}exprime${Z}  | build [-i] [-y] <receta…>  Construye, firma y añade al repositorio
+                                 (-i: además lo instala · -y: sin preguntar).
+                                 Las recetas se buscan en ~/naranjos-recetas
 
   ${O}version${Z}  | --version           Versión de zumo y de pacman
   ${O}ayuda${Z}    | help                Esta ayuda
@@ -53,14 +53,20 @@ exprime(){
   local CONF="${XDG_CONFIG_HOME:-$HOME/.config}/zumo/exprime.conf"
   # shellcheck disable=SC1090
   [ -r "$CONF" ] && . "$CONF"
-  local DB="$REPO/$(basename "$REPO").db.tar.zst" INSTALA=0 r d nombres=() pkgs=()
+  local DB="$REPO/$(basename "$REPO").db.tar.zst" INSTALA=0 SIN=() r d p f n nombres=() pkgs=()
   [ -d "$REPO" ] && [ -w "$REPO" ] || die "no puedo escribir en el repositorio $REPO"
   if [ -z "${GPGKEY:-}" ]; then
     GPGKEY=$(gpg --list-secret-keys --with-colons "NaranjOS Packager" 2>/dev/null | awk -F: '/^fpr/{print $10; exit}')
   fi
   [ -n "$GPGKEY" ] || die "no encuentro la clave de firma de NaranjOS (gpg)"
   export GPGKEY GPG_TTY="${GPG_TTY:-$(tty 2>/dev/null)}"
-  if [ "${1:-}" = -i ] || [ "${1:-}" = --instala ] || [ "${1:-}" = --install ]; then INSTALA=1; shift; fi
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -i|--instala|--install) INSTALA=1; shift ;;
+      -y|--si|--yes)          SIN=(--noconfirm); shift ;;
+      *) break ;;
+    esac
+  done
   [ $# -gt 0 ] || die "dime qué receta(s) exprimir. Ejemplo: zumo exprime wayland"
 
   msg "Refrescando la lista de paquetes…"
@@ -73,8 +79,17 @@ exprime(){
     ( cd "$d" && PKGDEST="$REPO" makepkg -sf --sign --noconfirm ) || die "makepkg falló en '$(basename "$d")'"
     mapfile -t pkgs < <(cd "$d" && PKGDEST="$REPO" makepkg --packagelist)
     [ ${#pkgs[@]} -gt 0 ] || die "makepkg no dijo qué paquetes generó"
-    repo-add --sign --key "$GPGKEY" --verify --remove "$DB" "${pkgs[@]}" >/dev/null \
+    repo-add --sign --key "$GPGKEY" --verify "$DB" "${pkgs[@]}" >/dev/null \
       || die "repo-add falló con $(basename "$d")"
+    # borrar versiones ANTERIORES del mismo paquete (nunca el fichero recién hecho)
+    for p in "${pkgs[@]}"; do
+      n=$(bsdtar -xOf "$p" .PKGINFO | awk '/^pkgname = /{print $3; exit}')
+      for f in "$REPO/$n"-*.pkg.tar.zst; do
+        [ -e "$f" ] && [ "$f" != "$p" ] || continue
+        [ "$(bsdtar -xOf "$f" .PKGINFO 2>/dev/null | awk '/^pkgname = /{print $3; exit}')" = "$n" ] || continue
+        rm -f "$f" "$f.sig"
+      done
+    done
     rm -rf "$d/src" "$d/pkg"
     for p in "${pkgs[@]}"; do okm "$(basename "$p")"; done
     mapfile -t -O "${#nombres[@]}" nombres < <(cd "$d" && makepkg --printsrcinfo | awk '/^pkgname = /{print $3}')
@@ -82,7 +97,7 @@ exprime(){
   done
   if [ "$INSTALA" = 1 ]; then
     msg "Instalando: ${nombres[*]}"
-    sudo pacman -S --needed "${nombres[@]}"
+    sudo pacman -S --needed "${SIN[@]}" "${nombres[@]}"
   fi
   okm "Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)"
 }

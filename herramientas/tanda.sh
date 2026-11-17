@@ -11,14 +11,17 @@ L="herramientas/tanda-${1:?Dime la tanda, p.ej. 5a1}.txt"
 grep -q '^default-cache-ttl' ~/.gnupg/gpg-agent.conf 2>/dev/null || {
   printf 'default-cache-ttl 7200\nmax-cache-ttl 28800\n' >> ~/.gnupg/gpg-agent.conf; gpgconf --kill gpg-agent; }
 export GPG_TTY=$(tty)
+# makepkg quiere PACKAGER con formato "Nombre <correo>" (correo ficticio .invalid)
+grep -q '^PACKAGER=' ~/.makepkg.conf 2>/dev/null || echo 'PACKAGER="NaranjOS Packager <yeicob@naranjos.invalid>"' >> ~/.makepkg.conf
+zumo ayuda | grep -q -- '-y' || { echo "${R}Necesitas zumo 0.2.1:  zumo exprime -i zumo${Z}"; exit 1; }
 total=$(grep -c . "$L"); i=0; inicio=$SECONDS
-while read -r r; do
+while read -r r <&3; do
   [ -n "$r" ] || continue; i=$((i+1))
   ver=$(cd "$r" && makepkg --printsrcinfo | awk '/^\tpkgver = /{v=$3} /^\tpkgrel = /{r=$3} END{print v"-"r}')
   if [ "$(pacman -Q "$r" 2>/dev/null | cut -d' ' -f2)" = "$ver" ]; then
     echo "${O}[$i/$total]${Z} $r $ver ya instalado, se salta"; continue
   fi
   echo "${O}[$i/$total]${Z} ${r} ${ver}"
-  zumo exprime -i "$r" || { echo "${R}Falló '$r'. Corrígelo y vuelve a lanzar la tanda: seguirá desde aquí.${Z}"; exit 1; }
-done < "$L"
+  zumo exprime -i -y "$r" || { echo "${R}Falló '$r'. Corrígelo y vuelve a lanzar la tanda: seguirá desde aquí.${Z}"; exit 1; }
+done 3< "$L"
 echo "${G}Tanda ${1} completa en $(( (SECONDS-inicio)/60 )) min.${Z}"

@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a2.sh a partir de BLFS 13.1-systemd
+pkgname=glslang
+pkgver=16.5.0
+pkgrel=1
+pkgdesc='Compilador de sombreadores GLSL/HLSL a SPIR-V'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('spirv-tools')
+makedepends=('cmake')
+source=('https://github.com/KhronosGroup/glslang/archive/16.5.0/glslang-16.5.0.tar.gz')
+sha256sums=('01af17195fbeb59e39e31e9506de35bb39dfd35807ea0c9a1a99d7d1183ddd45')
+build()   { cd glslang-$pkgver
+  cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -D ALLOW_EXTERNAL_SPIRV_TOOLS=ON \
+        -D BUILD_SHARED_LIBS=ON -D GLSLANG_TESTS=OFF -G Ninja
+  ninja -C build; }
+package() { cd glslang-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

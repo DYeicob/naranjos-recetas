@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a2.sh a partir de BLFS 13.1-systemd
+pkgname=vulkan-headers
+pkgver=1.4.357.0
+pkgrel=1
+pkgdesc='Cabeceras de Vulkan'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('cmake')
+source=('https://github.com/KhronosGroup/Vulkan-Headers/archive/vulkan-sdk-1.4.357.0/Vulkan-Headers-vulkan-sdk-1.4.357.0.tar.gz')
+sha256sums=('e87dce08116151f6b6d7de6b6faf41498e87e6cf848ff16fa3bd5402190ad4a3')
+arch=('any')
+build()   { cd Vulkan-Headers-vulkan-sdk-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -G Ninja; ninja -C build; }
+package() { cd Vulkan-Headers-vulkan-sdk-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

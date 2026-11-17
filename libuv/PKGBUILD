@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a2.sh a partir de BLFS 13.1-systemd
+pkgname=libuv
+pkgver=1.52.1
+pkgrel=1
+pkgdesc='E/S asíncrona multiplataforma'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://dist.libuv.org/dist/v1.52.1/libuv-v1.52.1.tar.gz')
+sha256sums=('66d511b9e6e334c0e62279eb234fbfb2b3110b1479c09b95b44c7afca8cff9e7')
+build()   { cd libuv-v$pkgver; unset ACLOCAL; sh autogen.sh; ./configure --prefix=/usr --disable-static; make; }
+package() { cd libuv-v$pkgver; make DESTDIR="$pkgdir" install; }

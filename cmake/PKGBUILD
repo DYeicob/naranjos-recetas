@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a2.sh a partir de BLFS 13.1-systemd
+pkgname=cmake
+pkgver=4.4.2
+pkgrel=1
+pkgdesc='Sistema de compilación multiplataforma'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('curl' 'libarchive' 'libuv' 'nghttp2')
+makedepends=()
+source=('https://cmake.org/files/v4.4/cmake-4.4.2.tar.gz')
+sha256sums=('1db9e61e60b6e0874c86386340b910382f3c5e75b9fbfb44d122063129a2789d')
+prepare() { cd cmake-$pkgver; sed -i '/"lib64"/s/64//' Modules/GNUInstallDirs.cmake; }
+build()   { cd cmake-$pkgver
+  ./bootstrap --prefix=/usr --system-libs --mandir=/share/man --no-system-jsoncpp \
+              --no-system-cppdap --no-system-librhash --docdir=/share/doc/cmake-$pkgver \
+              --parallel=$(nproc)
+  make; }
+package() { cd cmake-$pkgver; make DESTDIR="$pkgdir" install; }

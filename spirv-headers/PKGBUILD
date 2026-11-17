@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a2.sh a partir de BLFS 13.1-systemd
+pkgname=spirv-headers
+pkgver=1.4.357.0
+pkgrel=1
+pkgdesc='Cabeceras de SPIR-V (Khronos)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('cmake')
+source=('https://github.com/KhronosGroup/SPIRV-Headers/archive/vulkan-sdk-1.4.357.0/SPIRV-Headers-vulkan-sdk-1.4.357.0.tar.gz')
+sha256sums=('4d703067a7e06331ccb37bdfed3f9b7879cc61969a2689ae95c95db34a47ff07')
+arch=('any')
+build()   { cd SPIRV-Headers-vulkan-sdk-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -G Ninja; ninja -C build; }
+package() { cd SPIRV-Headers-vulkan-sdk-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }
