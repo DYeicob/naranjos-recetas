@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxext
+pkgver=1.3.7
+pkgrel=1
+pkgdesc='Biblioteca X11 libXext'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libx11' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXext-1.3.7.tar.xz')
+sha256sums=('6c643c7035cdacf67afd68f25d01b90ef889d546c9fcd7c0adf7c2cf91e3a32d')
+build()   { cd libXext-1.3.7; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXext-1.3.7 ; make; }
+package() { cd libXext-1.3.7; make DESTDIR="$pkgdir" install; }

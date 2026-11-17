@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=wayland
+pkgver=1.26.0
+pkgrel=1
+pkgdesc='Protocolo de pantallas Wayland'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libffi' 'expat' 'libxml2')
+makedepends=()
+source=('https://gitlab.freedesktop.org/wayland/wayland/-/releases/1.26.0/downloads/wayland-1.26.0.tar.xz')
+sha256sums=('64176eaa46e4969903e286f8e5ef8331affc17fdf03ac9b58381d2b23162b7a3')
+build()   { cd wayland-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D documentation=false; meson compile -C build; }
+package() { cd wayland-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

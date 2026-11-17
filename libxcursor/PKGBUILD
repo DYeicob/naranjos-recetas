@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxcursor
+pkgver=1.2.3
+pkgrel=1
+pkgdesc='Biblioteca X11 libXcursor'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxfixes' 'libxrender' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXcursor-1.2.3.tar.xz')
+sha256sums=('fde9402dd4cfe79da71e2d96bb980afc5e6ff4f8a7d74c159e1966afb2b2c2c0')
+build()   { cd libXcursor-1.2.3; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXcursor-1.2.3 ; make; }
+package() { cd libXcursor-1.2.3; make DESTDIR="$pkgdir" install; }

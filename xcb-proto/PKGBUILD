@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=xcb-proto
+pkgver=1.17.0
+pkgrel=1
+pkgdesc='Descripciones XML del protocolo XCB'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('python')
+source=('https://xorg.freedesktop.org/archive/individual/proto/xcb-proto-1.17.0.tar.xz')
+sha256sums=('2c1bacd2110f4799f74de6ebb714b94cf6f80fb112316b1219480fd22562148c')
+arch=('any')
+build()   { cd xcb-proto-$pkgver; PYTHON=python3 ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static; }
+package() { cd xcb-proto-$pkgver; make DESTDIR="$pkgdir" install; }

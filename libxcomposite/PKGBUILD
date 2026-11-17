@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxcomposite
+pkgver=0.4.7
+pkgrel=1
+pkgdesc='Biblioteca X11 libXcomposite'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxfixes' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXcomposite-0.4.7.tar.xz')
+sha256sums=('8bdf310967f484503fa51714cf97bff0723d9b673e0eecbf92b3f97c060c8ccb')
+build()   { cd libXcomposite-0.4.7; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXcomposite-0.4.7 ; make; }
+package() { cd libXcomposite-0.4.7; make DESTDIR="$pkgdir" install; }

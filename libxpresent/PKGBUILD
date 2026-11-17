@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxpresent
+pkgver=1.0.2
+pkgrel=1
+pkgdesc='Biblioteca X11 libXpresent'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxfixes' 'libxrandr' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXpresent-1.0.2.tar.xz')
+sha256sums=('4e5b21b4812206a4b223013606ae31170502c1043038777a1ef8f70c09d37602')
+build()   { cd libXpresent-1.0.2; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXpresent-1.0.2 ; make; }
+package() { cd libXpresent-1.0.2; make DESTDIR="$pkgdir" install; }

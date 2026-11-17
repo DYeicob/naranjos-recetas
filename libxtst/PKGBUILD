@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxtst
+pkgver=1.2.5
+pkgrel=1
+pkgdesc='Biblioteca X11 libXtst'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxi' 'libxext' 'libxfixes' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXtst-1.2.5.tar.xz')
+sha256sums=('b50d4c25b97009a744706c1039c598f4d8e64910c9fde381994e1cae235d9242')
+build()   { cd libXtst-1.2.5; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXtst-1.2.5 ; make; }
+package() { cd libXtst-1.2.5; make DESTDIR="$pkgdir" install; }

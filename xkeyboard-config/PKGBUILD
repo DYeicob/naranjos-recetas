@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=xkeyboard-config
+pkgver=2.48
+pkgrel=1
+pkgdesc='Distribuciones de teclado (incluida la española)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('libx11')
+source=('https://www.x.org/pub/individual/data/xkeyboard-config/xkeyboard-config-2.48.tar.xz')
+sha256sums=('b77041324f0109f77161ee43743fe04baa485866af8460d31e476ad3f7648fd5')
+arch=('any')
+build()   { cd xkeyboard-config-$pkgver; meson setup build --prefix=/usr --buildtype=plain; meson compile -C build; }
+package() { cd xkeyboard-config-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

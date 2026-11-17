@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxi
+pkgver=1.8.3
+pkgrel=1
+pkgdesc='Biblioteca X11 libXi'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxext' 'libxfixes' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXi-1.8.3.tar.xz')
+sha256sums=('7ad60056f01af4f786cfe93b3a7707447711626fc8da2637bec71a90409babe5')
+build()   { cd libXi-1.8.3; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXi-1.8.3 ; make; }
+package() { cd libXi-1.8.3; make DESTDIR="$pkgdir" install; }

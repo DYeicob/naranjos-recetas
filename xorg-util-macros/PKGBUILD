@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=xorg-util-macros
+pkgver=1.20.2
+pkgrel=1
+pkgdesc='Macros de compilación de Xorg'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://www.x.org/pub/individual/util/util-macros-1.20.2.tar.xz')
+sha256sums=('9ac269eba24f672d7d7b3574e4be5f333d13f04a7712303b1821b2a51ac82e8e')
+arch=('any')
+build()   { cd util-macros-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static; }
+package() { cd util-macros-$pkgver; make DESTDIR="$pkgdir" install; }

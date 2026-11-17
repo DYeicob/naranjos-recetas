@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxdamage
+pkgver=1.1.7
+pkgrel=1
+pkgdesc='Biblioteca X11 libXdamage'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxfixes' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXdamage-1.1.7.tar.xz')
+sha256sums=('127067f521d3ee467b97bcb145aeba1078e2454d448e8748eb984d5b397bde24')
+build()   { cd libXdamage-1.1.7; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXdamage-1.1.7 ; make; }
+package() { cd libXdamage-1.1.7; make DESTDIR="$pkgdir" install; }

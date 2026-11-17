@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxml2
+pkgver=2.15.3
+pkgrel=1
+pkgdesc='Biblioteca XML de GNOME'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('zlib' 'xz' 'readline')
+makedepends=()
+source=('https://download.gnome.org/sources/libxml2/2.15/libxml2-2.15.3.tar.xz')
+sha256sums=('78262a6e7ac170d6528ebfe2efccdf220191a5af6a6cd61ea4a9a9a5042c7a07')
+prepare() { cd libxml2-$pkgver; sed -i "/'git'/,+3d" meson.build; }
+build()   { cd libxml2-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D history=enabled -D icu=disabled -D python=disabled
+  meson compile -C build; }
+package() { cd libxml2-$pkgver; DESTDIR="$pkgdir" meson install -C build
+  sed "s/--static/--shared/" -i "$pkgdir/usr/bin/xml2-config"; }

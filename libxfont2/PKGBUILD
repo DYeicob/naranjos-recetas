@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxfont2
+pkgver=2.0.9
+pkgrel=1
+pkgdesc='Biblioteca X11 libXfont2'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('freetype2' 'libfontenc' 'zlib' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXfont2-2.0.9.tar.xz')
+sha256sums=('f042a370666815e7b941e9b7019024755bd1c6c2954afbfa515af378251799e2')
+build()   { cd libXfont2-2.0.9; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXfont2-2.0.9 --disable-devel-docs; make; }
+package() { cd libXfont2-2.0.9; make DESTDIR="$pkgdir" install; }

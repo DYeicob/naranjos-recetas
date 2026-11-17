@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxpm
+pkgver=3.5.19
+pkgrel=1
+pkgdesc='Biblioteca X11 libXpm'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxt' 'libxext' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXpm-3.5.19.tar.xz')
+sha256sums=('ad3576d689221a39dc728f0e0dc02ca7bb6a0d724c9a77fd1bfa1e9af83be900')
+build()   { cd libXpm-3.5.19; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXpm-3.5.19 --disable-open-zfile; make; }
+package() { cd libXpm-3.5.19; make DESTDIR="$pkgdir" install; }

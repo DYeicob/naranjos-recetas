@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxaw
+pkgver=1.0.16
+pkgrel=1
+pkgdesc='Biblioteca X11 libXaw'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxext' 'libxt' 'libxpm' 'libxmu' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXaw-1.0.16.tar.xz')
+sha256sums=('731d572b54c708f81e197a6afa8016918e2e06dfd3025e066ca642a5b8c39c8f')
+build()   { cd libXaw-1.0.16; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXaw-1.0.16 ; make; }
+package() { cd libXaw-1.0.16; make DESTDIR="$pkgdir" install; }

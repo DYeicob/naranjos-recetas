@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=wayland-protocols
+pkgver=1.49
+pkgrel=1
+pkgdesc='Protocolos adicionales de Wayland'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('wayland')
+source=('https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.49/downloads/wayland-protocols-1.49.tar.xz')
+sha256sums=('ec4c8f74942d6dff7ace8b4ce4764f0ef9ff618a935d974ea77edee2ad240b14')
+arch=('any')
+build()   { cd wayland-protocols-$pkgver; meson setup build --prefix=/usr --buildtype=plain; meson compile -C build; }
+package() { cd wayland-protocols-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

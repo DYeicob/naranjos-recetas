@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxxf86dga
+pkgver=1.1.7
+pkgrel=1
+pkgdesc='Biblioteca X11 libXxf86dga'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxext' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXxf86dga-1.1.7.tar.xz')
+sha256sums=('b3be5b444d324cb6e0f4b5019a4972c99ea336ccb8ab7968eccefecd917ffde6')
+build()   { cd libXxf86dga-1.1.7; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXxf86dga-1.1.7 ; make; }
+package() { cd libXxf86dga-1.1.7; make DESTDIR="$pkgdir" install; }

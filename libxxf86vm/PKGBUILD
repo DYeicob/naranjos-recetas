@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxxf86vm
+pkgver=1.1.7
+pkgrel=1
+pkgdesc='Biblioteca X11 libXxf86vm'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxext' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXxf86vm-1.1.7.tar.xz')
+sha256sums=('ae50c0f669e0af5a67cc4cd0f54f21d64a64d2660af883e80e95d3fe51b945d8')
+build()   { cd libXxf86vm-1.1.7; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXxf86vm-1.1.7 ; make; }
+package() { cd libXxf86vm-1.1.7; make DESTDIR="$pkgdir" install; }

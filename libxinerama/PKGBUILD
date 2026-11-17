@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxinerama
+pkgver=1.1.6
+pkgrel=1
+pkgdesc='Biblioteca X11 libXinerama'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxext' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXinerama-1.1.6.tar.xz')
+sha256sums=('d00fc1599c303dc5cbc122b8068bdc7405d6fcb19060f4597fc51bd3a8be51d7')
+build()   { cd libXinerama-1.1.6; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXinerama-1.1.6 ; make; }
+package() { cd libXinerama-1.1.6; make DESTDIR="$pkgdir" install; }

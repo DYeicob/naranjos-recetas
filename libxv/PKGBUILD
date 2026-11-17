@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxv
+pkgver=1.0.13
+pkgrel=1
+pkgdesc='Biblioteca X11 libXv'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxext' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXv-1.0.13.tar.xz')
+sha256sums=('7d34910958e1c1f8d193d828fea1b7da192297280a35437af0692f003ba03755')
+build()   { cd libXv-1.0.13; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXv-1.0.13 ; make; }
+package() { cd libXv-1.0.13; make DESTDIR="$pkgdir" install; }

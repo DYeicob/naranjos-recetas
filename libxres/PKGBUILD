@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxres
+pkgver=1.2.3
+pkgrel=1
+pkgdesc='Biblioteca X11 libXres'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxext' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXres-1.2.3.tar.xz')
+sha256sums=('d2de8f5401d6c86a8992791654547eb8def585dfdc0c08cc16e24ef6aeeb69dc')
+build()   { cd libXres-1.2.3; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXres-1.2.3 ; make; }
+package() { cd libXres-1.2.3; make DESTDIR="$pkgdir" install; }

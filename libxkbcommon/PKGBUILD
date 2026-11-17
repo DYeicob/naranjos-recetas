@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxkbcommon
+pkgver=1.13.2
+pkgrel=1
+pkgdesc='Gestión del teclado para Wayland y X11'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('xkeyboard-config' 'libxml2' 'libxcb' 'wayland')
+makedepends=('wayland-protocols')
+source=('https://github.com/lfs-book/libxkbcommon/archive/v1.13.2/libxkbcommon-1.13.2.tar.gz' 'https://www.linuxfromscratch.org/patches/blfs/13.1/libxkbcommon-1.13.2-upstream_fix-1.patch')
+sha256sums=('e5d5eff0ea09d82c44a96aec75c719b6969fdc602da82e6b1c9aa74cac5fd488' 'd978cac5875fed73b7223866a1138718afeba58c1390a412affdcf2cd7744a34')
+prepare() { cd libxkbcommon-$pkgver; patch -Np1 -i "$srcdir/libxkbcommon-$pkgver-upstream_fix-1.patch"; }
+build()   { cd libxkbcommon-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D enable-docs=false; meson compile -C build; }
+package() { cd libxkbcommon-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

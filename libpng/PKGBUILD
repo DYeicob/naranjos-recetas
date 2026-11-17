@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libpng
+pkgver=1.6.58
+pkgrel=1
+pkgdesc='Biblioteca PNG (con soporte APNG)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('zlib')
+makedepends=()
+source=('https://downloads.sourceforge.net/libpng/libpng-1.6.58.tar.xz' 'https://downloads.sourceforge.net/sourceforge/libpng-apng/libpng-1.6.58-apng.patch.gz')
+sha256sums=('28eb403f51f0f7405249132cecfe82ea5c0ef97f1b32c5a65828814ae0d34775' 'eee7dea22ed502868017971c86c63c4ed1e6085de0baebfdcc3d3322f00f3eb0')
+noextract=('libpng-1.6.58-apng.patch.gz')
+prepare() { cd libpng-$pkgver; zcat "$srcdir/libpng-$pkgver-apng.patch.gz" | patch -p1; }
+build()   { cd libpng-$pkgver; ./configure --prefix=/usr --disable-static; make; }
+package() { cd libpng-$pkgver; make DESTDIR="$pkgdir" install
+            install -vDm644 README libpng-manual.txt -t "$pkgdir/usr/share/doc/libpng-$pkgver"; }

@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libpciaccess
+pkgver=0.19
+pkgrel=1
+pkgdesc='Biblioteca X11 libpciaccess'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('zlib' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libpciaccess-0.19.tar.xz')
+sha256sums=('3c55aa86c82e54a4e3109786f0463530d53b36b6d1cfd14616454f985dd2aa43')
+build()   { cd libpciaccess-0.19; meson setup build --prefix=/usr --buildtype=plain; meson compile -C build; }
+package() { cd libpciaccess-0.19; DESTDIR="$pkgdir" meson install -C build; }

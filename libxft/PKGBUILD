@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libxft
+pkgver=2.3.9
+pkgrel=1
+pkgdesc='Biblioteca X11 libXft'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('fontconfig' 'libxrender' 'freetype2' )
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libXft-2.3.9.tar.xz')
+sha256sums=('60a25b78945ed6932635b3bb1899a517d31df7456e69867ffba27f89ff3976f5')
+build()   { cd libXft-2.3.9; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libXft-2.3.9 ; make; }
+package() { cd libXft-2.3.9; make DESTDIR="$pkgdir" install; }

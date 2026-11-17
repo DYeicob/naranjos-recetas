@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libdrm
+pkgver=2.4.134
+pkgrel=1
+pkgdesc='Acceso a los drivers gráficos del kernel (DRM)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libpciaccess')
+makedepends=('xorgproto')
+source=('https://dri.freedesktop.org/libdrm/libdrm-2.4.134.tar.xz')
+sha256sums=('ac5e74d157830eb8bee44c6a6bf3ad49774ef0dd2a72bdad74a8f20308b52a95')
+build()   { cd libdrm-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D udev=true -D valgrind=disabled; meson compile -C build; }
+package() { cd libdrm-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

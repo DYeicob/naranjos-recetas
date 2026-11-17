@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a1.sh a partir de BLFS 13.1-systemd
+pkgname=libfs
+pkgver=1.0.10
+pkgrel=1
+pkgdesc='Biblioteca X11 libFS'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('xorg-util-macros' 'xorgproto' 'xtrans')
+source=('https://www.x.org/pub/individual/lib/libFS-1.0.10.tar.xz')
+sha256sums=('9babbd3c86069c98563da044045fdc0ece4ec0c93dcdd2c68aa74eb34b4f3b77')
+build()   { cd libFS-1.0.10; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static --docdir=/usr/share/doc/libFS-1.0.10 ; make; }
+package() { cd libFS-1.0.10; make DESTDIR="$pkgdir" install; }
