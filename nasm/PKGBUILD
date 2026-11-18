@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a4.sh a partir de BLFS 13.1-systemd
+pkgname=nasm
+pkgver=3.02
+pkgrel=1
+pkgdesc='Ensamblador x86 (acelera libjpeg-turbo y otros)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://www.nasm.us/pub/nasm/releasebuilds/3.02/nasm-3.02.tar.xz')
+sha256sums=('87336eba53b4acfe917424ab5d500d2b0054d9f5148d35c2273ccf2cfb712f0d')
+build()   { cd nasm-$pkgver; ./configure --prefix=/usr; make; }
+package() { cd nasm-$pkgver; make DESTDIR="$pkgdir" install; }

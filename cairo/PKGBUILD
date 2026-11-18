@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a4.sh a partir de BLFS 13.1-systemd
+pkgname=cairo
+pkgver=1.18.4
+pkgrel=1
+pkgdesc='Gráficos vectoriales 2D'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libpng' 'pixman' 'fontconfig' 'freetype2' 'glib2' 'libx11' 'libxext' 'libxrender' 'libxcb')
+makedepends=()
+source=('https://www.cairographics.org/releases/cairo-1.18.4.tar.xz')
+sha256sums=('445ed8208a6e4823de1226a74ca319d3600e83f6369f99b14265006599c32ccb')
+build()   { cd cairo-$pkgver; meson setup build --prefix=/usr --buildtype=plain; meson compile -C build; }
+package() { cd cairo-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

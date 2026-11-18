@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a4.sh a partir de BLFS 13.1-systemd
+pkgname=fribidi
+pkgver=1.0.16
+pkgrel=1
+pkgdesc='Texto bidireccional (árabe, hebreo…)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://github.com/fribidi/fribidi/releases/download/v1.0.16/fribidi-1.0.16.tar.xz')
+sha256sums=('1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9ea05c')
+build()   { cd fribidi-$pkgver; meson setup build --prefix=/usr --buildtype=plain; meson compile -C build; }
+package() { cd fribidi-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

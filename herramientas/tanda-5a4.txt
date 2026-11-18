@@ -1,0 +1,8 @@
+nasm
+libjpeg-turbo
+libwebp
+glib2
+fribidi
+harfbuzz
+cairo
+pango

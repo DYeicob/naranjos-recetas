@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a4.sh a partir de BLFS 13.1-systemd
+pkgname=glib2
+pkgver=2.88.3
+pkgrel=1
+pkgdesc='Biblioteca base de GNOME/GTK (GLib, GObject, GIO)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('pcre2' 'libffi' 'util-linux-libs' 'zlib')
+makedepends=()
+source=('https://download.gnome.org/sources/glib/2.88/glib-2.88.3.tar.xz')
+sha256sums=('ab24d24e698dfa1e408b7bcdb508f4aafc906185a8b8ce72fdf79bbbdc9b383b')
+provides=('glib')
+build()   { cd glib-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D introspection=disabled -D glib_debug=disabled \
+        -D man-pages=disabled -D sysprof=disabled
+  meson compile -C build; }
+package() { cd glib-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

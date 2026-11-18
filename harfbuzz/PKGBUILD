@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a4.sh a partir de BLFS 13.1-systemd
+pkgname=harfbuzz
+pkgver=14.3.1
+pkgrel=1
+pkgdesc='Motor de composición de texto'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('freetype2' 'glib2')
+makedepends=()
+source=('https://github.com/harfbuzz/harfbuzz/releases/download/14.3.1/harfbuzz-14.3.1.tar.xz')
+sha256sums=('9dae9538aae2ffdf70cec31f2c27bf68e2aaeeae3112688467697d5faf6194f7')
+build()   { cd harfbuzz-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D graphite2=disabled -D icu=disabled \
+        -D introspection=disabled -D tests=disabled -D docs=disabled
+  meson compile -C build; }
+package() { cd harfbuzz-$pkgver; DESTDIR="$pkgdir" meson install -C build; }
