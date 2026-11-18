@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a3.sh a partir de BLFS 13.1-systemd
+pkgname=python-yaml
+pkgver=6.0.3
+pkgrel=1
+pkgdesc='Analizador YAML para Python'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('python')
+makedepends=()
+source=('https://files.pythonhosted.org/packages/source/P/PyYAML/pyyaml-6.0.3.tar.gz')
+sha256sums=('d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f')
+build()   { cd pyyaml-$pkgver; pip3 wheel -w dist --no-build-isolation --no-deps --no-cache-dir "$PWD"; }
+package() { cd pyyaml-$pkgver
+  pip3 install --root="$pkgdir" --no-index --find-links dist --no-user --no-deps --no-cache-dir --ignore-installed PyYAML; }

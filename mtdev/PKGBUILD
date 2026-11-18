@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a3.sh a partir de BLFS 13.1-systemd
+pkgname=mtdev
+pkgver=1.1.7
+pkgrel=1
+pkgdesc='Gestos multitáctiles'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://bitmath.org/code/mtdev/mtdev-1.1.7.tar.bz2')
+sha256sums=('a107adad2101fecac54ac7f9f0e0a0dd155d954193da55c2340c97f2ff1d814e')
+build()   { cd mtdev-$pkgver; ./configure --prefix=/usr --disable-static; make; }
+package() { cd mtdev-$pkgver; make DESTDIR="$pkgdir" install; }

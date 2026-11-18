@@ -32,7 +32,7 @@ build()   { cd llvm-project-$pkgver.src
       -D LLVM_INCLUDE_BENCHMARKS=OFF              \
       -D CLANG_DEFAULT_PIE_ON_LINUX=ON            \
       -D CLANG_CONFIG_FILE_SYSTEM_DIR=/etc/clang  \
-      -D LLVM_PARALLEL_LINK_JOBS=4                \
+      -D LLVM_PARALLEL_LINK_JOBS=4 -D LLVM_PARALLEL_COMPILE_JOBS=16                \
       -W no-author -G Ninja
   ninja -C llvm/build; }
 package() { cd llvm-project-$pkgver.src

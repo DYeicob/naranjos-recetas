@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a3.sh a partir de BLFS 13.1-systemd
+pkgname=libva
+pkgver=2.24.1
+pkgrel=1
+pkgdesc='Aceleración de vídeo por hardware (VA-API)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libdrm' 'libx11' 'libxext' 'libxfixes' 'wayland')
+makedepends=()
+source=('https://github.com/intel/libva/archive/2.24.1/libva-2.24.1.tar.gz')
+sha256sums=('0b4a3649ee8d683b9cce2ef094df4fb039d276c0cef7e49337c43d3b297b9f42')
+build()   { cd libva-$pkgver; meson setup build --prefix=/usr --buildtype=plain; meson compile -C build; }
+package() { cd libva-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

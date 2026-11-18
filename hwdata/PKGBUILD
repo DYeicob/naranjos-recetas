@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a3.sh a partir de BLFS 13.1-systemd
+pkgname=hwdata
+pkgver=0.410
+pkgrel=1
+pkgdesc='Bases de datos de identificadores de hardware (PCI, USB, monitores)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://github.com/vcrhonek/hwdata/archive/v0.410/hwdata-0.410.tar.gz')
+sha256sums=('2864b061b179b8ad8cb6a7339ca07678240a183d9cedce8677a4950acaf798e0')
+arch=('any')
+build()   { cd hwdata-$pkgver; ./configure --prefix=/usr --disable-blacklist; }
+package() { cd hwdata-$pkgver; make DESTDIR="$pkgdir" install; }

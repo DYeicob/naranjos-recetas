@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 # zumo — gestor de paquetes de NaranjOS (usa pacman por dentro)
-VERSION="0.2.1"
+VERSION="0.2.2"
 
 if [ -t 1 ]; then
   if [ "$TERM" = linux ]; then O=$'\e[0;33m'; else O=$'\e[1;38;5;208m'; fi
@@ -76,7 +76,7 @@ exprime(){
     [ -f "$d/PKGBUILD" ] || die "no encuentro la receta '$r' (ni ./$r ni $RECETAS/$r)"
     d=$(cd "$d" && pwd)
     msg "Exprimiendo ${B}$(basename "$d")${Z}…"
-    ( cd "$d" && PKGDEST="$REPO" makepkg -sf --sign --noconfirm ) || die "makepkg falló en '$(basename "$d")'"
+    ( cd "$d" && PKGDEST="$REPO" makepkg -sfC --sign --noconfirm ) || die "makepkg falló en '$(basename "$d")'"
     mapfile -t pkgs < <(cd "$d" && PKGDEST="$REPO" makepkg --packagelist)
     [ ${#pkgs[@]} -gt 0 ] || die "makepkg no dijo qué paquetes generó"
     repo-add --sign --key "$GPGKEY" --verify "$DB" "${pkgs[@]}" >/dev/null \

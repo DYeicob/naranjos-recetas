@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a3.sh a partir de BLFS 13.1-systemd
+pkgname=libdisplay-info
+pkgver=0.4.0
+pkgrel=1
+pkgdesc='Lectura de la información de pantallas (EDID)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('hwdata')
+source=('https://gitlab.freedesktop.org/emersion/libdisplay-info/-/releases/0.4.0/downloads/libdisplay-info-0.4.0.tar.xz')
+sha256sums=('43b180baa143e2035654759d84e2b2f5ee77d5fe817c423838c7fe59c0d68459')
+build()   { cd libdisplay-info-$pkgver; meson setup build --prefix=/usr --buildtype=plain; meson compile -C build; }
+package() { cd libdisplay-info-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

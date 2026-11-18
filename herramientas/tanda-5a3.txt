@@ -1,0 +1,9 @@
+python-mako
+python-yaml
+hwdata
+libdisplay-info
+libva
+mesa
+libevdev
+mtdev
+libinput

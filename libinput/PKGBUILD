@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a3.sh a partir de BLFS 13.1-systemd
+pkgname=libinput
+pkgver=1.31.3
+pkgrel=1
+pkgdesc='Teclado, ratón y touchpad para Wayland'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libevdev' 'mtdev')
+makedepends=()
+source=('https://gitlab.freedesktop.org/libinput/libinput/-/archive/1.31.3/libinput-1.31.3.tar.gz')
+sha256sums=('b6749bf6f1890f6631c0a70a027c35fec9d2e096a39f720548896e41474a9854')
+build()   { cd libinput-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D debug-gui=false -D tests=false \
+        -D libwacom=false -D udev-dir=/usr/lib/udev
+  meson compile -C build; }
+package() { cd libinput-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

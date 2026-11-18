@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a3.sh a partir de BLFS 13.1-systemd
+pkgname=python-mako
+pkgver=1.4.1
+pkgrel=1
+pkgdesc='Plantillas Mako para Python'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('python' 'python-markupsafe')
+makedepends=()
+source=('https://files.pythonhosted.org/packages/source/M/Mako/mako-1.4.1.tar.gz')
+sha256sums=('d7904710b662996425a21627710c4777c45053146942cf8a7aebf757c92b8c27')
+arch=('any')
+build()   { cd mako-$pkgver; pip3 wheel -w dist --no-build-isolation --no-deps --no-cache-dir "$PWD"; }
+package() { cd mako-$pkgver
+  pip3 install --root="$pkgdir" --no-index --find-links dist --no-user --no-deps --no-cache-dir --ignore-installed Mako; }
