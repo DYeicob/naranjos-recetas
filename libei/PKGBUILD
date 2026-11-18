@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=libei
+pkgver=1.6.0
+pkgrel=1
+pkgdesc='Emulación de entrada (escritorio remoto, Xwayland)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libevdev' 'libxkbcommon')
+makedepends=('python-attrs')
+source=('https://gitlab.freedesktop.org/libinput/libei/-/archive/1.6.0/libei-1.6.0.tar.gz')
+sha256sums=('81b4b967f0e5938492434a04f7ea2e6c6d96d3e6c44700bc691821f82281e602')
+build()   { cd libei-$pkgver; meson setup build --prefix=/usr --buildtype=plain -D tests=disabled; meson compile -C build; }
+package() { cd libei-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

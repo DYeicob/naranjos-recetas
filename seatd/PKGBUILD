@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=seatd
+pkgver=0.9.3
+pkgrel=1
+pkgdesc='Gestión de acceso a pantalla y teclado (libseat, vía logind)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://git.sr.ht/~kennylevinsen/seatd/archive/0.9.3.tar.gz')
+sha256sums=('302564d54d8e28191fadfd734f2675ecb0c9e0615a58011b89ef15dfa4dbaa96')
+build()   { cd seatd-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D libseat-logind=systemd -D libseat-builtin=disabled \
+        -D server=enabled -D examples=disabled -D man-pages=disabled
+  meson compile -C build; }
+package() { cd seatd-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

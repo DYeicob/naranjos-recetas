@@ -1,0 +1,15 @@
+hyprwayland-scanner
+hyprutils
+hyprlang
+hyprland-protocols
+hyprwire
+aquamarine
+hyprcursor
+hyprgraphics
+hyprtoolkit
+hyprland-guiutils
+hyprland
+tllist
+fcft
+foot
+ttf-dejavu

@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=aquamarine
+pkgver=0.16.0
+pkgrel=1
+pkgdesc='Capa de pantalla y entrada de Hyprland'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('hyprutils' 'libdisplay-info' 'libdrm' 'libinput' 'seatd' 'mesa' 'libglvnd' 'pixman' 'wayland')
+makedepends=('cmake' 'hyprwayland-scanner' 'wayland-protocols')
+source=('https://github.com/hyprwm/aquamarine/archive/v0.16.0/aquamarine-0.16.0.tar.gz')
+sha256sums=('42339c3096c9de6582c0d71bc86b7e63334a3faf6a2b917d385ad093caf66c3c')
+build()   { cd aquamarine-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+package() { cd aquamarine-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

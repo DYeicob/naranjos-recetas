@@ -1,23 +1,23 @@
 # Receta de NaranjOS — generada por naranjos-tanda-5a3.sh a partir de BLFS 13.1-systemd
 pkgname=mesa
 pkgver=26.1.7
-pkgrel=1
+pkgrel=2
 pkgdesc='Drivers gráficos libres: OpenGL, Vulkan y vídeo'
 arch=('x86_64')
 url='https://www.linuxfromscratch.org/blfs/'
 license=('custom')
-depends=('libdrm' 'libx11' 'libxext' 'libxfixes' 'libxshmfence' 'libxxf86vm' 'libxrandr' 'wayland' 'expat' 'zstd' 'llvm' 'spirv-llvm-translator' 'libva' 'vulkan-icd-loader')
+depends=('libglvnd' 'libdrm' 'libx11' 'libxext' 'libxfixes' 'libxshmfence' 'libxxf86vm' 'libxrandr' 'wayland' 'expat' 'zstd' 'llvm' 'spirv-llvm-translator' 'libva' 'vulkan-icd-loader')
 makedepends=('python-mako' 'python-yaml' 'glslang' 'wayland-protocols' 'xorgproto' 'libdisplay-info')
 source=('https://mesa.freedesktop.org/archive/mesa-26.1.7.tar.xz')
 sha256sums=('25e0a669e6638c3563e7be32a0a09f1888317e6eed0d047dc41d49dc8de26c7d')
-provides=('libgl' 'libegl' 'libgles' 'opengl-driver' 'vulkan-driver' 'vulkan-intel' 'vulkan-radeon'
+provides=('opengl-driver' 'vulkan-driver' 'vulkan-intel' 'vulkan-radeon'
           'vulkan-swrast' 'libva-mesa-driver' 'mesa-libgl')
 build()   { cd mesa-$pkgver
   meson setup build --prefix=/usr --buildtype=plain \
         -D platforms=x11,wayland \
         -D gallium-drivers=iris,crocus,i915,radeonsi,r300,r600,nouveau,virgl,svga,llvmpipe,softpipe,zink \
         -D vulkan-drivers=intel,intel_hasvk,amd,swrast \
-        -D valgrind=disabled -D libunwind=disabled
+        -D valgrind=disabled -D libunwind=disabled -D glvnd=enabled
   meson compile -C build; }
 package() { cd mesa-$pkgver; DESTDIR="$pkgdir" meson install -C build
   install -dm755 "$pkgdir/usr/share/doc/mesa-$pkgver"; cp -r docs/. "$pkgdir/usr/share/doc/mesa-$pkgver/"; }

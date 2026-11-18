@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=xcb-util-image
+pkgver=0.4.1
+pkgrel=1
+pkgdesc='Utilidades XCB (xcb-util-image)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('xcb-util' )
+makedepends=('xorg-util-macros' 'xcb-proto')
+source=('https://xorg.freedesktop.org/archive/individual/lib/xcb-util-image-0.4.1.tar.xz')
+sha256sums=('ccad8ee5dadb1271fd4727ad14d9bd77a64e505608766c4e98267d9aede40d3d')
+build()   { cd xcb-util-image-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static; make; }
+package() { cd xcb-util-image-$pkgver; make DESTDIR="$pkgdir" install; }

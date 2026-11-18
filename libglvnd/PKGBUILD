@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=libglvnd
+pkgver=1.7.0
+pkgrel=1
+pkgdesc='Despachador de OpenGL/EGL (permite varios drivers, p.ej. Mesa y NVIDIA)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libx11' 'libxext')
+makedepends=('xorgproto')
+source=('https://gitlab.freedesktop.org/glvnd/libglvnd/-/archive/v1.7.0/libglvnd-v1.7.0.tar.gz')
+sha256sums=('2b6e15b06aafb4c0b6e2348124808cbd9b291c647299eaaba2e3202f51ff2f3d')
+provides=('libgl' 'libegl' 'libgles' 'opengl')
+build()   { cd libglvnd-v$pkgver; meson setup build --prefix=/usr --buildtype=plain -D gles1=false; meson compile -C build; }
+package() { cd libglvnd-v$pkgver; DESTDIR="$pkgdir" meson install -C build; }

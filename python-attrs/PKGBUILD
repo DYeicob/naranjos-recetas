@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=python-attrs
+pkgver=26.1.0
+pkgrel=1
+pkgdesc='Clases de Python sin repetir código'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('python')
+makedepends=()
+source=('https://files.pythonhosted.org/packages/py3/a/attrs/attrs-26.1.0-py3-none-any.whl')
+sha256sums=('c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309')
+arch=('any')
+noextract=('attrs-26.1.0-py3-none-any.whl')
+package() { pip3 install --root="$pkgdir" --no-index --no-user --no-deps --no-cache-dir --ignore-installed \
+            "$srcdir/attrs-$pkgver-py3-none-any.whl"; }

@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=hyprland
+pkgver=0.57.2
+pkgrel=1
+pkgdesc='Compositor Wayland en mosaico (motor del escritorio de NaranjOS)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('aquamarine' 'cairo' 'glib2' 'glslang' 'hyprcursor' 'hyprgraphics' 'hyprland-guiutils' 'hyprlang' 'hyprutils' 'hyprwire' 'lcms2' 'libcanberra' 'libdrm' 'libei' 'libglvnd' 'libinput' 'libxcursor' 'libxkbcommon' 'lua' 'mesa' 'muparser' 'pango' 'pixman' 're2' 'sdbus-cpp' 'tomlplusplus' 'wayland' 'xcb-util-errors' 'xcb-util-wm' 'xcb-util-renderutil' 'xcb-util-keysyms' 'xcb-util-image' 'xorg-xwayland')
+makedepends=('cmake' 'glaze' 'hyprland-protocols' 'hyprwayland-scanner' 'wayland-protocols' 'xorgproto')
+source=('https://github.com/hyprwm/Hyprland/releases/download/v0.57.2/source-v0.57.2.tar.gz')
+sha256sums=('34dbec0738ab88c8228caf89385662688ab1601ea58fbe5c60a6b6ab383db46d')
+build()   { cd hyprland-source
+  cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D BUILD_TESTING=OFF -D NO_TESTS=ON
+  ninja -C build; }
+package() { cd hyprland-source; DESTDIR="$pkgdir" ninja -C build install; }

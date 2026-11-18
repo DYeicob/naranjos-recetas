@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=muparser
+pkgver=2.3.5
+pkgrel=1
+pkgdesc='Evaluador de expresiones matemáticas'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('cmake')
+source=('https://github.com/beltoforion/muparser/archive/v2.3.5/muparser-2.3.5.tar.gz')
+sha256sums=('20b43cc68c655665db83711906f01b20c51909368973116dfc8d7b3c4ddb5dd4')
+build()   { cd muparser-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D ENABLE_SAMPLES=OFF -D ENABLE_OPENMP=OFF; ninja -C build; }
+package() { cd muparser-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

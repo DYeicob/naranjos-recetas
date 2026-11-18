@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=xcb-util-cursor
+pkgver=0.1.6
+pkgrel=1
+pkgdesc='Utilidades XCB (xcb-util-cursor)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('xcb-util-renderutil' 'xcb-util-image' )
+makedepends=('xorg-util-macros' 'xcb-proto')
+source=('https://xorg.freedesktop.org/archive/individual/lib/xcb-util-cursor-0.1.6.tar.xz')
+sha256sums=('fdeb8bd127873519be5cc70dcd0d3b5d33b667877200f9925a59fdcad8f7a933')
+build()   { cd xcb-util-cursor-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static; make; }
+package() { cd xcb-util-cursor-$pkgver; make DESTDIR="$pkgdir" install; }

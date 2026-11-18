@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=xcb-util-errors
+pkgver=1.0.1
+pkgrel=1
+pkgdesc='Utilidades XCB (xcb-util-errors)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxcb' )
+makedepends=('xorg-util-macros' 'xcb-proto')
+source=('https://xorg.freedesktop.org/archive/individual/lib/xcb-util-errors-1.0.1.tar.xz')
+sha256sums=('5628c87b984259ad927bacd8a42958319c36bdf4b065887803c9d820fb80f357')
+build()   { cd xcb-util-errors-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static; make; }
+package() { cd xcb-util-errors-$pkgver; make DESTDIR="$pkgdir" install; }

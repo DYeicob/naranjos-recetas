@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=xorg-xkbcomp
+pkgver=1.5.0
+pkgrel=1
+pkgdesc='Compilador de mapas de teclado XKB'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxkbfile' 'libx11')
+makedepends=('xorg-util-macros')
+source=('https://www.x.org/pub/individual/app/xkbcomp-1.5.0.tar.xz')
+sha256sums=('2ac31f26600776db6d9cd79b3fcd272263faebac7eb85fb2f33c7141b8486060')
+build()   { cd xkbcomp-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static; make; }
+package() { cd xkbcomp-$pkgver; make DESTDIR="$pkgdir" install; }

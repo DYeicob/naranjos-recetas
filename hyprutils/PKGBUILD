@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=hyprutils
+pkgver=0.14.3
+pkgrel=1
+pkgdesc='Utilidades de Hyprland'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('pixman')
+makedepends=('cmake' )
+source=('https://github.com/hyprwm/hyprutils/archive/v0.14.3/hyprutils-0.14.3.tar.gz')
+sha256sums=('87bbfc9549ed96316b0d592c16d01f58729b23a2999a5293b73eec620b40c5f5')
+build()   { cd hyprutils-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+package() { cd hyprutils-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

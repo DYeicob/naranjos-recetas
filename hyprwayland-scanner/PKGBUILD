@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=hyprwayland-scanner
+pkgver=0.4.6
+pkgrel=1
+pkgdesc='Generador de código Wayland de Hyprland'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('pugixml')
+makedepends=('cmake' )
+source=('https://github.com/hyprwm/hyprwayland-scanner/archive/v0.4.6/hyprwayland-scanner-0.4.6.tar.gz')
+sha256sums=('05f55fd1a20d8ca81b5030980fdb7c87147749230145bdb3745af2741d617f5c')
+build()   { cd hyprwayland-scanner-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+package() { cd hyprwayland-scanner-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

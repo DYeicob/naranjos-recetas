@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=pugixml
+pkgver=1.16
+pkgrel=1
+pkgdesc='Lector de XML para C++'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('cmake')
+source=('https://github.com/zeux/pugixml/releases/download/v1.16/pugixml-1.16.tar.gz')
+sha256sums=('4cee1ca4aad395170f4c7a07824f3bdd41f28316c6e1e1090a1425b278ec0b4b')
+build()   { cd pugixml-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D BUILD_SHARED_LIBS=ON; ninja -C build; }
+package() { cd pugixml-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

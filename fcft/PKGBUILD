@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=fcft
+pkgver=3.3.3
+pkgrel=1
+pkgdesc='Fuentes para apps Wayland ligeras'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('fontconfig' 'freetype2' 'harfbuzz' 'pixman')
+makedepends=('tllist')
+source=('https://codeberg.org/dnkl/fcft/archive/3.3.3.tar.gz')
+sha256sums=('b0c0f4a599f43723736c8565b8b84337c4195077f07f1bb8bb3252bb13a2306a')
+build()   { cd fcft
+  meson setup build --prefix=/usr --buildtype=plain -D docs=disabled -D grapheme-shaping=disabled -D test-text-shaping=false
+  meson compile -C build; }
+package() { cd fcft; DESTDIR="$pkgdir" meson install -C build; }

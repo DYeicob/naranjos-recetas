@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=hyprgraphics
+pkgver=0.6.0
+pkgrel=1
+pkgdesc='Gráficos de Hyprland'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('cairo' 'file' 'hyprutils' 'libjpeg-turbo' 'libjxl' 'libpng' 'librsvg' 'libwebp' 'pango' 'pixman')
+makedepends=('cmake' )
+source=('https://github.com/hyprwm/hyprgraphics/archive/v0.6.0/hyprgraphics-0.6.0.tar.gz')
+sha256sums=('27e9e19ff59ba75a2963d72c3dcb5c0840b266b90d7fca6d5df7cac105419b08')
+build()   { cd hyprgraphics-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+package() { cd hyprgraphics-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

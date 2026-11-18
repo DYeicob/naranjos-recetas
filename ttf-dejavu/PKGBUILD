@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=ttf-dejavu
+pkgver=2.37
+pkgrel=1
+pkgdesc='Tipografía DejaVu'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('fontconfig')
+makedepends=()
+source=('https://github.com/dejavu-fonts/dejavu-fonts/releases/download/version_2_37/dejavu-fonts-ttf-2.37.tar.bz2')
+sha256sums=('fa9ca4d13871dd122f61258a80d01751d603b4d3ee14095d65453b4e846e17d7')
+arch=('any')
+install=ttf-dejavu.install
+package() { cd dejavu-fonts-ttf-$pkgver
+  install -dm755 "$pkgdir/usr/share/fonts/TTF"; install -m644 ttf/*.ttf "$pkgdir/usr/share/fonts/TTF/"
+  install -dm755 "$pkgdir/usr/share/fontconfig/conf.avail"; install -m644 fontconfig/*.conf "$pkgdir/usr/share/fontconfig/conf.avail/"; }

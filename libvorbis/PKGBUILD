@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=libvorbis
+pkgver=1.3.7
+pkgrel=1
+pkgdesc='Códec de audio Vorbis'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libogg')
+makedepends=()
+source=('https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.tar.xz')
+sha256sums=('b33cc4934322bcbf6efcbacf49e3ca01aadbea4114ec9589d1b1e9d20f72954b')
+build()   { cd libvorbis-$pkgver; ./configure --prefix=/usr --disable-static; make; }
+package() { cd libvorbis-$pkgver; make DESTDIR="$pkgdir" install
+  install -dm755 "$pkgdir/usr/share/doc/libvorbis-$pkgver"; install -v -m644 doc/Vorbis* "$pkgdir/usr/share/doc/libvorbis-$pkgver"; }

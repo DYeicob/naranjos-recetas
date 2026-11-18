@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=libtirpc
+pkgver=1.3.7
+pkgrel=1
+pkgdesc='RPC de transporte independiente'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://downloads.sourceforge.net/libtirpc/libtirpc-1.3.7.tar.bz2')
+sha256sums=('b47d3ac19d3549e54a05d0019a6c400674da716123858cfdb6d3bdd70a66c702')
+backup=('etc/netconfig' 'etc/bindresvport.blacklist')
+build()   { cd libtirpc-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc --disable-static --disable-gssapi; make; }
+package() { cd libtirpc-$pkgver; make DESTDIR="$pkgdir" install; }

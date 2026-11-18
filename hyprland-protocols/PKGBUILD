@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=hyprland-protocols
+pkgver=0.8.0
+pkgrel=1
+pkgdesc='Protocolos Wayland de Hyprland'
+arch=('any')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('cmake' )
+source=('https://github.com/hyprwm/hyprland-protocols/archive/v0.8.0/hyprland-protocols-0.8.0.tar.gz')
+sha256sums=('e41ab206d89259fdf2059fdc523c39133e23ed9efa8b0ef0de9aeed61be96e72')
+build()   { cd hyprland-protocols-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+package() { cd hyprland-protocols-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

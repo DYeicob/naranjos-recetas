@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=iniparser
+pkgver=4.3.2
+pkgrel=1
+pkgdesc='Lector de ficheros INI'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('cmake')
+source=('https://github.com/ndevilla/iniparser/archive/v4.3.2/iniparser-4.3.2.tar.gz')
+sha256sums=('e9eb6be555c30fbef87e5a07333fcff6ef8c5bbbdc5710321bbad7ebae0612a7')
+build()   { cd iniparser-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D BUILD_DOCS=OFF -D BUILD_TESTING=OFF -D BUILD_EXAMPLES=OFF; ninja -C build; }
+package() { cd iniparser-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

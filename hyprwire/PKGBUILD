@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=hyprwire
+pkgver=0.3.1
+pkgrel=1
+pkgdesc='Comunicación entre procesos de Hyprland'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('hyprutils' 'libffi' 'pugixml')
+makedepends=('cmake' )
+source=('https://github.com/hyprwm/hyprwire/archive/v0.3.1/hyprwire-0.3.1.tar.gz')
+sha256sums=('92a673d40ae6a7d66fbcd0a34ec071e026e17eaeeb0040c3375e4b2a80dba737')
+build()   { cd hyprwire-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+package() { cd hyprwire-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

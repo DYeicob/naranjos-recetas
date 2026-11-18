@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=glaze
+pkgver=9.1.0
+pkgrel=1
+pkgdesc='JSON/BEVE para C++ (solo cabeceras)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('cmake')
+source=('https://github.com/stephenberry/glaze/archive/v9.1.0/glaze-9.1.0.tar.gz')
+sha256sums=('55f8a675397c505f9bee6c160e1c26b0085868f185d04d7a7727531fdbff4bd4')
+arch=('any')
+build()   { cd glaze-$pkgver
+  cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D glaze_DEVELOPER_MODE=OFF -D glaze_BUILD_EXAMPLES=OFF -D glaze_ENABLE_FUZZING=OFF -D BUILD_TESTING=OFF
+  ninja -C build; }
+package() { cd glaze-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

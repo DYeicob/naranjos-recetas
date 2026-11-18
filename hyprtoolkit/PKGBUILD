@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=hyprtoolkit
+pkgver=0.6.0
+pkgrel=1
+pkgdesc='Kit de interfaz de Hyprland'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('abseil-cpp' 'aquamarine' 'cairo' 'glib2' 'hyprgraphics' 'hyprlang' 'hyprutils' 'iniparser' 'libdrm' 'libxkbcommon' 'mesa' 'pango' 'pixman' 'wayland')
+makedepends=('cmake' 'hyprwayland-scanner')
+source=('https://github.com/hyprwm/hyprtoolkit/archive/v0.6.0/hyprtoolkit-0.6.0.tar.gz')
+sha256sums=('53c41be72af97d9ede274a63c9c1034c58726d862905763ed6e5a564ae42ba6b')
+build()   { cd hyprtoolkit-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+package() { cd hyprtoolkit-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

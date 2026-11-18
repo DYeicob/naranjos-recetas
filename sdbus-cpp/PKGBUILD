@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=sdbus-cpp
+pkgver=2.3.1
+pkgrel=1
+pkgdesc='D-Bus para C++'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('expat')
+makedepends=('cmake')
+source=('https://github.com/Kistler-Group/sdbus-cpp/archive/v2.3.1/sdbus-cpp-2.3.1.tar.gz')
+sha256sums=('3a289eded586c26d06c1387de72c7bf7c809527a70d51ba6401fe61059b19626')
+build()   { cd sdbus-cpp-$pkgver
+  cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D BUILD_SHARED_LIBS=ON -D SDBUSCPP_BUILD_DOCS=OFF -D SDBUSCPP_BUILD_TESTS=OFF
+  ninja -C build; }
+package() { cd sdbus-cpp-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=xorg-xwayland
+pkgver=24.1.13
+pkgrel=1
+pkgdesc='Servidor X dentro de Wayland (apps antiguas)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('libxcvt' 'pixman' 'libepoxy' 'libtirpc' 'libglvnd' 'mesa' 'libxfont2' 'libxshmfence' 'libei' 'xorg-xkbcomp' 'xkeyboard-config')
+makedepends=('xorg-font-util' 'xorgproto' 'wayland-protocols')
+source=('https://www.x.org/pub/individual/xserver/xwayland-24.1.13.tar.xz')
+sha256sums=('173aea3d6f79609164c04528e1c8e4c9b60fcd59391c3c9dad4667297d727fb6')
+provides=('xwayland')
+prepare() { cd xwayland-$pkgver; sed -i '/install_man/,$d' meson.build; }
+build()   { cd xwayland-$pkgver; meson setup build --prefix=/usr --buildtype=plain -D xkb_output_dir=/var/lib/xkb; meson compile -C build; }
+package() { cd xwayland-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

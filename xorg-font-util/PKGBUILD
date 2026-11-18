@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=xorg-font-util
+pkgver=1.4.2
+pkgrel=1
+pkgdesc='Utilidades de fuentes de Xorg'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('xorg-util-macros')
+source=('https://www.x.org/pub/individual/font/font-util-1.4.2.tar.xz')
+sha256sums=('02e4f8afdcf03cc8372ca9c37aa104b1e36b47722dbc79531be08f0a4c622999')
+build()   { cd font-util-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static; make; }
+package() { cd font-util-$pkgver; make DESTDIR="$pkgdir" install; }

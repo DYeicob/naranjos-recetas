@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
+pkgname=re2
+pkgver=2025.11.05
+pkgrel=1
+pkgdesc='Expresiones regulares de Google (RE2)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('abseil-cpp')
+makedepends=('cmake')
+source=('https://github.com/google/re2/archive/2025-11-05/re2-2025-11-05.tar.gz')
+sha256sums=('87f6029d2f6de8aa023654240a03ada90e876ce9a4676e258dd01ea4c26ffd67')
+build()   { cd re2-2025-11-05; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D BUILD_SHARED_LIBS=ON -D RE2_BUILD_TESTING=OFF; ninja -C build; }
+package() { cd re2-2025-11-05; DESTDIR="$pkgdir" ninja -C build install; }
