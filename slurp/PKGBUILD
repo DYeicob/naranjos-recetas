@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=slurp
+pkgver=1.5.0
+pkgrel=1
+pkgdesc='Seleccionar una zona de la pantalla'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('cairo' 'libxkbcommon' 'wayland')
+makedepends=('scdoc' 'wayland-protocols')
+source=('https://github.com/emersion/slurp/archive/v1.5.0/slurp-1.5.0.tar.gz')
+sha256sums=('0fa880d4a93e1c795e3b5929fbea47546df0955bea34fc2f7ffeb1751678f663')
+build()   { cd slurp-$pkgver; meson setup build --prefix=/usr --buildtype=plain -D man-pages=enabled; meson compile -C build; }
+package() { cd slurp-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

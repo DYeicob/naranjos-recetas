@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=scdoc
+pkgver=1.11.5
+pkgrel=1
+pkgdesc='Generador de páginas de manual'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://git.sr.ht/~sircmpwn/scdoc/archive/1.11.5.tar.gz')
+sha256sums=('98780bbdf16c1bce89ef3a8c0f537ac6e4ea77087b609e7698857614488a2a62')
+prepare() { cd scdoc-$pkgver; sed -i 's/-static//' Makefile; }
+build()   { cd scdoc-$pkgver; make PREFIX=/usr; }
+package() { cd scdoc-$pkgver; make PREFIX=/usr DESTDIR="$pkgdir" install; }

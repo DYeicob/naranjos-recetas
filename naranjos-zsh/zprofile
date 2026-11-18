@@ -1,0 +1,2 @@
+# NaranjOS · /etc/zsh/zprofile — carga /etc/profile (PATH, idioma, /etc/profile.d…)
+emulate sh -c 'source /etc/profile'

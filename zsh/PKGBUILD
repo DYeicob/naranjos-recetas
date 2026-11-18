@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=zsh
+pkgver=5.9.2
+pkgrel=1
+pkgdesc='Z shell: la shell por defecto de NaranjOS'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('pcre2' 'gdbm' 'libcap' 'ncurses')
+makedepends=()
+source=('https://www.zsh.org/pub/zsh-5.9.2.tar.xz')
+sha256sums=('36fa734374b44783582cec09bcd67822e2f992c779ec1624ab5596df078d2f81')
+install=zsh.install
+build() { cd zsh-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc/zsh --enable-etcdir=/etc/zsh \
+    --enable-fndir=/usr/share/zsh/functions --enable-scriptdir=/usr/share/zsh/scripts \
+    --enable-function-subdirs --with-term-lib='ncursesw' --enable-multibyte \
+    --enable-pcre --enable-cap --enable-gdbm --with-tcsetpgrp --enable-zsh-secure-free
+  make; }
+package() { cd zsh-$pkgver; make DESTDIR="$pkgdir" install; }

@@ -1,0 +1,32 @@
+── APLICACIONES ─────────────────────────────────────────
+Super + Enter             Abrir la terminal
+Super + Espacio           Lanzador de aplicaciones
+Super + K                 Esta lista de atajos
+Super + H                 Manual de NaranjOS
+── VENTANAS ─────────────────────────────────────────────
+Super + W                 Cerrar la ventana
+Super + F                 Pantalla completa
+Super + Shift + F         Maximizar (deja ver la barra)
+Super + T                 Ventana flotante / en mosaico
+Super + J                 Cambiar la división (horizontal/vertical)
+Super + P                 Pseudo-mosaico
+Super + flechas           Mover el foco
+Super + Shift + flechas   Mover la ventana
+Super + clic izquierdo    Arrastrar la ventana
+Super + clic derecho      Cambiar el tamaño
+── ESCRITORIOS ──────────────────────────────────────────
+Super + 1 … 0             Ir al escritorio 1 … 10
+Super + Shift + 1 … 0     Mandar la ventana al escritorio
+Super + rueda del ratón   Escritorio siguiente / anterior
+Touchpad 3 dedos ← →      Escritorio siguiente / anterior
+Super + S                 Mostrar/ocultar el cajón
+Super + Alt + S           Guardar la ventana en el cajón
+── CAPTURAS ─────────────────────────────────────────────
+Super + Shift + S         Capturar una zona
+Impr                      Capturar una zona
+Shift + Impr              Capturar toda la pantalla
+── SISTEMA ──────────────────────────────────────────────
+Super + L                 Bloquear
+Super + Escape            Menú: bloquear, salir, apagar…
+Super + Shift + Escape    Salir de Hyprland al momento
+Fn + teclas de brillo     Subir / bajar el brillo

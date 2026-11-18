@@ -1,0 +1,15 @@
+# Paquete propio de NaranjOS — generado por naranjos-tanda-5c1.sh (NO editar a mano)
+pkgname=naranjos-fondos
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Fondos de pantalla de NaranjOS'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=()
+source=('naranjos-01.jpg' 'naranjos-02.jpg' 'naranjos-bloqueo.jpg')
+sha256sums=('0a659ed925255f477e02b26039a2464877772c0010906b1f2cdaacfd306e5892' '5084ac5170d44975c5ff939bb7dc54d30133f375009cabfb117ba642d105bd2c' '02647f2845ced4e3f22a42313ebd41da9540384397660de67ffc4eff48c3fc8d')
+package() {
+  install -dm755 "$pkgdir/usr/share/backgrounds/naranjos"
+  install -m644 naranjos-*.jpg "$pkgdir/usr/share/backgrounds/naranjos/"
+}

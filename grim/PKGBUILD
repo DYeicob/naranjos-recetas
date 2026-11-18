@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=grim
+pkgver=1.5.0
+pkgrel=1
+pkgdesc='Capturas de pantalla en Wayland'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('pixman' 'libpng' 'libjpeg-turbo' 'wayland')
+makedepends=('scdoc' 'wayland-protocols')
+source=('https://gitlab.freedesktop.org/emersion/grim/-/archive/v1.5.0/grim-v1.5.0.tar.gz')
+sha256sums=('9e72a98f7621b1f5741b405b8dbd447acf7d300ddb12667ec526db1ce6154eaa')
+build()   { cd grim-v$pkgver; meson setup build --prefix=/usr --buildtype=plain -D jpeg=enabled -D man-pages=enabled; meson compile -C build; }
+package() { cd grim-v$pkgver; DESTDIR="$pkgdir" meson install -C build; }

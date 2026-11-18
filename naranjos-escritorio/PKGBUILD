@@ -1,0 +1,31 @@
+# Paquete propio de NaranjOS — generado por naranjos-tanda-5c1.sh (NO editar a mano)
+pkgname=naranjos-escritorio
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Escritorio NaranjOS: la capa NaranjOS sobre Hyprland (configuración, atajos, scripts y manual)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('hyprland' 'hyprpaper' 'hyprlock' 'hypridle' 'mako' 'fuzzel' 'foot' 'grim' 'slurp' 'wl-clipboard' 'brightnessctl' 'naranjos-fondos' 'naranjos-zsh' 'ttf-jetbrains-mono-nerd' 'less')
+source=('atajos.txt' 'foot.ini' 'fuzzel.ini' 'hypridle.conf' 'hyprland.lua' 'hyprlock.conf' 'hyprpaper.conf' 'mako.conf' 'manual.md' 'naranjos-atajos' 'naranjos-ayuda' 'naranjos-captura' 'naranjos-config-usuario' 'naranjos-escritorio.sh' 'naranjos.lua' 'naranjos-notifica' 'naranjos-sistema' 'sudoers-energia')
+sha256sums=('8fabe5e5a4673b7f2356eeebe80e2c8aa19b0ddbf99d05f16632967386acdcd7' '4c9d4e8584f9f99095fcb59dd1d89d87e414f945fe9e24a5eb0158ef96d9785e' 'b5d8df93979d579d60354b1070ee9322cd47dd463116191431255db543806529' '7044a44af92c3ff8b5efa5df2fa5773402941ad1b42e29699c8fec6b9e35ffa7' 'd63ac1512679e8df9faee5e0d65e4afb5e0680d4333bdaf1ed632f9ad43bb289' 'e996a94d41303884ad152bc41f3f2af29183acaf16cdf5726cd6c55180fcc73f' '64ee3334993c4b753041f034d7accca73c56214d16cb2c07df3d5f35755de97a' '73ef3cf4cddc240dcd2af12176bff49b8bb9f6e849a7a7d2767f8f5f90432f86' '3c6b77fc55bc4fc73c6ab103a6576989267bd7ac9b9ca10e763cd42973218fcb' 'b22fc9fdaf53c0ec23bf243d0b0d9a4d73c8b1c6e97a9753695b247a9a3cbb01' 'e933081d7bb3176f97cdddf2189c94f12a1464248c9568a8a388f2c8bdb054ae' '1b567c97ea9cd425d9b554655bc77e5ec09d63b52581672ed593cd345740517d' '419abb2b8bcf647cfe43ee7cafe1f30b0e29218eb7e93bb0ff249a707dc32956' '13c8fec8c660c3bfb0df527e460b9bbbe31a0750227bcd0f160d5d2a6f69b837' 'e98e3192fd5e1448686c9217c6881684fc9e644c6434dae8bd876d5be9915cec' '703003314942e8b69a13d1a4d154c2c5f1cc7191cba5cb28f385e92bf0880e1d' 'd5c4820b73fa2ba43b4c38c8439c25e88e6b870770c68aa6fe33f77d9153673c' 'e355d0df2fc949a8726a4461c1f485d7ce8c99e9e82ea96b8045b0d54efa3c44')
+install=naranjos-escritorio.install
+package() {
+  local S="$pkgdir/etc/skel"
+  install -Dm644 naranjos.lua     "$pkgdir/usr/share/naranjos/hypr/naranjos.lua"
+  install -Dm644 atajos.txt       "$pkgdir/usr/share/naranjos/atajos.txt"
+  install -Dm644 manual.md        "$pkgdir/usr/share/doc/naranjos/manual.md"
+  install -Dm644 hyprland.lua     "$S/.config/hypr/hyprland.lua"
+  install -Dm644 hyprpaper.conf   "$S/.config/hypr/hyprpaper.conf"
+  install -Dm644 hyprlock.conf    "$S/.config/hypr/hyprlock.conf"
+  install -Dm644 hypridle.conf    "$S/.config/hypr/hypridle.conf"
+  install -Dm644 mako.conf        "$S/.config/mako/config"
+  install -Dm644 fuzzel.ini       "$S/.config/fuzzel/fuzzel.ini"
+  install -Dm644 foot.ini         "$S/.config/foot/foot.ini"
+  for s in naranjos-notifica naranjos-captura naranjos-sistema naranjos-atajos naranjos-ayuda naranjos-config-usuario; do
+    install -Dm755 "$s" "$pkgdir/usr/bin/$s"
+  done
+  install -Dm644 naranjos-escritorio.sh "$pkgdir/etc/profile.d/naranjos-escritorio.sh"
+  install -dm750 "$pkgdir/etc/sudoers.d"
+  install -m440 sudoers-energia "$pkgdir/etc/sudoers.d/50-naranjos-energia"
+}

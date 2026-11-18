@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=hypridle
+pkgver=0.1.8
+pkgrel=1
+pkgdesc='Detector de inactividad de Hyprland (bloquea y apaga la pantalla)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('hyprlang' 'hyprutils' 'sdbus-cpp' 'wayland')
+makedepends=('cmake' 'hyprland-protocols' 'hyprwayland-scanner' 'wayland-protocols')
+source=('https://github.com/hyprwm/hypridle/archive/v0.1.8/hypridle-0.1.8.tar.gz')
+sha256sums=('08703613cc33cc796c2179bcaa6076e8618113f67b938daaf7535f90c7d39595')
+build()   { cd hypridle-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+package() { cd hypridle-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

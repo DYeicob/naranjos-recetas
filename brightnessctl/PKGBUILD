@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=brightnessctl
+pkgver=0.5.1
+pkgrel=1
+pkgdesc='Brillo de la pantalla (vía logind, sin root)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://github.com/Hummer12007/brightnessctl/archive/0.5.1/brightnessctl-0.5.1.tar.gz')
+sha256sums=('a68869e23f56ac4f2e28f1783002810ddbf10f95e1af9b48b2912fb169f46994')
+build()   { cd brightnessctl-$pkgver; make ENABLE_SYSTEMD=1; }
+package() { cd brightnessctl-$pkgver; make ENABLE_SYSTEMD=1 PREFIX=/usr DESTDIR="$pkgdir" install; }

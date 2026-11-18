@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=which
+pkgver=2.25
+pkgrel=1
+pkgdesc='Dice dónde está un programa'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://ftp.gnu.org/gnu/which/which-2.25.tar.gz')
+sha256sums=('1cb83e4f702e60b8211ab5ec4c2afbab1b1dec80209456a7d2faf7584ed225ea')
+build()   { cd which-$pkgver; ./configure --prefix=/usr; make; }
+package() { cd which-$pkgver; make DESTDIR="$pkgdir" install; rm -rf "$pkgdir/usr/share/info"; }

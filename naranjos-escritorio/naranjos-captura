@@ -1,0 +1,12 @@
+#!/bin/bash
+# naranjos-captura [region|pantalla] — guarda en ~/Imágenes/Capturas y copia al portapapeles
+set -u
+dir="$HOME/Imágenes/Capturas"; mkdir -p "$dir"
+f="$dir/captura-$(date +%Y%m%d-%H%M%S).png"
+case "${1:-region}" in
+  region)   g=$(slurp -b 12121288 -c ff8700ff -w 2) || exit 0; grim -g "$g" "$f" ;;
+  pantalla) grim "$f" ;;
+  *) echo "Uso: naranjos-captura [region|pantalla]"; exit 1 ;;
+esac
+wl-copy --type image/png < "$f"
+naranjos-notifica "Captura guardada" "${f/#$HOME/~} · también está en el portapapeles"

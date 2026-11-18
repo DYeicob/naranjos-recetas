@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=wl-clipboard
+pkgver=2.3.0
+pkgrel=1
+pkgdesc='Copiar y pegar desde la terminal (wl-copy, wl-paste)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('wayland')
+makedepends=('wayland-protocols')
+source=('https://github.com/bugaevc/wl-clipboard/archive/v2.3.0/wl-clipboard-2.3.0.tar.gz')
+sha256sums=('b4dc560973f0cd74e02f817ffa2fd44ba645a4f1ea94b7b9614dacc9f895f402')
+build()   { cd wl-clipboard-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D zshcompletiondir=/usr/share/zsh/site-functions -D fishcompletiondir=no
+  meson compile -C build; }
+package() { cd wl-clipboard-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

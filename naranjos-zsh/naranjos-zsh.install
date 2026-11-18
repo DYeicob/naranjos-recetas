@@ -1,0 +1,10 @@
+post_install() {
+  # zsh por defecto para los usuarios NUEVOS (también los que cree el instalador de la ISO)
+  /usr/sbin/useradd -D -s /bin/zsh >/dev/null 2>&1 || true
+  # y para los usuarios normales que ya existen y usan bash (root se queda con bash)
+  awk -F: '$3>=1000 && $3<60000 && ($7=="/bin/bash" || $7=="/usr/bin/bash") {print $1}' /etc/passwd |
+  while read -r u; do
+    /usr/sbin/usermod -s /bin/zsh "$u" && echo "  NaranjOS: el usuario $u usará zsh desde su próximo inicio de sesión"
+  done
+}
+post_upgrade() { /usr/sbin/useradd -D -s /bin/zsh >/dev/null 2>&1 || true; }

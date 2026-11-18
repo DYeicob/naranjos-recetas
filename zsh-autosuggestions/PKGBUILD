@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=zsh-autosuggestions
+pkgver=0.7.1
+pkgrel=1
+pkgdesc='Sugerencias de zsh según tu historial'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('zsh')
+makedepends=()
+source=('https://github.com/zsh-users/zsh-autosuggestions/archive/v0.7.1/zsh-autosuggestions-0.7.1.tar.gz')
+sha256sums=('0df7affff21cd87ed298e6a3970ed08a1dd66a6efa676454ee5b091ad503badf')
+arch=('any')
+package() { cd zsh-autosuggestions-$pkgver
+  install -Dm644 zsh-autosuggestions.zsh "$pkgdir/usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"; }

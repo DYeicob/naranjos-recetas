@@ -1,0 +1,5 @@
+post_install() {
+  echo "  NaranjOS: escritorio instalado. Cada usuario recibe su configuración al iniciar sesión"
+  echo "            (o ya mismo con: naranjos-config-usuario). Manual: naranjos-ayuda"
+}
+post_upgrade() { :; }

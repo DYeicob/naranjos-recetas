@@ -1,0 +1,4 @@
+#!/bin/bash
+# naranjos-ayuda — abre el manual de NaranjOS (Super + H)
+M=/usr/share/doc/naranjos/manual.md
+if [ -t 1 ]; then exec less -R "$M"; else exec foot -T "Manual de NaranjOS" less -R "$M"; fi

@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=hyprpaper
+pkgver=0.8.5
+pkgrel=1
+pkgdesc='Fondo de pantalla de Hyprland'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('file' 'hyprlang' 'hyprtoolkit' 'hyprutils' 'hyprwire' 'libglvnd' 'wayland')
+makedepends=('cmake' 'hyprwayland-scanner' 'wayland-protocols' 'xorgproto')
+source=('https://github.com/hyprwm/hyprpaper/archive/v0.8.5/hyprpaper-0.8.5.tar.gz')
+sha256sums=('d5868931dc485fd2e798717ce885bc62abd1e00796ff921f31e1903147bff3bf')
+build()   { cd hyprpaper-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+package() { cd hyprpaper-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

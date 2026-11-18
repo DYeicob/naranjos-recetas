@@ -1,0 +1,5 @@
+#!/bin/bash
+# naranjos-notifica <título> [texto] — aviso de escritorio sin dependencias (D-Bus directo)
+busctl --user call org.freedesktop.Notifications /org/freedesktop/Notifications \
+  org.freedesktop.Notifications Notify susssasa{sv}i \
+  "NaranjOS" 0 "" "${1:-NaranjOS}" "${2:-}" 0 0 5000 >/dev/null 2>&1 || true

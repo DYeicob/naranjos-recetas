@@ -1,0 +1,4 @@
+# ~/.zshrc · tus ajustes de zsh
+# La base de NaranjOS (historial, autocompletado, prompt naranja…) ya está en /etc/zsh/zshrc.
+# Pon aquí debajo tus alias y cambios. Ejemplo:
+#   alias actualiza='zumo actualiza'

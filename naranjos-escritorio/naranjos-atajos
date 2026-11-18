@@ -1,0 +1,3 @@
+#!/bin/bash
+# naranjos-atajos — chuleta de atajos en pantalla (Super + K)
+fuzzel --dmenu --prompt "Atajos ❯ " --width 64 --lines 22 < /usr/share/naranjos/atajos.txt >/dev/null || true

@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 # zumo — gestor de paquetes de NaranjOS (usa pacman por dentro)
-VERSION="0.2.2"
+VERSION="0.2.3"
 
 if [ -t 1 ]; then
   if [ "$TERM" = linux ]; then O=$'\e[0;33m'; else O=$'\e[1;38;5;208m'; fi
@@ -64,6 +64,7 @@ exprime(){
     case "$1" in
       -i|--instala|--install) INSTALA=1; shift ;;
       -y|--si|--yes)          SIN=(--noconfirm); shift ;;
+      -C|--limpio)            shift ;;   # (siempre se compila en limpio)
       *) break ;;
     esac
   done
@@ -97,7 +98,8 @@ exprime(){
   done
   if [ "$INSTALA" = 1 ]; then
     msg "Instalando: ${nombres[*]}"
-    sudo pacman -S --needed "${SIN[@]}" "${nombres[@]}"
+    sudo pacman -S --needed "${SIN[@]}" "${nombres[@]}" \
+      || die "pacman NO instaló: ${nombres[*]} (mira el error justo encima)"
   fi
   okm "Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)"
 }

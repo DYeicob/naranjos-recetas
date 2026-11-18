@@ -1,0 +1,5 @@
+post_install() {
+  for s in /bin/zsh /usr/bin/zsh; do grep -qx "$s" /etc/shells || echo "$s" >> /etc/shells; done
+}
+post_upgrade() { post_install; }
+pre_remove() { sed -i -e '\|^/bin/zsh$|d' -e '\|^/usr/bin/zsh$|d' /etc/shells; }

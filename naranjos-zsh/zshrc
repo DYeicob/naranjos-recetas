@@ -1,0 +1,69 @@
+# =====================================================================
+#  NaranjOS · configuración global de zsh  (/etc/zsh/zshrc)
+#  La instala el paquete naranjos-zsh. Tus ajustes van en ~/.zshrc
+# =====================================================================
+
+# --- Historial --------------------------------------------------------
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt share_history hist_ignore_all_dups hist_ignore_space hist_reduce_blanks
+setopt auto_cd interactive_comments no_beep prompt_subst
+
+# --- Teclas (modo emacs, Inicio/Fin/Supr, Ctrl+flechas) -----------------
+bindkey -e
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+# flecha arriba/abajo: busca en el historial lo que ya hayas escrito
+bindkey '^[[A' up-line-or-beginning-search
+bindkey '^[OA' up-line-or-beginning-search
+bindkey '^[[B' down-line-or-beginning-search
+bindkey '^[OB' down-line-or-beginning-search
+bindkey '^[[H' beginning-of-line;  bindkey '^[OH' beginning-of-line;  bindkey '^[[1~' beginning-of-line
+bindkey '^[[F' end-of-line;        bindkey '^[OF' end-of-line;        bindkey '^[[4~' end-of-line
+bindkey '^[[3~' delete-char
+bindkey '^[[1;5C' forward-word
+bindkey '^[[1;5D' backward-word
+
+# --- Autocompletado ---------------------------------------------------
+mkdir -p "${XDG_CACHE_HOME:-$HOME/.cache}"
+autoload -Uz compinit
+compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/zcompdump"
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+[[ -n $LS_COLORS ]] && zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# --- Alias ------------------------------------------------------------
+alias ls='ls --color=auto'
+alias ll='ls -lh --color=auto'
+alias la='ls -lAh --color=auto'
+alias grep='grep --color=auto'
+alias ip='ip -color=auto'
+
+# --- Prompt NaranjOS (estilo C) ---------------------------------------
+#   yeicob@naranjos ~/carpeta (rama-git) ❯
+#   el ❯ se pone ROJO si el último comando falló
+autoload -Uz vcs_info add-zsh-hook
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git:*' formats       ' %F{244}(%f%F{215}%b%f%F{244})%f'
+zstyle ':vcs_info:git:*' actionformats ' %F{244}(%f%F{215}%b%f%F{244}|%a)%f'
+add-zsh-hook precmd vcs_info
+if [[ $TERM == linux ]]; then
+  # consola de texto: solo 16 colores y sin símbolos especiales
+  PROMPT='%F{yellow}%n@%m%f %~${vcs_info_msg_0_} %(?.%F{yellow}.%F{red})>%f '
+else
+  PROMPT='%F{208}%n@%m%f %F{252}%~%f${vcs_info_msg_0_} %(?.%F{208}.%F{196})❯%f '
+  # título de la ventana: carpeta actual
+  _naranjos_titulo() { print -Pn '\e]0;%~\a' }
+  add-zsh-hook precmd _naranjos_titulo
+fi
+
+# --- Complementos (sugerencias en gris, colores al escribir) ------------
+if [[ -r /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=244'
+  source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+# (este tiene que ir el último)
+[[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && \
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

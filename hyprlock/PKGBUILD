@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=hyprlock
+pkgver=0.9.7
+pkgrel=1
+pkgdesc='Pantalla de bloqueo de Hyprland'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('cairo' 'hyprgraphics' 'hyprlang' 'hyprutils' 'libdrm' 'libglvnd' 'libxkbcommon' 'mesa' 'pango' 'sdbus-cpp' 'wayland')
+makedepends=('cmake' 'hyprwayland-scanner' 'wayland-protocols')
+source=('https://github.com/hyprwm/hyprlock/archive/v0.9.7/hyprlock-0.9.7.tar.gz')
+sha256sums=('01145790570ffabd31e9b528c517bdccae76f36e72d733f00c2696d9c3bf2c88')
+backup=('etc/pam.d/hyprlock')
+build()   { cd hyprlock-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D CMAKE_INSTALL_SYSCONFDIR=/etc; ninja -C build; }
+package() { cd hyprlock-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

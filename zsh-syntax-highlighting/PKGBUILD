@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c1.sh
+pkgname=zsh-syntax-highlighting
+pkgver=0.8.0
+pkgrel=1
+pkgdesc='Colorea los comandos de zsh mientras escribes'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('zsh')
+makedepends=()
+source=('https://github.com/zsh-users/zsh-syntax-highlighting/archive/0.8.0/zsh-syntax-highlighting-0.8.0.tar.gz')
+sha256sums=('5981c19ebaab027e356fe1ee5284f7a021b89d4405cc53dc84b476c3aee9cc32')
+arch=('any')
+package() { cd zsh-syntax-highlighting-$pkgver
+  make DESTDIR="$pkgdir" PREFIX=/usr SHARE_DIR="$pkgdir/usr/share/zsh/plugins/zsh-syntax-highlighting" install; }
