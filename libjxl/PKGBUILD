@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a5.sh a partir de BLFS 13.1-systemd
+pkgname=libjxl
+pkgver=0.12.0
+pkgrel=1
+pkgdesc='Imágenes JPEG XL'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('brotli' 'giflib' 'highway' 'lcms2' 'libjpeg-turbo' 'libpng')
+makedepends=('cmake')
+source=('https://github.com/libjxl/libjxl/archive/v0.12.0/libjxl-0.12.0.tar.gz')
+sha256sums=('03e9be69a30be4011f559da75328b6d7cea8ad921fabfbd551ce10bf45cdc992')
+build()   { cd libjxl-$pkgver
+  cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -D BUILD_TESTING=OFF \
+        -D BUILD_SHARED_LIBS=ON -D JPEGXL_ENABLE_SKCMS=OFF -D JPEGXL_ENABLE_SJPEG=OFF \
+        -D JPEGXL_ENABLE_PLUGINS=OFF -D JPEGXL_INSTALL_JARDIR=/usr/share/java -G Ninja
+  ninja -C build; }
+package() { cd libjxl-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

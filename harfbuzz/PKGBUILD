@@ -10,7 +10,7 @@ depends=('freetype2' 'glib2')
 makedepends=()
 source=('https://github.com/harfbuzz/harfbuzz/releases/download/14.3.1/harfbuzz-14.3.1.tar.xz')
 sha256sums=('9dae9538aae2ffdf70cec31f2c27bf68e2aaeeae3112688467697d5faf6194f7')
-build()   { cd harfbuzz-$pkgver
+build()   { cd harfbuzz-$pkgver; CXXFLAGS+=" -fno-exceptions"
   meson setup build --prefix=/usr --buildtype=plain -D graphite2=disabled -D icu=disabled \
         -D introspection=disabled -D tests=disabled -D docs=disabled
   meson compile -C build; }

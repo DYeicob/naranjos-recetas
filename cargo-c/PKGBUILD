@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a5.sh a partir de BLFS 13.1-systemd
+pkgname=cargo-c
+pkgver=0.10.24
+pkgrel=1
+pkgdesc='cargo cbuild/cinstall: bibliotecas C escritas en Rust'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('rust')
+makedepends=()
+source=('https://github.com/lu-zero/cargo-c/archive/v0.10.24/cargo-c-0.10.24.tar.gz' 'https://github.com/lu-zero/cargo-c/releases/download/v0.10.24/Cargo.lock')
+sha256sums=('91c6e0be34aa0ad26b7ef21ce21a390c95635e4e6e00b7a6ff07323f9af8550b' '0cbf346afe2c77fec7b39f8954b9de0639ced04234764240c8290dbec8d45e82')
+prepare() { cd cargo-c-$pkgver; cp "$srcdir/Cargo.lock" .; }
+build()   { cd cargo-c-$pkgver; cargo build --release; }
+package() { cd cargo-c-$pkgver
+  install -dm755 "$pkgdir/usr/bin"
+  install -vm755 target/release/cargo-{capi,cbuild,cinstall,ctest} "$pkgdir/usr/bin/"; }

@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a5.sh a partir de BLFS 13.1-systemd
+pkgname=giflib
+pkgver=6.1.3
+pkgrel=1
+pkgdesc='Imágenes GIF'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://sourceforge.net/projects/giflib/files/giflib-6.1.3.tar.gz')
+sha256sums=('b65b66b99f0424b93525f987386f22fc5efb9da2bfc92ad4a532249aaffbab0e')
+build()   { cd giflib-$pkgver; make; }
+package() { cd giflib-$pkgver
+  make PREFIX=/usr DOCDIR=/usr/share/doc/giflib-$pkgver DESTDIR="$pkgdir" install
+  rm -fv "$pkgdir/usr/lib/libgif.a"; }

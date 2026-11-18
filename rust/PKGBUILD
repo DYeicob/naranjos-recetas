@@ -1,0 +1,52 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a5.sh a partir de BLFS 13.1-systemd
+pkgname=rust
+pkgver=1.97.1
+pkgrel=1
+pkgdesc='Lenguaje Rust: compilador rustc y cargo'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('curl' 'llvm' 'libxml2')
+makedepends=('cmake' 'python')
+source=('https://static.rust-lang.org/dist/rustc-1.97.1-src.tar.xz')
+sha256sums=('0ed06fdaffd4722a7702e0b4eebfafc897ab8f513e8e1b247cdd7e5c6df6ded2')
+provides=('rustc' 'cargo' 'rustfmt' 'clippy')
+options=('staticlibs' '!lto')
+prepare() { cd rustc-$pkgver-src
+  cat > bootstrap.toml << TOML
+change-id = 154587
+
+[llvm]
+link-shared = true
+targets = "X86"
+
+[build]
+description = "for NaranjOS"
+docs = false
+jobs = 16
+tools = ["cargo", "clippy", "rustdoc", "rustfmt", "src"]
+
+[install]
+prefix = "/usr"
+sysconfdir = "/etc"
+docdir = "share/doc/rust"
+
+[rust]
+channel = "stable"
+lto = "thin"
+codegen-units = 1
+llvm-bitcode-linker = false
+
+[target.x86_64-unknown-linux-gnu]
+llvm-config = "/usr/bin/llvm-config"
+TOML
+}
+build()   { cd rustc-$pkgver-src; python3 ./x.py build; }
+package() { cd rustc-$pkgver-src
+  DESTDIR="$pkgdir" python3 ./x.py install
+  rm -fv "$pkgdir"/usr/share/doc/rust/*.old
+  install -vm644 README.md "$pkgdir/usr/share/doc/rust/"
+  if [ -e "$pkgdir/etc/bash_completion.d/cargo" ]; then
+    install -Dm644 "$pkgdir/etc/bash_completion.d/cargo" "$pkgdir/usr/share/bash-completion/completions/cargo"
+    rm -rf "$pkgdir/etc/bash_completion.d"
+  fi; }

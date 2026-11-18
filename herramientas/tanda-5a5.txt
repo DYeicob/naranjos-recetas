@@ -1,0 +1,12 @@
+rust
+cargo-c
+shared-mime-info
+gdk-pixbuf2
+librsvg
+lcms2
+brotli
+highway
+giflib
+libjxl
+libzip
+tomlplusplus

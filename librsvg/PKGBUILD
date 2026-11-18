@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a5.sh a partir de BLFS 13.1-systemd
+pkgname=librsvg
+pkgver=2.62.3
+pkgrel=1
+pkgdesc='Dibujo de imágenes SVG (cursores, iconos)'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('cairo' 'pango' 'gdk-pixbuf2' 'glib2')
+makedepends=('rust' 'cargo-c')
+source=('https://download.gnome.org/sources/librsvg/2.62/librsvg-2.62.3.tar.xz')
+sha256sums=('7eb449b2722a768021356f66dfee3202c229b54ed4e6a70ce40c090e97ff16f2')
+build()   { cd librsvg-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D introspection=disabled -D vala=disabled -D docs=disabled
+  meson compile -C build; }
+package() { cd librsvg-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

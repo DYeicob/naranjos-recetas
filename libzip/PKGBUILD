@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a5.sh a partir de BLFS 13.1-systemd
+pkgname=libzip
+pkgver=1.11.4
+pkgrel=1
+pkgdesc='Ficheros ZIP'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('zlib' 'bzip2' 'xz' 'zstd' 'openssl')
+makedepends=('cmake')
+source=('https://libzip.org/download/libzip-1.11.4.tar.xz')
+sha256sums=('8a247f57d1e3e6f6d11413b12a6f28a9d388de110adc0ec608d893180ed7097b')
+build()   { cd libzip-$pkgver
+  cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -D ENABLE_GNUTLS=OFF \
+        -D ENABLE_MBEDTLS=OFF -D BUILD_REGRESS=OFF -D BUILD_EXAMPLES=OFF -D BUILD_DOC=OFF -G Ninja
+  ninja -C build; }
+package() { cd libzip-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

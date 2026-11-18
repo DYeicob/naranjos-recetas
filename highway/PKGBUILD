@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a5.sh a partir de BLFS 13.1-systemd
+pkgname=highway
+pkgver=1.4.0
+pkgrel=1
+pkgdesc='SIMD portable de Google'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=()
+makedepends=('cmake')
+source=('https://github.com/google/highway/archive/1.4.0/highway-1.4.0.tar.gz')
+sha256sums=('e72241ac9524bb653ae52ced768b508045d4438726a303f10181a38f764a453c')
+build()   { cd highway-$pkgver
+  cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -D BUILD_TESTING=OFF -D BUILD_SHARED_LIBS=ON -G Ninja
+  ninja -C build; }
+package() { cd highway-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a5.sh a partir de BLFS 13.1-systemd
+pkgname=gdk-pixbuf2
+pkgver=2.44.7
+pkgrel=1
+pkgdesc='Carga de imágenes para GTK'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('glib2' 'shared-mime-info' 'libpng' 'libjpeg-turbo')
+makedepends=()
+source=('https://download.gnome.org/sources/gdk-pixbuf/2.44/gdk-pixbuf-2.44.7.tar.xz')
+sha256sums=('172f80e3626ec31520a970400f1a3694e04718f6c2cd2885f75250fb5a6995a4')
+install=gdk-pixbuf2.install
+build()   { cd gdk-pixbuf-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nofallback \
+        -D png=enabled -D jpeg=enabled -D gif=disabled -D tiff=disabled -D thumbnailer=disabled \
+        -D glycin=disabled -D introspection=disabled -D man=false
+  meson compile -C build; }
+package() { cd gdk-pixbuf-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

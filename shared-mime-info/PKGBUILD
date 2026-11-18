@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5a5.sh a partir de BLFS 13.1-systemd
+pkgname=shared-mime-info
+pkgver=2.5.1
+pkgrel=1
+pkgdesc='Base de datos de tipos de fichero'
+arch=('x86_64')
+url='https://www.linuxfromscratch.org/blfs/'
+license=('custom')
+depends=('glib2' 'libxml2')
+makedepends=()
+source=('https://gitlab.freedesktop.org/xdg/shared-mime-info/-/archive/2.5.1/shared-mime-info-2.5.1.tar.gz')
+sha256sums=('ea248ea157b7fa0165f4fe282c84919fa84c3f175553642f229c8f1ab7539128')
+install=shared-mime-info.install
+build()   { cd shared-mime-info-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D update-mimedb=false -D build-tests=false -D build-spec=false
+  meson compile -C build; }
+package() { cd shared-mime-info-$pkgver; DESTDIR="$pkgdir" meson install -C build; }
