@@ -7,11 +7,11 @@ arch=('any')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
 depends=()
-source=('default-index.theme' 'naranjos-cursor-0.1.0.tar.xz')
+source=('default-index.theme' 'naranjos-cursor-0.1.0.cursores')
 sha256sums=('c299e9d48c0bf6cc12bff84cdd794e2e0c45433151c2fea81c2a7a9eb5c1221f' '8e603b60917b62aa1e15eee57ddf1d858741cf4ba12dadc23bafca6cde4aa811')
-noextract=("naranjos-cursor-$pkgver.tar.xz")
+noextract=("naranjos-cursor-$pkgver.cursores")
 package() {
   install -dm755 "$pkgdir/usr/share/icons"
-  tar -C "$pkgdir/usr/share/icons" -xf "naranjos-cursor-$pkgver.tar.xz"
+  tar -C "$pkgdir/usr/share/icons" -xf "naranjos-cursor-$pkgver.cursores"
   install -Dm644 default-index.theme "$pkgdir/usr/share/icons/default/index.theme"
 }
