@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c2.sh
+pkgname=adwaita-icon-theme
+pkgver=50.0
+pkgrel=1
+install=adwaita-icon-theme.install
+pkgdesc='Tema de iconos Adwaita'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('hicolor-icon-theme' 'librsvg' 'gtk3')
+makedepends=()
+source=('https://download.gnome.org/sources/adwaita-icon-theme/50/adwaita-icon-theme-50.0.tar.xz')
+sha256sums=('fac6e0401fca714780561a081b8f7e27c3bc1db34ebda4da175081f26b24d460')
+build()   { cd adwaita-icon-theme-$pkgver; meson setup build --prefix=/usr --buildtype=plain ; meson compile -C build; }
+package() { cd adwaita-icon-theme-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

@@ -22,6 +22,7 @@ Puedes verlos en cualquier momento con **Super + K**.
 | Super + Espacio | Lanzador de aplicaciones (fuzzel) |
 | Super + K | Chuleta de atajos |
 | Super + H | Este manual |
+| Super + Shift + B | Mostrar / ocultar la barra |
 | Super + W | Cerrar la ventana |
 | Super + F | Pantalla completa |
 | Super + Shift + F | Maximizar |
@@ -47,6 +48,8 @@ la pantalla solas, sin solaparse. Encima va la capa NaranjOS:
 | Pieza | Programa | Configuración |
 |---|---|---|
 | Ventanas y atajos | Hyprland | `~/.config/hypr/hyprland.lua` |
+| Barra superior | Waybar | `~/.config/waybar/config.jsonc` y `style.css` |
+| Aspecto de apps GTK | GTK 3 | `~/.config/gtk-3.0/settings.ini` |
 | Fondo de pantalla | hyprpaper | `~/.config/hypr/hyprpaper.conf` |
 | Bloqueo | hyprlock | `~/.config/hypr/hyprlock.conf` |
 | Inactividad | hypridle | `~/.config/hypr/hypridle.conf` |
@@ -62,13 +65,29 @@ de la línea `require(...)`. Lo que escribas ahí manda sobre la base.
 Si rompes algo, `naranjos-config-usuario --forzar` vuelve a poner la configuración
 original de NaranjOS (guarda la tuya con la extensión `.anterior`).
 
-## 4. Fondos de pantalla
+## 4. La barra superior
+
+De izquierda a derecha:
+
+- **NaranjOS**: abre el lanzador de aplicaciones.
+- **Escritorios 1–5**: el activo sale en naranja. Pulsa uno para ir a él.
+- **Ventana activa**: su título.
+- **Reloj**, en el centro. Al pulsarlo muestra la fecha completa; al pasar el ratón, el calendario.
+- **Red**: pulsa para abrir `iwctl` y conectarte a una WiFi
+  (`station wlan0 get-networks`, luego `station wlan0 connect NOMBRE`).
+- **Brillo**: sube o baja con la rueda del ratón encima.
+- **Batería**, **procesador** y **memoria**.
+- **Botón de apagado**: el menú del sistema.
+
+**Super + Shift + B** la oculta o la vuelve a mostrar.
+
+## 5. Fondos de pantalla
 
 Los fondos de NaranjOS están en `/usr/share/backgrounds/naranjos/`. Para cambiarlo,
 edita la línea `path` de `~/.config/hypr/hyprpaper.conf` y vuelve a entrar en Hyprland.
 `path` también puede ser una carpeta; con `timeout = 600` el fondo cambia cada 10 minutos.
 
-## 5. Inactividad
+## 6. Inactividad
 
 - A los 2,5 minutos baja el brillo.
 - A los 5 minutos se bloquea la sesión.
@@ -76,11 +95,11 @@ edita la línea `path` de `~/.config/hypr/hyprpaper.conf` y vuelve a entrar en H
 
 Se cambia en `~/.config/hypr/hypridle.conf`.
 
-## 6. Capturas de pantalla
+## 7. Capturas de pantalla
 
 Se guardan en `~/Imágenes/Capturas` y además se copian al portapapeles, listas para pegar.
 
-## 7. La terminal: zsh
+## 8. La terminal: zsh
 
 zsh es la shell de NaranjOS. El prompt es así:
 
@@ -96,7 +115,7 @@ Tus alias y ajustes van en `~/.zshrc`. La base está en `/etc/zsh/zshrc`.
 
 Copiar y pegar desde la terminal: `wl-copy < fichero` y `wl-paste > fichero`.
 
-## 8. zumo, el gestor de paquetes
+## 9. zumo, el gestor de paquetes
 
 | Orden | Qué hace |
 |---|---|
@@ -108,7 +127,7 @@ Copiar y pegar desde la terminal: `wl-copy < fichero` y `wl-paste > fichero`.
 | `zumo limpia` | Quitar lo que sobra |
 | `zumo ayuda` | Todas las órdenes |
 
-## 9. Problemas frecuentes
+## 10. Problemas frecuentes
 
 - **No se abre nada al pulsar un atajo:** abre una terminal con Super + Enter y mira si
   el programa existe con `which <programa>`.
@@ -118,9 +137,9 @@ Copiar y pegar desde la terminal: `wl-copy < fichero` y `wl-paste > fichero`.
   MSI las teclas F necesitan Fn). Para volver: Ctrl + Alt + Fn + F1.
 - **No puedo apagar desde el menú:** tu usuario tiene que estar en el grupo `wheel`.
 
-## 10. Lo que viene
+## 11. Lo que viene
 
-- Barra superior con WiFi, sonido, batería y reloj (Waybar).
+- Volumen y bandeja de iconos en la barra.
 - Sonido con PipeWire, Bluetooth, y menús de WiFi y Bluetooth.
 - Pantalla de inicio de sesión gráfica.
 - Tienda de aplicaciones (Flatpak) e instalador de la ISO.

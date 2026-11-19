@@ -1,0 +1,75 @@
+// NaranjOS · barra superior (~/.config/waybar/config.jsonc)
+// Tras editar: Super + Shift + B dos veces, o cierra sesión y vuelve a entrar.
+{
+  "layer": "top",
+  "position": "top",
+  "height": 32,
+  "margin-top": 8,
+  "margin-left": 10,
+  "margin-right": 10,
+  "spacing": 4,
+
+  "modules-left":   ["custom/naranjos", "hyprland/workspaces", "hyprland/window"],
+  "modules-center": ["clock"],
+  "modules-right":  ["network", "backlight", "battery", "cpu", "memory", "custom/sistema"],
+
+  "custom/naranjos": {
+    "format": "NaranjOS",
+    "tooltip-format": "Aplicaciones (Super + Espacio)",
+    "on-click": "fuzzel"
+  },
+  "hyprland/workspaces": {
+    "format": "{id}",
+    "on-click": "activate",
+    "persistent-workspaces": { "*": 5 }
+  },
+  "hyprland/window": {
+    "max-length": 48,
+    "separate-outputs": true
+  },
+  "clock": {
+    "format": "{:%H:%M}",
+    "format-alt": "{:%A %d de %B · %H:%M}",
+    "locale": "es_ES.UTF-8",
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "calendar": {
+      "mode": "month",
+      "format": { "today": "<span color='#ff8700'><b>{}</b></span>" }
+    }
+  },
+  "network": {
+    "format-wifi": "  {essid}",
+    "format-ethernet": "  cable",
+    "format-disconnected": "  sin red",
+    "tooltip-format": "{ifname} · {ipaddr}",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%) · {ipaddr}",
+    "on-click": "foot -T WiFi iwctl"
+  },
+  "backlight": {
+    "format": "  {percent}%",
+    "on-scroll-up": "brightnessctl -e4 -n2 set 5%+",
+    "on-scroll-down": "brightnessctl -e4 -n2 set 5%-"
+  },
+  "battery": {
+    "states": { "warning": 25, "critical": 10 },
+    "format": "{icon}  {capacity}%",
+    "format-charging": "  {capacity}%",
+    "format-plugged": "  {capacity}%",
+    "format-icons": ["", "", "", "", ""],
+    "tooltip-format": "{timeTo}"
+  },
+  "cpu": {
+    "format": "  {usage}%",
+    "interval": 5
+  },
+  "memory": {
+    "format": "  {percentage}%",
+    "interval": 10,
+    "tooltip-format": "{used:0.1f} de {total:0.1f} GiB"
+  },
+  "custom/sistema": {
+    "format": "",
+    "tooltip-format": "Bloquear, salir, apagar… (Super + Escape)",
+    "on-click": "naranjos-sistema"
+  }
+}

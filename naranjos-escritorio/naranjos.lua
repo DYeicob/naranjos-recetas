@@ -123,6 +123,7 @@ hl.bind(mainMod .. " + Return",        hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + space",         hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + K",             hl.dsp.exec_cmd("naranjos-atajos"))
 hl.bind(mainMod .. " + H",             hl.dsp.exec_cmd("naranjos-ayuda"))
+hl.bind(mainMod .. " + SHIFT + B",     hl.dsp.exec_cmd("pkill -SIGUSR1 waybar || waybar"))
 -- Ventanas
 hl.bind(mainMod .. " + W",             hl.dsp.window.close())
 hl.bind(mainMod .. " + F",             hl.dsp.window.fullscreen())

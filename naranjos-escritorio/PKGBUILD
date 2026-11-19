@@ -1,14 +1,14 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-5c1.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-5c2.sh (NO editar a mano)
 pkgname=naranjos-escritorio
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
-pkgdesc='Escritorio NaranjOS: la capa NaranjOS sobre Hyprland (configuración, atajos, scripts y manual)'
+pkgdesc='Escritorio NaranjOS: la capa NaranjOS sobre Hyprland (configuración, barra, atajos, scripts y manual)'
 arch=('any')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
-depends=('hyprland' 'hyprpaper' 'hyprlock' 'hypridle' 'mako' 'fuzzel' 'foot' 'grim' 'slurp' 'wl-clipboard' 'brightnessctl' 'naranjos-fondos' 'naranjos-zsh' 'ttf-jetbrains-mono-nerd' 'less')
-source=('atajos.txt' 'foot.ini' 'fuzzel.ini' 'hypridle.conf' 'hyprland.lua' 'hyprlock.conf' 'hyprpaper.conf' 'mako.conf' 'manual.md' 'naranjos-atajos' 'naranjos-ayuda' 'naranjos-captura' 'naranjos-config-usuario' 'naranjos-escritorio.sh' 'naranjos.lua' 'naranjos-notifica' 'naranjos-sistema' 'sudoers-energia')
-sha256sums=('8fabe5e5a4673b7f2356eeebe80e2c8aa19b0ddbf99d05f16632967386acdcd7' '4c9d4e8584f9f99095fcb59dd1d89d87e414f945fe9e24a5eb0158ef96d9785e' 'b5d8df93979d579d60354b1070ee9322cd47dd463116191431255db543806529' '7044a44af92c3ff8b5efa5df2fa5773402941ad1b42e29699c8fec6b9e35ffa7' 'd63ac1512679e8df9faee5e0d65e4afb5e0680d4333bdaf1ed632f9ad43bb289' 'e996a94d41303884ad152bc41f3f2af29183acaf16cdf5726cd6c55180fcc73f' '64ee3334993c4b753041f034d7accca73c56214d16cb2c07df3d5f35755de97a' '73ef3cf4cddc240dcd2af12176bff49b8bb9f6e849a7a7d2767f8f5f90432f86' '3c6b77fc55bc4fc73c6ab103a6576989267bd7ac9b9ca10e763cd42973218fcb' 'b22fc9fdaf53c0ec23bf243d0b0d9a4d73c8b1c6e97a9753695b247a9a3cbb01' 'e933081d7bb3176f97cdddf2189c94f12a1464248c9568a8a388f2c8bdb054ae' '1b567c97ea9cd425d9b554655bc77e5ec09d63b52581672ed593cd345740517d' '419abb2b8bcf647cfe43ee7cafe1f30b0e29218eb7e93bb0ff249a707dc32956' '13c8fec8c660c3bfb0df527e460b9bbbe31a0750227bcd0f160d5d2a6f69b837' 'e98e3192fd5e1448686c9217c6881684fc9e644c6434dae8bd876d5be9915cec' '703003314942e8b69a13d1a4d154c2c5f1cc7191cba5cb28f385e92bf0880e1d' 'd5c4820b73fa2ba43b4c38c8439c25e88e6b870770c68aa6fe33f77d9153673c' 'e355d0df2fc949a8726a4461c1f485d7ce8c99e9e82ea96b8045b0d54efa3c44')
+depends=('hyprland' 'hyprpaper' 'hyprlock' 'hypridle' 'mako' 'fuzzel' 'foot' 'grim' 'slurp' 'wl-clipboard' 'brightnessctl' 'naranjos-fondos' 'naranjos-zsh' 'ttf-jetbrains-mono-nerd' 'less' 'waybar' 'adwaita-icon-theme')
+source=('atajos.txt' 'foot.ini' 'fuzzel.ini' 'gtk3-settings.ini' 'hypridle.conf' 'hyprland.lua' 'hyprlock.conf' 'hyprpaper.conf' 'mako.conf' 'manual.md' 'naranjos-atajos' 'naranjos-ayuda' 'naranjos-captura' 'naranjos-config-usuario' 'naranjos-escritorio.sh' 'naranjos.lua' 'naranjos-notifica' 'naranjos-sistema' 'sudoers-energia' 'waybar-config.jsonc' 'waybar-style.css')
+sha256sums=('f28d99508cbfd79de46fb7bcbc28c48c4ff3b0f80f333c9aa7909700b034faa6' '4c9d4e8584f9f99095fcb59dd1d89d87e414f945fe9e24a5eb0158ef96d9785e' 'b5d8df93979d579d60354b1070ee9322cd47dd463116191431255db543806529' '4ce851cead9a1de125bb351967b2dfca3e2ed7b86cd330e1878e7c372b0f3ac2' '7044a44af92c3ff8b5efa5df2fa5773402941ad1b42e29699c8fec6b9e35ffa7' 'd63ac1512679e8df9faee5e0d65e4afb5e0680d4333bdaf1ed632f9ad43bb289' 'e996a94d41303884ad152bc41f3f2af29183acaf16cdf5726cd6c55180fcc73f' '64ee3334993c4b753041f034d7accca73c56214d16cb2c07df3d5f35755de97a' '73ef3cf4cddc240dcd2af12176bff49b8bb9f6e849a7a7d2767f8f5f90432f86' '3d1796181b479b8e9fddfc0f5bb431abe39e01c42d982ca918ba6d486469cf02' 'b22fc9fdaf53c0ec23bf243d0b0d9a4d73c8b1c6e97a9753695b247a9a3cbb01' 'e933081d7bb3176f97cdddf2189c94f12a1464248c9568a8a388f2c8bdb054ae' '1b567c97ea9cd425d9b554655bc77e5ec09d63b52581672ed593cd345740517d' 'edf9a75aa63856d87dd75860250e2b2df47c9323943c4a09677a653dfda5e3e6' '13c8fec8c660c3bfb0df527e460b9bbbe31a0750227bcd0f160d5d2a6f69b837' 'f72ff7d0fe77c15531bb6ba1da7c3381a1fc49f9a8e89ac334ed6877349c8b05' '703003314942e8b69a13d1a4d154c2c5f1cc7191cba5cb28f385e92bf0880e1d' 'd5c4820b73fa2ba43b4c38c8439c25e88e6b870770c68aa6fe33f77d9153673c' 'e355d0df2fc949a8726a4461c1f485d7ce8c99e9e82ea96b8045b0d54efa3c44' '0819a4c17fd0685695bb1fd5742a0f31db43c3cfefede86e7838e37d7f81cd9b' '2d384bc1119718130e8974fd558c6fdc269ec8e65f1e0d34c724ffacb4cc0015')
 install=naranjos-escritorio.install
 package() {
   local S="$pkgdir/etc/skel"
@@ -22,6 +22,9 @@ package() {
   install -Dm644 mako.conf        "$S/.config/mako/config"
   install -Dm644 fuzzel.ini       "$S/.config/fuzzel/fuzzel.ini"
   install -Dm644 foot.ini         "$S/.config/foot/foot.ini"
+  install -Dm644 waybar-config.jsonc "$S/.config/waybar/config.jsonc"
+  install -Dm644 waybar-style.css   "$S/.config/waybar/style.css"
+  install -Dm644 gtk3-settings.ini  "$S/.config/gtk-3.0/settings.ini"
   for s in naranjos-notifica naranjos-captura naranjos-sistema naranjos-atajos naranjos-ayuda naranjos-config-usuario; do
     install -Dm755 "$s" "$pkgdir/usr/bin/$s"
   done

@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c2.sh
+pkgname=iso-codes
+pkgver=4.20.1
+pkgrel=1
+pkgdesc='Nombres de países, idiomas y monedas (ISO)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=('python')
+source=('https://salsa.debian.org/iso-codes-team/iso-codes/-/archive/v4.20.1/iso-codes-v4.20.1.tar.gz')
+sha256sums=('2d7d9f6084ab9ce6c534ce71a3dd5144b6e474f3c97616459a88f73f44a64bff')
+build()   { cd iso-codes-v$pkgver; meson setup build --prefix=/usr --buildtype=plain ; meson compile -C build; }
+package() { cd iso-codes-v$pkgver; DESTDIR="$pkgdir" meson install -C build; }

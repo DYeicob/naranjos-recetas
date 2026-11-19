@@ -3,6 +3,7 @@ Super + Enter             Abrir la terminal
 Super + Espacio           Lanzador de aplicaciones
 Super + K                 Esta lista de atajos
 Super + H                 Manual de NaranjOS
+Super + Shift + B         Mostrar / ocultar la barra
 ── VENTANAS ─────────────────────────────────────────────
 Super + W                 Cerrar la ventana
 Super + F                 Pantalla completa

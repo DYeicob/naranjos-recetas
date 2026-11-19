@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c2.sh
+pkgname=libnl
+pkgver=3.12.0
+pkgrel=1
+pkgdesc='Netlink: información de red para la barra'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://github.com/thom311/libnl/releases/download/libnl3_12_0/libnl-3.12.0.tar.gz')
+sha256sums=('fc51ca7196f1a3f5fdf6ffd3864b50f4f9c02333be28be4eeca057e103c0dd18')
+backup=('etc/libnl/classid' 'etc/libnl/pktloc')
+build()   { cd libnl-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc --disable-static; make; }
+package() { cd libnl-$pkgver; make DESTDIR="$pkgdir" install; }

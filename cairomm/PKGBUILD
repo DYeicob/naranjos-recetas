@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c2.sh
+pkgname=cairomm
+pkgver=1.14.6
+pkgrel=1
+pkgdesc='Cairomm (C++ para Cairo, API 1.0)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('cairo' 'libsigcpp2')
+makedepends=()
+source=('https://www.cairographics.org/releases/cairomm-1.14.6.tar.xz')
+sha256sums=('7e0d5c7f29175d573a03ab5c45aef63f48dd91a5caf335a404cd763e4b7cea4a')
+build()   { cd cairomm-$pkgver; meson setup build --prefix=/usr --buildtype=plain -D build-tests=false; meson compile -C build; }
+package() { cd cairomm-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

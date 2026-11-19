@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c2.sh
+pkgname=spdlog
+pkgver=1.17.0
+pkgrel=1
+pkgdesc='Registro (logs) rápido para C++'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('fmt')
+makedepends=('cmake')
+source=('https://github.com/gabime/spdlog/archive/v1.17.0/spdlog-1.17.0.tar.gz')
+sha256sums=('d8862955c6d74e5846b3f580b1605d2428b11d97a410d86e2fb13e857cd3a744')
+build()   { cd spdlog-$pkgver
+  cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D SPDLOG_BUILD_SHARED=ON -D SPDLOG_FMT_EXTERNAL=ON -D SPDLOG_BUILD_EXAMPLE=OFF -D SPDLOG_BUILD_TESTS=OFF
+  ninja -C build; }
+package() { cd spdlog-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

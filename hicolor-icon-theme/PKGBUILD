@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c2.sh
+pkgname=hicolor-icon-theme
+pkgver=0.18
+pkgrel=1
+pkgdesc='Tema de iconos base (freedesktop)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://icon-theme.freedesktop.org/releases/hicolor-icon-theme-0.18.tar.xz')
+sha256sums=('db0e50a80aa3bf64bb45cbca5cf9f75efd9348cf2ac690b907435238c3cf81d7')
+build()   { cd hicolor-icon-theme-$pkgver; meson setup build --prefix=/usr --buildtype=plain ; meson compile -C build; }
+package() { cd hicolor-icon-theme-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

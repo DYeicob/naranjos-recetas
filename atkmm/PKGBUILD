@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c2.sh
+pkgname=atkmm
+pkgver=2.28.5
+pkgrel=1
+pkgdesc='Atkmm (C++ para ATK, API 1.6)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('at-spi2-core' 'glibmm')
+makedepends=()
+source=('https://download.gnome.org/sources/atkmm/2.28/atkmm-2.28.5.tar.xz')
+sha256sums=('ae449192a582a2582a95e0602b15d792bbd639e836339b81ef916aa87540ac5c')
+build()   { cd atkmm-$pkgver; meson setup build --prefix=/usr --buildtype=plain ; meson compile -C build; }
+package() { cd atkmm-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

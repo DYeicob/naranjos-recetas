@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c2.sh
+pkgname=gtk-layer-shell
+pkgver=0.10.1
+pkgrel=1
+pkgdesc='Barras y paneles GTK en Wayland (layer-shell)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('gtk3' 'wayland')
+makedepends=('wayland-protocols')
+source=('https://github.com/wmww/gtk-layer-shell/archive/v0.10.1/gtk-layer-shell-0.10.1.tar.gz')
+sha256sums=('88c3a3e0a5300532f3d368d5df64838a87f1fb85273f22d41df0a6b8d0ec59c6')
+build()   { cd gtk-layer-shell-$pkgver; meson setup build --prefix=/usr --buildtype=plain -D introspection=false -D vapi=false -D docs=false -D tests=false -D examples=false; meson compile -C build; }
+package() { cd gtk-layer-shell-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

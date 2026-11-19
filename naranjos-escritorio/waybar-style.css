@@ -1,0 +1,57 @@
+/* NaranjOS · estilo de la barra (~/.config/waybar/style.css) */
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+}
+window#waybar {
+  background: rgba(18, 18, 18, 0.90);
+  color: #e6e6e6;
+  border: 2px solid rgba(255, 135, 0, 0.55);
+  border-radius: 10px;
+}
+tooltip {
+  background: #121212;
+  border: 1px solid #ff8700;
+  border-radius: 8px;
+}
+tooltip label { color: #e6e6e6; }
+
+#custom-naranjos {
+  color: #ff8700;
+  font-weight: bold;
+  padding: 0 12px 0 14px;
+}
+#workspaces button {
+  padding: 0 8px;
+  margin: 4px 1px;
+  color: #8a8a8a;
+  background: transparent;
+  border-radius: 6px;
+}
+#workspaces button.active {
+  color: #121212;
+  background: #ff8700;
+}
+#workspaces button.urgent {
+  color: #121212;
+  background: #ff5f5f;
+}
+#workspaces button:hover {
+  color: #ffaf5f;
+  background: #2a2a2a;
+  box-shadow: none;
+}
+#window { color: #8a8a8a; padding: 0 10px; }
+#clock  { color: #ffaf5f; font-weight: bold; padding: 0 10px; }
+#network, #backlight, #battery, #cpu, #memory { padding: 0 9px; }
+#network.disconnected          { color: #ff5f5f; }
+#battery.charging              { color: #87d787; }
+#battery.warning:not(.charging){ color: #ffd75f; }
+#battery.critical:not(.charging){ color: #ff5f5f; }
+#custom-sistema {
+  color: #ff8700;
+  padding: 0 16px 0 10px;
+}

@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c2.sh
+pkgname=glibmm
+pkgver=2.66.10
+pkgrel=1
+pkgdesc='GLibmm (C++ para GLib, API 2.4)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('glib2' 'libsigcpp2')
+makedepends=()
+source=('https://download.gnome.org/sources/glibmm/2.66/glibmm-2.66.10.tar.xz')
+sha256sums=('2b61780203aed98e701d3ea57c8f353e7c8ada9706a79be782f6c5153dd035c0')
+build()   { cd glibmm-$pkgver; meson setup build --prefix=/usr --buildtype=plain ; meson compile -C build; }
+package() { cd glibmm-$pkgver; DESTDIR="$pkgdir" meson install -C build; }
