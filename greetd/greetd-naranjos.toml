@@ -1,0 +1,7 @@
+# NaranjOS · pantalla de inicio de sesión (/etc/greetd/config.toml)
+[terminal]
+vt = 1
+
+[default_session]
+command = "tuigreet --cmd start-hyprland"
+user = "greeter"

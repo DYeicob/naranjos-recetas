@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=polkit
+pkgver=127
+pkgrel=1
+install=polkit.install
+pkgdesc='polkit: permisos del escritorio'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('glib2' 'duktape')
+makedepends=()
+source=('https://github.com/polkit-org/polkit/archive/127/polkit-127.tar.gz')
+sha256sums=('9b7bc16f086479dcc626c575976568ba4a85d34297a750d8ab3d2e57f6d8b988')
+build() { cd polkit-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D session_tracking=logind -D authfw=pam \
+    -D introspection=false -D man=false -D tests=false -D examples=false -D gtk_doc=false
+  meson compile -C build; }
+package() { cd polkit-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

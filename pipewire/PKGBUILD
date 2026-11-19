@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=pipewire
+pkgver=1.6.8
+pkgrel=1
+pkgdesc='PipeWire: servidor de sonido y vídeo (sustituye a PulseAudio y JACK)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('alsa-lib' 'dbus' 'sbc' 'bluez' 'libcanberra')
+makedepends=()
+source=('https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.6.8/pipewire-1.6.8.tar.bz2')
+sha256sums=('efbaedf80450e5b08bb3196a4ca7ea17850d4a71ec1a8ae321e8937a7c95779e')
+provides=('libpipewire' 'pipewire-pulse' 'pipewire-alsa' 'pulse-native-provider')
+build() { cd pipewire-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D session-managers="[]" \
+    -D examples=disabled -D tests=disabled -D man=disabled -D docs=disabled \
+    -D alsa=enabled -D pipewire-alsa=enabled -D bluez5=enabled \
+    -D gstreamer=disabled -D gstreamer-device-provider=disabled -D jack=disabled -D pipewire-jack=disabled \
+    -D libcamera=disabled -D avahi=disabled -D roc=disabled -D sdl2=disabled -D ffmpeg=disabled \
+    -D vulkan=disabled -D libffado=disabled -D snap=disabled -D selinux=disabled -D compress-offload=disabled
+  meson compile -C build; }
+package() { cd pipewire-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

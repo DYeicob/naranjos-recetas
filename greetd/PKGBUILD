@@ -1,0 +1,25 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=greetd
+pkgver=0.10.3
+pkgrel=1
+install=greetd.install
+pkgdesc='Gestor de inicio de sesión (greetd)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=('rust' )
+source=('greetd-naranjos.toml' 'greetd.pam' 'https://git.sr.ht/~kennylevinsen/greetd/archive/0.10.3.tar.gz')
+sha256sums=('050d78eb8103d22dbf11f8a6438e53b1753178e05d89af80542e177bc239728d' '9882cbd2a27d7129236d054bc79ce3818b845cabbe69aaf57e12bede1b15457e' 'ee5cb70e0add4ca9c9fe57e47581ab0002d44c07743fb5492469f3b570db640b')
+options=('!lto')
+backup=('etc/greetd/config.toml' 'etc/pam.d/greetd')
+prepare() { cd greetd-$pkgver; cargo fetch --locked; }
+build()   { cd greetd-$pkgver; cargo build --frozen --release; }
+package() { cd greetd-$pkgver
+  install -Dm755 target/release/greetd "$pkgdir/usr/bin/greetd"
+  install -Dm755 target/release/agreety "$pkgdir/usr/bin/agreety"
+  sed "s|^ExecStart=greetd|ExecStart=/usr/bin/greetd|" greetd.service > "$srcdir/greetd.service.ok"
+  install -Dm644 "$srcdir/greetd.service.ok" "$pkgdir/usr/lib/systemd/system/greetd.service"
+  install -Dm644 "$srcdir/greetd-naranjos.toml" "$pkgdir/etc/greetd/config.toml"
+  install -Dm644 "$srcdir/greetd.pam" "$pkgdir/etc/pam.d/greetd"
+}

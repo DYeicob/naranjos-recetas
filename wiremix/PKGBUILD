@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=wiremix
+pkgver=0.11.0
+pkgrel=1
+pkgdesc='Mezclador de sonido en la terminal (PipeWire)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('pipewire')
+makedepends=('rust' 'clang')
+source=('https://github.com/tsowell/wiremix/archive/v0.11.0/wiremix-0.11.0.tar.gz')
+sha256sums=('62a7cace79c9af537e0917a6d4e5da66b2efe2b4abc5f08c0fbaed727acc8c9f')
+options=('!lto')
+prepare() { cd wiremix-$pkgver; cargo fetch --locked; }
+build()   { cd wiremix-$pkgver; cargo build --frozen --release; }
+package() { cd wiremix-$pkgver
+  install -Dm755 target/release/wiremix "$pkgdir/usr/bin/wiremix"
+}

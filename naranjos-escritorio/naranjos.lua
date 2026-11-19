@@ -124,6 +124,9 @@ hl.bind(mainMod .. " + space",         hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + K",             hl.dsp.exec_cmd("naranjos-atajos"))
 hl.bind(mainMod .. " + H",             hl.dsp.exec_cmd("naranjos-ayuda"))
 hl.bind(mainMod .. " + SHIFT + B",     hl.dsp.exec_cmd("pkill -SIGUSR1 waybar || waybar"))
+hl.bind(mainMod .. " + CTRL + W",      hl.dsp.exec_cmd("naranjos-tui wifi"))
+hl.bind(mainMod .. " + CTRL + B",      hl.dsp.exec_cmd("naranjos-tui bluetooth"))
+hl.bind(mainMod .. " + CTRL + A",      hl.dsp.exec_cmd("naranjos-tui sonido"))
 -- Ventanas
 hl.bind(mainMod .. " + W",             hl.dsp.window.close())
 hl.bind(mainMod .. " + F",             hl.dsp.window.fullscreen())
@@ -168,6 +171,13 @@ hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),                  { locked = true, repeating = true })
 
 ---- Reglas de ventanas -------------------------------------------------
+hl.window_rule({
+    name  = "menus-naranjos",
+    match = { class = "^naranjos-tui$" },
+    float  = true,
+    size   = "960 620",
+    center = true,
+})
 hl.window_rule({
     name  = "ignorar-maximizar",
     match = { class = ".*" },

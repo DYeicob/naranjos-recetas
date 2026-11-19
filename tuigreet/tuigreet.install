@@ -1,0 +1,4 @@
+post_install() {
+  install -dm755 -o greeter -g greeter /var/cache/tuigreet 2>/dev/null || install -dm755 /var/cache/tuigreet
+}
+post_upgrade() { post_install; }

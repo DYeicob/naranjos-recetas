@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=wireplumber
+pkgver=0.5.15
+pkgrel=1
+install=wireplumber.install
+pkgdesc='WirePlumber: gestor de sesiones de PipeWire (incluye wpctl)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('pipewire' 'glib2' 'lua')
+makedepends=()
+source=('https://gitlab.freedesktop.org/pipewire/wireplumber/-/archive/0.5.15/wireplumber-0.5.15.tar.bz2')
+sha256sums=('fb192f5d884155aedd6f01438e94cc12b263f482f0f39e5706c1e2cff9ad0c6d')
+build() { cd wireplumber-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D system-lua=true \
+    -D introspection=disabled -D doc=disabled -D tests=false -D dbus-tests=false
+  meson compile -C build; }
+package() { cd wireplumber-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

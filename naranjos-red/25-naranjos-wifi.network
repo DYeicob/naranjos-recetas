@@ -1,0 +1,8 @@
+# NaranjOS · WiFi: iwd se conecta a la red y systemd-networkd pide la IP (DHCP).
+# Así el resto del sistema (p. ej. la hora por internet) sabe que hay conexión.
+[Match]
+Type=wlan
+
+[Network]
+DHCP=yes
+IgnoreCarrierLoss=3s

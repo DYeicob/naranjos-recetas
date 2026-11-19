@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=impala
+pkgver=0.9.0
+pkgrel=1
+pkgdesc='Menú de WiFi en la terminal (para iwd)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('iwd')
+makedepends=('rust' )
+source=('https://github.com/pythops/impala/archive/v0.9.0/impala-0.9.0.tar.gz')
+sha256sums=('af476be1c36be1c60fbc629f281e7c32aaece704db77b96c7ecd40fb87e0f1a7')
+options=('!lto')
+prepare() { cd impala-$pkgver; cargo fetch --locked; }
+build()   { cd impala-$pkgver; cargo build --frozen --release; }
+package() { cd impala-$pkgver
+  install -Dm755 target/release/impala "$pkgdir/usr/bin/impala"
+}

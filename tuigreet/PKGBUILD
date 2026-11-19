@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=tuigreet
+pkgver=0.11.1
+pkgrel=1
+install=tuigreet.install
+pkgdesc='Pantalla de inicio de sesión en modo texto para greetd'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('greetd')
+makedepends=('rust' )
+source=('https://github.com/tuigreet/tuigreet/archive/0.11.1/tuigreet-0.11.1.tar.gz')
+sha256sums=('7d643ba224c40c6a63f9462a826630543071aea08e732ccd2e880bcd80d939e8')
+options=('!lto')
+prepare() { cd tuigreet-$pkgver; cargo fetch --locked; }
+build()   { cd tuigreet-$pkgver; cargo build --frozen --release; }
+package() { cd tuigreet-$pkgver
+  install -Dm755 target/release/tuigreet "$pkgdir/usr/bin/tuigreet"
+}

@@ -1,0 +1,30 @@
+# NaranjOS · aspecto de la pantalla de inicio de sesión (/etc/tuigreet/config.toml)
+[display]
+show_time = true
+greeting = "Bienvenido a NaranjOS"
+align_greeting = "center"
+issue = false
+
+[remember]
+username = true
+session = false
+user_session = false
+
+[secret]
+mode = "characters"
+characters = "*"
+
+[background]
+kind = "none"
+
+[theme]
+border = "yellow"
+text = "white"
+time = "yellow"
+container = "black"
+title = "yellow"
+greet = "yellow"
+prompt = "yellow"
+input = "white"
+action = "gray"
+button = "yellow"

@@ -1,0 +1,6 @@
+#%PAM-1.0
+# NaranjOS · inicio de sesión desde greetd (igual que en la consola)
+auth       include   login
+account    include   login
+password   include   login
+session    include   login

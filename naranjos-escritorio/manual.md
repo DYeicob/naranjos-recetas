@@ -5,8 +5,9 @@ Para moverte: flechas o espacio para avanzar, `/` para buscar y `q` para salir.
 
 ## 1. Primeros pasos
 
-1. Inicia sesión con tu usuario en la consola.
-2. Escribe `start-hyprland` para abrir el escritorio.
+1. En la pantalla de inicio de sesión de NaranjOS escribe tu usuario y tu contraseña.
+   (Si no está activada, inicia sesión en la consola y escribe `start-hyprland`.)
+2. Se abre el escritorio.
 3. Pulsa **Super + Enter** para abrir una terminal o **Super + Espacio** para buscar aplicaciones.
 4. Para salir: **Super + Escape** y elige «Cerrar sesión».
 
@@ -23,6 +24,9 @@ Puedes verlos en cualquier momento con **Super + K**.
 | Super + K | Chuleta de atajos |
 | Super + H | Este manual |
 | Super + Shift + B | Mostrar / ocultar la barra |
+| Super + Ctrl + W | Menú de WiFi |
+| Super + Ctrl + B | Menú de Bluetooth |
+| Super + Ctrl + A | Mezclador de sonido |
 | Super + W | Cerrar la ventana |
 | Super + F | Pantalla completa |
 | Super + Shift + F | Maximizar |
@@ -73,13 +77,24 @@ De izquierda a derecha:
 - **Escritorios 1–5**: el activo sale en naranja. Pulsa uno para ir a él.
 - **Ventana activa**: su título.
 - **Reloj**, en el centro. Al pulsarlo muestra la fecha completa; al pasar el ratón, el calendario.
-- **Red**: pulsa para abrir `iwctl` y conectarte a una WiFi
-  (`station wlan0 get-networks`, luego `station wlan0 connect NOMBRE`).
+- **Bluetooth**: pulsa para abrir el menú de Bluetooth (bluetui).
+- **Volumen**: rueda del ratón para subir o bajar, clic para el mezclador (wiremix),
+  clic derecho para silenciar.
+- **Red**: pulsa para abrir el menú de WiFi (impala): elige la red con las flechas y pulsa Enter.
 - **Brillo**: sube o baja con la rueda del ratón encima.
 - **Batería**, **procesador** y **memoria**.
 - **Botón de apagado**: el menú del sistema.
 
 **Super + Shift + B** la oculta o la vuelve a mostrar.
+
+### Sonido, WiFi y Bluetooth
+
+El sonido lo gestiona **PipeWire**. Las teclas de volumen del portátil funcionan siempre,
+también con la pantalla bloqueada. Desde la terminal: `wpctl status` muestra los dispositivos
+y `wpctl set-volume @DEFAULT_AUDIO_SINK@ 50%` cambia el volumen.
+
+Los menús de WiFi, Bluetooth y sonido se abren en una ventana flotante. En todos ellos
+te mueves con las flechas, **Enter** elige y **q** o **Esc** cierra; **?** muestra su ayuda.
 
 ## 5. Fondos de pantalla
 
@@ -135,11 +150,14 @@ Copiar y pegar desde la terminal: `wl-copy < fichero` y `wl-paste > fichero`.
   dice la línea. Corrígela; Hyprland recarga solo al guardar.
 - **Volver a la consola sin cerrar Hyprland:** Ctrl + Alt + **Fn** + F2 (en los portátiles
   MSI las teclas F necesitan Fn). Para volver: Ctrl + Alt + Fn + F1.
-- **No puedo apagar desde el menú:** tu usuario tiene que estar en el grupo `wheel`.
+- **No puedo apagar desde el menú:** comprueba que polkit funciona con `systemctl status polkit`.
+- **No suena nada:** `wpctl status` debe mostrar tu tarjeta. Si no aparece, cierra sesión y vuelve
+  a entrar (el sonido arranca con la sesión). Comprueba también que no esté en silencio.
+- **La pantalla de inicio de sesión no aparece o falla:** pulsa Ctrl + Alt + Fn + F2, inicia sesión
+  ahí y desactívala con `sudo systemctl disable greetd`.
 
 ## 11. Lo que viene
 
-- Volumen y bandeja de iconos en la barra.
-- Sonido con PipeWire, Bluetooth, y menús de WiFi y Bluetooth.
-- Pantalla de inicio de sesión gráfica.
+- Bandeja de iconos en la barra.
 - Tienda de aplicaciones (Flatpak) e instalador de la ISO.
+- Driver de NVIDIA para la gráfica dedicada.

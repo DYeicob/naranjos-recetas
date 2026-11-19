@@ -1,0 +1,11 @@
+post_install() {
+  f=/etc/iwd/main.conf
+  if [ -f "$f" ]; then
+    sed -i 's/^EnableNetworkConfiguration=true/EnableNetworkConfiguration=false/' "$f"
+  else
+    mkdir -p /etc/iwd
+    printf '[General]\nEnableNetworkConfiguration=false\n\n[Network]\nNameResolvingService=systemd\n' > "$f"
+  fi
+  systemctl enable systemd-networkd systemd-resolved systemd-timesyncd >/dev/null 2>&1 || true
+}
+post_upgrade() { post_install; }

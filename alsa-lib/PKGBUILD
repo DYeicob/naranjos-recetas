@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=alsa-lib
+pkgver=1.2.16.1
+pkgrel=1
+pkgdesc='ALSA: biblioteca de sonido del núcleo + perfiles UCM'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://www.alsa-project.org/files/pub/lib/alsa-lib-1.2.16.1.tar.bz2' 'https://www.alsa-project.org/files/pub/lib/alsa-ucm-conf-1.2.16.1.tar.bz2')
+sha256sums=('f740db7f488255944ffd4428416ee3390a96742856916433df468c281436480e' 'cf3d1c07e089a83c4ece2c20f05dd6a8aab7fcd108768c38811386880575492b')
+provides=('alsa-ucm-conf' 'alsa-topology-conf')
+noextract=("alsa-ucm-conf-$pkgver.tar.bz2")
+build()   { cd alsa-lib-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc; make; }
+package() { cd alsa-lib-$pkgver; make DESTDIR="$pkgdir" install
+  install -dm755 "$pkgdir/usr/share/alsa"
+  tar -C "$pkgdir/usr/share/alsa" --strip-components=1 -xf "$srcdir/alsa-ucm-conf-$pkgver.tar.bz2"; }

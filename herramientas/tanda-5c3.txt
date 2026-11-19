@@ -1,0 +1,16 @@
+naranjos-red
+alsa-lib
+alsa-utils
+sbc
+bluez
+pipewire
+wireplumber
+duktape
+polkit
+waybar
+impala
+bluetui
+wiremix
+greetd
+tuigreet
+naranjos-escritorio

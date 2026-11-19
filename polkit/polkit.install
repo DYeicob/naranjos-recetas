@@ -1,0 +1,9 @@
+pre_install() {
+  getent group polkitd  >/dev/null || /usr/sbin/groupadd -fg 27 polkitd
+  getent passwd polkitd >/dev/null || /usr/sbin/useradd -c "PolicyKit Daemon Owner" -d /etc/polkit-1 -u 27 -g polkitd -s /bin/false polkitd
+}
+pre_upgrade() { pre_install; }
+post_install() {
+  systemctl daemon-reload >/dev/null 2>&1 || true
+}
+post_upgrade() { post_install; }

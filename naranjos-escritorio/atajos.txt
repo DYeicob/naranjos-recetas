@@ -4,6 +4,9 @@ Super + Espacio           Lanzador de aplicaciones
 Super + K                 Esta lista de atajos
 Super + H                 Manual de NaranjOS
 Super + Shift + B         Mostrar / ocultar la barra
+Super + Ctrl + W          Menú de WiFi
+Super + Ctrl + B          Menú de Bluetooth
+Super + Ctrl + A          Mezclador de sonido
 ── VENTANAS ─────────────────────────────────────────────
 Super + W                 Cerrar la ventana
 Super + F                 Pantalla completa
@@ -31,3 +34,4 @@ Super + L                 Bloquear
 Super + Escape            Menú: bloquear, salir, apagar…
 Super + Shift + Escape    Salir de Hyprland al momento
 Fn + teclas de brillo     Subir / bajar el brillo
+Fn + teclas de volumen    Subir / bajar / silenciar el volumen

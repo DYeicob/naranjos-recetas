@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=bluetui
+pkgver=0.8.2
+pkgrel=1
+pkgdesc='Menú de Bluetooth en la terminal'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('bluez' 'dbus')
+makedepends=('rust' )
+source=('https://github.com/pythops/bluetui/archive/v0.8.2/bluetui-0.8.2.tar.gz')
+sha256sums=('16b5c108f7f02cb6578e5bda5eb9cf7d1e1552b2c53d88533a7e4f5e9f12969d')
+options=('!lto')
+prepare() { cd bluetui-$pkgver; cargo fetch --locked; }
+build()   { cd bluetui-$pkgver; cargo build --frozen --release; }
+package() { cd bluetui-$pkgver
+  install -Dm755 target/release/bluetui "$pkgdir/usr/bin/bluetui"
+}

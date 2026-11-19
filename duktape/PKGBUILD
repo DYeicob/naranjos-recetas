@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=duktape
+pkgver=2.7.0
+pkgrel=1
+pkgdesc='Motor de JavaScript ligero (lo usa polkit)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://duktape.org/duktape-2.7.0.tar.xz')
+sha256sums=('90f8d2fa8b5567c6899830ddef2c03f3c27960b11aca222fa17aa7ac613c2890')
+prepare() { cd duktape-$pkgver; sed -i 's/-Os/-O2/' Makefile.sharedlibrary; }
+build()   { cd duktape-$pkgver; make -f Makefile.sharedlibrary INSTALL_PREFIX=/usr; }
+package() { cd duktape-$pkgver; make -f Makefile.sharedlibrary INSTALL_PREFIX=/usr DESTDIR="$pkgdir" install; }

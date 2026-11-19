@@ -11,7 +11,7 @@
 
   "modules-left":   ["custom/naranjos", "hyprland/workspaces", "hyprland/window"],
   "modules-center": ["clock"],
-  "modules-right":  ["network", "backlight", "battery", "cpu", "memory", "custom/sistema"],
+  "modules-right":  ["bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "custom/sistema"],
 
   "custom/naranjos": {
     "format": "NaranjOS",
@@ -37,13 +37,34 @@
       "format": { "today": "<span color='#ff8700'><b>{}</b></span>" }
     }
   },
+  "wireplumber": {
+    "format": "{icon}  {volume}%",
+    "format-muted": "\uf026  mudo",
+    "format-icons": ["\uf026", "\uf027", "\uf028"],
+    "scroll-step": 5,
+    "max-volume": 100,
+    "tooltip-format": "{node_name}",
+    "on-click": "naranjos-tui sonido",
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  },
+  "bluetooth": {
+    "format": "\uf294",
+    "format-off": "\uf294  off",
+    "format-disabled": "",
+    "format-no-controller": "",
+    "format-connected": "\uf294  {device_alias}",
+    "tooltip-format": "{controller_alias}",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "on-click": "naranjos-tui bluetooth"
+  },
   "network": {
     "format-wifi": "  {essid}",
     "format-ethernet": "  cable",
     "format-disconnected": "  sin red",
     "tooltip-format": "{ifname} · {ipaddr}",
     "tooltip-format-wifi": "{essid} ({signalStrength}%) · {ipaddr}",
-    "on-click": "foot -T WiFi iwctl"
+    "on-click": "naranjos-tui wifi"
   },
   "backlight": {
     "format": "  {percent}%",

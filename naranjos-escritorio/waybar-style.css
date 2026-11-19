@@ -46,7 +46,10 @@ tooltip label { color: #e6e6e6; }
 }
 #window { color: #8a8a8a; padding: 0 10px; }
 #clock  { color: #ffaf5f; font-weight: bold; padding: 0 10px; }
-#network, #backlight, #battery, #cpu, #memory { padding: 0 9px; }
+#network, #backlight, #battery, #cpu, #memory, #wireplumber, #bluetooth { padding: 0 9px; }
+#wireplumber.muted { color: #8a8a8a; }
+#bluetooth.connected { color: #ffaf5f; }
+#bluetooth.off { color: #8a8a8a; }
 #network.disconnected          { color: #ff5f5f; }
 #battery.charging              { color: #87d787; }
 #battery.warning:not(.charging){ color: #ffd75f; }

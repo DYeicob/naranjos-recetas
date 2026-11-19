@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=alsa-utils
+pkgver=1.2.16
+pkgrel=1
+pkgdesc='Herramientas de ALSA (alsamixer, amixer…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('alsa-lib' 'ncurses')
+makedepends=()
+source=('https://www.alsa-project.org/files/pub/utils/alsa-utils-1.2.16.tar.bz2')
+sha256sums=('092399d5e8749a1d5e188e393157521cec4b75693b60ebb79bbce728cff2232c')
+build()   { cd alsa-utils-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc --disable-alsaconf --disable-bat --disable-xmlto --with-curses=ncursesw
+  make; }
+package() { cd alsa-utils-$pkgver; make DESTDIR="$pkgdir" install; }

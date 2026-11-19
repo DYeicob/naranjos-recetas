@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
+pkgname=sbc
+pkgver=2.2
+pkgrel=1
+pkgdesc='Códec SBC (audio Bluetooth)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://www.kernel.org/pub/linux/bluetooth/sbc-2.2.tar.xz')
+sha256sums=('a1ada76ef35e5af9c2fbd063754dc9e37a8d989417c6eb1ecebb089b1383ae9e')
+build()   { cd sbc-$pkgver; ./configure --prefix=/usr --disable-static --disable-tester; make; }
+package() { cd sbc-$pkgver; make DESTDIR="$pkgdir" install; }

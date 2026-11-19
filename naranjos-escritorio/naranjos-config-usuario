@@ -15,5 +15,10 @@ for f in .config/hypr/hyprland.lua .config/hypr/hyprpaper.conf .config/hypr/hypr
     mv -f "$d" "$d.hyprland-original"
   fi
   if [ "$forzar" = 1 ] && [ -f "$d" ]; then mv -f "$d" "$d.anterior"; fi
+  # versión antigua sin cambios del usuario → se cambia por la nueva
+  if [ -f "$d" ] && ! cmp -s "$d" "$S/$f" && \
+     grep -qx "$(sha256sum < "$d" | cut -d" " -f1)  $f" /usr/share/naranjos/versiones-antiguas.sha256 2>/dev/null; then
+    cp "$S/$f" "$d"
+  fi
   if [ ! -e "$d" ]; then mkdir -p "$(dirname "$d")"; cp "$S/$f" "$d"; fi
 done
