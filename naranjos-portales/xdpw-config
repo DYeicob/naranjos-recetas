@@ -1,0 +1,4 @@
+# NaranjOS · compartir pantalla: elige la pantalla con un clic (marco naranja)
+[screencast]
+chooser_type=simple
+chooser_cmd=slurp -f %o -or -b 12121288 -c ff8700ff -w 2

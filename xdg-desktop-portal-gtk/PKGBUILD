@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5e.sh
+pkgname=xdg-desktop-portal-gtk
+pkgver=1.15.3
+pkgrel=1
+pkgdesc='Portal GTK: selector de ficheros y ajustes'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('xdg-desktop-portal' 'gtk3' 'gsettings-desktop-schemas' 'fontconfig')
+makedepends=()
+source=('https://github.com/flatpak/xdg-desktop-portal-gtk/releases/download/1.15.3/xdg-desktop-portal-gtk-1.15.3.tar.xz')
+sha256sums=('47a3743d2419a8601e691db37e85bb5fac5ae4b26842177065cd5f22ada23b37')
+build()   { cd xdg-desktop-portal-gtk-$pkgver; meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nodownload -D wallpaper=disabled -D settings=enabled -D appchooser=enabled -D lockdown=disabled; meson compile -C build; }
+package() { cd xdg-desktop-portal-gtk-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

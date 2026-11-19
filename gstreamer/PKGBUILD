@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5e.sh
+pkgname=gstreamer
+pkgver=1.28.6
+pkgrel=1
+pkgdesc='GStreamer: base multimedia'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('glib2')
+makedepends=()
+source=('https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.28.6.tar.xz')
+sha256sums=('62b6b9f0ad3147a6dd6420ac64a91180b14e990695bddd353b96041611d052ca')
+build()   { cd gstreamer-$pkgver; meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nodownload -D gst_debug=false -D tests=disabled -D examples=disabled -D benchmarks=disabled -D introspection=disabled -D doc=disabled -D ptp-helper=disabled; meson compile -C build; }
+package() { cd gstreamer-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

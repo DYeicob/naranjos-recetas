@@ -21,6 +21,7 @@ Puedes verlos en cualquier momento con **Super + K**.
 |---|---|
 | Super + Enter | Abrir la terminal (foot) |
 | Super + Espacio | Lanzador de aplicaciones (fuzzel) |
+| Super + B | Navegador (Firefox) |
 | Super + K | Chuleta de atajos |
 | Super + H | Este manual |
 | Super + Shift + B | Mostrar / ocultar la barra |
@@ -130,7 +131,24 @@ Tus alias y ajustes van en `~/.zshrc`. La base está en `/etc/zsh/zshrc`.
 
 Copiar y pegar desde la terminal: `wl-copy < fichero` y `wl-paste > fichero`.
 
-## 9. zumo, el gestor de paquetes
+## 9. La tienda: Flatpak y Flathub
+
+Las aplicaciones gráficas (Firefox, LibreOffice, GIMP, Spotify, Discord…) se instalan desde
+**Flathub**, que ya viene configurado:
+
+| Orden | Qué hace |
+|---|---|
+| `flatpak search <texto>` | Buscar aplicaciones |
+| `flatpak install flathub <id>` | Instalar (p. ej. `org.mozilla.firefox`) |
+| `flatpak update` | Actualizar todas las aplicaciones |
+| `flatpak uninstall <id>` | Desinstalar |
+| `flatpak list --app` | Ver las instaladas |
+
+Las aplicaciones instaladas aparecen en el lanzador (Super + Espacio) al volver a iniciar sesión.
+Para compartir pantalla (Meet, Discord…) la app te deja elegir: haz clic en la pantalla que
+quieras compartir (sale un marco naranja).
+
+## 9b. zumo, el gestor de paquetes
 
 | Orden | Qué hace |
 |---|---|
@@ -159,5 +177,5 @@ Copiar y pegar desde la terminal: `wl-copy < fichero` y `wl-paste > fichero`.
 ## 11. Lo que viene
 
 - Bandeja de iconos en la barra.
-- Tienda de aplicaciones (Flatpak) e instalador de la ISO.
+- Instalador de la ISO.
 - Driver de NVIDIA para la gráfica dedicada.

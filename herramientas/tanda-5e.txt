@@ -1,0 +1,8 @@
+gstreamer
+gst-plugins-base
+xdg-desktop-portal
+xdg-desktop-portal-gtk
+libinih
+xdg-desktop-portal-wlr
+naranjos-portales
+naranjos-escritorio

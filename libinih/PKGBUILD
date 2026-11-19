@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5e.sh
+pkgname=libinih
+pkgver=62
+pkgrel=1
+pkgdesc='Lector de ficheros INI (inih)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://github.com/benhoyt/inih/archive/r62/inih-r62.tar.gz')
+sha256sums=('9c15fa751bb8093d042dae1b9f125eb45198c32c6704cd5481ccde460d4f8151')
+build()   { cd inih-r$pkgver; meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nodownload -D default_library=shared -D distro_install=true; meson compile -C build; }
+package() { cd inih-r$pkgver; DESTDIR="$pkgdir" meson install -C build; }

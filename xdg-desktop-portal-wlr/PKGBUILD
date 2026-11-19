@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5e.sh
+pkgname=xdg-desktop-portal-wlr
+pkgver=0.8.4
+pkgrel=1
+pkgdesc='Portal para compartir pantalla y capturas en Hyprland'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('xdg-desktop-portal' 'pipewire' 'libinih' 'libdrm' 'mesa' 'wayland' 'grim' 'slurp')
+makedepends=('scdoc' 'wayland-protocols')
+source=('https://github.com/emersion/xdg-desktop-portal-wlr/releases/download/v0.8.4/xdg-desktop-portal-wlr-0.8.4.tar.gz')
+sha256sums=('41b9683acae9415005d7b62d801e34946cb95da5eaaa83528c7085759a635187')
+build()   { cd xdg-desktop-portal-wlr-$pkgver; meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nodownload -D sd-bus-provider=libsystemd -D systemd=enabled -D man-pages=enabled; meson compile -C build; }
+package() { cd xdg-desktop-portal-wlr-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

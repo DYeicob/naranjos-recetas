@@ -1,6 +1,7 @@
 ── APLICACIONES ─────────────────────────────────────────
 Super + Enter             Abrir la terminal
 Super + Espacio           Lanzador de aplicaciones
+Super + B                 Navegador (Firefox)
 Super + K                 Esta lista de atajos
 Super + H                 Manual de NaranjOS
 Super + Shift + B         Mostrar / ocultar la barra

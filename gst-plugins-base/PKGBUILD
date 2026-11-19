@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5e.sh
+pkgname=gst-plugins-base
+pkgver=1.28.6
+pkgrel=1
+pkgdesc='GStreamer: complementos básicos'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('gstreamer' 'alsa-lib' 'libogg' 'libvorbis' 'libpng' 'libjpeg-turbo' 'pango' 'mesa' 'iso-codes')
+makedepends=('wayland-protocols')
+source=('https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.28.6.tar.xz')
+sha256sums=('0ba699c7c6c66f4ba640be78cb38a24715add9683f3e3a199f5369dc5a4f04ac')
+build()   { cd gst-plugins-base-$pkgver; meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nodownload -D introspection=disabled -D tests=disabled -D examples=disabled -D doc=disabled; meson compile -C build; }
+package() { cd gst-plugins-base-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

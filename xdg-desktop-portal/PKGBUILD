@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5e.sh
+pkgname=xdg-desktop-portal
+pkgver=1.22.1
+pkgrel=1
+pkgdesc='Portales del escritorio (permisos para apps de Flatpak)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('glib2' 'json-glib' 'fuse3' 'gdk-pixbuf2' 'gst-plugins-base' 'pipewire' 'flatpak')
+makedepends=()
+source=('https://github.com/flatpak/xdg-desktop-portal/releases/download/1.22.1/xdg-desktop-portal-1.22.1.tar.xz')
+sha256sums=('d4879ddb3d65ff1a8f19187497e6f13dc5d267bcac404a5d501218be355753d3')
+build()   { cd xdg-desktop-portal-$pkgver; meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nodownload -D geoclue=disabled -D gudev=disabled -D systemd=enabled -D documentation=disabled -D tests=disabled -D installed-tests=false -D man-pages=disabled -D sandboxed-image-validation=disabled -D sandboxed-sound-validation=disabled; meson compile -C build; }
+package() { cd xdg-desktop-portal-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

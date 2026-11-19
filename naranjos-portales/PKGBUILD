@@ -1,0 +1,15 @@
+# Paquete propio de NaranjOS — generado por naranjos-tanda-5e.sh (NO editar a mano)
+pkgname=naranjos-portales
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Portales de NaranjOS: GTK para ficheros y ajustes, wlr para compartir pantalla'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('xdg-desktop-portal' 'xdg-desktop-portal-gtk' 'xdg-desktop-portal-wlr')
+source=('hyprland-portals.conf' 'xdpw-config')
+sha256sums=('2219f89c5d83dbf4cdcb9832ddc0f96070134614bf81213a8dc3be1b9d3f324b' 'fe5f37dd37a13191f81ca9fc3db440445c034eefa25bb7810f26f6a3207e2a36')
+package() {
+  install -Dm644 hyprland-portals.conf "$pkgdir/usr/share/xdg-desktop-portal/hyprland-portals.conf"
+  install -Dm644 xdpw-config           "$pkgdir/etc/xdg/xdg-desktop-portal-wlr/config"
+}
