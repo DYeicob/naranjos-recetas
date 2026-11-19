@@ -19,10 +19,13 @@ tooltip {
 }
 tooltip label { color: #e6e6e6; }
 
+#image.naranjos {
+  padding: 0 0 0 14px;
+}
 #custom-naranjos {
   color: #ff8700;
   font-weight: bold;
-  padding: 0 12px 0 14px;
+  padding: 0 12px 0 6px;
 }
 #workspaces button {
   padding: 0 8px;

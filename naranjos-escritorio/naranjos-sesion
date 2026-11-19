@@ -1,0 +1,7 @@
+#!/bin/sh
+# naranjos-sesion — arranca el escritorio NaranjOS con el entorno completo
+# (la pantalla de inicio de sesión no carga /etc/profile por sí sola: sin esto no hay PATH,
+#  ni aplicaciones de Flatpak en el lanzador, ni configuración nueva del usuario)
+[ -r /etc/profile ] && . /etc/profile
+[ -r "$HOME/.profile" ] && . "$HOME/.profile"
+exec start-hyprland "$@"

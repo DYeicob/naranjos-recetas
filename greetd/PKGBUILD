@@ -1,7 +1,7 @@
 # Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
 pkgname=greetd
 pkgver=0.10.3
-pkgrel=1
+pkgrel=2
 install=greetd.install
 pkgdesc='Gestor de inicio de sesión (greetd)'
 arch=('x86_64')
@@ -10,7 +10,7 @@ license=('custom')
 depends=()
 makedepends=('rust' )
 source=('greetd-naranjos.toml' 'greetd.pam' 'https://git.sr.ht/~kennylevinsen/greetd/archive/0.10.3.tar.gz')
-sha256sums=('050d78eb8103d22dbf11f8a6438e53b1753178e05d89af80542e177bc239728d' '9882cbd2a27d7129236d054bc79ce3818b845cabbe69aaf57e12bede1b15457e' 'ee5cb70e0add4ca9c9fe57e47581ab0002d44c07743fb5492469f3b570db640b')
+sha256sums=('cfd7e2ea4cf38dd32d4c7138ea2fbcd89030764f95e9a8fe30dac190645c478c' '9882cbd2a27d7129236d054bc79ce3818b845cabbe69aaf57e12bede1b15457e' 'ee5cb70e0add4ca9c9fe57e47581ab0002d44c07743fb5492469f3b570db640b')
 options=('!lto')
 backup=('etc/greetd/config.toml' 'etc/pam.d/greetd')
 prepare() { cd greetd-$pkgver; cargo fetch --locked; }

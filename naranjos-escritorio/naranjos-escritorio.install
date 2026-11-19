@@ -2,4 +2,8 @@ post_install() {
   echo "  NaranjOS: escritorio instalado. Cada usuario recibe su configuración al iniciar sesión"
   echo "            (o ya mismo con: naranjos-config-usuario). Manual: naranjos-ayuda"
 }
-post_upgrade() { :; }
+post_upgrade() {
+  # que las sesiones de Hyprland abiertas relean la configuración ya actualizada
+  for f in /home/*/.config/hypr/hyprland.lua; do [ -f "$f" ] && touch "$f"; done
+  return 0
+}

@@ -1,6 +1,6 @@
 # Receta de zumo, el gestor de paquetes de NaranjOS
 pkgname=zumo
-pkgver=0.2.3
+pkgver=0.2.4
 pkgrel=1
 pkgdesc='Gestor de paquetes de NaranjOS'
 arch=('any')
@@ -9,7 +9,7 @@ license=('GPL-3.0-or-later')
 depends=('bash' 'pacman' 'sudo')
 optdepends=('git: para bajar recetas con git pull')
 source=('zumo')
-sha256sums=('e9256e1752ef533409c15244d3f607bc95abe2e03f468be2a837a640d34bcd6f')
+sha256sums=('f28d9c127efee578d161d97378621d3d8a86fa30e2651a1d2e05079e3c6ea37b')
 
 package() {
   install -Dm755 zumo "$pkgdir/usr/bin/zumo"

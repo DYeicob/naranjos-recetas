@@ -15,11 +15,13 @@ local mainMod  = "SUPER"   -- la tecla de Windows
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
 
 ---- Entorno -----------------------------------------------------------
+hl.env("XCURSOR_THEME", "NaranjOS")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 
 ---- Al arrancar -------------------------------------------------------
 hl.on("hyprland.start", function()
+    hl.exec_cmd("hyprctl setcursor NaranjOS 24")               -- cursor NaranjOS
     hl.exec_cmd("hyprpaper")                                   -- fondo
     hl.exec_cmd("mako")                                        -- avisos
     hl.exec_cmd("hypridle")                                    -- bloqueo por inactividad

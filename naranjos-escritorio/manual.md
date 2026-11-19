@@ -99,9 +99,21 @@ te mueves con las flechas, **Enter** elige y **q** o **Esc** cierra; **?** muest
 
 ## 5. Fondos de pantalla
 
-Los fondos de NaranjOS están en `/usr/share/backgrounds/naranjos/`. Para cambiarlo,
-edita la línea `path` de `~/.config/hypr/hyprpaper.conf` y vuelve a entrar en Hyprland.
-`path` también puede ser una carpeta; con `timeout = 600` el fondo cambia cada 10 minutos.
+Los fondos de NaranjOS están en `/usr/share/backgrounds/naranjos/`:
+
+| Fichero | Fondo |
+|---|---|
+| `naranjos-01.jpg` | Pincelada (por defecto) |
+| `naranjos-02.jpg` | Órbita |
+| `naranjos-03.jpg` | Gajo |
+| `naranjos-04.jpg` | Onda |
+| `naranjos-05.jpg` | Tinta |
+| `naranjos-06.jpg` | Topográfico |
+| `naranjos-07.jpg` | Huerto |
+| `naranjos-bloqueo.jpg` | Pantalla de bloqueo |
+
+Para cambiarlo, edita la línea `path` de `~/.config/hypr/hyprpaper.conf` y vuelve a entrar en Hyprland.
+`path` también puede ser la carpeta entera: con `timeout = 600` el fondo cambia solo cada 10 minutos.
 
 ## 6. Inactividad
 

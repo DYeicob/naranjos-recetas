@@ -1,0 +1,6 @@
+zumo
+naranjos-cursor
+naranjos-fondos
+naranjos-portales
+naranjos-escritorio
+greetd

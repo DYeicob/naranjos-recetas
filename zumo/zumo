@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 # zumo — gestor de paquetes de NaranjOS (usa pacman por dentro)
-VERSION="0.2.3"
+VERSION="0.2.4"
 
 if [ -t 1 ]; then
   if [ "$TERM" = linux ]; then O=$'\e[0;33m'; else O=$'\e[1;38;5;208m'; fi
@@ -92,6 +92,8 @@ exprime(){
       done
     done
     rm -rf "$d/src" "$d/pkg"
+    # la caché de pacman puede guardar un paquete con el MISMO nombre pero de otra compilación
+    for p in "${pkgs[@]}"; do sudo rm -f "/var/cache/pacman/pkg/$(basename "$p")" "/var/cache/pacman/pkg/$(basename "$p").sig"; done
     for p in "${pkgs[@]}"; do okm "$(basename "$p")"; done
     mapfile -t -O "${#nombres[@]}" nombres < <(cd "$d" && makepkg --printsrcinfo | awk '/^pkgname = /{print $3}')
     sudo pacman -Sy >/dev/null

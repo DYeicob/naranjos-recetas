@@ -9,10 +9,16 @@
   "margin-right": 10,
   "spacing": 4,
 
-  "modules-left":   ["custom/naranjos", "hyprland/workspaces", "hyprland/window"],
+  "modules-left":   ["image#naranjos", "custom/naranjos", "hyprland/workspaces", "hyprland/window"],
   "modules-center": ["clock"],
   "modules-right":  ["bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "custom/sistema"],
 
+  "image#naranjos": {
+    "path": "/usr/share/naranjos/logo/naranjos-logo-plano-48.png",
+    "size": 20,
+    "tooltip": false,
+    "on-click": "fuzzel"
+  },
   "custom/naranjos": {
     "format": "NaranjOS",
     "tooltip-format": "Aplicaciones (Super + Espacio)",
