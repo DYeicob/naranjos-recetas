@@ -4,3 +4,7 @@ a7e24f35e2e035c2da009ffdb020b6de01147d0d22cd5c4ac35adf82ce199e30  .config/waybar
 ca82c08872912810d33eb5c7e882688190d5892ffd4f563e8dc29fcf375c24af  .config/waybar/style.css
 e996a94d41303884ad152bc41f3f2af29183acaf16cdf5726cd6c55180fcc73f  .config/hypr/hyprlock.conf
 4ce851cead9a1de125bb351967b2dfca3e2ed7b86cd330e1878e7c372b0f3ac2  .config/gtk-3.0/settings.ini
+a344901aa74c082a1bd836d8b24c9dedac76009bea76173e0df381edff5c7f57  .config/waybar/config.jsonc
+d9fe1f48d7e2dfd4b79b0159b4d9140dc417d5bd049433f250d25afc64d9a3f3  .config/waybar/style.css
+47590e90c0bd301201841e9a5255781c03696df8448f87ea43517be322c6bb81  .config/hypr/hyprlock.conf
+df5de9219a7c19586fc617e37ba689728c77720d9b3a974bb9c7a1230928664f  .config/gtk-3.0/settings.ini
