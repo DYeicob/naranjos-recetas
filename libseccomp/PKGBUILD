@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5d.sh
+pkgname=libseccomp
+pkgver=2.6.1
+pkgrel=1
+pkgdesc='Filtros de llamadas al sistema (aislamiento de Flatpak)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://github.com/seccomp/libseccomp/releases/download/v2.6.1/libseccomp-2.6.1.tar.gz')
+sha256sums=('501f66c667225d53791b97e1d7cf85ab764c297d04881f60f38f451c4b0ee1be')
+build()   { cd libseccomp-$pkgver; ./configure --prefix=/usr --disable-static; make; }
+package() { cd libseccomp-$pkgver; make DESTDIR="$pkgdir" install; }

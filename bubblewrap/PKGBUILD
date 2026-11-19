@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5d.sh
+pkgname=bubblewrap
+pkgver=0.12.0
+pkgrel=1
+pkgdesc='Aislamiento de aplicaciones (bwrap)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('libcap')
+makedepends=()
+source=('https://github.com/containers/bubblewrap/releases/download/v0.12.0/bubblewrap-0.12.0.tar.xz')
+sha256sums=('9760d007363e3abba7c747489910f9f82d9fca53ba3bd3282e396fa3c97a3314')
+build()   { cd bubblewrap-$pkgver; meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nodownload -D man=disabled -D selinux=disabled -D tests=false -D bash_completion=disabled -D zsh_completion=enabled; meson compile -C build; }
+package() { cd bubblewrap-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

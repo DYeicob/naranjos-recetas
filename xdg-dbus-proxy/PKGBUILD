@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5d.sh
+pkgname=xdg-dbus-proxy
+pkgver=0.1.6
+pkgrel=1
+pkgdesc='Filtro de D-Bus para aplicaciones aisladas'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('glib2')
+makedepends=()
+source=('https://github.com/flatpak/xdg-dbus-proxy/releases/download/0.1.6/xdg-dbus-proxy-0.1.6.tar.xz')
+sha256sums=('131bf59fce7c7ee7ecbc5d9106d6750f4f597bfe609966573240f7e4952973a1')
+build()   { cd xdg-dbus-proxy-$pkgver; meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nodownload -D man=disabled -D tests=false; meson compile -C build; }
+package() { cd xdg-dbus-proxy-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

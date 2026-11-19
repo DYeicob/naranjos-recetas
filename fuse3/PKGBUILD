@@ -1,0 +1,27 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5d.sh
+pkgname=fuse3
+pkgver=3.18.2
+pkgrel=1
+pkgdesc='FUSE 3: sistemas de ficheros en espacio de usuario'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://github.com/libfuse/libfuse/releases/download/fuse-3.18.2/fuse-3.18.2.tar.gz')
+sha256sums=('f01de85717e20adf5f98aff324acd85dd73d61a5ca3834d573dcf0bd6e54a298')
+backup=('etc/fuse.conf')
+prepare() { cd fuse-$pkgver; sed -i '/^udev/,$ s/^/#/' util/meson.build; }
+build()   { cd fuse-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain -D examples=false -D tests=false -D enable-io-uring=false
+  meson compile -C build; }
+package() { cd fuse-$pkgver; DESTDIR="$pkgdir" meson install -C build
+  chmod u+s "$pkgdir/usr/bin/fusermount3"
+  install -Dm644 /dev/stdin "$pkgdir/etc/fuse.conf" << 'CONF'
+# Número máximo de montajes FUSE para usuarios normales (por defecto 1000).
+#mount_max = 1000
+
+# Permite a los usuarios normales usar las opciones 'allow_other' o 'allow_root'.
+#user_allow_other
+CONF
+}

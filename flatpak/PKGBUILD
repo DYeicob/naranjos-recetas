@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5d.sh
+pkgname=flatpak
+pkgver=1.18.4
+pkgrel=1
+install=flatpak.install
+pkgdesc='Flatpak: instala aplicaciones desde Flathub (la tienda de NaranjOS)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('appstream' 'bubblewrap' 'xdg-dbus-proxy' 'ostree' 'json-glib' 'libseccomp' 'fuse3' 'polkit' 'gdk-pixbuf2' 'gpgme' 'libarchive' 'libxau' 'curl' 'zstd' 'wayland')
+makedepends=('python-pyparsing' 'wayland-protocols')
+source=('https://github.com/flatpak/flatpak/releases/download/1.18.4/flatpak-1.18.4.tar.xz')
+sha256sums=('b899a7a00c48d2c626cb8ec33fe556720b376c25805d7222430c0fdca4c6ac8d')
+build() { cd flatpak-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain --libexecdir=/usr/lib --wrap-mode=nodownload \
+    -D system_bubblewrap=bwrap -D system_dbus_proxy=xdg-dbus-proxy \
+    -D dconf=disabled -D malcontent=disabled -D gir=disabled -D gtkdoc=disabled -D docbook_docs=disabled \
+    -D man=disabled -D tests=false -D selinux_module=disabled -D wayland_security_context=enabled
+  meson compile -C build; }
+package() { cd flatpak-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

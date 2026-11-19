@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5d.sh
+pkgname=appstream
+pkgver=1.2.3
+pkgrel=1
+pkgdesc='AppStream: catálogo de aplicaciones para la tienda'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('glib2' 'curl' 'libxml2' 'libfyaml' 'libxmlb' 'zstd')
+makedepends=()
+source=('https://github.com/ximion/appstream/archive/v1.2.3/appstream-1.2.3.tar.gz')
+sha256sums=('12f01e127081c485a3e3056b6d30f54d003101689ff815adac6f1ef2b19af6ab')
+# los metadatos traducidos del propio appstreamcli necesitan itstool (no lo tenemos): se instalan sin traducir
+prepare() { cd appstream-$pkgver
+  sed -i '/^metainfo_i18n = i18n.itstool_join(/,/^)/c metainfo_i18n = metainfo_with_relinfo' data/meson.build; }
+build()   { cd appstream-$pkgver
+  meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nodownload \
+    -D stemming=false -D systemd=true -D vapi=false -D qt=false -D compose=false -D apt-support=false \
+    -D gir=false -D zstd-support=true -D blake3-support=false -D docs=false -D apidocs=false \
+    -D install-docs=false -D man=false -D bash-completion=false
+  meson compile -C build; }
+package() { cd appstream-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

@@ -1,7 +1,8 @@
 # Receta de NaranjOS — generada por naranjos-tanda-5c3.sh
 pkgname=pipewire
 pkgver=1.6.8
-pkgrel=1
+pkgrel=2
+install=pipewire.install
 pkgdesc='PipeWire: servidor de sonido y vídeo (sustituye a PulseAudio y JACK)'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'

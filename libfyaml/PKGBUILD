@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5d.sh
+pkgname=libfyaml
+pkgver=0.9.6
+pkgrel=1
+pkgdesc='Lector de YAML (lo usa AppStream)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=()
+makedepends=()
+source=('https://github.com/pantoniou/libfyaml/releases/download/v0.9.6/libfyaml-0.9.6.tar.gz')
+sha256sums=('a59cc3331e2eb903ec36933ad52a45888041cac31e44f553a00511131242c483')
+build()   { cd libfyaml-$pkgver; ./configure --prefix=/usr --disable-static; make; }
+package() { cd libfyaml-$pkgver; make DESTDIR="$pkgdir" install; }

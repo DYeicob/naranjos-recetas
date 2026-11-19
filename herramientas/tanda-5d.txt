@@ -1,0 +1,12 @@
+pipewire
+python-pyparsing
+fuse3
+libseccomp
+json-glib
+bubblewrap
+xdg-dbus-proxy
+libfyaml
+libxmlb
+appstream
+ostree
+flatpak

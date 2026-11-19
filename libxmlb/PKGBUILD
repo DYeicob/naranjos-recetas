@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-5d.sh
+pkgname=libxmlb
+pkgver=0.3.30
+pkgrel=1
+pkgdesc='Lector rápido de XML (lo usa AppStream)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('glib2' 'xz' 'zstd')
+makedepends=()
+source=('https://github.com/hughsie/libxmlb/releases/download/0.3.30/libxmlb-0.3.30.tar.xz')
+sha256sums=('2cb894b873aac5fc9e9b6228d4e795f7236d16e429ed2de8f95179a131be3a68')
+build()   { cd libxmlb-$pkgver; meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nodownload -D gtkdoc=false -D introspection=false -D tests=false -D stemmer=false -D cli=true; meson compile -C build; }
+package() { cd libxmlb-$pkgver; DESTDIR="$pkgdir" meson install -C build; }
