@@ -1,0 +1,41 @@
+# NaranjOS peel · endurecimiento del kernel
+# (para cambiar algo: crea /etc/sysctl.d/90-mio.conf con tu valor; ese manda sobre este)
+
+# no enseñar direcciones del kernel ni su registro a usuarios normales (dmesg → sudo dmesg)
+kernel.kptr_restrict = 2
+kernel.dmesg_restrict = 1
+# BPF solo para root, y su compilador endurecido
+kernel.unprivileged_bpf_disabled = 1
+net.core.bpf_jit_harden = 2
+# un programa no puede espiar a otro que no sea hijo suyo
+kernel.yama.ptrace_scope = 1
+# trampas típicas con enlaces y ficheros en /tmp
+fs.protected_symlinks = 1
+fs.protected_hardlinks = 1
+fs.protected_fifos = 2
+fs.protected_regular = 2
+# los programas con permisos especiales no vuelcan memoria al fallar
+fs.suid_dumpable = 0
+# no cargar módulos de terminal raros automáticamente
+dev.tty.ldisc_autoload = 0
+
+# red: no aceptar redirecciones ni rutas impuestas desde fuera
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv6.conf.all.accept_redirects = 0
+net.ipv6.conf.default.accept_redirects = 0
+net.ipv4.conf.all.secure_redirects = 0
+net.ipv4.conf.default.secure_redirects = 0
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv6.conf.all.accept_source_route = 0
+net.ipv6.conf.default.accept_source_route = 0
+# comprobación de origen «suelta» (compatible con VPN)
+net.ipv4.conf.all.rp_filter = 2
+net.ipv4.conf.default.rp_filter = 2
+# protección contra inundaciones SYN y respuestas a broadcast
+net.ipv4.tcp_syncookies = 1
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+net.ipv4.icmp_ignore_bogus_error_responses = 1

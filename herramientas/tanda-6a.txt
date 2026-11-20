@@ -1,0 +1,7 @@
+libmnl
+libnftnl
+nftables
+lynis
+naranjos-entorno
+naranjos-peel
+naranjos-escritorio

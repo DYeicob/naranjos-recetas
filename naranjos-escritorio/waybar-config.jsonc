@@ -11,7 +11,7 @@
 
   "modules-left":   ["image#naranjos", "custom/naranjos", "hyprland/workspaces", "hyprland/window"],
   "modules-center": ["clock"],
-  "modules-right":  ["bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "custom/sistema"],
+  "modules-right":  ["custom/peel", "bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "custom/sistema"],
 
   "image#naranjos": {
     "path": "/usr/share/naranjos/logo/naranjos-logo-plano-48.png",
@@ -93,6 +93,12 @@
     "format": "  {percentage}%",
     "interval": 10,
     "tooltip-format": "{used:0.1f} de {total:0.1f} GiB"
+  },
+  "custom/peel": {
+    "exec": "naranjos-peel barra",
+    "return-type": "json",
+    "interval": 30,
+    "on-click": "naranjos-tui seguridad"
   },
   "custom/sistema": {
     "format": "",

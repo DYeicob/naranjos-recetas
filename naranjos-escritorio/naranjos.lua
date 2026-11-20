@@ -130,6 +130,7 @@ hl.bind(mainMod .. " + SHIFT + B",     hl.dsp.exec_cmd("pkill -SIGUSR1 waybar ||
 hl.bind(mainMod .. " + CTRL + W",      hl.dsp.exec_cmd("naranjos-tui wifi"))
 hl.bind(mainMod .. " + CTRL + B",      hl.dsp.exec_cmd("naranjos-tui bluetooth"))
 hl.bind(mainMod .. " + CTRL + A",      hl.dsp.exec_cmd("naranjos-tui sonido"))
+hl.bind(mainMod .. " + CTRL + S",      hl.dsp.exec_cmd("naranjos-tui seguridad"))
 -- Ventanas
 hl.bind(mainMod .. " + W",             hl.dsp.window.close())
 hl.bind(mainMod .. " + F",             hl.dsp.window.fullscreen())

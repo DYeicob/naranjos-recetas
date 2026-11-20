@@ -1,0 +1,2 @@
+# NaranjOS peel · aquí van las reglas extra del cortafuegos (ficheros *.nft).
+# Los puertos que abras con «naranjos-peel abre» se guardan en naranjos-puertos.nft.

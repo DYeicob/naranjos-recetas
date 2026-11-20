@@ -1,0 +1,24 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6a.sh
+pkgname=nftables
+pkgver=1.1.7
+pkgrel=1
+pkgdesc='Cortafuegos del kernel Linux (nft)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom')
+depends=('libnftnl' 'libmnl' 'gmp' 'readline' 'ncurses')
+makedepends=()
+source=('https://www.netfilter.org/pub/nftables/nftables-1.1.7.tar.xz')
+sha256sums=('a6fbf060d8d4fff001517a2b94f356bb4366bfbf0ba366366f9d27cc38caa58f')
+build() {
+  cd nftables-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc --sbindir=/usr/sbin --disable-static \
+              --disable-debug --disable-man-doc --without-json --with-cli=readline
+  make
+}
+package() {
+  cd nftables-$pkgver
+  make DESTDIR="$pkgdir" install
+  # NaranjOS pone su propio servicio y sus reglas (paquete naranjos-peel)
+  rm -f "$pkgdir/usr/lib/systemd/system/nftables.service" "$pkgdir/etc/nftables.conf"
+}

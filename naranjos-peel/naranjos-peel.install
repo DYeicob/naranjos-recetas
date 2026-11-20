@@ -1,0 +1,42 @@
+post_install() {
+  echo "  NaranjOS peel: preparando la seguridad…"
+  # 1) endurecimiento del kernel, ya mismo
+  /usr/lib/systemd/systemd-sysctl /usr/lib/sysctl.d/60-naranjos-peel.conf >/dev/null 2>&1 || true
+  # 2) cortafuegos
+  if /usr/sbin/nft -c -f /etc/nftables.conf; then
+    systemctl enable --now nftables.service >/dev/null 2>&1 \
+      && echo "  ✔ cortafuegos activo" || echo "  ! no se pudo arrancar el cortafuegos: systemctl status nftables"
+  else
+    echo "  ! las reglas del cortafuegos no cargan (¿faltan módulos nf_tables en el kernel?)"
+  fi
+  # 3) MAC aleatoria en la WiFi (una distinta por red)
+  f=/etc/iwd/main.conf
+  if [ -f "$f" ] && ! grep -q '^AddressRandomization=' "$f"; then
+    if grep -q '^\[General\]' "$f"; then sed -i '/^\[General\]/a AddressRandomization=network' "$f"
+    else printf '\n[General]\nAddressRandomization=network\n' >> "$f"; fi
+    echo "  ✔ MAC aleatoria en la WiFi (se aplica al reiniciar)"
+  fi
+  # 4) DNS cifrado: /etc/resolv.conf tiene que pasar por systemd-resolved
+  if systemctl is-active -q systemd-resolved; then
+    systemctl restart systemd-resolved
+    if [ "$(readlink -f /etc/resolv.conf)" != /run/systemd/resolve/stub-resolv.conf ]; then
+      [ -e /etc/resolv.conf ] && cp -a /etc/resolv.conf /etc/resolv.conf.antes-de-peel
+      ln -sf ../run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+      echo "  ✔ /etc/resolv.conf ahora usa systemd-resolved (copia: /etc/resolv.conf.antes-de-peel)"
+    fi
+    networkctl reload >/dev/null 2>&1 || true
+    echo "  ✔ DNS cifrado (Quad9, DNS-over-TLS)"
+  else
+    echo "  ! systemd-resolved no está activo: el DNS cifrado no funcionará"
+  fi
+  echo "  Mira el estado con: naranjos-peel"
+}
+post_upgrade() {
+  /usr/lib/systemd/systemd-sysctl /usr/lib/sysctl.d/60-naranjos-peel.conf >/dev/null 2>&1 || true
+  systemctl is-enabled -q nftables.service 2>/dev/null && systemctl reload-or-restart nftables.service >/dev/null 2>&1
+  systemctl try-restart systemd-resolved >/dev/null 2>&1
+  return 0
+}
+pre_remove() {
+  systemctl disable --now nftables.service >/dev/null 2>&1 || true
+}

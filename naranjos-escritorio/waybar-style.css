@@ -57,6 +57,9 @@ tooltip label { color: #e6e6e6; }
 #battery.charging              { color: #87d787; }
 #battery.warning:not(.charging){ color: #ffd75f; }
 #battery.critical:not(.charging){ color: #ff5f5f; }
+#custom-peel        { color: #ff8700; padding: 0 9px; }
+#custom-peel.aviso  { color: #ffd75f; }
+#custom-peel.mal    { color: #ff5f5f; }
 #custom-sistema {
   color: #ff8700;
   padding: 0 16px 0 10px;

@@ -4,6 +4,12 @@ post_install() {
 }
 post_upgrade() {
   # que las sesiones de Hyprland abiertas relean la configuración ya actualizada
-  for f in /home/*/.config/hypr/hyprland.lua; do [ -f "$f" ] && touch "$f"; done
+  local d uid sig u
+  for d in /run/user/*/hypr/*/; do
+    [ -S "$d.socket.sock" ] || continue
+    uid=$(stat -c %u "$d"); sig=$(basename "$d"); u=$(id -nu "$uid" 2>/dev/null) || continue
+    runuser -u "$u" -- env XDG_RUNTIME_DIR="/run/user/$uid" HYPRLAND_INSTANCE_SIGNATURE="$sig" \
+      hyprctl reload >/dev/null 2>&1 && echo "  NaranjOS: escritorio de $u recargado"
+  done
   return 0
 }

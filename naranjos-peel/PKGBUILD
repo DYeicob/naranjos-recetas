@@ -1,0 +1,24 @@
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6a.sh (NO editar a mano)
+pkgname=naranjos-peel
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='NaranjOS peel: centro de seguridad (cortafuegos, DNS cifrado, kernel endurecido, MAC aleatoria, auditoría)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('nftables' 'lynis' 'iwd' 'sudo' 'naranjos-red')
+source=('00-naranjos.nft' '50-naranjos-peel.resolved' '60-naranjos-peel-dns.network.conf' '60-naranjos-peel.sysctl' 'naranjos-peel' 'nftables.conf' 'nftables.service' 'peel.md')
+sha256sums=('eb6813f7352718115bb64a5e62d711ff9306ceccc17d0ff40ad80d381daea8c3' '396fb157d2c58443948d0903c7eb22721451973c8b56470b7cb3762d515b4845' 'b3c381f87e1732c7817ff472f6589b86408c500368ad7323866add6125512419' 'cfc40187f62fc84c5ce5ac2f258b81f9a19349ab4dd1f9aae2ec0e87ce935143' '0ffbc8a4417ddebc58ce61d8a53f1c6ca3ca3667f4a147fc6b5da27c9b9b9438' '3ff656222e286666737c10c1e8ca4aeaf5c1698fe9159eec6c0fa97cc058b6e4' '417c89f656388abeacddeeaeee54f560ea3ad70ef162396ae8eaae1075626e24' '588f3d1e1431c7f50dfb4920aa283189426aec5f1fb843a9589c596f6fa75b92')
+install=naranjos-peel.install
+backup=('etc/nftables.conf' 'etc/nftables.d/00-naranjos.nft')
+package() {
+  install -Dm755 naranjos-peel                    "$pkgdir/usr/bin/naranjos-peel"
+  install -Dm644 nftables.conf                    "$pkgdir/etc/nftables.conf"
+  install -Dm644 00-naranjos.nft                  "$pkgdir/etc/nftables.d/00-naranjos.nft"
+  install -Dm644 nftables.service                 "$pkgdir/usr/lib/systemd/system/nftables.service"
+  install -Dm644 60-naranjos-peel.sysctl          "$pkgdir/usr/lib/sysctl.d/60-naranjos-peel.conf"
+  install -Dm644 50-naranjos-peel.resolved        "$pkgdir/usr/lib/systemd/resolved.conf.d/50-naranjos-peel.conf"
+  install -Dm644 60-naranjos-peel-dns.network.conf \
+                 "$pkgdir/usr/lib/systemd/network/25-naranjos-wifi.network.d/60-naranjos-peel-dns.conf"
+  install -Dm644 peel.md                          "$pkgdir/usr/share/doc/naranjos/peel.md"
+}

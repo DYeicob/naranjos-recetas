@@ -172,6 +172,22 @@ quieras compartir (sale un marco naranja).
 | `zumo limpia` | Quitar lo que sobra |
 | `zumo ayuda` | Todas las órdenes |
 
+## 9c. Seguridad: NaranjOS peel
+
+`naranjos-peel` es el centro de seguridad de NaranjOS (**Super + Ctrl + S** o el escudo de la barra).
+De serie: cortafuegos con toda la entrada cerrada, DNS cifrado (Quad9), MAC aleatoria en la WiFi y
+kernel endurecido. El escudo se pone amarillo si hay algo a medias y rojo si el cortafuegos está apagado.
+
+| Orden | Qué hace |
+|---|---|
+| `naranjos-peel` | Estado de todo |
+| `naranjos-peel abre 22/tcp` | Abrir un puerto de entrada |
+| `naranjos-peel cierra 22/tcp` | Cerrarlo |
+| `naranjos-peel portal` | WiFi de hotel/tren con página de acceso (`portal fin` al acabar) |
+| `naranjos-peel auditoria` | Auditoría completa con Lynis |
+
+Guía completa: `less /usr/share/doc/naranjos/peel.md`
+
 ## 10. Problemas frecuentes
 
 - **No se abre nada al pulsar un atajo:** abre una terminal con Super + Enter y mira si
@@ -183,11 +199,13 @@ quieras compartir (sale un marco naranja).
 - **No puedo apagar desde el menú:** comprueba que polkit funciona con `systemctl status polkit`.
 - **No suena nada:** `wpctl status` debe mostrar tu tarjeta. Si no aparece, cierra sesión y vuelve
   a entrar (el sonido arranca con la sesión). Comprueba también que no esté en silencio.
+- **Una WiFi pública no carga su página de acceso:** `naranjos-peel portal` (y luego `naranjos-peel portal fin`).
 - **La pantalla de inicio de sesión no aparece o falla:** pulsa Ctrl + Alt + Fn + F2, inicia sesión
   ahí y desactívala con `sudo systemctl disable greetd`.
 
 ## 11. Lo que viene
 
 - Bandeja de iconos en la barra.
+- VPN propia, antivirus y más piezas de NaranjOS peel.
 - Instalador de la ISO.
 - Driver de NVIDIA para la gráfica dedicada.

@@ -1,8 +1,9 @@
 #!/bin/bash
-# naranjos-tui <wifi|bluetooth|sonido> — abre el menú en una ventana flotante
+# naranjos-tui <wifi|bluetooth|sonido|seguridad> — abre el menú en una ventana flotante
 case "${1:-}" in
   wifi)      exec foot --app-id=naranjos-tui -T "WiFi"      impala ;;
   bluetooth) exec foot --app-id=naranjos-tui -T "Bluetooth" bluetui ;;
   sonido)    exec foot --app-id=naranjos-tui -T "Sonido"    wiremix ;;
-  *) echo "Uso: naranjos-tui wifi|bluetooth|sonido"; exit 1 ;;
+  seguridad) exec foot --app-id=naranjos-tui -T "Seguridad" bash -c 'naranjos-peel; echo; read -rsn1 -p "Pulsa una tecla para cerrar…"' ;;
+  *) echo "Uso: naranjos-tui wifi|bluetooth|sonido|seguridad"; exit 1 ;;
 esac

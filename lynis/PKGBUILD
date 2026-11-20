@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6a.sh
+pkgname=lynis
+pkgver=3.1.7
+pkgrel=1
+pkgdesc='Auditoría de seguridad del sistema'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-only')
+depends=('bash')
+makedepends=()
+source=('https://github.com/CISOfy/lynis/archive/3.1.7/lynis-3.1.7.tar.gz')
+sha256sums=('48d829d0dc2c583a3e838cc09a7190b69a3af844bcb913c7cf9c0226b04b95c5')
+backup=('etc/lynis/default.prf')
+package() {
+  cd lynis-$pkgver
+  install -Dm755 lynis       "$pkgdir/usr/bin/lynis"
+  install -dm755             "$pkgdir/usr/share/lynis"
+  cp -r include plugins db   "$pkgdir/usr/share/lynis/"
+  chmod -R go-w              "$pkgdir/usr/share/lynis"
+  install -Dm644 default.prf "$pkgdir/etc/lynis/default.prf"
+  install -Dm644 lynis.8     "$pkgdir/usr/share/man/man8/lynis.8"
+}
