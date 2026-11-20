@@ -28,6 +28,8 @@ bloquea(){  # apunta el bloqueo y avisa a los usuarios
 
 nuevo(){
   local k="$1"
+  # los controladores USB del propio portátil (usb1, usb2…) nunca se bloquean: de ellos cuelga todo
+  [[ "$k" =~ ^[0-9]+-[0-9.]+$ ]] || exit 0
   [ -d "$S/$k" ] || exit 0
   if [ "$(modo)" != protegido ]; then exit 0; fi
   if permitido "$k"; then autoriza "$k" 1
@@ -36,6 +38,9 @@ nuevo(){
 
 aplica(){
   local h k
+  # los controladores (usb1, usb2…) siempre autorizados
+  for h in "$S"/usb*; do [ "$(cat "$h/authorized" 2>/dev/null)" = 0 ] && echo 1 > "$h/authorized"; done
+  sed -i '/^usb[0-9]*|/d' "$RUN/bloqueados" 2>/dev/null
   if [ "$(modo)" = protegido ]; then
     for h in "$S"/usb*; do [ -e "$h/authorized_default" ] && echo 0 > "$h/authorized_default"; done
     # los ya conectados: los permitidos siguen, el resto se bloquea (de arriba abajo en el árbol)
