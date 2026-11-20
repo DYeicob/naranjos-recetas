@@ -1,0 +1,35 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6e1.sh
+pkgname=apparmor
+pkgver=4.1.8
+pkgrel=1
+pkgdesc='AppArmor: perfiles que encierran a cada programa (lo gestiona naranjos-peel)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-only' 'LGPL-2.1-only')
+depends=('glibc' 'gcc-libs')
+makedepends=('autoconf' 'automake' 'libtool' 'bison' 'flex' 'gettext' 'perl' 'python' 'pkgconf')
+source=('https://gitlab.com/apparmor/apparmor/-/archive/v4.1.8/apparmor-v4.1.8.tar.gz' 'ax_check_compile_flag.m4')
+sha256sums=('00f0434405f72b2a624587a92e56fd5e350af91077603b372706469f7c5e9757' '629dc6835eb1e2bd586fd842a4db66541bc442bcc2b13d6f24907631c5a688b0')
+backup=('etc/apparmor/parser.conf')
+build() {
+  cd apparmor-v$pkgver/libraries/libapparmor
+  mkdir -p "$srcdir/m4"; cp "$srcdir/ax_check_compile_flag.m4" "$srcdir/m4/"
+  ACLOCAL_PATH="$srcdir/m4" sh ./autogen.sh
+  ./configure --prefix=/usr --with-perl=no --with-python=no --with-ruby=no
+  make
+  cd ../..
+  make -C binutils
+  make -C parser
+}
+package() {
+  cd apparmor-v$pkgver
+  make -C libraries/libapparmor DESTDIR="$pkgdir" install
+  # NaranjOS: todo en /usr/bin y /usr/lib/apparmor (nada en /sbin ni /lib)
+  make -C binutils DESTDIR="$pkgdir" SBINDIR="$pkgdir/usr/bin" install
+  make -C parser   DESTDIR="$pkgdir" SBINDIR="$pkgdir/usr/bin" USR_SBINDIR="$pkgdir/usr/bin" \
+                   APPARMOR_BIN_PREFIX="$pkgdir/usr/lib/apparmor" install
+  make -C profiles DESTDIR="$pkgdir" install
+  rm -f "$pkgdir"/usr/lib/libapparmor.la
+  # los perfiles los carga naranjos-apparmor.service (naranjos-peel), no el servicio de AppArmor
+  rm -rf "$pkgdir"/usr/lib/systemd
+}

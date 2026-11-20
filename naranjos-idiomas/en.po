@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NaranjOS 0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DYeicob/naranjos-recetas/issues\n"
-"POT-Creation-Date: 2026-11-20 13:45+0100\n"
+"POT-Creation-Date: 2026-11-20 15:46+0100\n"
 "PO-Revision-Date: 2026-11-20 13:30+0100\n"
 "Last-Translator: NaranjOS\n"
 "Language-Team: English\n"
@@ -13,258 +13,263 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: peel/naranjos-peel:35
+#: peel/naranjos-peel:37
 msgid "Las reglas tienen un error; no se ha cambiado nada"
 msgstr "The rules have an error; nothing was changed"
 
-#: peel/naranjos-peel:36
+#: peel/naranjos-peel:38
 msgid "No se pudo recargar el cortafuegos"
 msgstr "Could not reload the firewall"
 
-#: peel/naranjos-peel:45
+#: peel/naranjos-peel:47
 msgid "(la piel que protege la naranja)"
 msgstr "(the skin that protects the orange)"
 
-#: peel/naranjos-peel:47
+#: peel/naranjos-peel:49
 msgid "Cortafuegos"
 msgstr "Firewall"
 
-#: peel/naranjos-peel:49 peel/naranjos-peel:51
+#: peel/naranjos-peel:51 peel/naranjos-peel:53
 msgid "cortafuegos"
 msgstr "firewall"
 
-#: peel/naranjos-peel:49
+#: peel/naranjos-peel:51
 msgid "activo (entrante cerrado, saliente abierto)"
 msgstr "active (incoming closed, outgoing open)"
 
-#: peel/naranjos-peel:51
+#: peel/naranjos-peel:53
 msgid "APAGADO"
 msgstr "OFF"
 
-#: peel/naranjos-peel:54
+#: peel/naranjos-peel:56
 msgid "puertos abiertos"
 msgstr "open ports"
 
-#: peel/naranjos-peel:54
+#: peel/naranjos-peel:56 initramfs/naranjos-initramfs:201
 msgid "ninguno"
 msgstr "none"
 
-#: peel/naranjos-peel:59 peel/naranjos-peel:689
+#: peel/naranjos-peel:61 peel/naranjos-peel:696
 msgid "Antivirus"
 msgstr "Antivirus"
 
-#: peel/naranjos-peel:62
+#: peel/naranjos-peel:64
 msgid "Integridad y USB"
 msgstr "Integrity and USB"
 
-#: peel/naranjos-peel:68
+#: peel/naranjos-peel:70
 msgid "DNS del sistema"
 msgstr "system DNS"
 
-#: peel/naranjos-peel:68
+#: peel/naranjos-peel:70
 msgid "/etc/resolv.conf no usa systemd-resolved (el DNS NO va cifrado)"
 msgstr "/etc/resolv.conf does not use systemd-resolved (DNS is NOT encrypted)"
 
-#: peel/naranjos-peel:70 peel/naranjos-peel:72 peel/naranjos-peel:147
+#: peel/naranjos-peel:72 peel/naranjos-peel:74 peel/naranjos-peel:151
 msgid "DNS cifrado"
 msgstr "encrypted DNS"
 
-#: peel/naranjos-peel:70
+#: peel/naranjos-peel:72
 msgid "estricto (solo DNS-over-TLS)"
 msgstr "strict (DNS-over-TLS only)"
 
-#: peel/naranjos-peel:72
+#: peel/naranjos-peel:74
 msgid "flexible (cifra siempre que la red lo permite)"
 msgstr "flexible (encrypts whenever the network allows it)"
 
-#: peel/naranjos-peel:76
+#: peel/naranjos-peel:78
 msgid "servidores: %s"
 msgstr "servers: %s"
 
-#: peel/naranjos-peel:78
+#: peel/naranjos-peel:80
 msgid "(systemd-resolved no dice que use DNS-over-TLS: puede ir sin cifrar)"
 msgstr ""
 "(systemd-resolved does not report DNS-over-TLS: it may be unencrypted)"
 
-#: peel/naranjos-peel:80 peel/naranjos-peel:82
+#: peel/naranjos-peel:82 peel/naranjos-peel:84
 msgid "red local"
 msgstr "local network"
 
-#: peel/naranjos-peel:80
+#: peel/naranjos-peel:82
 msgid "visible (LLMNR/mDNS encendidos)"
 msgstr "visible (LLMNR/mDNS on)"
 
-#: peel/naranjos-peel:82
+#: peel/naranjos-peel:84
 msgid "invisible (tu nombre de equipo no se anuncia)"
 msgstr "invisible (your computer name is not announced)"
 
-#: peel/naranjos-peel:87 peel/naranjos-peel:89
+#: peel/naranjos-peel:89 peel/naranjos-peel:91
 msgid "MAC aleatoria"
 msgstr "random MAC"
 
-#: peel/naranjos-peel:87
+#: peel/naranjos-peel:89
 msgid "sí (una distinta por cada red; se aplica al reiniciar iwd)"
 msgstr "yes (a different one per network; applied when iwd restarts)"
 
-#: peel/naranjos-peel:89
+#: peel/naranjos-peel:91
 msgid "no configurada"
 msgstr "not configured"
 
-#: peel/naranjos-peel:103 peel/naranjos-peel:106
+#: peel/naranjos-peel:105 peel/naranjos-peel:108
 msgid "endurecimiento"
 msgstr "hardening"
 
-#: peel/naranjos-peel:103
+#: peel/naranjos-peel:105
 msgid "aplicado (%s/%s)"
 msgstr "applied (%s/%s)"
 
-#: peel/naranjos-peel:104
+#: peel/naranjos-peel:106
 msgid "(%s más solo se pueden comprobar con: sudo naranjos-peel)"
 msgstr "(%s more can only be checked with: sudo naranjos-peel)"
 
-#: peel/naranjos-peel:106
+#: peel/naranjos-peel:108
 msgid "%s/%s (reinicia para aplicarlo todo)"
 msgstr "%s/%s (reboot to apply everything)"
 
-#: peel/naranjos-peel:107
+#: peel/naranjos-peel:109
 msgid "faltan:"
 msgstr "missing:"
 
-#: peel/naranjos-peel:111
+#: peel/naranjos-peel:113
 msgid "activo"
 msgstr "active"
 
-#: peel/naranjos-peel:112
+#: peel/naranjos-peel:114
 msgid "desactivado"
 msgstr "disabled"
 
-#: peel/naranjos-peel:113
+#: peel/naranjos-peel:115 peel/naranjos-peel:1009
 msgid "desconocido"
 msgstr "unknown"
 
-#: peel/naranjos-peel:116
+#: peel/naranjos-peel:120
 msgid "Auditoría"
 msgstr "Audit"
 
-#: peel/naranjos-peel:120
+#: peel/naranjos-peel:124
 msgid "última auditoría"
 msgstr "last audit"
 
-#: peel/naranjos-peel:120
+#: peel/naranjos-peel:124
 msgid "puntuación Lynis: %s/100"
 msgstr "Lynis score: %s/100"
 
-#: peel/naranjos-peel:122
+#: peel/naranjos-peel:126
 msgid "Hay una auditoría hecha; para ver la puntuación: sudo naranjos-peel"
 msgstr "There is an audit; to see the score: sudo naranjos-peel"
 
-#: peel/naranjos-peel:124
+#: peel/naranjos-peel:128
 msgid "Haz una con: naranjos-peel auditoria"
 msgstr "Run one with: naranjos-peel auditoria"
 
-#: peel/naranjos-peel:127
+#: peel/naranjos-peel:131
 msgid "Más: naranjos-peel ayuda"
 msgstr "More: naranjos-peel ayuda"
 
-#: peel/naranjos-peel:134
+#: peel/naranjos-peel:138
 msgid "Cortafuegos activo"
 msgstr "Firewall active"
 
-#: peel/naranjos-peel:135
+#: peel/naranjos-peel:139
 msgid "abiertos:"
 msgstr "open:"
 
-#: peel/naranjos-peel:137
+#: peel/naranjos-peel:141
 msgid "¡Cortafuegos APAGADO!"
 msgstr "Firewall OFF!"
 
-#: peel/naranjos-peel:143 peel/naranjos-peel:292
+#: peel/naranjos-peel:147 peel/naranjos-peel:298
 msgid "caída"
 msgstr "down"
 
-#: peel/naranjos-peel:143 peel/naranjos-peel:292
+#: peel/naranjos-peel:147 peel/naranjos-peel:298
 msgid "Internet bloqueado por el kill switch"
 msgstr "Internet blocked by the kill switch"
 
-#: peel/naranjos-peel:145 peel/naranjos-peel:294
+#: peel/naranjos-peel:149 peel/naranjos-peel:300
 msgid "desconectada"
 msgstr "disconnected"
 
-#: peel/naranjos-peel:148
+#: peel/naranjos-peel:152
 msgid "DNS sin cifrar"
 msgstr "Unencrypted DNS"
 
-#: peel/naranjos-peel:152
+#: peel/naranjos-peel:156
 msgid "Antivirus: firmas sin actualizar"
 msgstr "Antivirus: signatures out of date"
 
-#: peel/naranjos-peel:153
+#: peel/naranjos-peel:157
 msgid "Antivirus: al día"
 msgstr "Antivirus: up to date"
 
-#: peel/naranjos-peel:155
+#: peel/naranjos-peel:159
 msgid "Cuarentena: %s fichero(s)"
 msgstr "Quarantine: %s file(s)"
 
-#: peel/naranjos-peel:161
+#: peel/naranjos-peel:165
 msgid "Integridad: hay cosas que revisar"
 msgstr "Integrity: there are things to check"
 
-#: peel/naranjos-peel:162
+#: peel/naranjos-peel:166
 msgid "Integridad: algo ha cambiado en el sistema"
 msgstr "Integrity: something has changed in the system"
 
-#: peel/naranjos-peel:163
+#: peel/naranjos-peel:167
 msgid "Integridad: sin cambios"
 msgstr "Integrity: no changes"
 
-#: peel/naranjos-peel:168
+#: peel/naranjos-peel:172
 msgid "USB bloqueados: %s (Super + Ctrl + U)"
 msgstr "Blocked USB devices: %s (Super + Ctrl + U)"
 
-#: peel/naranjos-peel:169
+#: peel/naranjos-peel:173
 msgid "USB: protegido"
 msgstr "USB: protected"
 
-#: peel/naranjos-peel:170
+#: peel/naranjos-peel:175
+msgid "apagado"
+msgstr "off"
+
+#: peel/naranjos-peel:176
 msgid "clic: centro de seguridad"
 msgstr "click: security centre"
 
-#: peel/naranjos-peel:171
+#: peel/naranjos-peel:177
 msgid "clic derecho: conectar/desconectar la VPN"
 msgstr "right click: connect/disconnect the VPN"
 
-#: peel/naranjos-peel:179
+#: peel/naranjos-peel:185
 msgid "Puerto no válido: %s (ejemplo: 22/tcp)"
 msgstr "Invalid port: %s (example: 22/tcp)"
 
-#: peel/naranjos-peel:181
+#: peel/naranjos-peel:187
 msgid "Protocolo no válido: %s (tcp o udp)"
 msgstr "Invalid protocol: %s (tcp or udp)"
 
-#: peel/naranjos-peel:185 peel/naranjos-peel:194 peel/naranjos-peel:212
-#: peel/naranjos-peel:254 peel/naranjos-peel:303 peel/naranjos-peel:477
-#: peel/naranjos-peel:497 peel/naranjos-peel:522 peel/naranjos-peel:653
-#: peel/naranjos-peel:669 peel/naranjos-peel:698 peel/naranjos-peel:819
-#: peel/naranjos-peel:861 peel/naranjos-peel:882 peel/naranjos-peel:911
-#: peel/naranjos-peel:939 idiomas/naranjos-idioma:100 esc/naranjos-tui:12
-#: esc/naranjos-captura:12 zumo:24
+#: peel/naranjos-peel:191 peel/naranjos-peel:200 peel/naranjos-peel:218
+#: peel/naranjos-peel:260 peel/naranjos-peel:309 peel/naranjos-peel:483
+#: peel/naranjos-peel:503 peel/naranjos-peel:528 peel/naranjos-peel:660
+#: peel/naranjos-peel:676 peel/naranjos-peel:705 peel/naranjos-peel:827
+#: peel/naranjos-peel:870 peel/naranjos-peel:891 peel/naranjos-peel:920
+#: peel/naranjos-peel:974 peel/naranjos-peel:1000 peel/naranjos-peel:1040
+#: esc/naranjos-captura:12 esc/naranjos-tui:12 idiomas/naranjos-idioma:100
+#: zumo:24
 msgid "Uso:"
 msgstr "Usage:"
 
-#: peel/naranjos-peel:190
+#: peel/naranjos-peel:196
 msgid "Regla no válida; no se ha cambiado nada"
 msgstr "Invalid rule; nothing was changed"
 
-#: peel/naranjos-peel:191
+#: peel/naranjos-peel:197
 msgid "Abierto:"
 msgstr "Opened:"
 
-#: peel/naranjos-peel:198
+#: peel/naranjos-peel:204
 msgid "Cerrado:"
 msgstr "Closed:"
 
-#: peel/naranjos-peel:208
+#: peel/naranjos-peel:214
 msgid ""
 "DNS estricto: si la red bloquea DNS-over-TLS no habrá DNS (vuelve con: "
 "naranjos-peel dns flexible)"
@@ -272,23 +277,23 @@ msgstr ""
 "Strict DNS: if the network blocks DNS-over-TLS there will be no DNS (undo "
 "with: naranjos-peel dns flexible)"
 
-#: peel/naranjos-peel:211
+#: peel/naranjos-peel:217
 msgid "DNS flexible: cifrado siempre que la red lo permita"
 msgstr "Flexible DNS: encrypted whenever the network allows it"
 
-#: peel/naranjos-peel:222
+#: peel/naranjos-peel:228
 msgid "No hay conexión de red"
 msgstr "No network connection"
 
-#: peel/naranjos-peel:225
+#: peel/naranjos-peel:231
 msgid "Vuelve el DNS cifrado de NaranjOS en %s"
 msgstr "NaranjOS encrypted DNS is back on %s"
 
-#: peel/naranjos-peel:228
+#: peel/naranjos-peel:234
 msgid "No encuentro el router de %s"
 msgstr "Cannot find the router of %s"
 
-#: peel/naranjos-peel:231
+#: peel/naranjos-peel:237
 msgid ""
 "Modo portal en %s: usa el DNS de la red (%s). Abre el navegador e inicia "
 "sesión."
@@ -296,19 +301,19 @@ msgstr ""
 "Portal mode on %s: using the network's DNS (%s). Open the browser and log "
 "in."
 
-#: peel/naranjos-peel:232
+#: peel/naranjos-peel:238
 msgid "Cuando termines:"
 msgstr "When you are done:"
 
-#: peel/naranjos-peel:236
+#: peel/naranjos-peel:242
 msgid "Falta lynis (zumo instala lynis)"
 msgstr "lynis is missing (zumo instala lynis)"
 
-#: peel/naranjos-peel:239
+#: peel/naranjos-peel:245
 msgid "Informe completo:"
 msgstr "Full report:"
 
-#: peel/naranjos-peel:249
+#: peel/naranjos-peel:255
 msgid ""
 "Red local visible: impresoras, Chromecast y equipos por nombre (vuelve con: "
 "naranjos-peel red-local no)"
@@ -316,37 +321,37 @@ msgstr ""
 "Local network visible: printers, Chromecast and computers by name (undo "
 "with: naranjos-peel red-local no)"
 
-#: peel/naranjos-peel:253
+#: peel/naranjos-peel:259
 msgid "Red local invisible: tu equipo no anuncia su nombre"
 msgstr "Local network invisible: your computer does not announce its name"
 
-#: peel/naranjos-peel:283 peel/naranjos-peel:470
+#: peel/naranjos-peel:289 peel/naranjos-peel:476
 msgid "conectada"
 msgstr "connected"
 
-#: peel/naranjos-peel:284
+#: peel/naranjos-peel:290
 msgid "kill switch activo: si el túnel se cae, no sale nada a Internet"
 msgstr ""
 "kill switch on: if the tunnel goes down, nothing goes out to the Internet"
 
-#: peel/naranjos-peel:288
+#: peel/naranjos-peel:294
 msgid "último contacto con el servidor: hace %s s"
 msgstr "last contact with the server: %s s ago"
 
-#: peel/naranjos-peel:289
+#: peel/naranjos-peel:295
 msgid "todavía sin contacto con el servidor"
 msgstr "no contact with the server yet"
 
-#: peel/naranjos-peel:296 peel/naranjos-peel:473
+#: peel/naranjos-peel:302 peel/naranjos-peel:479
 msgid ""
 "sin perfiles. Importa uno con: naranjos-peel vpn importa <fichero.conf>"
 msgstr "no profiles. Import one with: naranjos-peel vpn importa <file.conf>"
 
-#: peel/naranjos-peel:307
+#: peel/naranjos-peel:313
 msgid "Nombre de perfil no válido"
 msgstr "Invalid profile name"
 
-#: peel/naranjos-peel:335
+#: peel/naranjos-peel:341
 msgid ""
 "Este fichero no trae la clave: Proton la tapa con ***** si lo descargas más "
 "tarde desde la lista."
@@ -354,7 +359,7 @@ msgstr ""
 "This file has no key: Proton hides it with ***** if you download it later "
 "from the list."
 
-#: peel/naranjos-peel:336
+#: peel/naranjos-peel:342
 msgid ""
 "Crea una configuración NUEVA y pulsa Download en la ventana que sale justo "
 "después de Create."
@@ -362,38 +367,38 @@ msgstr ""
 "Create a NEW configuration and press Download in the window shown right "
 "after Create."
 
-#: peel/naranjos-peel:339
+#: peel/naranjos-peel:345
 msgid "El fichero no tiene una clave privada de WireGuard válida"
 msgstr "The file has no valid WireGuard private key"
 
-#: peel/naranjos-peel:340
+#: peel/naranjos-peel:346
 msgid "El fichero no tiene la clave pública del servidor"
 msgstr "The file has no server public key"
 
-#: peel/naranjos-peel:341
+#: peel/naranjos-peel:347
 msgid "La clave precompartida no es válida"
 msgstr "The preshared key is not valid"
 
-#: peel/naranjos-peel:342
+#: peel/naranjos-peel:348
 msgid "Faltan la dirección (Address) o el servidor (Endpoint)"
 msgstr "The address (Address) or the server (Endpoint) is missing"
 
-#: peel/naranjos-peel:343
+#: peel/naranjos-peel:349
 msgid "el fichero tiene varios servidores; NaranjOS usa el primero"
 msgstr "the file has several servers; NaranjOS uses the first one"
 
-#: peel/naranjos-peel:357
+#: peel/naranjos-peel:363
 msgid "Perfil «%s» importado. Conéctate con: naranjos-peel vpn conecta %s"
 msgstr "Profile «%s» imported. Connect with: naranjos-peel vpn conecta %s"
 
-#: peel/naranjos-peel:358
+#: peel/naranjos-peel:364
 msgid ""
 "Ya puedes borrar el fichero original: la clave queda guardada solo para "
 "root."
 msgstr ""
 "You can delete the original file now: the key is stored for root only."
 
-#: peel/naranjos-peel:366
+#: peel/naranjos-peel:372
 msgid ""
 "No hay perfiles de VPN. Importa uno con: naranjos-peel vpn importa "
 "<fichero.conf>"
@@ -401,31 +406,31 @@ msgstr ""
 "There are no VPN profiles. Import one with: naranjos-peel vpn importa "
 "<file.conf>"
 
-#: peel/naranjos-peel:368 peel/naranjos-peel:480
+#: peel/naranjos-peel:374 peel/naranjos-peel:486
 msgid "No existe el perfil «%s»"
 msgstr "Profile «%s» does not exist"
 
-#: peel/naranjos-peel:370
+#: peel/naranjos-peel:376
 msgid "El kernel no tiene WireGuard (módulo «wireguard»)"
 msgstr "The kernel has no WireGuard («wireguard» module)"
 
-#: peel/naranjos-peel:380
+#: peel/naranjos-peel:386
 msgid "No encuentro la dirección del servidor %s"
 msgstr "Cannot find the address of server %s"
 
-#: peel/naranjos-peel:424
+#: peel/naranjos-peel:430
 msgid "No se pudo poner el kill switch; no se ha conectado"
 msgstr "Could not set the kill switch; not connected"
 
-#: peel/naranjos-peel:429
+#: peel/naranjos-peel:435
 msgid "Conectando a «%s»…"
 msgstr "Connecting to «%s»…"
 
-#: peel/naranjos-peel:441
+#: peel/naranjos-peel:447
 msgid "VPN conectada: %s (kill switch activo)"
 msgstr "VPN connected: %s (kill switch on)"
 
-#: peel/naranjos-peel:443
+#: peel/naranjos-peel:449
 msgid ""
 "el servidor aún no responde; Internet queda bloqueado hasta que conecte o "
 "desconectes"
@@ -433,31 +438,31 @@ msgstr ""
 "the server is not answering yet; the Internet stays blocked until it "
 "connects or you disconnect"
 
-#: peel/naranjos-peel:460
+#: peel/naranjos-peel:466
 msgid "VPN desconectada (kill switch quitado)"
 msgstr "VPN disconnected (kill switch removed)"
 
-#: peel/naranjos-peel:486
+#: peel/naranjos-peel:492
 msgid "Perfil «%s» borrado"
 msgstr "Profile «%s» deleted"
 
-#: peel/naranjos-peel:493
+#: peel/naranjos-peel:499
 msgid "La VPN se conectará sola al encender (con el último perfil usado)"
 msgstr "The VPN will connect by itself at boot (with the last profile used)"
 
-#: peel/naranjos-peel:496
+#: peel/naranjos-peel:502
 msgid "La VPN ya no se conecta sola al encender"
 msgstr "The VPN no longer connects by itself at boot"
 
-#: peel/naranjos-peel:503
+#: peel/naranjos-peel:509
 msgid "VPN gratis con Proton VPN (0 €, sin tarjeta):"
 msgstr "Free VPN with Proton VPN (0 €, no card):"
 
-#: peel/naranjos-peel:504
+#: peel/naranjos-peel:510
 msgid "Crea una cuenta gratuita en https://account.protonvpn.com"
 msgstr "Create a free account at https://account.protonvpn.com"
 
-#: peel/naranjos-peel:505
+#: peel/naranjos-peel:511
 msgid ""
 "Downloads → WireGuard configuration → plataforma «GNU/Linux» → un servidor "
 "gratuito → Create"
@@ -465,239 +470,239 @@ msgstr ""
 "Downloads → WireGuard configuration → platform «GNU/Linux» → a free server →"
 " Create"
 
-#: peel/naranjos-peel:506
+#: peel/naranjos-peel:512
 msgid "Descarga el fichero .conf y en una terminal:"
 msgstr "Download the .conf file and, in a terminal:"
 
-#: peel/naranjos-peel:508
+#: peel/naranjos-peel:514
 msgid "(o Super + Ctrl + V)"
 msgstr "(or Super + Ctrl + V)"
 
-#: peel/naranjos-peel:549 peel/naranjos-peel:605
+#: peel/naranjos-peel:555 peel/naranjos-peel:612
 msgid "antivirus"
 msgstr "antivirus"
 
-#: peel/naranjos-peel:549
+#: peel/naranjos-peel:555
 msgid "no instalado"
 msgstr "not installed"
 
-#: peel/naranjos-peel:552 peel/naranjos-peel:556 peel/naranjos-peel:557
+#: peel/naranjos-peel:558 peel/naranjos-peel:562 peel/naranjos-peel:563
 msgid "firmas"
 msgstr "signatures"
 
-#: peel/naranjos-peel:552
+#: peel/naranjos-peel:558
 msgid "aún no descargadas"
 msgstr "not downloaded yet"
 
-#: peel/naranjos-peel:556
+#: peel/naranjos-peel:562 peel/naranjos-peel:1028
 msgid "al día (%s)"
 msgstr "up to date (%s)"
 
-#: peel/naranjos-peel:557
+#: peel/naranjos-peel:563
 msgid "de hace %s días"
 msgstr "%s days old"
 
-#: peel/naranjos-peel:560 peel/naranjos-peel:562
+#: peel/naranjos-peel:566 peel/naranjos-peel:568
 msgid "vigilancia"
 msgstr "watcher"
 
-#: peel/naranjos-peel:560
+#: peel/naranjos-peel:566
 msgid "activa en"
 msgstr "active on"
 
-#: peel/naranjos-peel:562
+#: peel/naranjos-peel:568
 msgid "apagada"
 msgstr "off"
 
-#: peel/naranjos-peel:566 peel/naranjos-peel:567 peel/naranjos-peel:597
+#: peel/naranjos-peel:572 peel/naranjos-peel:573 peel/naranjos-peel:604
 msgid "cuarentena"
 msgstr "quarantine"
 
-#: peel/naranjos-peel:566
+#: peel/naranjos-peel:572
 msgid "%s fichero(s)"
 msgstr "%s file(s)"
 
-#: peel/naranjos-peel:567
+#: peel/naranjos-peel:573
 msgid "vacía"
 msgstr "empty"
 
-#: peel/naranjos-peel:568
+#: peel/naranjos-peel:574
 msgid "último análisis:"
 msgstr "last scan:"
 
-#: peel/naranjos-peel:587
+#: peel/naranjos-peel:594
 msgid "Falta el motor del antivirus (zumo instala clamav)"
 msgstr "The antivirus engine is missing (zumo instala clamav)"
 
-#: peel/naranjos-peel:588
+#: peel/naranjos-peel:595
 msgid "Aún no hay firmas. Descárgalas con: naranjos-peel antivirus actualiza"
 msgstr ""
 "There are no signatures yet. Download them with: naranjos-peel antivirus "
 "actualiza"
 
-#: peel/naranjos-peel:597 peel/naranjos-peel:600
+#: peel/naranjos-peel:604 peel/naranjos-peel:607
 msgid "amenaza"
 msgstr "threat"
 
-#: peel/naranjos-peel:598
+#: peel/naranjos-peel:605
 msgid "NaranjOS peel: amenaza bloqueada"
 msgstr "NaranjOS peel: threat blocked"
 
-#: peel/naranjos-peel:598
+#: peel/naranjos-peel:605
 msgid "está en cuarentena"
 msgstr "it is in quarantine"
 
-#: peel/naranjos-peel:600
+#: peel/naranjos-peel:607
 msgid "no se pudo mover a la cuarentena"
 msgstr "could not be moved to quarantine"
 
-#: peel/naranjos-peel:601
+#: peel/naranjos-peel:608
 msgid "NaranjOS peel: amenaza encontrada"
 msgstr "NaranjOS peel: threat found"
 
-#: peel/naranjos-peel:605
+#: peel/naranjos-peel:612
 msgid "algunos ficheros no se pudieron leer"
 msgstr "some files could not be read"
 
-#: peel/naranjos-peel:610
+#: peel/naranjos-peel:617
 msgid "Analiza como tu usuario, sin sudo"
 msgstr "Scan as your user, without sudo"
 
-#: peel/naranjos-peel:613
+#: peel/naranjos-peel:620
 msgid "Analizando %s… (cargar las firmas tarda unos segundos)"
 msgstr "Scanning %s… (loading the signatures takes a few seconds)"
 
-#: peel/naranjos-peel:614
+#: peel/naranjos-peel:621
 msgid "Todo limpio"
 msgstr "All clean"
 
-#: peel/naranjos-peel:639
+#: peel/naranjos-peel:646
 msgid "Descargando las firmas del antivirus (la primera vez son unos 200 MB)…"
 msgstr "Downloading the antivirus signatures (about 200 MB the first time)…"
 
-#: peel/naranjos-peel:640
+#: peel/naranjos-peel:647
 msgid ""
 "No se pudieron descargar las firmas (mira: journalctl -u naranjos-firmas)"
 msgstr ""
 "Could not download the signatures (see: journalctl -u naranjos-firmas)"
 
-#: peel/naranjos-peel:641
+#: peel/naranjos-peel:648
 msgid "Firmas al día"
 msgstr "Signatures up to date"
 
-#: peel/naranjos-peel:650
+#: peel/naranjos-peel:657
 msgid "Vigilancia de descargas activada (y análisis semanal)"
 msgstr "Downloads watcher on (and weekly scan)"
 
-#: peel/naranjos-peel:652
+#: peel/naranjos-peel:659
 msgid "Vigilancia de descargas apagada"
 msgstr "Downloads watcher off"
 
-#: peel/naranjos-peel:664 peel/naranjos-peel:681
+#: peel/naranjos-peel:671 peel/naranjos-peel:688
 msgid "La cuarentena está vacía"
 msgstr "The quarantine is empty"
 
-#: peel/naranjos-peel:669
+#: peel/naranjos-peel:676
 msgid "míralo con: naranjos-peel antivirus cuarentena"
 msgstr "see it with: naranjos-peel antivirus cuarentena"
 
-#: peel/naranjos-peel:672
+#: peel/naranjos-peel:679
 msgid "No está en la cuarentena: %s"
 msgstr "Not in quarantine: %s"
 
-#: peel/naranjos-peel:675
+#: peel/naranjos-peel:682
 msgid "No se pudo restaurar"
 msgstr "Could not restore"
 
-#: peel/naranjos-peel:676
+#: peel/naranjos-peel:683
 msgid "restaurado"
 msgstr "restored"
 
-#: peel/naranjos-peel:676
+#: peel/naranjos-peel:683
 msgid "el antivirus lo consideraba peligroso: ábrelo solo si estás seguro"
 msgstr "the antivirus considered it dangerous: open it only if you are sure"
 
-#: peel/naranjos-peel:684
+#: peel/naranjos-peel:691
 msgid "Cuarentena vaciada (%s fichero(s) borrados)"
 msgstr "Quarantine emptied (%s file(s) deleted)"
 
-#: peel/naranjos-peel:733
+#: peel/naranjos-peel:740
 msgid "Guardando las huellas de la base del sistema (tarda un poco)…"
 msgstr "Saving the fingerprints of the base system (takes a while)…"
 
-#: peel/naranjos-peel:738
+#: peel/naranjos-peel:745
 msgid "Huellas guardadas: %s ficheros de la base"
 msgstr "Fingerprints saved: %s base files"
 
-#: peel/naranjos-peel:751
+#: peel/naranjos-peel:758
 msgid "modificado (paquete)"
 msgstr "modified (package)"
 
-#: peel/naranjos-peel:758
+#: peel/naranjos-peel:765
 msgid "desaparecido (base)"
 msgstr "missing (base)"
 
-#: peel/naranjos-peel:759
+#: peel/naranjos-peel:766
 msgid "modificado (base)"
 msgstr "modified (base)"
 
-#: peel/naranjos-peel:762
+#: peel/naranjos-peel:769
 msgid "programa nuevo sin paquete"
 msgstr "new program without a package"
 
-#: peel/naranjos-peel:765
+#: peel/naranjos-peel:772
 msgid "/etc/ld.so.preload no está vacío (carga código en todos los programas)"
 msgstr "/etc/ld.so.preload is not empty (it loads code into every program)"
 
-#: peel/naranjos-peel:767
+#: peel/naranjos-peel:774
 msgid "usuario con poderes de root"
 msgstr "user with root powers"
 
-#: peel/naranjos-peel:770
+#: peel/naranjos-peel:777
 msgid "usuario sin contraseña"
 msgstr "user without a password"
 
-#: peel/naranjos-peel:773
+#: peel/naranjos-peel:780
 msgid "módulo del kernel sin fichero en el sistema"
 msgstr "kernel module with no file on the system"
 
-#: peel/naranjos-peel:775
+#: peel/naranjos-peel:782
 msgid "nuevo programa con permisos de root (SUID)"
 msgstr "new program with root permissions (SUID)"
 
-#: peel/naranjos-peel:777
+#: peel/naranjos-peel:784
 msgid "ejecutable en una carpeta temporal"
 msgstr "executable in a temporary folder"
 
-#: peel/naranjos-peel:780
+#: peel/naranjos-peel:787
 msgid "tarjeta de red escuchando todo el tráfico (modo promiscuo)"
 msgstr "network card listening to all traffic (promiscuous mode)"
 
-#: peel/naranjos-peel:793
+#: peel/naranjos-peel:800
 msgid "NaranjOS peel: algo ha cambiado en el sistema"
 msgstr "NaranjOS peel: something has changed in the system"
 
-#: peel/naranjos-peel:794
+#: peel/naranjos-peel:801
 msgid "%s cosa(s) que revisar: sudo naranjos-peel integridad"
 msgstr "%s thing(s) to check: sudo naranjos-peel integridad"
 
-#: peel/naranjos-peel:801
+#: peel/naranjos-peel:809
 msgid "Aún no se ha comprobado: sudo naranjos-peel integridad comprueba"
 msgstr "Not checked yet: sudo naranjos-peel integridad comprueba"
 
-#: peel/naranjos-peel:804 peel/naranjos-peel:805 peel/naranjos-peel:806
+#: peel/naranjos-peel:812 peel/naranjos-peel:813 peel/naranjos-peel:814
 msgid "integridad"
 msgstr "integrity"
 
-#: peel/naranjos-peel:804
+#: peel/naranjos-peel:812
 msgid "sin cambios"
 msgstr "no changes"
 
-#: peel/naranjos-peel:805 peel/naranjos-peel:806
+#: peel/naranjos-peel:813 peel/naranjos-peel:814
 msgid "cosa(s) que revisar"
 msgstr "thing(s) to check"
 
-#: peel/naranjos-peel:810
+#: peel/naranjos-peel:818
 msgid ""
 "Si lo cambiaste tú (o un programa que instalaste a mano): sudo naranjos-peel"
 " integridad acepta"
@@ -705,45 +710,45 @@ msgstr ""
 "If you changed it yourself (or a program you installed by hand): sudo "
 "naranjos-peel integridad acepta"
 
-#: peel/naranjos-peel:816
+#: peel/naranjos-peel:824
 msgid "Integridad"
 msgstr "Integrity"
 
-#: peel/naranjos-peel:839
+#: peel/naranjos-peel:847
 msgid "dispositivo USB"
 msgstr "USB device"
 
-#: peel/naranjos-peel:845
+#: peel/naranjos-peel:853
 msgid ""
 "protegido: los dispositivos desconocidos no funcionan hasta que los permites"
 msgstr "protected: unknown devices do not work until you allow them"
 
-#: peel/naranjos-peel:846
+#: peel/naranjos-peel:854
 msgid "abierto: cualquier USB funciona al enchufarlo"
 msgstr "open: any USB device works when plugged in"
 
-#: peel/naranjos-peel:849
+#: peel/naranjos-peel:857
 msgid "bloqueado"
 msgstr "blocked"
 
-#: peel/naranjos-peel:853
+#: peel/naranjos-peel:861
 msgid "%s dispositivo(s) bloqueado(s). Super + Ctrl + U para permitirlos"
 msgstr "%s blocked device(s). Super + Ctrl + U to allow them"
 
-#: peel/naranjos-peel:873
+#: peel/naranjos-peel:882
 msgid "Permitido"
 msgstr "Allowed"
 
-#: peel/naranjos-peel:876
+#: peel/naranjos-peel:885
 msgid ""
 "No encuentro ese dispositivo: %s (míralos con: naranjos-peel usb lista)"
 msgstr "Cannot find that device: %s (see them with: naranjos-peel usb lista)"
 
-#: peel/naranjos-peel:890
+#: peel/naranjos-peel:899
 msgid "Olvidado"
 msgstr "Forgotten"
 
-#: peel/naranjos-peel:906
+#: peel/naranjos-peel:915
 msgid ""
 "USB protegido. Lo que estaba conectado queda permitido; lo nuevo habrá que "
 "permitirlo."
@@ -751,19 +756,19 @@ msgstr ""
 "USB protected. What was connected stays allowed; new devices will have to be"
 " allowed."
 
-#: peel/naranjos-peel:910
+#: peel/naranjos-peel:919
 msgid "USB abierto: cualquier dispositivo funciona al enchufarlo"
 msgstr "USB open: any device works when plugged in"
 
-#: peel/naranjos-peel:919
+#: peel/naranjos-peel:928
 msgid "Dispositivos USB bloqueados"
 msgstr "Blocked USB devices"
 
-#: peel/naranjos-peel:920
+#: peel/naranjos-peel:929
 msgid "No hay ninguno bloqueado."
 msgstr "None is blocked."
 
-#: peel/naranjos-peel:922
+#: peel/naranjos-peel:931
 msgid ""
 "¡Ojo! Permite solo lo que acabas de enchufar tú. Un «teclado» que no "
 "esperabas puede ser un ataque."
@@ -771,131 +776,193 @@ msgstr ""
 "Careful! Only allow what you have just plugged in yourself. An unexpected "
 "«keyboard» may be an attack."
 
-#: peel/naranjos-peel:923
+#: peel/naranjos-peel:932
 msgid "Número a permitir (t = todos, Enter = ninguno):"
 msgstr "Number to allow (t = all, Enter = none):"
 
-#: peel/naranjos-peel:962
+#: peel/naranjos-peel:948
+msgid "estricto (los perfiles bloquean)"
+msgstr "strict (profiles block)"
+
+#: peel/naranjos-peel:949
+msgid "aprendiz (los perfiles solo avisan)"
+msgstr "learning (profiles only report)"
+
+#: peel/naranjos-peel:954
+msgid "apagado en el kernel"
+msgstr "disabled in the kernel"
+
+#: peel/naranjos-peel:957
+msgid "activo en el kernel, pero faltan sus herramientas"
+msgstr "enabled in the kernel, but its tools are missing"
+
+#: peel/naranjos-peel:964
+msgid "%s perfiles · modo %s"
+msgstr "%s profiles · mode %s"
+
+#: peel/naranjos-peel:966
+msgid "activo, pero sin perfiles cargados"
+msgstr "enabled, but no profiles loaded"
+
+#: peel/naranjos-peel:979
+msgid "No se pudieron cargar los perfiles"
+msgstr "Could not load the profiles"
+
+#: peel/naranjos-peel:994
+msgid ""
+"Algunos perfiles no se pudieron cargar (programas que NaranjOS no tiene):"
+msgstr "Some profiles could not be loaded (programs NaranjOS does not have):"
+
+#: peel/naranjos-peel:999
+msgid "Perfiles recargados"
+msgstr "Profiles reloaded"
+
+#: peel/naranjos-peel:1009 peel/naranjos-peel:1021 peel/naranjos-peel:1023
+#: peel/naranjos-peel:1028
+msgid "microcódigo"
+msgstr "microcode"
+
+#: peel/naranjos-peel:1021
+msgid "%s → %s al reiniciar"
+msgstr "%s → %s after a reboot"
+
+#: peel/naranjos-peel:1023
+msgid "%s, hay uno más nuevo pero falta el initramfs"
+msgstr "%s, a newer one exists but the initramfs is missing"
+
+#: peel/naranjos-peel:1063
 msgid "centro de seguridad de NaranjOS"
 msgstr "NaranjOS security centre"
 
-#: peel/naranjos-peel:965
+#: peel/naranjos-peel:1066
 msgid "estado de todo (cortafuegos, DNS, WiFi, kernel…)"
 msgstr "status of everything (firewall, DNS, Wi-Fi, kernel…)"
 
-#: peel/naranjos-peel:966
+#: peel/naranjos-peel:1067
 msgid "abre un puerto de entrada (tcp por defecto)"
 msgstr "opens an incoming port (tcp by default)"
 
-#: peel/naranjos-peel:967
+#: peel/naranjos-peel:1068
 msgid "lo vuelve a cerrar"
 msgstr "closes it again"
 
-#: peel/naranjos-peel:968
+#: peel/naranjos-peel:1069
 msgid "lo último que ha frenado el cortafuegos (hoy)"
 msgstr "the latest things the firewall stopped (today)"
 
-#: peel/naranjos-peel:969
+#: peel/naranjos-peel:1070
 msgid "estado de la VPN (y cómo conseguir una gratis)"
 msgstr "VPN status (and how to get one for free)"
 
-#: peel/naranjos-peel:970
+#: peel/naranjos-peel:1071
 msgid "importa un perfil de WireGuard (Proton VPN, etc.)"
 msgstr "imports a WireGuard profile (Proton VPN, etc.)"
 
-#: peel/naranjos-peel:971
+#: peel/naranjos-peel:1072
 msgid "conecta (con kill switch)"
 msgstr "connects (with kill switch)"
 
-#: peel/naranjos-peel:972
+#: peel/naranjos-peel:1073
 msgid "desconecta"
 msgstr "disconnects"
 
-#: peel/naranjos-peel:973
+#: peel/naranjos-peel:1074
 msgid "perfiles guardados / borrar uno"
 msgstr "saved profiles / delete one"
 
-#: peel/naranjos-peel:974
+#: peel/naranjos-peel:1075
 msgid "conectar sola al encender"
 msgstr "connect automatically at boot"
 
-#: peel/naranjos-peel:975
+#: peel/naranjos-peel:1076
 msgid "estado del antivirus"
 msgstr "antivirus status"
 
-#: peel/naranjos-peel:976
+#: peel/naranjos-peel:1077
 msgid "analiza (por defecto, tus descargas)"
 msgstr "scans (by default, your downloads)"
 
-#: peel/naranjos-peel:977
+#: peel/naranjos-peel:1078
 msgid "pone al día las firmas"
 msgstr "updates the signatures"
 
-#: peel/naranjos-peel:978
+#: peel/naranjos-peel:1079
 msgid "vigilar las descargas (por defecto: sí)"
 msgstr "watch your downloads (default: yes)"
 
-#: peel/naranjos-peel:979
+#: peel/naranjos-peel:1080
 msgid "lo bloqueado (restaura <n> / vacia)"
 msgstr "what was blocked (restaura <n> / vacia)"
 
-#: peel/naranjos-peel:980
+#: peel/naranjos-peel:1081
 msgid "detector de rootkits: ¿algo del sistema ha cambiado?"
 msgstr "rootkit detector: has anything in the system changed?"
 
-#: peel/naranjos-peel:981
+#: peel/naranjos-peel:1082
 msgid "comprobar ahora (tarda unos minutos)"
 msgstr "check now (takes a few minutes)"
 
-#: peel/naranjos-peel:982
+#: peel/naranjos-peel:1083
 msgid "dar por buenos los cambios que hiciste tú"
 msgstr "accept changes you made yourself"
 
-#: peel/naranjos-peel:983
+#: peel/naranjos-peel:1084
 msgid "protección USB y dispositivos conectados"
 msgstr "USB protection and connected devices"
 
-#: peel/naranjos-peel:984
+#: peel/naranjos-peel:1085
 msgid "permitir un USB bloqueado (Super + Ctrl + U)"
 msgstr "allow a blocked USB device (Super + Ctrl + U)"
 
-#: peel/naranjos-peel:985
+#: peel/naranjos-peel:1086
 msgid "dejar de permitir un USB"
 msgstr "stop allowing a USB device"
 
-#: peel/naranjos-peel:986
+#: peel/naranjos-peel:1087
 msgid "bloquear lo desconocido o no"
 msgstr "block unknown devices or not"
 
-#: peel/naranjos-peel:987
+#: peel/naranjos-peel:1088
+msgid "AppArmor: cada programa solo toca lo suyo"
+msgstr "AppArmor: every program only touches its own files"
+
+#: peel/naranjos-peel:1089
+msgid "que los perfiles solo avisen o que bloqueen"
+msgstr "profiles only report, or really block"
+
+#: peel/naranjos-peel:1090
+msgid "lo que AppArmor ha frenado o frenaría (hoy)"
+msgstr "what AppArmor blocked or would block (today)"
+
+#: peel/naranjos-peel:1091
 msgid "DNS siempre cifrado (si la red lo bloquea, no hay DNS)"
 msgstr "always-encrypted DNS (if the network blocks it, there is no DNS)"
 
-#: peel/naranjos-peel:988
+#: peel/naranjos-peel:1092
 msgid "cifrado cuando se puede (por defecto)"
 msgstr "encrypted whenever possible (default)"
 
-#: peel/naranjos-peel:989
+#: peel/naranjos-peel:1093
 msgid "ver impresoras/Chromecast por nombre (por defecto: no)"
 msgstr "see printers/Chromecast by name (default: no)"
 
-#: peel/naranjos-peel:990
+#: peel/naranjos-peel:1094
 msgid "para WiFi de hotel/tren con página de acceso"
 msgstr "for hotel/train Wi-Fi with a login page"
 
-#: peel/naranjos-peel:991
+#: peel/naranjos-peel:1095
 msgid "auditoría completa del sistema con Lynis"
 msgstr "full system audit with Lynis"
 
-#: peel/naranjos-peel:994
+#: peel/naranjos-peel:1098
 msgid "En el escritorio: Super + Ctrl + S, o clic en el escudo de la barra."
 msgstr "On the desktop: Super + Ctrl + S, or click the shield on the bar."
 
-#: peel/naranjos-peel:995
+#: peel/naranjos-peel:1099
 msgid "VPN: Super + Ctrl + V, o clic derecho en el escudo."
 msgstr "VPN: Super + Ctrl + V, or right click the shield."
 
-#: peel/naranjos-peel:996
+#: peel/naranjos-peel:1100
 msgid "Más información:"
 msgstr "More information:"
 
@@ -906,6 +973,162 @@ msgstr "NaranjOS peel: USB blocked"
 #: peel/naranjos-usb:24
 msgid "si lo has enchufado tú, permítelo con Super + Ctrl + U"
 msgstr "if you plugged it in yourself, allow it with Super + Ctrl + U"
+
+#: initramfs/naranjos-initramfs:95
+msgid "Este kernel no tiene módulos: solo va el microcódigo"
+msgstr "This kernel has no modules: only the microcode goes in"
+
+#: initramfs/naranjos-initramfs:113
+msgid "depmod ha fallado"
+msgstr "depmod failed"
+
+#: initramfs/naranjos-initramfs:154
+msgid "No existe /boot/vmlinuz-%s"
+msgstr "/boot/vmlinuz-%s does not exist"
+
+#: initramfs/naranjos-initramfs:157
+msgid "Creando el initramfs del kernel %s…"
+msgstr "Creating the initramfs for kernel %s…"
+
+#: initramfs/naranjos-initramfs:171
+msgid "No se pudo crear el initramfs"
+msgstr "Could not create the initramfs"
+
+#: initramfs/naranjos-initramfs:175
+msgid "%s (%s, en %s s)"
+msgstr "%s (%s, in %s s)"
+
+#: initramfs/naranjos-initramfs:197
+msgid "sin initramfs"
+msgstr "no initramfs"
+
+#: initramfs/naranjos-initramfs:201
+msgid "Microcódigo: %s · módulos extra: %s"
+msgstr "Microcode: %s · extra modules: %s"
+
+#: initramfs/naranjos-initramfs:202
+msgid "Ajustes: %s"
+msgstr "Settings: %s"
+
+#: initramfs/naranjos-initramfs:206
+msgid "el initramfs de NaranjOS"
+msgstr "the NaranjOS initramfs"
+
+#: initramfs/naranjos-initramfs:207
+msgid "estado de los initramfs"
+msgstr "initramfs status"
+
+#: initramfs/naranjos-initramfs:208
+msgid "rehacer el de todos los kernels"
+msgstr "rebuild it for every kernel"
+
+#: initramfs/naranjos-initramfs:209
+msgid "rehacer el de un kernel"
+msgstr "rebuild it for one kernel"
+
+#: initramfs/naranjos-initramfs:211
+msgid ""
+"Se rehace solo cuando zumo instala un kernel, módulos o microcódigo nuevos."
+msgstr ""
+"It is rebuilt automatically when zumo installs a new kernel, modules or "
+"microcode."
+
+#: initramfs/naranjos-initramfs:212
+msgid "Ajustes (módulos extra, microcódigo):"
+msgstr "Settings (extra modules, microcode):"
+
+#: initramfs/naranjos-initramfs:222
+msgid "No hay ningún kernel en /boot"
+msgstr "There is no kernel in /boot"
+
+#: esc/naranjos-atajos:4
+msgid "Atajos"
+msgstr "Shortcuts"
+
+#: esc/naranjos-ayuda:5
+msgid "Manual de NaranjOS"
+msgstr "NaranjOS manual"
+
+#: esc/naranjos-captura:6 esc/naranjos-carpetas:11
+msgid "Imágenes"
+msgstr "Pictures"
+
+#: esc/naranjos-captura:7
+msgid "Capturas"
+msgstr "Screenshots"
+
+#: esc/naranjos-captura:8
+msgid "captura"
+msgstr "screenshot"
+
+#: esc/naranjos-captura:15
+msgid "Captura guardada"
+msgstr "Screenshot saved"
+
+#: esc/naranjos-captura:15
+msgid "también está en el portapapeles"
+msgstr "also copied to the clipboard"
+
+#: esc/naranjos-carpetas:11
+msgid "Descargas"
+msgstr "Downloads"
+
+#: esc/naranjos-carpetas:11
+msgid "Documentos"
+msgstr "Documents"
+
+#: esc/naranjos-carpetas:12
+msgid "Música"
+msgstr "Music"
+
+#: esc/naranjos-carpetas:12
+msgid "Vídeos"
+msgstr "Videos"
+
+#: esc/naranjos-navegador:7
+msgid "Firefox no está instalado"
+msgstr "Firefox is not installed"
+
+#: esc/naranjos-navegador:7
+msgid "En una terminal:"
+msgstr "In a terminal:"
+
+#: esc/naranjos-sistema:5
+msgid "Bloquear"
+msgstr "Lock"
+
+#: esc/naranjos-sistema:5
+msgid "Cerrar sesión"
+msgstr "Log out"
+
+#: esc/naranjos-sistema:5
+msgid "Suspender"
+msgstr "Suspend"
+
+#: esc/naranjos-sistema:5
+msgid "Reiniciar"
+msgstr "Reboot"
+
+#: esc/naranjos-sistema:5
+msgid "Apagar"
+msgstr "Power off"
+
+#: esc/naranjos-tui:7
+msgid "Sonido"
+msgstr "Sound"
+
+#: esc/naranjos-tui:8
+msgid "Seguridad"
+msgstr "Security"
+
+#: esc/naranjos-tui:8 esc/naranjos-tui:9 esc/naranjos-tui:10
+#: idiomas/naranjos-idioma:124 idiomas/naranjos-idioma:132
+msgid "Pulsa una tecla para cerrar…"
+msgstr "Press any key to close…"
+
+#: esc/naranjos-tui:11 idiomas/naranjos-idioma:117 idiomas/naranjos-idioma:124
+msgid "Idioma"
+msgstr "Language"
 
 #: idiomas/naranjos-idioma:45
 msgid "Idioma de NaranjOS"
@@ -980,98 +1203,9 @@ msgstr "System language"
 msgid "Se aplica en el próximo inicio de sesión."
 msgstr "It applies at the next login."
 
-#: idiomas/naranjos-idioma:117 idiomas/naranjos-idioma:124 esc/naranjos-tui:11
-msgid "Idioma"
-msgstr "Language"
-
-#: idiomas/naranjos-idioma:124 idiomas/naranjos-idioma:132 esc/naranjos-tui:8
-#: esc/naranjos-tui:9 esc/naranjos-tui:10
-msgid "Pulsa una tecla para cerrar…"
-msgstr "Press any key to close…"
-
 #: idiomas/naranjos-idioma:130
 msgid "Escribe el código del idioma (Enter para salir):"
 msgstr "Type the language code (Enter to quit):"
-
-#: esc/naranjos-tui:7
-msgid "Sonido"
-msgstr "Sound"
-
-#: esc/naranjos-tui:8
-msgid "Seguridad"
-msgstr "Security"
-
-#: esc/naranjos-sistema:5
-msgid "Bloquear"
-msgstr "Lock"
-
-#: esc/naranjos-sistema:5
-msgid "Cerrar sesión"
-msgstr "Log out"
-
-#: esc/naranjos-sistema:5
-msgid "Suspender"
-msgstr "Suspend"
-
-#: esc/naranjos-sistema:5
-msgid "Reiniciar"
-msgstr "Reboot"
-
-#: esc/naranjos-sistema:5
-msgid "Apagar"
-msgstr "Power off"
-
-#: esc/naranjos-captura:6 esc/naranjos-carpetas:11
-msgid "Imágenes"
-msgstr "Pictures"
-
-#: esc/naranjos-captura:7
-msgid "Capturas"
-msgstr "Screenshots"
-
-#: esc/naranjos-captura:8
-msgid "captura"
-msgstr "screenshot"
-
-#: esc/naranjos-captura:15
-msgid "Captura guardada"
-msgstr "Screenshot saved"
-
-#: esc/naranjos-captura:15
-msgid "también está en el portapapeles"
-msgstr "also copied to the clipboard"
-
-#: esc/naranjos-navegador:7
-msgid "Firefox no está instalado"
-msgstr "Firefox is not installed"
-
-#: esc/naranjos-navegador:7
-msgid "En una terminal:"
-msgstr "In a terminal:"
-
-#: esc/naranjos-atajos:4
-msgid "Atajos"
-msgstr "Shortcuts"
-
-#: esc/naranjos-ayuda:5
-msgid "Manual de NaranjOS"
-msgstr "NaranjOS manual"
-
-#: esc/naranjos-carpetas:11
-msgid "Descargas"
-msgstr "Downloads"
-
-#: esc/naranjos-carpetas:11
-msgid "Documentos"
-msgstr "Documents"
-
-#: esc/naranjos-carpetas:12
-msgid "Música"
-msgstr "Music"
-
-#: esc/naranjos-carpetas:12
-msgid "Vídeos"
-msgstr "Videos"
 
 #: zumo:19
 msgid "falta el nombre del paquete. Ejemplo: zumo %s firefox"

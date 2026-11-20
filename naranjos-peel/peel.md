@@ -12,6 +12,8 @@ en el escudo de la barra o escribiendo `naranjos-peel` en una terminal.
 | Red local invisible | LLMNR y mDNS apagados: en una WiFi pública tu portátil no anuncia su nombre. |
 | MAC aleatoria | En cada red WiFi tu portátil usa una dirección MAC distinta, para que no te sigan de una red a otra. |
 | Kernel endurecido | Ajustes `sysctl` que dificultan los ataques locales y de red (`/usr/lib/sysctl.d/60-naranjos-peel.conf`). |
+| AppArmor | Cada programa con perfil solo puede tocar sus propios ficheros. De serie, en modo **aprendiz**. |
+| Microcódigo | El initramfs de NaranjOS carga al arrancar los arreglos de seguridad de Intel y AMD para el procesador. |
 | Auditoría | Lynis revisa todo el sistema y da una puntuación con consejos. |
 
 ## Antivirus
@@ -115,6 +117,24 @@ WireGuard configuration → «GNU/Linux» → un servidor gratuito → Create �
 - **Quiero apagar el cortafuegos un momento:** `sudo systemctl stop nftables`
   (vuelve con `sudo systemctl start nftables`). No es recomendable.
 
+## AppArmor
+
+AppArmor encierra a cada programa que tiene perfil: aunque alguien lo engañe, no puede leer tus
+documentos ni tocar el sistema más allá de lo que su perfil permite. NaranjOS carga los perfiles
+con su propio servicio (`naranjos-apparmor.service`) en uno de dos modos:
+
+- **aprendiz** (por defecto): los perfiles solo **avisan** de lo que bloquearían. Nada se rompe.
+- **estricto**: los perfiles **bloquean** de verdad. Pásate cuando `naranjos-peel apparmor avisos`
+  lleve unos días sin mostrar nada raro.
+
+| Orden | Qué hace |
+|---|---|
+| `naranjos-peel apparmor` | Estado: perfiles cargados y modo |
+| `naranjos-peel apparmor modo aprendiz\|estricto` | Cambia el modo |
+| `naranjos-peel apparmor avisos [desde]` | Lo que ha frenado o frenaría (por defecto, hoy) |
+| `naranjos-peel apparmor lista` | Todos los perfiles cargados |
+| `naranjos-peel apparmor recarga` | Vuelve a cargar los perfiles de `/etc/apparmor.d` |
+
 ## Lo que viene
 
-AppArmor y el kit opcional de ciberseguridad `naranjos-ciber`.
+El kit opcional de ciberseguridad `naranjos-ciber`.

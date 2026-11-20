@@ -1,0 +1,5 @@
+intel-ucode
+naranjos-idiomas
+naranjos-initramfs
+apparmor
+naranjos-peel

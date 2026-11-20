@@ -1,0 +1,20 @@
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6e1.sh (NO editar a mano)
+pkgname=naranjos-initramfs
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Generador de initramfs propio de NaranjOS (microcódigo, udev, discos, LUKS)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('bash' 'kmod' 'util-linux' 'systemd' 'libarchive' 'zstd' 'coreutils' 'findutils' 'gawk' 'naranjos-idiomas' 'intel-ucode')
+source=('90-naranjos-initramfs.hook' 'init' 'initramfs.conf' 'naranjos-initramfs')
+sha256sums=('cbdac623a916a8950356e5b379ef44e8edc1e8d6c4bab14d96bdd4f325905f82' '2b2922073a0a742fd37368276501f7fcc05039a06cf6b7a8e1734159f602f535' '7aef95d9e0a7d465686e77cc1376566adeb8dda203409dbd5877450c6c815ddb' '6e43ce48564a8cc6a0f12245c5236786e4a79a0ad215845de46abd3164c46754')
+install=naranjos-initramfs.install
+backup=('etc/naranjos/initramfs.conf')
+optdepends=('cryptsetup: arrancar desde un disco cifrado con LUKS')
+package() {
+  install -Dm755 naranjos-initramfs          "$pkgdir/usr/bin/naranjos-initramfs"
+  install -Dm755 init                        "$pkgdir/usr/lib/naranjos/initramfs/init"
+  install -Dm644 initramfs.conf              "$pkgdir/etc/naranjos/initramfs.conf"
+  install -Dm644 90-naranjos-initramfs.hook  "$pkgdir/usr/share/libalpm/hooks/90-naranjos-initramfs.hook"
+}

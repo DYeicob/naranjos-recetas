@@ -1,0 +1,227 @@
+#!/bin/bash
+# naranjos-initramfs — el generador de initramfs propio de NaranjOS
+#   Crea /boot/initramfs-<versión>.img para cada kernel instalado:
+#     1) un cpio SIN comprimir con el microcódigo de Intel y AMD (el kernel lo aplica nada más arrancar)
+#     2) un cpio comprimido con zstd: un /init en bash, udev, los módulos de discos y sistemas de ficheros
+#   Con eso el kernel de NaranjOS arranca en cualquier PC (discos SATA, NVMe, USB, virtio, RAID, LUKS…)
+set -euo pipefail
+VERSION="0.1.0"
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
+[ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
+die(){  printf '%snaranjos-initramfs:%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+hecho(){ printf '%s✔%s %s\n' "$G" "$Z" "$1"; }
+nota(){ printf '  %s%s%s\n' "$D" "$1" "$Z"; }
+
+CONF=/etc/naranjos/initramfs.conf
+DATOS=/usr/lib/naranjos/initramfs
+FW=/usr/lib/firmware
+MODULOS=""
+MICROCODIGO=todos
+# shellcheck source=/dev/null
+[ -r "$CONF" ] && . "$CONF"
+
+# Módulos que siempre van: discos, controladoras, USB, teclado, cifrado y sistemas de ficheros
+CARPETAS_MODULOS="drivers/ata drivers/nvme drivers/scsi drivers/block drivers/md drivers/virtio
+  drivers/mmc drivers/usb/host drivers/usb/storage drivers/usb/common drivers/usb/core drivers/hid
+  drivers/input/serio drivers/input/keyboard drivers/pci/controller drivers/message/fusion
+  drivers/firewire drivers/nvdimm drivers/thunderbolt
+  fs/ext4 fs/jbd2 fs/btrfs fs/xfs fs/fat fs/exfat fs/isofs fs/squashfs fs/overlayfs fs/nls"
+MODULOS_SUELTOS="dm_mod dm_crypt dm_integrity dm_snapshot raid1 raid0 raid456 crc32c_generic
+  crc32c_intel libcrc32c xxhash_generic sha256_generic aesni_intel cbc xts essiv ecb
+  loop sd_mod sr_mod usb_storage uas usbhid hid_generic xhci_pci ehci_pci ohci_pci
+  vmd ahci nvme virtio_blk virtio_scsi virtio_pci"
+# Programas del initramfs (los que no existan en el sistema, se saltan)
+PROGRAMAS="bash sh mount umount switch_root setsid blkid modprobe kmod insmod udevadm
+  sleep cat mkdir ls ln readlink uname dmesg grep sed cryptsetup e2fsck fsck.ext4 btrfs loadkeys
+  /usr/lib/systemd/systemd-udevd"
+# Reglas de udev que hacen falta para encontrar el disco
+REGLAS="50-udev-default.rules 60-block.rules 60-persistent-storage.rules 60-persistent-storage-dm.rules
+  64-btrfs.rules 10-dm.rules 13-dm-disk.rules 95-dm-notify.rules 80-drivers.rules 63-md-raid-arrays.rules"
+
+declare -A YA=()
+RAIZ=""; TMPD=""
+
+limpia(){ [ -n "$TMPD" ] && [ -d "$TMPD" ] && rm -rf -- "${TMPD:?}"; TMPD=""; return 0; }
+trap limpia EXIT
+
+# copia un fichero (y, si es un enlace, el enlace y su destino) dentro del initramfs
+pon(){
+  local p="$1" real pd
+  [ -e "$p" ] || return 0
+  real=$(readlink -f -- "$p")
+  pd="$(readlink -f -- "$(dirname -- "$p")")/$(basename -- "$p")"
+  if [ -z "${YA[$real]:-}" ]; then
+    YA[$real]=1
+    mkdir -p "$RAIZ$(dirname -- "$real")"
+    cp -p -- "$real" "$RAIZ$real"
+    # bibliotecas que necesita (ldd ya da la lista completa)
+    if [ -x "$real" ] || [[ "$real" == *.so* ]]; then
+      local l
+      while read -r l; do pon "$l"; done < <(ldd -- "$real" 2>/dev/null | grep -o '/[^ ]*' | sort -u || true)
+    fi
+  fi
+  if [ "$pd" != "$real" ] && [ ! -e "$RAIZ$pd" ] && [ ! -L "$RAIZ$pd" ]; then
+    mkdir -p "$RAIZ$(dirname -- "$pd")"
+    ln -s -- "$real" "$RAIZ$pd"
+  fi
+}
+
+# programa por nombre (en el PATH) o por ruta
+pon_programa(){
+  local p="$1"
+  [[ "$p" == /* ]] || p=$(PATH=/usr/bin:/usr/sbin:/bin:/sbin command -v -- "$p" 2>/dev/null) || return 0
+  [ -n "$p" ] && pon "$p"
+}
+
+# esqueleto con la misma forma que el sistema (bin, lib, sbin… como enlaces a usr/ si lo son aquí)
+esqueleto(){
+  local d
+  mkdir -p "$RAIZ"/{dev,proc,sys,run,tmp,sysroot,etc,usr/bin,usr/lib}
+  for d in bin lib lib64 sbin usr/sbin usr/lib64; do
+    if [ -L "/$d" ]; then ln -s -- "$(readlink -- "/$d")" "$RAIZ/$d"
+    elif [ -d "/$d" ]; then mkdir -p "$RAIZ/$d"; fi
+  done
+  # usuarios y grupos del sistema (udev los usa en sus reglas)
+  echo 'root:x:0:0:root:/:/bin/bash' > "$RAIZ/etc/passwd"
+  awk -F: '$3 < 1000 { print $1 ":x:" $3 ":" }' /etc/group > "$RAIZ/etc/group"
+  : > "$RAIZ/etc/fstab"
+  printf 'NAME="NaranjOS initramfs"\nID=naranjos\n' > "$RAIZ/etc/naranjos-initramfs-release"
+}
+
+# módulos del kernel $1 (con todas sus dependencias)
+pon_modulos(){
+  local k="$1" m="/usr/lib/modules/$1" c f n nombres=() lineas
+  [ -d "$m" ] || { nota "$(_ 'Este kernel no tiene módulos: solo va el microcódigo')"; return 0; }
+  for c in $CARPETAS_MODULOS; do
+    [ -d "$m/kernel/$c" ] || continue
+    while IFS= read -r f; do
+      n=${f##*/}; n=${n%%.ko*}; nombres+=("$n")
+    done < <(find "$m/kernel/$c" -name '*.ko*' 2>/dev/null)
+  done
+  # shellcheck disable=SC2206
+  nombres+=($MODULOS_SUELTOS $MODULOS)
+  lineas=$(printf '%s\n' "${nombres[@]}" | sort -u | while read -r n; do
+             modprobe -S "$k" --show-depends "$n" 2>/dev/null || true; done)
+  while read -r c f; do
+    [ "$c" = insmod ] && [ -e "$f" ] && pon "$f"
+  done <<< "$lineas"
+  for f in modules.order modules.builtin modules.builtin.modinfo; do
+    [ -e "$m/$f" ] && pon "$m/$f"
+  done
+  depmod -b "$RAIZ" "$k" 2>/dev/null || depmod -b "$RAIZ/usr" "$k" 2>/dev/null \
+    || die "$(_ 'depmod ha fallado')"
+}
+
+pon_udev(){
+  local r
+  for r in $REGLAS; do pon "/usr/lib/udev/rules.d/$r"; done
+  for r in ata_id scsi_id cdrom_id; do pon "/usr/lib/udev/$r"; done
+  [ -e /etc/udev/udev.conf ] && pon /etc/udev/udev.conf
+  return 0
+}
+
+# cpio en formato «newc» con todo lo que hay en la carpeta actual
+cpio_de_aqui(){
+  find . -mindepth 1 -printf '%P\0' | LC_ALL=C sort -z \
+    | bsdtar --uid 0 --gid 0 --null -cnf - -T - | bsdtar --null -cf - --format=newc @-
+}
+
+# microcódigo: «todos» (arranca en cualquier PC) o «este» (solo el de este procesador)
+microcodigo(){
+  local d="$1" fam mod est v f
+  mkdir -p "$d/kernel/x86/microcode"
+  v=$(awk -F': ' '/^vendor_id/ {print $2; exit}' /proc/cpuinfo)
+  fam=$(awk -F': ' '/^cpu family/ {print $2; exit}' /proc/cpuinfo)
+  mod=$(awk -F': ' '/^model\t/ {print $2; exit}' /proc/cpuinfo)
+  est=$(awk -F': ' '/^stepping/ {print $2; exit}' /proc/cpuinfo)
+  if [ -d "$FW/intel-ucode" ] && { [ "$MICROCODIGO" != este ] || [ "$v" = GenuineIntel ]; }; then
+    if [ "$MICROCODIGO" = este ]; then
+      f=$(printf '%s/intel-ucode/%02x-%02x-%02x' "$FW" "$fam" "$mod" "$est")
+      [ -e "$f" ] && cat "$f" > "$d/kernel/x86/microcode/GenuineIntel.bin"
+    else
+      cat "$FW"/intel-ucode/* > "$d/kernel/x86/microcode/GenuineIntel.bin"
+    fi
+  fi
+  if [ -d "$FW/amd-ucode" ] && { [ "$MICROCODIGO" != este ] || [ "$v" = AuthenticAMD ]; }; then
+    cat "$FW"/amd-ucode/microcode_amd*.bin > "$d/kernel/x86/microcode/AuthenticAMD.bin" 2>/dev/null || true
+  fi
+  find "$d/kernel/x86/microcode" -type f -empty -delete
+}
+
+genera(){
+  local k="$1" sal="/boot/initramfs-$1.img" mc t0
+  [ -e "/boot/vmlinuz-$k" ] || die "$(printf "$(_ 'No existe /boot/vmlinuz-%s')" "$k")"
+  t0=$SECONDS
+  # shellcheck disable=SC2059
+  printf '%s%s%s %s\n' "$O" "naranjos-initramfs" "$Z" "$(printf "$(_ 'Creando el initramfs del kernel %s…')" "$k")"
+  TMPD=$(mktemp -d /tmp/naranjos-initramfs.XXXXXX); YA=()
+  mc="$TMPD/micro"; RAIZ="$TMPD/raiz"; mkdir -p "$mc" "$RAIZ"
+  microcodigo "$mc"
+  esqueleto
+  local p; for p in $PROGRAMAS; do pon_programa "$p"; done
+  pon_udev
+  pon_modulos "$k"
+  install -m755 "$DATOS/init" "$RAIZ/init"
+  # el teclado de la sesión (para escribir la contraseña del disco cifrado)
+  [ -r /etc/vconsole.conf ] && cp -p /etc/vconsole.conf "$RAIZ/etc/vconsole.conf"
+  {
+    ( cd "$mc" && cpio_de_aqui )
+    ( cd "$RAIZ" && cpio_de_aqui | zstd -q -T0 -10 )
+  } > "$sal.nuevo" || die "$(_ 'No se pudo crear el initramfs')"
+  chmod 600 "$sal.nuevo"
+  mv -f "$sal.nuevo" "$sal"
+  # shellcheck disable=SC2059
+  hecho "$(printf "$(_ '%s (%s, en %s s)')" "$sal" "$(du -h "$sal" | cut -f1)" "$((SECONDS - t0))")"
+  limpia; RAIZ=""
+}
+
+kernels(){  # kernels instalados (los que tienen /boot/vmlinuz-<versión>)
+  local d k
+  for d in /usr/lib/modules/*/; do
+    k=${d%/}; k=${k##*/}
+    [ -e "/boot/vmlinuz-$k" ] && echo "$k"
+  done
+  return 0
+}
+
+estado(){
+  local k f
+  printf '%sNaranjOS · initramfs%s %s\n' "$O" "$Z" "$VERSION"
+  for k in $(kernels); do
+    f="/boot/initramfs-$k.img"
+    if [ -e "$f" ]; then
+      printf '  %s✔%s %-28s %s\n' "$G" "$Z" "$k" "$(du -h "$f" | cut -f1) · $(date -r "$f" '+%Y-%m-%d %H:%M')"
+    else
+      # shellcheck disable=SC2059
+      printf '  %s!%s %-28s %s\n' "$A" "$Z" "$k" "$(_ 'sin initramfs')  →  sudo naranjos-initramfs $k"
+    fi
+  done
+  # shellcheck disable=SC2059
+  printf '  %s\n' "$(printf "$(_ 'Microcódigo: %s · módulos extra: %s')" "$MICROCODIGO" "${MODULOS:-$(_ 'ninguno')}")"
+  nota "$(printf "$(_ 'Ajustes: %s')" "$CONF")"
+}
+
+ayuda(){
+  printf '%snaranjos-initramfs%s %s — %s\n\n' "$O" "$Z" "$VERSION" "$(_ 'el initramfs de NaranjOS')"
+  printf '  %-36s %s\n' "naranjos-initramfs"            "$(_ 'estado de los initramfs')"
+  printf '  %-36s %s\n' "sudo naranjos-initramfs --todos" "$(_ 'rehacer el de todos los kernels')"
+  printf '  %-36s %s\n' "sudo naranjos-initramfs <versión>" "$(_ 'rehacer el de un kernel')"
+  echo
+  _ 'Se rehace solo cuando zumo instala un kernel, módulos o microcódigo nuevos.'; echo
+  printf '%s %s\n' "$(_ 'Ajustes (módulos extra, microcódigo):')" "$CONF"
+}
+
+case "${1:-estado}" in
+  estado|status) estado ;;
+  ayuda|help|-h|--help) ayuda ;;
+  version|--version) echo "naranjos-initramfs $VERSION" ;;
+  --todos|--all|todos|all)
+    [ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+    hay=0; for k in $(kernels); do genera "$k"; hay=1; done
+    [ "$hay" = 1 ] || nota "$(_ 'No hay ningún kernel en /boot')" ;;
+  -*) ayuda; exit 1 ;;
+  *)
+    [ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+    for k in "$@"; do genera "$k"; done ;;
+esac

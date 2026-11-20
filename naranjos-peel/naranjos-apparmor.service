@@ -1,0 +1,16 @@
+[Unit]
+Description=NaranjOS peel: perfiles de AppArmor
+DefaultDependencies=no
+After=local-fs.target
+Before=sysinit.target
+ConditionSecurity=apparmor
+RequiresMountsFor=/var/cache/apparmor
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/lib/naranjos/naranjos-apparmor
+ExecReload=/usr/lib/naranjos/naranjos-apparmor
+
+[Install]
+WantedBy=sysinit.target

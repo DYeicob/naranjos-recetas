@@ -12,6 +12,8 @@ the shield on the bar or by typing `naranjos-peel` in a terminal.
 | Invisible on the local network | LLMNR and mDNS are off: on a public Wi-Fi your laptop does not announce its name. |
 | Random MAC | On each Wi-Fi network your laptop uses a different MAC address, so you can't be tracked from one network to another. |
 | Hardened kernel | `sysctl` settings that make local and network attacks harder (`/usr/lib/sysctl.d/60-naranjos-peel.conf`). |
+| AppArmor | Every program with a profile can only touch its own files. Out of the box, in **learning** mode. |
+| Microcode | The NaranjOS initramfs loads Intel and AMD security fixes for the processor at boot. |
 | Audit | Lynis checks the whole system and gives a score with advice. |
 
 ## Antivirus
@@ -117,6 +119,24 @@ The sub-commands are in Spanish; most also accept an English alias (`open`, `clo
 - **I want to switch the firewall off for a moment:** `sudo systemctl stop nftables`
   (back with `sudo systemctl start nftables`). Not recommended.
 
+## AppArmor
+
+AppArmor confines every program that has a profile: even if someone tricks it, it cannot read your
+documents or touch the system beyond what its profile allows. NaranjOS loads the profiles with its
+own service (`naranjos-apparmor.service`) in one of two modes:
+
+- **aprendiz** (learning, the default): profiles only **report** what they would block. Nothing breaks.
+- **estricto** (strict): profiles really **block**. Switch when `naranjos-peel apparmor avisos`
+  has shown nothing odd for a few days.
+
+| Command | What it does |
+|---|---|
+| `naranjos-peel apparmor` | Status: loaded profiles and mode |
+| `naranjos-peel apparmor modo aprendiz\|estricto` | Change the mode |
+| `naranjos-peel apparmor avisos [since]` | What it blocked or would block (today by default) |
+| `naranjos-peel apparmor lista` | Every loaded profile |
+| `naranjos-peel apparmor recarga` | Reload the profiles in `/etc/apparmor.d` |
+
 ## Coming next
 
-AppArmor and the optional `naranjos-ciber` security kit.
+The optional `naranjos-ciber` security kit.

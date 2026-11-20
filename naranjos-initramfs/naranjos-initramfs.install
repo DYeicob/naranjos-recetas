@@ -1,0 +1,4 @@
+# Al instalarlo por primera vez se crea el initramfs; en las actualizaciones lo hace el hook de zumo
+post_install() {
+  /usr/bin/naranjos-initramfs --todos || echo "  ! no se pudo crear el initramfs: sudo naranjos-initramfs --todos"
+}

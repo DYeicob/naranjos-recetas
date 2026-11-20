@@ -1,0 +1,19 @@
+# NaranjOS · cuando zumo instala un kernel, módulos, microcódigo o piezas del arranque, se rehace el initramfs
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Path
+Target = usr/lib/modules/*/*
+Target = usr/lib/firmware/intel-ucode/*
+Target = usr/lib/firmware/amd-ucode/*
+Target = usr/lib/naranjos/initramfs/*
+Target = usr/bin/naranjos-initramfs
+Target = usr/lib/udev/rules.d/*
+Target = usr/lib/systemd/systemd-udevd
+Target = usr/bin/cryptsetup
+Target = boot/vmlinuz-*
+
+[Action]
+Description = NaranjOS: rehaciendo el initramfs…
+When = PostTransaction
+Exec = /usr/bin/naranjos-initramfs --todos
