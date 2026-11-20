@@ -176,6 +176,8 @@ quieras compartir (sale un marco naranja).
 | `zumo limpia` | Quitar lo que sobra |
 | `zumo ayuda` | Todas las órdenes |
 
+Cada orden tiene también su nombre en inglés (`install`, `remove`, `update`…).
+
 ## 9c. Seguridad: NaranjOS peel
 
 `naranjos-peel` es el centro de seguridad de NaranjOS (**Super + Ctrl + S** o el escudo de la barra).
@@ -225,6 +227,5 @@ cambian de idioma. ¿Quieres traducir NaranjOS al tuyo? Mira `/usr/share/doc/nar
 
 - Bandeja de iconos en la barra.
 - VPN propia, antivirus y más piezas de NaranjOS peel.
-- zumo en varios idiomas.
 - Instalador de la ISO.
 - Driver de NVIDIA para la gráfica dedicada.

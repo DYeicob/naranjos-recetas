@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NaranjOS 0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DYeicob/naranjos-recetas/issues\n"
-"POT-Creation-Date: 2026-11-20 10:23+0100\n"
-"PO-Revision-Date: 2026-11-20 10:30+0100\n"
+"POT-Creation-Date: 2026-11-20 10:37+0100\n"
+"PO-Revision-Date: 2026-11-20 11:00+0100\n"
 "Last-Translator: NaranjOS\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -188,7 +188,7 @@ msgstr "Invalid protocol: %s (tcp or udp)"
 
 #: peel/naranjos-peel:146 peel/naranjos-peel:155 peel/naranjos-peel:173
 #: peel/naranjos-peel:215 idiomas/naranjos-idioma:100 esc/naranjos-tui:10
-#: esc/naranjos-captura:12
+#: esc/naranjos-captura:12 zumo:24
 msgid "Uso:"
 msgstr "Usage:"
 
@@ -456,3 +456,184 @@ msgstr "Shortcuts"
 #: esc/naranjos-ayuda:5
 msgid "Manual de NaranjOS"
 msgstr "NaranjOS manual"
+
+#: zumo:19
+msgid "falta el nombre del paquete. Ejemplo: zumo %s firefox"
+msgstr "the package name is missing. Example: zumo %s firefox"
+
+#: zumo:23
+msgid "el gestor de paquetes de %s"
+msgstr "the %s package manager"
+
+#: zumo:24
+msgid "orden"
+msgstr "command"
+
+#: zumo:24
+msgid "paquetes"
+msgstr "packages"
+
+#: zumo:25
+msgid "Instalar y quitar"
+msgstr "Install and remove"
+
+#: zumo:28
+msgid "Instala paquetes (y sus dependencias)"
+msgstr "Installs packages (and their dependencies)"
+
+#: zumo:29
+msgid "Desinstala paquetes y lo que ya no haga falta"
+msgstr "Removes packages and whatever is no longer needed"
+
+#: zumo:30
+msgid "Instala un fichero .pkg.tar.zst"
+msgstr "Installs a .pkg.tar.zst file"
+
+#: zumo:31
+msgid "Mantener el sistema al día"
+msgstr "Keep the system up to date"
+
+#: zumo:32
+msgid "Actualiza todo el sistema"
+msgstr "Updates the whole system"
+
+#: zumo:33
+msgid "Quita huérfanos y vacía la caché antigua"
+msgstr "Removes orphans and empties the old cache"
+
+#: zumo:34
+msgid "Consultar"
+msgstr "Look up"
+
+#: zumo:35
+msgid "Busca en los repositorios"
+msgstr "Searches the repositories"
+
+#: zumo:36
+msgid "Información de un paquete"
+msgstr "Information about a package"
+
+#: zumo:37
+msgid "Paquetes instalados"
+msgstr "Installed packages"
+
+#: zumo:38
+msgid "Ficheros que instaló un paquete"
+msgstr "Files installed by a package"
+
+#: zumo:39
+msgid "Qué paquete instaló un fichero"
+msgstr "Which package installed a file"
+
+#: zumo:40
+msgid "Dependencias que ya nadie usa"
+msgstr "Dependencies nobody uses any more"
+
+#: zumo:41
+msgid "Para quien crea paquetes"
+msgstr "For package makers"
+
+#: zumo:43
+msgid "Construye, firma y añade al repositorio"
+msgstr "Builds, signs and adds to the repository"
+
+#: zumo:44
+msgid "(-i: además lo instala · -y: sin preguntar)."
+msgstr "(-i: also installs it · -y: without asking)."
+
+#: zumo:45
+msgid "Las recetas se buscan en ~/naranjos-recetas"
+msgstr "Recipes are looked up in ~/naranjos-recetas"
+
+#: zumo:47
+msgid "Versión de zumo y de pacman"
+msgstr "zumo and pacman version"
+
+#: zumo:48
+msgid "Esta ayuda"
+msgstr "This help"
+
+#: zumo:50
+msgid "Ejemplos:"
+msgstr "Examples:"
+
+#: zumo:51
+msgid ""
+"Cada orden tiene también su nombre en inglés (install, remove, update…)."
+msgstr "Every command also has an English name (install, remove, update…)."
+
+#: zumo:56
+msgid "'exprime' se usa con tu usuario normal, no como root."
+msgstr "'exprime' is used with your normal user, not as root."
+
+#: zumo:62
+msgid "no puedo escribir en el repositorio %s"
+msgstr "cannot write to the repository %s"
+
+#: zumo:66
+msgid "no encuentro la clave de firma de NaranjOS (gpg)"
+msgstr "cannot find the NaranjOS signing key (gpg)"
+
+#: zumo:76
+msgid "dime qué receta(s) exprimir. Ejemplo: zumo exprime wayland"
+msgstr "tell me which recipe(s) to build. Example: zumo exprime wayland"
+
+#: zumo:78
+msgid "Refrescando la lista de paquetes…"
+msgstr "Refreshing the package list…"
+
+#: zumo:79
+msgid "pacman -Sy falló"
+msgstr "pacman -Sy failed"
+
+#: zumo:82
+msgid "no encuentro la receta '%s' (ni ./%s ni %s)"
+msgstr "cannot find the recipe '%s' (neither ./%s nor %s)"
+
+#: zumo:84
+msgid "Exprimiendo %s…"
+msgstr "Squeezing %s…"
+
+#: zumo:85
+msgid "makepkg falló en '%s'"
+msgstr "makepkg failed in '%s'"
+
+#: zumo:87
+msgid "makepkg no dijo qué paquetes generó"
+msgstr "makepkg did not say which packages it built"
+
+#: zumo:89
+msgid "repo-add falló con %s"
+msgstr "repo-add failed with %s"
+
+#: zumo:107
+msgid "Instalando: %s"
+msgstr "Installing: %s"
+
+#: zumo:109
+msgid "pacman NO instaló: %s (mira el error justo encima)"
+msgstr "pacman did NOT install: %s (see the error just above)"
+
+#: zumo:111
+msgid "Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)"
+msgstr "Done. To publish it on GitHub: naranjos-github.sh (from Ubuntu)"
+
+#: zumo:119
+msgid "Actualizando NaranjOS…"
+msgstr "Updating NaranjOS…"
+
+#: zumo:126 zumo:128
+msgid "No hay huérfanos."
+msgstr "There are no orphans."
+
+#: zumo:128
+msgid "Quitando huérfanos…"
+msgstr "Removing orphans…"
+
+#: zumo:129
+msgid "Vaciando la caché de versiones antiguas…"
+msgstr "Emptying the cache of old versions…"
+
+#: zumo:133
+msgid "orden desconocida: '%s'. Mira 'zumo ayuda'."
+msgstr "unknown command: '%s'. See 'zumo ayuda'."

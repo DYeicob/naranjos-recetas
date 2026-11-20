@@ -1,6 +1,12 @@
 #!/usr/bin/bash
 # zumo — gestor de paquetes de NaranjOS (usa pacman por dentro)
-VERSION="0.2.4"
+# Textos traducibles con gettext (dominio «naranjos»): naranjos-idioma cambia el idioma.
+VERSION="0.3.0"
+export TEXTDOMAIN=naranjos TEXTDOMAINDIR=/usr/share/locale
+_(){ gettext "$1" 2>/dev/null || printf '%s' "$1"; }
+# _f <texto con %s> <datos…>: texto traducido con datos dentro
+# shellcheck disable=SC2059
+_f(){ local t; t=$(_ "$1"); shift; printf "$t" "$@"; }
 
 if [ -t 1 ]; then
   if [ "$TERM" = linux ]; then O=$'\e[0;33m'; else O=$'\e[1;38;5;208m'; fi
@@ -10,55 +16,54 @@ msg(){ printf '%s==>%s %s\n' "$O" "$Z" "$*"; }
 okm(){ printf '%s  ✓%s %s\n' "$G" "$Z" "$*"; }
 die(){ printf '%szumo:%s %s\n' "$R" "$Z" "$*" >&2; exit 1; }
 SUDO=; [ "$(id -u)" -ne 0 ] && SUDO=sudo
-hace_falta(){ [ $# -gt 0 ] || die "falta el nombre del paquete. Ejemplo: zumo $ORDEN firefox"; }
+hace_falta(){ [ $# -gt 0 ] || die "$(_f 'falta el nombre del paquete. Ejemplo: zumo %s firefox' "$ORDEN")"; }
 
-ayuda(){ cat << EOF
-${O}zumo${Z} ${VERSION} · el gestor de paquetes de ${O}NaranjOS${Z}
-
-${B}Uso:${Z} zumo <orden> [paquetes…]
-
-${B}Instalar y quitar${Z}
-  ${O}instala${Z}  | install   <paq…>   Instala paquetes (y sus dependencias)
-  ${O}quita${Z}    | remove    <paq…>   Desinstala paquetes y lo que ya no haga falta
-  ${O}local${Z}    | install-file <fich>  Instala un fichero .pkg.tar.zst
-
-${B}Mantener el sistema al día${Z}
-  ${O}actualiza${Z}| update              Actualiza todo el sistema
-  ${O}limpia${Z}   | clean               Quita huérfanos y vacía la caché antigua
-
-${B}Consultar${Z}
-  ${O}busca${Z}    | search    <texto>   Busca en los repositorios
-  ${O}info${Z}               <paq>     Información de un paquete
-  ${O}lista${Z}    | list                Paquetes instalados
-  ${O}archivos${Z} | files     <paq>     Ficheros que instaló un paquete
-  ${O}de${Z}       | owns      <fich>    Qué paquete instaló un fichero
-  ${O}huerfanos${Z}| orphans             Dependencias que ya nadie usa
-
-${B}Para quien crea paquetes${Z}
-  ${O}exprime${Z}  | build [-i] [-y] <receta…>  Construye, firma y añade al repositorio
-                                 (-i: además lo instala · -y: sin preguntar).
-                                 Las recetas se buscan en ~/naranjos-recetas
-
-  ${O}version${Z}  | --version           Versión de zumo y de pacman
-  ${O}ayuda${Z}    | help                Esta ayuda
-
-${B}Ejemplos:${Z}  zumo busca editor   ·   zumo instala git   ·   zumo exprime -i wayland
-EOF
+ayuda(){
+  local f="  ${O}%-9s${Z}| %-13s %-10s %s\n"
+  printf '%szumo%s %s · %s\n\n' "$O" "$Z" "$VERSION" "$(_f 'el gestor de paquetes de %s' "${O}NaranjOS${Z}")"
+  printf '%s%s%s zumo <%s> [%s…]\n\n' "$B" "$(_ 'Uso:')" "$Z" "$(_ 'orden')" "$(_ 'paquetes')"
+  printf '%s%s%s\n' "$B" "$(_ 'Instalar y quitar')" "$Z"
+  # shellcheck disable=SC2059
+  {
+  printf "$f" instala   install      "<paq...>"  "$(_ 'Instala paquetes (y sus dependencias)')"
+  printf "$f" quita     remove       "<paq...>"  "$(_ 'Desinstala paquetes y lo que ya no haga falta')"
+  printf "$f" local     install-file "<fich>"  "$(_ 'Instala un fichero .pkg.tar.zst')"
+  printf '\n%s%s%s\n' "$B" "$(_ 'Mantener el sistema al día')" "$Z"
+  printf "$f" actualiza update       ""        "$(_ 'Actualiza todo el sistema')"
+  printf "$f" limpia    clean        ""        "$(_ 'Quita huérfanos y vacía la caché antigua')"
+  printf '\n%s%s%s\n' "$B" "$(_ 'Consultar')" "$Z"
+  printf "$f" busca     search       "<texto>" "$(_ 'Busca en los repositorios')"
+  printf "$f" info      info         "<paq>"   "$(_ 'Información de un paquete')"
+  printf "$f" lista     list         ""        "$(_ 'Paquetes instalados')"
+  printf "$f" archivos  files        "<paq>"   "$(_ 'Ficheros que instaló un paquete')"
+  printf "$f" de        owns         "<fich>"  "$(_ 'Qué paquete instaló un fichero')"
+  printf "$f" huerfanos orphans      ""        "$(_ 'Dependencias que ya nadie usa')"
+  printf '\n%s%s%s\n' "$B" "$(_ 'Para quien crea paquetes')" "$Z"
+  printf "$f" exprime   build        "[-i] [-y] <receta...>" ""
+  printf '               %s\n' "$(_ 'Construye, firma y añade al repositorio')"
+  printf '               %s\n' "$(_ '(-i: además lo instala · -y: sin preguntar).')"
+  printf '               %s\n' "$(_ 'Las recetas se buscan en ~/naranjos-recetas')"
+  echo
+  printf "$f" version   --version    ""        "$(_ 'Versión de zumo y de pacman')"
+  printf "$f" ayuda     help         ""        "$(_ 'Esta ayuda')"
+  }
+  printf '\n%s%s%s  zumo busca editor   ·   zumo instala git   ·   zumo exprime -i wayland\n' "$B" "$(_ 'Ejemplos:')" "$Z"
+  printf '%s\n' "$(_ 'Cada orden tiene también su nombre en inglés (install, remove, update…).')"
 }
 
 # --- zumo exprime: construir + firmar + publicar en el repositorio local -----------------
 exprime(){
-  [ "$(id -u)" -ne 0 ] || die "'exprime' se usa con tu usuario normal, no como root."
+  [ "$(id -u)" -ne 0 ] || die "$(_ "'exprime' se usa con tu usuario normal, no como root.")"
   local REPO="${ZUMO_REPO:-/srv/zumo/naranjos-core}" RECETAS="${ZUMO_RECETAS:-$HOME/naranjos-recetas}"
   local CONF="${XDG_CONFIG_HOME:-$HOME/.config}/zumo/exprime.conf"
   # shellcheck disable=SC1090
   [ -r "$CONF" ] && . "$CONF"
   local DB="$REPO/$(basename "$REPO").db.tar.zst" INSTALA=0 SIN=() r d p f n nombres=() pkgs=()
-  [ -d "$REPO" ] && [ -w "$REPO" ] || die "no puedo escribir en el repositorio $REPO"
+  [ -d "$REPO" ] && [ -w "$REPO" ] || die "$(_f 'no puedo escribir en el repositorio %s' "$REPO")"
   if [ -z "${GPGKEY:-}" ]; then
     GPGKEY=$(gpg --list-secret-keys --with-colons "NaranjOS Packager" 2>/dev/null | awk -F: '/^fpr/{print $10; exit}')
   fi
-  [ -n "$GPGKEY" ] || die "no encuentro la clave de firma de NaranjOS (gpg)"
+  [ -n "$GPGKEY" ] || die "$(_ 'no encuentro la clave de firma de NaranjOS (gpg)')"
   export GPGKEY GPG_TTY="${GPG_TTY:-$(tty 2>/dev/null)}"
   while [ $# -gt 0 ]; do
     case "$1" in
@@ -68,20 +73,20 @@ exprime(){
       *) break ;;
     esac
   done
-  [ $# -gt 0 ] || die "dime qué receta(s) exprimir. Ejemplo: zumo exprime wayland"
+  [ $# -gt 0 ] || die "$(_ 'dime qué receta(s) exprimir. Ejemplo: zumo exprime wayland')"
 
-  msg "Refrescando la lista de paquetes…"
-  sudo pacman -Sy >/dev/null || die "pacman -Sy falló"
+  msg "$(_ 'Refrescando la lista de paquetes…')"
+  sudo pacman -Sy >/dev/null || die "$(_ 'pacman -Sy falló')"
   for r in "$@"; do
     d="$r"; [ -f "$d/PKGBUILD" ] || d="$RECETAS/$r"
-    [ -f "$d/PKGBUILD" ] || die "no encuentro la receta '$r' (ni ./$r ni $RECETAS/$r)"
+    [ -f "$d/PKGBUILD" ] || die "$(_f "no encuentro la receta '%s' (ni ./%s ni %s)" "$r" "$r" "$RECETAS/$r")"
     d=$(cd "$d" && pwd)
-    msg "Exprimiendo ${B}$(basename "$d")${Z}…"
-    ( cd "$d" && PKGDEST="$REPO" makepkg -sfC --sign --noconfirm ) || die "makepkg falló en '$(basename "$d")'"
+    msg "$(_f 'Exprimiendo %s…' "${B}$(basename "$d")${Z}")"
+    ( cd "$d" && PKGDEST="$REPO" makepkg -sfC --sign --noconfirm ) || die "$(_f "makepkg falló en '%s'" "$(basename "$d")")"
     mapfile -t pkgs < <(cd "$d" && PKGDEST="$REPO" makepkg --packagelist)
-    [ ${#pkgs[@]} -gt 0 ] || die "makepkg no dijo qué paquetes generó"
+    [ ${#pkgs[@]} -gt 0 ] || die "$(_ 'makepkg no dijo qué paquetes generó')"
     repo-add --sign --key "$GPGKEY" --verify "$DB" "${pkgs[@]}" >/dev/null \
-      || die "repo-add falló con $(basename "$d")"
+      || die "$(_f 'repo-add falló con %s' "$(basename "$d")")"
     # borrar versiones ANTERIORES del mismo paquete (nunca el fichero recién hecho)
     for p in "${pkgs[@]}"; do
       n=$(bsdtar -xOf "$p" .PKGINFO | awk '/^pkgname = /{print $3; exit}')
@@ -99,11 +104,11 @@ exprime(){
     sudo pacman -Sy >/dev/null
   done
   if [ "$INSTALA" = 1 ]; then
-    msg "Instalando: ${nombres[*]}"
+    msg "$(_f 'Instalando: %s' "${nombres[*]}")"
     sudo pacman -S --needed "${SIN[@]}" "${nombres[@]}" \
-      || die "pacman NO instaló: ${nombres[*]} (mira el error justo encima)"
+      || die "$(_f 'pacman NO instaló: %s (mira el error justo encima)' "${nombres[*]}")"
   fi
-  okm "Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)"
+  okm "$(_ 'Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)')"
 }
 
 ORDEN="${1:-ayuda}"; shift || true
@@ -111,19 +116,19 @@ case "$ORDEN" in
   instala|install|i)          hace_falta "$@"; $SUDO pacman -S "$@" ;;
   quita|remove|rm)            hace_falta "$@"; $SUDO pacman -Rns "$@" ;;
   local|install-file)         hace_falta "$@"; $SUDO pacman -U "$@" ;;
-  actualiza|update|up)        msg "Actualizando NaranjOS…"; $SUDO pacman -Syu "$@" ;;
+  actualiza|update|up)        msg "$(_ 'Actualizando NaranjOS…')"; $SUDO pacman -Syu "$@" ;;
   busca|search|s)             hace_falta "$@"; pacman -Ss "$@" ;;
   info)                       hace_falta "$@"
                               if pacman -Qq "$1" >/dev/null 2>&1; then pacman -Qi "$@"; else pacman -Si "$@"; fi ;;
   lista|list|ls)              pacman -Q "$@" ;;
   archivos|files)             hace_falta "$@"; pacman -Ql "$@" ;;
   de|owns)                    hace_falta "$@"; pacman -Qo "$@" ;;
-  huerfanos|huérfanos|orphans) pacman -Qdt || msg "No hay huérfanos." ;;
+  huerfanos|huérfanos|orphans) pacman -Qdt || msg "$(_ 'No hay huérfanos.')" ;;
   limpia|clean)               H=$(pacman -Qdtq 2>/dev/null || true)
-                              if [ -n "$H" ]; then msg "Quitando huérfanos…"; $SUDO pacman -Rns $H; else msg "No hay huérfanos."; fi
-                              msg "Vaciando la caché de versiones antiguas…"; $SUDO pacman -Sc ;;
+                              if [ -n "$H" ]; then msg "$(_ 'Quitando huérfanos…')"; $SUDO pacman -Rns $H; else msg "$(_ 'No hay huérfanos.')"; fi
+                              msg "$(_ 'Vaciando la caché de versiones antiguas…')"; $SUDO pacman -Sc ;;
   exprime|build)              exprime "$@" ;;
   version|--version|-V)       echo "${O}zumo${Z} ${VERSION} · NaranjOS"; pacman -V | grep -o 'Pacman v[0-9.]*' | head -n1 ;;
   ayuda|help|-h|--help)       ayuda ;;
-  *)                          die "orden desconocida: '$ORDEN'. Mira 'zumo ayuda'." ;;
+  *)                          die "$(_f "orden desconocida: '%s'. Mira 'zumo ayuda'." "$ORDEN")" ;;
 esac

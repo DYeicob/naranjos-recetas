@@ -12,7 +12,7 @@ grep -q '^default-cache-ttl' ~/.gnupg/gpg-agent.conf 2>/dev/null || {
   printf 'default-cache-ttl 7200\nmax-cache-ttl 28800\n' >> ~/.gnupg/gpg-agent.conf; gpgconf --kill gpg-agent; }
 export GPG_TTY=$(tty)
 grep -q '^PACKAGER=' ~/.makepkg.conf 2>/dev/null || echo 'PACKAGER="NaranjOS Packager <yeicob@naranjos.invalid>"' >> ~/.makepkg.conf
-zumo ayuda | grep -q -- '-y' || { echo "${R}Necesitas zumo 0.2.1 o más nuevo:  zumo exprime -i zumo${Z}"; exit 1; }
+zumo ayuda 2>/dev/null | grep -- '-y' >/dev/null || { echo "${R}Necesitas zumo 0.2.1 o más nuevo:  zumo exprime -i zumo${Z}"; exit 1; }
 total=$(grep -c . "$L"); i=0; inicio=$SECONDS
 while read -r r <&3; do
   [ -n "$r" ] || continue; i=$((i+1))

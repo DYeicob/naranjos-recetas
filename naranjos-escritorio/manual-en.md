@@ -167,17 +167,17 @@ want to share (an orange frame appears).
 
 ## 9b. zumo, the package manager
 
-zumo's commands are in Spanish for now (an English version is coming):
+Every zumo command has a Spanish and an English name; use whichever you prefer:
 
 | Command | What it does |
 |---|---|
-| `zumo busca <text>` | Search for programs |
-| `zumo instala <package>` | Install |
-| `zumo quita <package>` | Uninstall |
-| `zumo actualiza` | Update the whole system |
+| `zumo search <text>` (`busca`) | Search for programs |
+| `zumo install <package>` (`instala`) | Install |
+| `zumo remove <package>` (`quita`) | Uninstall |
+| `zumo update` (`actualiza`) | Update the whole system |
 | `zumo info <package>` | Information about a package |
-| `zumo limpia` | Remove what is not needed |
-| `zumo ayuda` | All the commands |
+| `zumo clean` (`limpia`) | Remove what is not needed |
+| `zumo help` (`ayuda`) | All the commands |
 
 ## 9c. Security: NaranjOS peel
 
@@ -229,6 +229,5 @@ language too. Want to translate NaranjOS into yours? See `/usr/share/doc/naranjo
 
 - Tray icons on the bar.
 - Own VPN, antivirus and more NaranjOS peel pieces.
-- zumo in several languages.
 - The ISO installer.
 - NVIDIA driver for the dedicated graphics card.
