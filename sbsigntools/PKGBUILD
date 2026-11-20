@@ -16,6 +16,10 @@ build() {
   sed -i 's/^SUBDIRS = .*/SUBDIRS = lib\/ccan src/' Makefile.am
   # con el GCC de LFS 13.1 salen avisos nuevos que -Werror convierte en errores
   sed -i 's/ -Werror//' src/Makefile.am
+  # el OpenSSL de NaranjOS ya no trae los «engines» (los quitó OpenSSL 4): esa opción de sbsign se apaga
+  sed -i 's/^#include <openssl\/engine.h>/#include <openssl\/ui.h>/' src/fileio.c
+  sed -i '/^EVP_PKEY \*fileio_read_engine_key/,/^}/c\EVP_PKEY *fileio_read_engine_key(const char *engine, const char *filename)\n{\n\t(void)filename;\n\tfprintf(stderr, "OpenSSL engines are not available (%s)\\n", engine);\n\treturn NULL;\n}' src/fileio.c
+  grep -q 'ENGINE_' src/fileio.c && return 1
   autoreconf -fi
   ./configure --prefix=/usr
   make
