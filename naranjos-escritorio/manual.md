@@ -185,7 +185,7 @@ quieras compartir (sale un marco naranja).
 ## 9c. Seguridad: NaranjOS peel
 
 `naranjos-peel` es el centro de seguridad de NaranjOS (**Super + Ctrl + S** o el escudo de la barra).
-De serie: cortafuegos con toda la entrada cerrada, DNS cifrado (Quad9), MAC aleatoria en la WiFi y
+De serie: cortafuegos con toda la entrada cerrada, antivirus que vigila tus descargas, DNS cifrado (Quad9), MAC aleatoria en la WiFi y
 kernel endurecido. El escudo se pone amarillo si hay algo a medias y rojo si el cortafuegos está apagado.
 
 | Orden | Qué hace |
@@ -194,6 +194,7 @@ kernel endurecido. El escudo se pone amarillo si hay algo a medias y rojo si el 
 | `naranjos-peel abre 22/tcp` | Abrir un puerto de entrada |
 | `naranjos-peel cierra 22/tcp` | Cerrarlo |
 | `naranjos-peel portal` | WiFi de hotel/tren con página de acceso (`portal fin` al acabar) |
+| `naranjos-peel antivirus` | Estado del antivirus (`analiza`, `cuarentena`…) |
 | `naranjos-peel auditoria` | Auditoría completa con Lynis |
 
 ### VPN (gratis)
@@ -243,7 +244,7 @@ cambian de idioma. ¿Quieres traducir NaranjOS al tuyo? Mira `/usr/share/doc/nar
 ## 11. Lo que viene
 
 - Bandeja de iconos en la barra.
-- Antivirus y más piezas de NaranjOS peel.
+- Detector de rootkits y protección USB en NaranjOS peel.
 - zumo en varios idiomas.
 - Instalador de la ISO.
 - Driver de NVIDIA para la gráfica dedicada.

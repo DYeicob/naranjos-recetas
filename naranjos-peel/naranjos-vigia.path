@@ -1,0 +1,11 @@
+[Unit]
+Description=NaranjOS peel: vigila tu carpeta de descargas
+Documentation=file:/usr/share/doc/naranjos/peel.md
+
+[Path]
+# enlace a tu carpeta de descargas (Descargas, Downloads…), lo mantiene naranjos-carpetas
+PathChanged=%h/.local/state/naranjos/descargas
+Unit=naranjos-vigia.service
+
+[Install]
+WantedBy=default.target

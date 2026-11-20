@@ -1,0 +1,11 @@
+[Unit]
+Description=NaranjOS peel: pone al día las firmas del antivirus (ClamAV)
+Documentation=file:/usr/share/doc/naranjos/peel.md
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/freshclam --foreground --stdout --config-file=/etc/clamav/freshclam.conf
+Nice=10
+IOSchedulingClass=idle

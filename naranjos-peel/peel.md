@@ -14,6 +14,26 @@ en el escudo de la barra o escribiendo `naranjos-peel` en una terminal.
 | Kernel endurecido | Ajustes `sysctl` que dificultan los ataques locales y de red (`/usr/lib/sysctl.d/60-naranjos-peel.conf`). |
 | Auditoría | Lynis revisa todo el sistema y da una puntuación con consejos. |
 
+## Antivirus
+
+NaranjOS usa el motor libre **ClamAV** con su propia integración:
+
+- **Vigila tu carpeta de descargas**: cada fichero nuevo que llega se analiza solo. Si es peligroso
+  se mueve a la **cuarentena** (queda sin permisos, no se puede abrir) y sale un aviso.
+- **Firmas al día**: se descargan solas cada 6 horas (la primera vez, unos 200 MB).
+- **Análisis semanal** de tu carpeta personal, en segundo plano y con prioridad baja.
+- No hay un programa vigilando todo el rato: solo se analiza cuando llega algo nuevo, así no gasta memoria.
+
+| Orden | Qué hace |
+|---|---|
+| `naranjos-peel antivirus` | Estado: firmas, vigilancia, cuarentena |
+| `naranjos-peel antivirus analiza [ruta]` | Analiza ahora (sin ruta: tus descargas) |
+| `naranjos-peel antivirus actualiza` | Pone al día las firmas ya |
+| `naranjos-peel antivirus vigila si\|no` | Enciende o apaga la vigilancia de descargas |
+| `naranjos-peel antivirus cuarentena` | Lo que se ha bloqueado |
+| `naranjos-peel antivirus restaura <nombre>` | Saca un fichero de la cuarentena (solo si estás seguro) |
+| `naranjos-peel antivirus vacia` | Borra todo lo que hay en la cuarentena |
+
 ## VPN
 
 `naranjos-peel vpn` usa WireGuard con la red de NaranjOS (systemd-networkd), sin programas extra.
@@ -66,5 +86,5 @@ WireGuard configuration → «GNU/Linux» → un servidor gratuito → Create �
 
 ## Lo que viene
 
-Antivirus que vigila Descargas, detector de rootkits,
+Detector de rootkits,
 protección USB, AppArmor y el kit opcional de ciberseguridad `naranjos-ciber`.

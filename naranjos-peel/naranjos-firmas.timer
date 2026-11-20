@@ -1,0 +1,11 @@
+[Unit]
+Description=NaranjOS peel: firmas del antivirus al día (cada 6 horas)
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=6h
+RandomizedDelaySec=20min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

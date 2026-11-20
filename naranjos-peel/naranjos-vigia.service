@@ -1,0 +1,8 @@
+[Unit]
+Description=NaranjOS peel: analiza lo nuevo de tus descargas
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/naranjos-peel antivirus vigia
+Nice=10
+IOSchedulingClass=idle

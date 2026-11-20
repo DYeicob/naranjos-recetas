@@ -29,15 +29,36 @@ post_install() {
   else
     echo "  ! systemd-resolved no está activo: el DNS cifrado no funcionará"
   fi
+  # 5) antivirus: usuario y carpeta de firmas, firmas al día y vigilancia de descargas
+  peel_antivirus
+  echo "  ✔ antivirus: descargando las firmas en segundo plano (unos 200 MB la primera vez)"
   echo "  Mira el estado con: naranjos-peel"
 }
+peel_antivirus() {
+  systemd-sysusers /usr/lib/sysusers.d/naranjos-clamav.conf >/dev/null 2>&1 || true
+  systemd-tmpfiles --create /usr/lib/tmpfiles.d/naranjos-clamav.conf >/dev/null 2>&1 || true
+  systemctl enable --now naranjos-firmas.timer >/dev/null 2>&1 || true
+  ls /var/lib/clamav/daily.c?d >/dev/null 2>&1 || systemctl start --no-block naranjos-firmas.service >/dev/null 2>&1 || true
+  # vigilancia de descargas y análisis semanal para todos los usuarios (se arrancan al iniciar sesión)
+  systemctl --global enable naranjos-vigia.path naranjos-analisis.timer >/dev/null 2>&1 || true
+  # y ya mismo para quien tenga la sesión abierta
+  local d uid u
+  for d in /run/user/*; do
+    uid=${d##*/}; [ "$uid" -ge 1000 ] 2>/dev/null || continue
+    u=$(id -nu "$uid" 2>/dev/null) || continue
+    sudo -u "$u" env XDG_RUNTIME_DIR="$d" sh -c 'systemctl --user daemon-reload; naranjos-peel antivirus vigila si' >/dev/null 2>&1 || true
+  done
+}
 post_upgrade() {
+  peel_antivirus
   /usr/lib/systemd/systemd-sysctl /usr/lib/sysctl.d/60-naranjos-peel.conf >/dev/null 2>&1 || true
   systemctl is-enabled -q nftables.service 2>/dev/null && systemctl reload-or-restart nftables.service >/dev/null 2>&1
   systemctl try-restart systemd-resolved >/dev/null 2>&1
   return 0
 }
 pre_remove() {
+  systemctl disable --now naranjos-firmas.timer >/dev/null 2>&1 || true
+  systemctl --global disable naranjos-vigia.path naranjos-analisis.timer >/dev/null 2>&1 || true
   /usr/bin/naranjos-peel vpn desconecta silencio >/dev/null 2>&1 || true
   systemctl disable naranjos-vpn.service >/dev/null 2>&1 || true
   systemctl disable --now nftables.service >/dev/null 2>&1 || true

@@ -22,5 +22,8 @@ for par in "DOWNLOAD:$(_ 'Descargas')" "DOCUMENTS:$(_ 'Documentos')" "PICTURES:$
   fi
   nueva=1
 done
+# enlace fijo a tu carpeta de descargas: lo vigila el antivirus (naranjos-vigia.path)
+mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/naranjos"
+ln -sfn "$(naranjos_carpeta DOWNLOAD)" "${XDG_STATE_HOME:-$HOME/.local/state}/naranjos/descargas"
 [ "$nueva" = 1 ] && [ -t 1 ] && { _ 'Carpetas personales listas:'; echo; grep '^XDG_' "$F" | grep -v '"\$HOME"$' | sed 's/^XDG_\(.*\)_DIR="\$HOME\/\(.*\)"$/  ~\/\2/'; }
 exit 0

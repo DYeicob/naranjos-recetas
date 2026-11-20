@@ -1,0 +1,27 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6c.sh
+pkgname=clamav
+pkgver=1.5.5
+pkgrel=1
+pkgdesc='Motor antivirus ClamAV (lo usa NaranjOS peel)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-only')
+depends=('json-c' 'libxml2' 'pcre2' 'openssl' 'zlib' 'bzip2' 'curl' 'ncurses' 'systemd-libs')
+makedepends=('cmake' 'rust')
+source=('https://github.com/Cisco-Talos/clamav/releases/download/clamav-1.5.5/clamav-1.5.5.tar.gz')
+sha256sums=('90284644e5568732c15fc4f4312fd0f09ac14c14e5b29fba3909d4da4e281b1e')
+build() {
+  export CARGO_HOME="$srcdir/cargo"          # nada fuera de la carpeta de compilación
+  cmake -B build -S clamav-$pkgver -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D CMAKE_INSTALL_LIBDIR=lib \
+    -D APP_CONFIG_DIRECTORY=/etc/clamav -D DATABASE_DIRECTORY=/var/lib/clamav \
+    -D CLAMAV_USER=clamav -D CLAMAV_GROUP=clamav \
+    -D ENABLE_JSON_SHARED=ON -D ENABLE_TESTS=OFF -D ENABLE_MILTER=OFF -D ENABLE_CLAMONACC=OFF \
+    -D ENABLE_SYSTEMD=ON -D SYSTEMD_UNIT_DIR=/usr/lib/systemd/system -D DO_NOT_SET_RPATH=ON
+  cmake --build build
+}
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  # NaranjOS pone sus propios servicios (naranjos-firmas, naranjos-vigia…) y su freshclam.conf
+  rm -f "$pkgdir"/usr/lib/systemd/system/clamav-*.service "$pkgdir"/usr/lib/systemd/system/clamav-*.socket \
+        "$pkgdir"/usr/lib/systemd/system/clamav-*.timer
+}

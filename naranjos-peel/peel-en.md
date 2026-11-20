@@ -14,6 +14,26 @@ the shield on the bar or by typing `naranjos-peel` in a terminal.
 | Hardened kernel | `sysctl` settings that make local and network attacks harder (`/usr/lib/sysctl.d/60-naranjos-peel.conf`). |
 | Audit | Lynis checks the whole system and gives a score with advice. |
 
+## Antivirus
+
+NaranjOS uses the free **ClamAV** engine with its own integration:
+
+- **It watches your downloads folder**: every new file that arrives is scanned automatically. If it is
+  dangerous it is moved to **quarantine** (no permissions, it cannot be opened) and you get a notification.
+- **Up-to-date signatures**: downloaded automatically every 6 hours (about 200 MB the first time).
+- **Weekly scan** of your home folder, in the background and at low priority.
+- No program is watching all the time: scanning only happens when something new arrives, so it uses no memory.
+
+| Command | What it does |
+|---|---|
+| `naranjos-peel antivirus` | Status: signatures, watcher, quarantine |
+| `naranjos-peel antivirus analiza [path]` | Scan now (no path: your downloads) |
+| `naranjos-peel antivirus actualiza` | Update the signatures now |
+| `naranjos-peel antivirus vigila si\|no` | Turn the downloads watcher on or off |
+| `naranjos-peel antivirus cuarentena` | What has been blocked |
+| `naranjos-peel antivirus restaura <name>` | Take a file out of quarantine (only if you are sure) |
+| `naranjos-peel antivirus vacia` | Delete everything in quarantine |
+
 ## VPN
 
 `naranjos-peel vpn` uses WireGuard with the NaranjOS network stack (systemd-networkd), no extra programs.
@@ -68,5 +88,5 @@ The sub-commands are in Spanish; most also accept an English alias (`open`, `clo
 
 ## Coming next
 
-Antivirus watching Downloads, rootkit detector,
+Rootkit detector,
 USB protection, AppArmor and the optional `naranjos-ciber` security kit.

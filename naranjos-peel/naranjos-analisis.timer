@@ -1,0 +1,10 @@
+[Unit]
+Description=NaranjOS peel: análisis semanal de tu carpeta personal
+
+[Timer]
+OnCalendar=weekly
+RandomizedDelaySec=2h
+Persistent=true
+
+[Install]
+WantedBy=timers.target

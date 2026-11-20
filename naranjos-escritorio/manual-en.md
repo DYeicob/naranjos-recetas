@@ -188,7 +188,7 @@ zumo's commands are in Spanish for now (an English version is coming):
 ## 9c. Security: NaranjOS peel
 
 `naranjos-peel` is the NaranjOS security centre (**Super + Ctrl + S** or the shield on the bar).
-Out of the box: a firewall with all incoming traffic closed, encrypted DNS (Quad9), random Wi-Fi
+Out of the box: a firewall with all incoming traffic closed, an antivirus watching your downloads, encrypted DNS (Quad9), random Wi-Fi
 MAC address, an invisible computer on the local network and a hardened kernel.
 
 | Command | What it does |
@@ -198,6 +198,7 @@ MAC address, an invisible computer on the local network and a hardened kernel.
 | `naranjos-peel cierra 22/tcp` | Close it |
 | `naranjos-peel red-local si` | Show printers / Chromecast by name (`red-local no` to hide again) |
 | `naranjos-peel portal` | Hotel/train Wi-Fi with a login page (`portal fin` when done) |
+| `naranjos-peel antivirus` | Antivirus status (`analiza`, `cuarentena`…) |
 | `naranjos-peel auditoria` | Full audit with Lynis |
 
 ### VPN (free)
@@ -247,7 +248,7 @@ language too. Want to translate NaranjOS into yours? See `/usr/share/doc/naranjo
 ## 11. Coming next
 
 - Tray icons on the bar.
-- Antivirus and more NaranjOS peel pieces.
+- Rootkit detector and USB protection in NaranjOS peel.
 - zumo in several languages.
 - The ISO installer.
 - NVIDIA driver for the dedicated graphics card.

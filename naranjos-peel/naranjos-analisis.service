@@ -1,0 +1,8 @@
+[Unit]
+Description=NaranjOS peel: análisis semanal de tu carpeta personal
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/naranjos-peel antivirus completo
+Nice=19
+IOSchedulingClass=idle
