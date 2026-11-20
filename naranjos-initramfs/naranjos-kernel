@@ -1,0 +1,109 @@
+#!/bin/bash
+# naranjos-kernel — pone en /boot los kernels que instala zumo (paquetes linux-naranjos…)
+#   · copia /usr/lib/modules/<versión>/vmlinuz a /boot/vmlinuz-<paquete> (un nombre fijo: el GRUB no cambia)
+#   · lo firma para Secure Boot con la MOK de NaranjOS (/etc/naranjos/mok)
+#   · prepara los módulos (depmod); el initramfs lo hace después naranjos-initramfs
+# Lo lanzan los hooks de zumo; a mano: sudo naranjos-kernel instala | naranjos-kernel estado
+set -euo pipefail
+VERSION="0.2.0"
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
+[ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
+die(){   printf '%snaranjos-kernel:%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+hecho(){ printf '%s✔%s %s\n' "$G" "$Z" "$1"; }
+aviso(){ printf '%s!%s %s\n' "$A" "$Z" "$1"; }
+MOK=/etc/naranjos/mok
+
+secure_boot(){
+  [ "$(od -An -t u1 /sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c 2>/dev/null | awk '{print $NF}')" = 1 ]
+}
+
+# targets de pacman (usr/lib/modules/<v>/vmlinuz) o, sin ellos, todos los kernels con paquete
+versiones(){
+  local l d
+  if [ ! -t 0 ]; then
+    while read -r l; do
+      [[ "$l" == usr/lib/modules/*/vmlinuz ]] || continue
+      d=${l#usr/lib/modules/}; echo "${d%/vmlinuz}"
+    done
+  else
+    for d in /usr/lib/modules/*/; do
+      d=${d%/}; [ -e "$d/vmlinuz" ] && [ -e "$d/pkgbase" ] && echo "${d##*/}"
+    done
+  fi
+  return 0
+}
+
+firma(){  # firma <entrada> <salida>
+  if [ -r "$MOK/MOK.priv" ] && [ -r "$MOK/MOK.pem" ] && command -v sbsign >/dev/null; then
+    sbsign --key "$MOK/MOK.priv" --cert "$MOK/MOK.pem" --output "$2" "$1" >/dev/null 2>&1 \
+      || die "$(_ 'No se pudo firmar el kernel')"
+    sbverify --cert "$MOK/MOK.pem" "$2" >/dev/null 2>&1 || die "$(_ 'La firma del kernel no se verifica')"
+    return 0
+  fi
+  cp "$1" "$2"
+  if secure_boot; then
+    aviso "$(_ 'Secure Boot está activo y no hay clave MOK en /etc/naranjos/mok: este kernel NO arrancará')"
+  fi
+  return 1
+}
+
+instala(){
+  [ "$(id -u)" = 0 ] || die "$(_ 'Hace falta root:') sudo naranjos-kernel instala"
+  local k d n firmado
+  # restos de kernels ya quitados por zumo (solo quedan los modules.* que creó depmod)
+  for d in /usr/lib/modules/*/; do
+    d=${d%/}
+    if [ ! -e "$d/kernel" ] && [ ! -e "$d/vmlinuz" ]; then
+      rm -f -- "$d"/modules.*; rmdir -- "$d" 2>/dev/null || true
+    fi
+  done
+  for k in $(versiones); do
+    d=/usr/lib/modules/$k
+    [ -e "$d/vmlinuz" ] && [ -r "$d/pkgbase" ] || continue
+    n=$(cat "$d/pkgbase")
+    depmod "$k"
+    if firma "$d/vmlinuz" "/boot/vmlinuz-$n.nuevo"; then firmado=$(_ 'firmado para Secure Boot'); else firmado=$(_ 'sin firmar'); fi
+    chmod 644 "/boot/vmlinuz-$n.nuevo"
+    mv -f "/boot/vmlinuz-$n.nuevo" "/boot/vmlinuz-$n"
+    echo "$k" > "/boot/.version-$n"
+    # shellcheck disable=SC2059
+    hecho "$(printf "$(_ 'Kernel %s en /boot/vmlinuz-%s (%s)')" "$k" "$n" "$firmado")"
+  done
+}
+
+quita(){
+  [ "$(id -u)" = 0 ] || die "$(_ 'Hace falta root:') sudo naranjos-kernel quita"
+  local k d n
+  for k in $(versiones); do
+    d=/usr/lib/modules/$k
+    [ -r "$d/pkgbase" ] || continue
+    n=$(cat "$d/pkgbase")
+    rm -f -- "/boot/vmlinuz-$n" "/boot/initramfs-$n.img" "/boot/.version-$n"
+    # shellcheck disable=SC2059
+    hecho "$(printf "$(_ 'Quitado de /boot: %s')" "$n")"
+  done
+}
+
+estado(){
+  local f n k s
+  printf '%sNaranjOS · kernels%s %s(%s: %s)%s\n' "$O" "$Z" "$D" "$(_ 'en uso')" "$(uname -r)" "$Z"
+  for f in /boot/vmlinuz-*; do
+    [ -e "$f" ] || continue
+    case "$f" in *.sinfirmar|*.nuevo) continue ;; esac
+    n=${f#/boot/vmlinuz-}
+    k=$n; [ -r "/boot/.version-$n" ] && k="$(cat "/boot/.version-$n") ($n)"
+    if [ -r "$MOK/MOK.pem" ] && command -v sbverify >/dev/null; then
+      if sbverify --cert "$MOK/MOK.pem" "$f" >/dev/null 2>&1; then s=$(_ 'firmado'); else s=$(_ 'SIN firmar'); fi
+    else s=$(_ 'firma sin comprobar'); fi
+    printf '  %-40s %s\n' "$k" "$s"
+  done
+}
+
+case "${1:-estado}" in
+  instala|install) instala ;;
+  quita|remove)    quita ;;
+  estado|status)   estado ;;
+  version|--version) echo "naranjos-kernel $VERSION" ;;
+  *) echo "naranjos-kernel instala | quita | estado"; exit 1 ;;
+esac

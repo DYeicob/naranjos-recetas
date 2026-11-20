@@ -1,0 +1,24 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6e2.sh
+pkgname=sbsigntools
+pkgver=0.9.5
+pkgrel=1
+pkgdesc='Firma y comprueba programas EFI para Secure Boot (sbsign, sbverify)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('openssl' 'util-linux-libs' 'binutils')
+makedepends=('gnu-efi' 'autoconf' 'automake' 'pkgconf')
+source=('http://archive.ubuntu.com/ubuntu/pool/main/s/sbsigntool/sbsigntool_0.9.5.orig.tar.gz')
+sha256sums=('fa93920ef80a406115c1de6f7764ffa4c34e3d1bd7890b9145c36de899a258f5')
+build() {
+  cd sbsigntool-$pkgver
+  # sin manuales ni pruebas (piden help2man, que LFS no trae)
+  sed -i 's/^SUBDIRS = .*/SUBDIRS = lib\/ccan src/' Makefile.am
+  autoreconf -fi
+  ./configure --prefix=/usr
+  make
+}
+package() {
+  cd sbsigntool-$pkgver
+  make DESTDIR="$pkgdir" install
+}

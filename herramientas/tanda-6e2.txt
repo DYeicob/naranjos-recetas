@@ -1,0 +1,5 @@
+gnu-efi
+sbsigntools
+naranjos-idiomas
+naranjos-initramfs
+linux-naranjos

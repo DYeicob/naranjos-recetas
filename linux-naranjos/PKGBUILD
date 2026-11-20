@@ -1,0 +1,86 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6e2.sh
+pkgname=linux-naranjos
+pkgver=7.3.5
+pkgrel=1
+pkgdesc='El kernel de NaranjOS (Linux estable, firmado para Secure Boot)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-only')
+depends=('kmod' 'naranjos-initramfs')
+makedepends=('bc' 'perl' 'openssl' 'elfutils' 'flex' 'bison' 'python' 'zstd' 'xz' 'tar')
+source=('https://cdn.kernel.org/pub/linux/kernel/v7.x/linux-7.3.5.tar.xz' 'config')
+sha256sums=('8f293f83d54f0b7b9be56863ebc5e4ea79d73e530b4ae55c572be97ef39f0990' '365a3cbdca99bb12f2cab70abb1b0f92f30184453055057abde8f007c832f0c9')
+options=('!strip' '!debug' '!lto')
+_kver() { make -s kernelrelease; }
+prepare() {
+  cd linux-$pkgver
+  cp ../config .config
+  local S=scripts/config
+  $S --disable WERROR --set-str LOCALVERSION "-naranjos" --disable LOCALVERSION_AUTO
+  # lo que LFS 13.1-systemd pide (=y) y lo que pide quitar
+  for o in PSI CGROUPS MEMCG RELOCATABLE RANDOMIZE_BASE STACKPROTECTOR STACKPROTECTOR_STRONG NET INET IPV6 \
+           DEVTMPFS DEVTMPFS_MOUNT DMIID SYSFB_SIMPLEFB DRM DRM_PANIC DRM_FBDEV_EMULATION DRM_SIMPLEDRM \
+           FRAMEBUFFER_CONSOLE INOTIFY_USER TMPFS TMPFS_POSIX_ACL X86_X2APIC PCI PCI_MSI IOMMU_SUPPORT \
+           IRQ_REMAP EFI EFI_STUB EFI_PARTITION VFAT_FS EFIVAR_FS NLS_CODEPAGE_437 NLS_ISO8859_1 \
+           BLK_DEV_NVME VMD EXT4_FS BLK_DEV_INITRD RD_ZSTD MICROCODE \
+           SECURITY_APPARMOR DEFAULT_SECURITY_APPARMOR MODULE_SIG MODULE_SIG_ALL; do
+    $S --enable "$o"
+  done
+  for o in PSI_DEFAULT_DISABLED IKHEADERS RT_GROUP_SCHED UEVENT_HELPER FW_LOADER_USER_HELPER LEGACY_TIOCSTI \
+           DEBUG_INFO_BTF DEBUG_INFO_BTF_MODULES DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT DEBUG_INFO_DWARF4 \
+           DEBUG_INFO_DWARF5 MODULE_COMPRESS GCC_PLUGINS SYSTEM_REVOCATION_LIST; do
+    $S --disable "$o"
+  done
+  $S --enable DEBUG_INFO_NONE --enable MODULE_COMPRESS_NONE \
+     --set-str SYSTEM_TRUSTED_KEYS "" --set-str SYSTEM_REVOCATION_KEYS "" \
+     --set-str MODULE_SIG_KEY "certs/signing_key.pem" \
+     --set-str LSM "landlock,lockdown,yama,integrity,apparmor,bpf"
+  make olddefconfig
+  # lo prohibido que vuelve porque otra opción lo «selecciona»: se apaga a quien lo selecciona
+  _selectores() {
+    find . -name 'Kconfig*' -not -path './Documentation/*' -print0 |
+      xargs -0 awk -v s="$1" '/^[[:space:]]*(menu)?config[[:space:]]+/ { cur=$2 } $1=="select" && $2==s { print cur }' | sort -u
+  }
+  _quita() {
+    local sym="$1" n="${2:-0}" x
+    [ "$n" -lt 4 ] || return 0
+    for x in $(_selectores "$sym"); do
+      if grep -q "^CONFIG_${x}=[ym]" .config; then $S --disable "$x"; _quita "$x" $((n + 1)); fi
+    done
+  }
+  local p
+  for p in UEVENT_HELPER FW_LOADER_USER_HELPER DEBUG_INFO_BTF; do
+    if grep -q "^CONFIG_${p}=y" .config; then _quita "$p"; $S --disable "$p"; fi
+  done
+  make olddefconfig
+  local mal=0
+  for o in BLK_DEV_NVME VMD EXT4_FS DEVTMPFS DEVTMPFS_MOUNT EFI_STUB TMPFS INOTIFY_USER CGROUPS MEMCG \
+           DRM_SIMPLEDRM FRAMEBUFFER_CONSOLE BLK_DEV_INITRD RD_ZSTD MICROCODE SECURITY_APPARMOR MODULE_SIG; do
+    grep -q "^CONFIG_${o}=y" .config || { echo "!! CONFIG_${o} no es =y"; mal=1; }
+  done
+  for o in UEVENT_HELPER FW_LOADER_USER_HELPER DEBUG_INFO_BTF; do
+    if grep -q "^CONFIG_${o}=y" .config; then echo "!! CONFIG_${o} sigue activo"; mal=1; fi
+  done
+  [ "$mal" = 0 ] || return 1
+  [ "$(_kver)" = "$pkgver-naranjos" ] || { echo "!! versión inesperada: $(_kver)"; return 1; }
+  cp .config ../config.final
+}
+build() {
+  cd linux-$pkgver
+  unset LDFLAGS
+  export KBUILD_BUILD_HOST=naranjos KBUILD_BUILD_USER=naranjos
+  make -j"$(nproc)" all
+}
+package() {
+  cd linux-$pkgver
+  unset LDFLAGS
+  local k m
+  k=$(_kver); m="$pkgdir/usr/lib/modules/$k"
+  install -Dm644 "$(make -s image_name)" "$m/vmlinuz"
+  echo "$pkgname" > "$m/pkgbase"
+  install -Dm644 .config "$m/config"
+  install -Dm644 System.map "$m/System.map"
+  # los módulos (firmados por el propio kernel); depmod lo hace naranjos-kernel al instalar
+  make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 DEPMOD=/doesnt/exist modules_install
+  rm -f "$m/build" "$m/source"
+}

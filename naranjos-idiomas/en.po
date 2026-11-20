@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NaranjOS 0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DYeicob/naranjos-recetas/issues\n"
-"POT-Creation-Date: 2026-11-20 15:46+0100\n"
+"POT-Creation-Date: 2026-11-20 16:38+0100\n"
 "PO-Revision-Date: 2026-11-20 13:30+0100\n"
 "Last-Translator: NaranjOS\n"
 "Language-Team: English\n"
@@ -45,7 +45,7 @@ msgstr "OFF"
 msgid "puertos abiertos"
 msgstr "open ports"
 
-#: peel/naranjos-peel:56 initramfs/naranjos-initramfs:201
+#: peel/naranjos-peel:56 initramfs/naranjos-initramfs:205
 msgid "ninguno"
 msgstr "none"
 
@@ -982,64 +982,116 @@ msgstr "This kernel has no modules: only the microcode goes in"
 msgid "depmod ha fallado"
 msgstr "depmod failed"
 
-#: initramfs/naranjos-initramfs:154
+#: initramfs/naranjos-initramfs:158
 msgid "No existe /boot/vmlinuz-%s"
 msgstr "/boot/vmlinuz-%s does not exist"
 
-#: initramfs/naranjos-initramfs:157
+#: initramfs/naranjos-initramfs:161
 msgid "Creando el initramfs del kernel %s…"
 msgstr "Creating the initramfs for kernel %s…"
 
-#: initramfs/naranjos-initramfs:171
+#: initramfs/naranjos-initramfs:175
 msgid "No se pudo crear el initramfs"
 msgstr "Could not create the initramfs"
 
-#: initramfs/naranjos-initramfs:175
+#: initramfs/naranjos-initramfs:179
 msgid "%s (%s, en %s s)"
 msgstr "%s (%s, in %s s)"
 
-#: initramfs/naranjos-initramfs:197
+#: initramfs/naranjos-initramfs:201
 msgid "sin initramfs"
 msgstr "no initramfs"
 
-#: initramfs/naranjos-initramfs:201
+#: initramfs/naranjos-initramfs:205
 msgid "Microcódigo: %s · módulos extra: %s"
 msgstr "Microcode: %s · extra modules: %s"
 
-#: initramfs/naranjos-initramfs:202
+#: initramfs/naranjos-initramfs:206
 msgid "Ajustes: %s"
 msgstr "Settings: %s"
 
-#: initramfs/naranjos-initramfs:206
+#: initramfs/naranjos-initramfs:210
 msgid "el initramfs de NaranjOS"
 msgstr "the NaranjOS initramfs"
 
-#: initramfs/naranjos-initramfs:207
+#: initramfs/naranjos-initramfs:211
 msgid "estado de los initramfs"
 msgstr "initramfs status"
 
-#: initramfs/naranjos-initramfs:208
+#: initramfs/naranjos-initramfs:212
 msgid "rehacer el de todos los kernels"
 msgstr "rebuild it for every kernel"
 
-#: initramfs/naranjos-initramfs:209
+#: initramfs/naranjos-initramfs:213
 msgid "rehacer el de un kernel"
 msgstr "rebuild it for one kernel"
 
-#: initramfs/naranjos-initramfs:211
+#: initramfs/naranjos-initramfs:215
 msgid ""
 "Se rehace solo cuando zumo instala un kernel, módulos o microcódigo nuevos."
 msgstr ""
 "It is rebuilt automatically when zumo installs a new kernel, modules or "
 "microcode."
 
-#: initramfs/naranjos-initramfs:212
+#: initramfs/naranjos-initramfs:216
 msgid "Ajustes (módulos extra, microcódigo):"
 msgstr "Settings (extra modules, microcode):"
 
-#: initramfs/naranjos-initramfs:222
+#: initramfs/naranjos-initramfs:226
 msgid "No hay ningún kernel en /boot"
 msgstr "There is no kernel in /boot"
+
+#: initramfs/naranjos-kernel:40
+msgid "No se pudo firmar el kernel"
+msgstr "Could not sign the kernel"
+
+#: initramfs/naranjos-kernel:41
+msgid "La firma del kernel no se verifica"
+msgstr "The kernel signature does not verify"
+
+#: initramfs/naranjos-kernel:46
+msgid ""
+"Secure Boot está activo y no hay clave MOK en /etc/naranjos/mok: este kernel"
+" NO arrancará"
+msgstr ""
+"Secure Boot is on and there is no MOK key in /etc/naranjos/mok: this kernel "
+"will NOT boot"
+
+#: initramfs/naranjos-kernel:52 initramfs/naranjos-kernel:76
+msgid "Hace falta root:"
+msgstr "Root is needed:"
+
+#: initramfs/naranjos-kernel:66
+msgid "firmado para Secure Boot"
+msgstr "signed for Secure Boot"
+
+#: initramfs/naranjos-kernel:66
+msgid "sin firmar"
+msgstr "unsigned"
+
+#: initramfs/naranjos-kernel:71
+msgid "Kernel %s en /boot/vmlinuz-%s (%s)"
+msgstr "Kernel %s in /boot/vmlinuz-%s (%s)"
+
+#: initramfs/naranjos-kernel:84
+msgid "Quitado de /boot: %s"
+msgstr "Removed from /boot: %s"
+
+#: initramfs/naranjos-kernel:90
+msgid "en uso"
+msgstr "running"
+
+#: initramfs/naranjos-kernel:97
+msgid "firmado"
+msgstr "signed"
+
+#: initramfs/naranjos-kernel:97
+msgid "SIN firmar"
+msgstr "NOT signed"
+
+#: initramfs/naranjos-kernel:98
+msgid "firma sin comprobar"
+msgstr "signature not checked"
 
 #: esc/naranjos-atajos:4
 msgid "Atajos"

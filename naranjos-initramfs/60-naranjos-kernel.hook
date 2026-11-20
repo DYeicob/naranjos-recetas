@@ -1,0 +1,13 @@
+# NaranjOS · cuando zumo instala un kernel, se copia a /boot con un nombre fijo y se firma para Secure Boot
+# (después, 90-naranjos-initramfs.hook le hace su initramfs)
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Path
+Target = usr/lib/modules/*/vmlinuz
+
+[Action]
+Description = NaranjOS: instalando el kernel en /boot (firmado para Secure Boot)…
+When = PostTransaction
+Exec = /usr/bin/naranjos-kernel instala
+NeedsTargets

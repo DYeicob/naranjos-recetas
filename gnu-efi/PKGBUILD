@@ -1,0 +1,24 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6e2.sh
+pkgname=gnu-efi
+pkgver=4.0.4
+pkgrel=1
+pkgdesc='Bibliotecas y cabeceras para programas EFI (las usa el arranque de NaranjOS)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later' 'BSD-2-Clause' 'BSD-3-Clause')
+depends=()
+makedepends=()
+source=('http://archive.ubuntu.com/ubuntu/pool/main/g/gnu-efi/gnu-efi_4.0.4.orig.tar.gz')
+sha256sums=('cce8f466a5d9d83d653aa03bf67875c6e8ce5334da776734b777d0c383c3c549')
+options=('!strip' '!lto' 'staticlibs')
+build() {
+  cd ncroxon-gnu-efi-*/
+  # los programas EFI no llevan las opciones de seguridad de los programas normales
+  unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
+  make
+}
+package() {
+  cd ncroxon-gnu-efi-*/
+  unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
+  make PREFIX=/usr LIBDIR=/usr/lib DESTDIR="$pkgdir" install
+}

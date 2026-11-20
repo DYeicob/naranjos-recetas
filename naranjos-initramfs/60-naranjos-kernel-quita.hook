@@ -1,0 +1,11 @@
+# NaranjOS · al quitar un kernel con zumo, se borra también de /boot
+[Trigger]
+Operation = Remove
+Type = Path
+Target = usr/lib/modules/*/vmlinuz
+
+[Action]
+Description = NaranjOS: quitando el kernel de /boot…
+When = PreTransaction
+Exec = /usr/bin/naranjos-kernel quita
+NeedsTargets
