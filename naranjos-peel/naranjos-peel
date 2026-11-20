@@ -1,9 +1,9 @@
 #!/bin/bash
 # naranjos-peel — la piel de NaranjOS: centro de seguridad
-# (cortafuegos, VPN, antivirus, DNS cifrado, endurecimiento del kernel, MAC aleatoria y auditoría)
+# (cortafuegos, VPN, antivirus, integridad, USB, DNS cifrado, endurecimiento del kernel, MAC aleatoria y auditoría)
 # Textos traducibles con gettext (dominio «naranjos»): /usr/share/locale/<idioma>/LC_MESSAGES/naranjos.mo
 set -u
-VERSION="0.3.1"
+VERSION="0.4.0"
 . /usr/lib/naranjos/naranjos-i18n.sh
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
 [ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
@@ -58,6 +58,10 @@ estado(){
 
   titulo "$(_ 'Antivirus')"
   av_estado
+
+  titulo "$(_ 'Integridad y USB')"
+  int_estado
+  usb_estado
 
   titulo "DNS"
   if [ "$(readlink -f /etc/resolv.conf)" != "$STUB" ]; then
@@ -150,6 +154,19 @@ barra(){
     # shellcheck disable=SC2059
     [ "$nq" -gt 0 ] && { tip="$tip\\n$(printf "$(_ 'Cuarentena: %s fichero(s)')" "$nq")"; [ "$cls" = mal ] || cls=aviso; }
   fi
+  local ni nb
+  if [ -r "$INT_ESTADO" ]; then
+    read -r ni _ < "$INT_ESTADO"
+    case "$ni" in
+      aviso)  tip="$tip\\n$(_ 'Integridad: hay cosas que revisar')"; [ "$cls" = mal ] || cls=aviso ;;
+      alerta) tip="$tip\\n$(_ 'Integridad: algo ha cambiado en el sistema')"; cls=mal ;;
+      *)      tip="$tip\\n$(_ 'Integridad: sin cambios')" ;;
+    esac
+  fi
+  nb=$(grep -c . "$USB_RUN/bloqueados" 2>/dev/null || true)
+  # shellcheck disable=SC2059
+  if [ "${nb:-0}" -gt 0 ]; then tip="$tip\\n$(printf "$(_ 'USB bloqueados: %s (Super + Ctrl + U)')" "$nb")"; [ "$cls" = mal ] || cls=aviso
+  elif [ "$(usb_modo)" = protegido ]; then tip="$tip\\n$(_ 'USB: protegido')"; fi
   tip="$tip\\n($(_ 'clic: centro de seguridad') · Super + Ctrl + S)"
   tip="$tip\\n($(_ 'clic derecho: conectar/desconectar la VPN') · Super + Ctrl + V)"
   printf '{"text":"%s","class":"%s","tooltip":"NaranjOS peel\\n%s"}\n' "$txt" "$cls" "${tip//\"/\'}"
@@ -549,6 +566,7 @@ av_estado(){
   if [ "$n" -gt 0 ]; then aviso "$(_ 'cuarentena')" "$(printf "$(_ '%s fichero(s)')" "$n")  →  naranjos-peel antivirus cuarentena"
   else bien "$(_ 'cuarentena')" "$(_ 'vacía')"; fi
   [ -r "$AV_ESTADO/ultimo-analisis" ] && nota "$(_ 'último análisis:') $(cat "$AV_ESTADO/ultimo-analisis")"
+  return 0
 }
 
 # mete un fichero infectado en la cuarentena (sin permisos, con nota de dónde estaba)
@@ -682,6 +700,260 @@ antivirus(){
   esac
 }
 
+# ==========================================================================================
+#  Integridad (detector de rootkits de NaranjOS)
+#   · ficheros de paquetes: se comparan con las huellas que guarda zumo/pacman (pacman -Qkk)
+#   · la base LFS (sin paquete): huellas propias en /var/lib/naranjos/integridad/huellas.sha256
+#   · señales típicas de rootkit: ld.so.preload, módulos del kernel sin fichero, UID 0 extra,
+#     contraseñas vacías, programas nuevos con permisos de root (SUID), ejecutables en /tmp…
+#   · naranjos-integridad.timer la pasa cada día; los avisos llegan por /run/naranjos/avisos
+# ==========================================================================================
+INT_DIR=/var/lib/naranjos/integridad
+INT_ESTADO="$INT_DIR/estado"            # «ok|aviso|alerta <fecha> <n>» (lo leen todos)
+INT_INFORME="$INT_DIR/informe.txt"      # detalle (solo root)
+AVISOS=/run/naranjos/avisos
+
+# avisa a los usuarios con sesión abierta (naranjos-avisos.path lo convierte en notificación)
+aviso_sistema(){  # aviso_sistema <tipo> <título> <texto>
+  mkdir -p "$AVISOS"; chmod 755 "$AVISOS"
+  printf '%s\n%s\n' "$2" "$3" > "$AVISOS/$1-$(date +%s%N)"
+  chmod 644 "$AVISOS/$1-"*
+}
+
+int_owned(){ pacman -Qlq 2>/dev/null | grep -v '/$' | sort -u; }
+int_base_lista(){  # ficheros de la base que no son de ningún paquete
+  { find /usr/bin /usr/sbin /usr/libexec -xdev -type f 2>/dev/null
+    find /usr/lib -maxdepth 1 -xdev -type f -name '*.so*' 2>/dev/null
+    find /usr/lib/systemd /usr/lib/security -xdev -type f 2>/dev/null; } | sort -u | comm -23 - <(int_owned)
+}
+int_suid(){ find /usr /opt -xdev -type f -perm /6000 2>/dev/null | sort; }
+
+int_base(){
+  como_root integridad acepta
+  install -dm755 "$INT_DIR"
+  printf '%s\n' "$(_ 'Guardando las huellas de la base del sistema (tarda un poco)…')"
+  ( umask 077
+    int_base_lista | tr '\n' '\0' | xargs -0 -r sha256sum > "$INT_DIR/huellas.sha256" 2>/dev/null
+    int_suid > "$INT_DIR/suid.txt" )
+  # shellcheck disable=SC2059
+  hecho "$(printf "$(_ 'Huellas guardadas: %s ficheros de la base')" "$(wc -l < "$INT_DIR/huellas.sha256")")"
+}
+
+int_comprueba(){
+  como_root integridad comprueba
+  install -dm755 "$INT_DIR"
+  [ -s "$INT_DIR/huellas.sha256" ] || { int_base; echo "ok $(date '+%d/%m %H:%M') 0" > "$INT_ESTADO"; chmod 644 "$INT_ESTADO"; return; }
+  local alertas=() avisos=() l f m p
+  # 1) ficheros de paquetes modificados (solo programas y bibliotecas, no la configuración de /etc)
+  while IFS= read -r l; do
+    f=$(sed -n 's/^[^:]*: [^:]*: \(\/[^ ]*\) (.*$/\1/p' <<< "$l")
+    case "$f" in /usr/bin/*|/usr/sbin/*|/usr/lib/*.so*|/usr/lib/systemd/*|/usr/libexec/*) ;; *) continue ;; esac
+    [[ "$f" == */__pycache__/* ]] && continue
+    alertas+=("$(_ 'modificado (paquete)'): $f")
+  done < <(LC_ALL=C nice -n 19 pacman -Qkk 2>&1 | grep -E 'checksum mismatch|Size mismatch')
+  # 2) base LFS: modificados o nuevos sin paquete
+  local owned; owned=$(int_owned)
+  while IFS= read -r l; do
+    case "$l" in *": FAILED open or read") f="${l%: FAILED open or read}" ;; *": FAILED") f="${l%: FAILED}" ;; *) continue ;; esac
+    grep -qxF "$f" <<< "$owned" && continue          # ahora es de un paquete (lo vigila pacman)
+    case "$l" in *"open or read") avisos+=("$(_ 'desaparecido (base)'): $f") ;;
+                 *) alertas+=("$(_ 'modificado (base)'): $f") ;; esac
+  done < <(cd / && LC_ALL=C nice -n 19 sha256sum -c --quiet "$INT_DIR/huellas.sha256" 2>/dev/null)
+  while IFS= read -r f; do
+    case "$f" in /usr/bin/*|/usr/sbin/*) avisos+=("$(_ 'programa nuevo sin paquete'): $f") ;; esac
+  done < <(comm -13 <(cut -d' ' -f3- "$INT_DIR/huellas.sha256" | sort -u) <(int_base_lista))
+  # 3) señales de rootkit
+  [ -s /etc/ld.so.preload ] && alertas+=("$(_ '/etc/ld.so.preload no está vacío (carga código en todos los programas)')")
+  while IFS=: read -r u _ uid _; do
+    [ "$uid" = 0 ] && [ "$u" != root ] && alertas+=("$(_ 'usuario con poderes de root'): $u")
+  done < /etc/passwd
+  while IFS=: read -r u p _; do
+    [ -z "$p" ] && alertas+=("$(_ 'usuario sin contraseña'): $u")
+  done < /etc/shadow
+  while read -r m _; do
+    modinfo -n "$m" >/dev/null 2>&1 || alertas+=("$(_ 'módulo del kernel sin fichero en el sistema'): $m")
+  done < /proc/modules
+  while IFS= read -r f; do avisos+=("$(_ 'nuevo programa con permisos de root (SUID)'): $f")
+  done < <(comm -13 "$INT_DIR/suid.txt" <(int_suid))
+  while IFS= read -r f; do avisos+=("$(_ 'ejecutable en una carpeta temporal'): $f")
+  done < <(find /tmp /var/tmp /dev/shm -maxdepth 2 -xdev -type f -perm /111 2>/dev/null | head -n 20)
+  for f in /sys/class/net/*/flags; do
+    [ $(( $(cat "$f") & 0x100 )) -ne 0 ] && avisos+=("$(_ 'tarjeta de red escuchando todo el tráfico (modo promiscuo)'): $(basename "$(dirname "$f")")")
+  done
+
+  local nivel=ok n=$(( ${#alertas[@]} + ${#avisos[@]} ))
+  [ ${#avisos[@]} -gt 0 ] && nivel=aviso
+  [ ${#alertas[@]} -gt 0 ] && nivel=alerta
+  ( umask 077
+    { echo "# NaranjOS peel · integridad · $(date '+%F %T')"
+      for l in "${alertas[@]}"; do echo "ALERTA $l"; done
+      for l in "${avisos[@]}"; do echo "AVISO  $l"; done; } > "$INT_INFORME" )
+  echo "$nivel $(date '+%d/%m %H:%M') $n" > "$INT_ESTADO"; chmod 644 "$INT_ESTADO"
+  if [ "$nivel" != ok ]; then
+    # shellcheck disable=SC2059
+    aviso_sistema integridad "$(_ 'NaranjOS peel: algo ha cambiado en el sistema')" \
+      "$(printf "$(_ '%s cosa(s) que revisar: sudo naranjos-peel integridad')" "$n")"
+  fi
+  [ -t 1 ] && int_estado
+}
+
+int_estado(){
+  local nivel fecha n
+  if [ ! -r "$INT_ESTADO" ]; then nota "$(_ 'Aún no se ha comprobado: sudo naranjos-peel integridad comprueba')"; return; fi
+  read -r nivel fecha n < "$INT_ESTADO"
+  case "$nivel" in
+    ok)     bien "$(_ 'integridad')" "$(_ 'sin cambios') ($fecha)";;
+    aviso)  aviso "$(_ 'integridad')" "$n $(_ 'cosa(s) que revisar') ($fecha)  →  sudo naranjos-peel integridad";;
+    *)      mal "$(_ 'integridad')" "$n $(_ 'cosa(s) que revisar') ($fecha)  →  sudo naranjos-peel integridad";;
+  esac
+  if [ "$(id -u)" = 0 ] && [ "$nivel" != ok ] && [ -r "$INT_INFORME" ]; then
+    grep -v '^#' "$INT_INFORME" | sed 's/^/    /'
+    nota "$(_ 'Si lo cambiaste tú (o un programa que instalaste a mano): sudo naranjos-peel integridad acepta')"
+  fi
+}
+
+integridad(){
+  case "${1:-}" in
+    ""|estado|status) printf '%s%s%s\n' "$O" "$(_ 'Integridad')" "$Z"; int_estado ;;
+    comprueba|check)  int_comprueba ;;
+    acepta|accept)    int_base; echo "ok $(date '+%d/%m %H:%M') 0" > "$INT_ESTADO"; chmod 644 "$INT_ESTADO" ;;
+    *) die "$(_ 'Uso:') naranjos-peel integridad [comprueba|acepta]" ;;
+  esac
+}
+
+# ==========================================================================================
+#  Protección USB de NaranjOS (autorización USB del propio kernel, sin programas extra)
+#   · modo «protegido»: un USB desconocido no funciona hasta que lo permites; lo permitido se recuerda
+#   · lo conectado al activar la protección (webcam, Bluetooth interno…) queda permitido
+#   · /etc/naranjos/usb/modo y /etc/naranjos/usb/permitidos  ·  bloqueados: /run/naranjos/usb/bloqueados
+#   · el kernel avisa a udev (60-naranjos-usb.rules) → /usr/lib/naranjos/naranjos-usb decide
+# ==========================================================================================
+USB_DIR=/etc/naranjos/usb
+USB_RUN=/run/naranjos/usb
+
+usb_modo(){ cat "$USB_DIR/modo" 2>/dev/null || echo abierto; }
+usb_dispositivos(){ local d; for d in /sys/bus/usb/devices/*; do [[ "${d##*/}" =~ ^[0-9]+-[0-9.]+$ ]] && echo "${d##*/}"; done; }
+usb_dato(){ cat "/sys/bus/usb/devices/$1/$2" 2>/dev/null; }
+usb_id(){ echo "$(usb_dato "$1" idVendor):$(usb_dato "$1" idProduct)|$(usb_dato "$1" serial)"; }
+usb_nombre(){
+  local n; n="$(usb_dato "$1" manufacturer) $(usb_dato "$1" product)"; n="${n# }"; n="${n% }"
+  echo "${n:-$(_ 'dispositivo USB')}"
+}
+usb_permitido(){ grep -q "^$(usb_id "$1" | sed 's/[][\.*^$/]/\\&/g')|" "$USB_DIR/permitidos" 2>/dev/null; }
+
+usb_estado(){
+  local m k a n=0; m=$(usb_modo)
+  if [ "$m" = protegido ]; then bien "USB" "$(_ 'protegido: los dispositivos desconocidos no funcionan hasta que los permites')"
+  else aviso "USB" "$(_ 'abierto: cualquier USB funciona al enchufarlo')  →  naranjos-peel usb modo protegido"; fi
+  for k in $(usb_dispositivos); do
+    a=$(usb_dato "$k" authorized)
+    if [ "$a" = 0 ]; then n=$((n+1)); printf '    %s✘%s %s  %s(%s · naranjos-peel usb permite %s)%s\n' "$R" "$Z" "$(usb_nombre "$k")" "$D" "$(_ 'bloqueado')" "$k" "$Z"
+    elif [ "${VERBOSO:-0}" = 1 ]; then printf '    %s✔%s %s  %s%s%s\n' "$G" "$Z" "$(usb_nombre "$k")" "$D" "$(usb_id "$k" | cut -d'|' -f1)" "$Z"; fi
+  done
+  # shellcheck disable=SC2059
+  [ "$n" -gt 0 ] && nota "$(printf "$(_ '%s dispositivo(s) bloqueado(s). Super + Ctrl + U para permitirlos')" "$n")"
+  return 0
+}
+
+usb_lista(){ VERBOSO=1 usb_estado; }
+
+# permite un dispositivo conectado (por su posición, p. ej. 1-3, o por fabricante:modelo) y lo recuerda
+usb_permite(){
+  local q="${1:-}" k hecho_algo=0
+  [ -n "$q" ] || die "$(_ 'Uso:') naranjos-peel usb permite <1-3|vid:pid|todos>"
+  como_root usb permite "$@"
+  install -dm755 "$USB_DIR"; touch "$USB_DIR/permitidos"
+  for k in $(usb_dispositivos); do
+    case "$q" in
+      todos|all) [ "$(usb_dato "$k" authorized)" = 0 ] || continue ;;
+      *:*) [ "$(usb_id "$k" | cut -d'|' -f1)" = "$q" ] || continue ;;
+      *)   [ "$k" = "$q" ] || continue ;;
+    esac
+    usb_permitido "$k" || echo "$(usb_id "$k")|$(usb_nombre "$k")" >> "$USB_DIR/permitidos"
+    echo 1 > "/sys/bus/usb/devices/$k/authorized" 2>/dev/null
+    sed -i "/^$k|/d" "$USB_RUN/bloqueados" 2>/dev/null
+    hecho "$(_ 'Permitido'): $(usb_nombre "$k")"; hecho_algo=1
+  done
+  # shellcheck disable=SC2059
+  [ "$hecho_algo" = 1 ] || die "$(printf "$(_ 'No encuentro ese dispositivo: %s (míralos con: naranjos-peel usb lista)')" "$q")"
+}
+
+# deja de recordar un dispositivo (por fabricante:modelo); si está conectado, se bloquea
+usb_olvida(){
+  local q="${1:-}" k
+  [[ "$q" == *:* ]] || die "$(_ 'Uso:') naranjos-peel usb olvida <vid:pid>"
+  como_root usb olvida "$q"
+  sed -i "/^${q//:/\\:}|/d" "$USB_DIR/permitidos" 2>/dev/null
+  if [ "$(usb_modo)" = protegido ]; then
+    for k in $(usb_dispositivos); do
+      [ "$(usb_id "$k" | cut -d'|' -f1)" = "$q" ] && echo 0 > "/sys/bus/usb/devices/$k/authorized" 2>/dev/null
+    done
+  fi
+  hecho "$(_ 'Olvidado'): $q"
+}
+
+usb_aprende(){
+  local k; install -dm755 "$USB_DIR"; touch "$USB_DIR/permitidos"
+  for k in $(usb_dispositivos); do
+    [ "$(usb_dato "$k" authorized)" = 1 ] || continue
+    usb_permitido "$k" || echo "$(usb_id "$k")|$(usb_nombre "$k")" >> "$USB_DIR/permitidos"
+  done
+}
+
+usb_modo_pon(){
+  case "${1:-}" in
+    protegido|protected)
+      como_root usb modo protegido
+      usb_aprende; echo protegido > "$USB_DIR/modo"; /usr/lib/naranjos/naranjos-usb aplica
+      hecho "$(_ 'USB protegido. Lo que estaba conectado queda permitido; lo nuevo habrá que permitirlo.')";;
+    abierto|open)
+      como_root usb modo abierto
+      echo abierto > "$USB_DIR/modo"; /usr/lib/naranjos/naranjos-usb aplica
+      hecho "$(_ 'USB abierto: cualquier dispositivo funciona al enchufarlo')";;
+    *) die "$(_ 'Uso:') naranjos-peel usb modo protegido|abierto";;
+  esac
+}
+
+# menú en terminal (Super + Ctrl + U): permitir lo bloqueado
+usb_menu(){
+  local k bl=() i=0 r
+  for k in $(usb_dispositivos); do [ "$(usb_dato "$k" authorized)" = 0 ] && bl+=("$k"); done
+  printf '%s%s%s\n\n' "$O" "$(_ 'Dispositivos USB bloqueados')" "$Z"
+  if [ ${#bl[@]} -eq 0 ]; then nota "$(_ 'No hay ninguno bloqueado.')"; VERBOSO=1 usb_estado; return; fi
+  for k in "${bl[@]}"; do i=$((i+1)); printf '  %s%s)%s %s  %s(%s)%s\n' "$O" "$i" "$Z" "$(usb_nombre "$k")" "$D" "$(usb_id "$k" | cut -d'|' -f1)" "$Z"; done
+  echo; printf '%s\n' "$(_ '¡Ojo! Permite solo lo que acabas de enchufar tú. Un «teclado» que no esperabas puede ser un ataque.')"
+  read -rp "$(_ 'Número a permitir (t = todos, Enter = ninguno):') " r
+  case "$r" in
+    t|T) usb_permite todos ;;
+    ''|*[!0-9]*) ;;
+    *) [ "$r" -ge 1 ] && [ "$r" -le ${#bl[@]} ] && usb_permite "${bl[$((r-1))]}" ;;
+  esac
+}
+
+usb(){
+  case "${1:-}" in
+    ""|estado|status) printf '%sUSB%s\n' "$O" "$Z"; usb_estado ;;
+    lista|list)       printf '%sUSB%s\n' "$O" "$Z"; usb_lista ;;
+    permite|allow)    shift; usb_permite "$@" ;;
+    olvida|forget)    shift; usb_olvida "$@" ;;
+    modo|mode)        shift; usb_modo_pon "$@" ;;
+    menu)             usb_menu ;;
+    *) die "$(_ 'Uso:') naranjos-peel usb [lista|permite|olvida|modo|menu]" ;;
+  esac
+}
+
+# avisos del sistema → notificaciones (lo lanza naranjos-avisos.path de cada usuario)
+avisos(){
+  local sello="$AV_ESTADO/avisos.sello" f t x
+  mkdir -p "$AV_ESTADO"; [ -e "$sello" ] || touch -d '-1 min' "$sello"
+  for f in /run/naranjos/avisos/*; do
+    [ -f "$f" ] && [ "$f" -nt "$sello" ] || continue
+    t=$(sed -n 1p "$f"); x=$(sed -n 2p "$f")
+    naranjos-notifica --urgente "$t" "$x"
+  done
+  touch "$sello"
+}
+
 bloqueados(){
   como_root bloqueados "$@"
   journalctl -k -g 'naranjos-cortafuegos' --since "${1:-today}" --no-pager | tail -n 40
@@ -707,6 +979,13 @@ ayuda(){
   printf "$f" "$O" "naranjos-peel antivirus actualiza" "$Z" "$(_ 'pone al día las firmas')"
   printf "$f" "$O" "naranjos-peel antivirus vigila si|no" "$Z" "$(_ 'vigilar las descargas (por defecto: sí)')"
   printf "$f" "$O" "naranjos-peel antivirus cuarentena" "$Z" "$(_ 'lo bloqueado (restaura <n> / vacia)')"
+  printf "$f" "$O" "naranjos-peel integridad"      "$Z" "$(_ 'detector de rootkits: ¿algo del sistema ha cambiado?')"
+  printf "$f" "$O" "naranjos-peel integridad comprueba" "$Z" "$(_ 'comprobar ahora (tarda unos minutos)')"
+  printf "$f" "$O" "naranjos-peel integridad acepta" "$Z" "$(_ 'dar por buenos los cambios que hiciste tú')"
+  printf "$f" "$O" "naranjos-peel usb [lista]"     "$Z" "$(_ 'protección USB y dispositivos conectados')"
+  printf "$f" "$O" "naranjos-peel usb permite <n>" "$Z" "$(_ 'permitir un USB bloqueado (Super + Ctrl + U)')"
+  printf "$f" "$O" "naranjos-peel usb olvida <id>" "$Z" "$(_ 'dejar de permitir un USB')"
+  printf "$f" "$O" "naranjos-peel usb modo protegido|abierto" "$Z" "$(_ 'bloquear lo desconocido o no')"
   printf "$f" "$O" "naranjos-peel dns estricto"    "$Z" "$(_ 'DNS siempre cifrado (si la red lo bloquea, no hay DNS)')"
   printf "$f" "$O" "naranjos-peel dns flexible"    "$Z" "$(_ 'cifrado cuando se puede (por defecto)')"
   printf "$f" "$O" "naranjos-peel red-local si|no" "$Z" "$(_ 'ver impresoras/Chromecast por nombre (por defecto: no)')"
@@ -730,6 +1009,9 @@ case "${1:-estado}" in
   red-local|local-network) shift; red_local "$@" ;;
   vpn)       shift;    vpn "$@" ;;
   antivirus|av) shift; antivirus "$@" ;;
+  integridad|integrity) shift; integridad "$@" ;;
+  usb)       shift;    usb "$@" ;;
+  avisos)              avisos ;;
   auditoria|auditoría|audit) shift; auditoria "$@" ;;
   ayuda|help|-h|--help) ayuda ;;
   version|--version)   echo "naranjos-peel $VERSION" ;;

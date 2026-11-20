@@ -34,6 +34,37 @@ NaranjOS uses the free **ClamAV** engine with its own integration:
 | `naranjos-peel antivirus restaura <name>` | Take a file out of quarantine (only if you are sure) |
 | `naranjos-peel antivirus vacia` | Delete everything in quarantine |
 
+## Integrity (rootkit detector)
+
+Every day NaranjOS checks that no system program has been modified: packaged ones, with the fingerprints
+zumo keeps; the base system ones, with its own fingerprints. It also looks for typical rootkit signs:
+`/etc/ld.so.preload`, kernel modules without a file, users with root powers or no password, new programs
+with root permissions, executables in temporary folders and network cards sniffing all traffic. If it finds
+something, the shield turns yellow or red and you get a notification.
+
+| Command | What it does |
+|---|---|
+| `naranjos-peel integridad` | Result of the last check (with sudo, the details) |
+| `sudo naranjos-peel integridad comprueba` | Check now (a few minutes) |
+| `sudo naranjos-peel integridad acepta` | Accept changes you made yourself |
+
+## USB protection
+
+An unknown USB device (stick, mouse, keyboard…) **does not work until you allow it**. That way a «fake
+keyboard» that types commands by itself (Rubber Ducky and similar) can do nothing. Whatever was connected
+when NaranjOS peel was installed (webcam, internal Bluetooth…) stays allowed, and what you allow is remembered.
+It uses the kernel's own USB authorization: no extra program is watching.
+
+| Command | What it does |
+|---|---|
+| **Super + Ctrl + U** | See what is blocked and allow it |
+| `naranjos-peel usb lista` | Connected devices and their state |
+| `naranjos-peel usb permite <1-3\|vid:pid\|todos>` | Allow (and remember) |
+| `naranjos-peel usb olvida <vid:pid>` | Stop allowing |
+| `naranjos-peel usb modo protegido\|abierto` | Block unknown devices or not |
+
+**Careful:** only allow what you have just plugged in yourself. If an unexpected «keyboard» shows up blocked, do not allow it.
+
 ## VPN
 
 `naranjos-peel vpn` uses WireGuard with the NaranjOS network stack (systemd-networkd), no extra programs.
@@ -88,5 +119,4 @@ The sub-commands are in Spanish; most also accept an English alias (`open`, `clo
 
 ## Coming next
 
-Rootkit detector,
-USB protection, AppArmor and the optional `naranjos-ciber` security kit.
+AppArmor and the optional `naranjos-ciber` security kit.

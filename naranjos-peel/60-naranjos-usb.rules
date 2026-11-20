@@ -1,0 +1,2 @@
+# NaranjOS peel · protección USB: cada dispositivo USB nuevo pasa por naranjos-usb
+ACTION=="add", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", RUN+="/usr/lib/naranjos/naranjos-usb nuevo %k"

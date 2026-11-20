@@ -30,6 +30,7 @@ Puedes verlos en cualquier momento con **Super + K**.
 | Super + Ctrl + A | Mezclador de sonido |
 | Super + Ctrl + S | Seguridad (naranjos-peel) |
 | Super + Ctrl + V | Conectar / desconectar la VPN |
+| Super + Ctrl + U | Permitir un USB bloqueado |
 | Super + Ctrl + I | Idioma |
 | Super + W | Cerrar la ventana |
 | Super + F | Pantalla completa |
@@ -185,7 +186,8 @@ quieras compartir (sale un marco naranja).
 ## 9c. Seguridad: NaranjOS peel
 
 `naranjos-peel` es el centro de seguridad de NaranjOS (**Super + Ctrl + S** o el escudo de la barra).
-De serie: cortafuegos con toda la entrada cerrada, antivirus que vigila tus descargas, DNS cifrado (Quad9), MAC aleatoria en la WiFi y
+De serie: cortafuegos con toda la entrada cerrada, antivirus que vigila tus descargas, detector de
+rootkits diario, protección USB (lo desconocido no funciona hasta que lo permites con **Super + Ctrl + U**), DNS cifrado (Quad9), MAC aleatoria en la WiFi y
 kernel endurecido. El escudo se pone amarillo si hay algo a medias y rojo si el cortafuegos está apagado.
 
 | Orden | Qué hace |
@@ -237,6 +239,8 @@ cambian de idioma. ¿Quieres traducir NaranjOS al tuyo? Mira `/usr/share/doc/nar
 - **No puedo apagar desde el menú:** comprueba que polkit funciona con `systemctl status polkit`.
 - **No suena nada:** `wpctl status` debe mostrar tu tarjeta. Si no aparece, cierra sesión y vuelve
   a entrar (el sonido arranca con la sesión). Comprueba también que no esté en silencio.
+- **Enchufo un USB (ratón, memoria…) y no funciona:** está bloqueado por seguridad. Pulsa **Super + Ctrl + U**
+  y permítelo; NaranjOS lo recordará.
 - **Una WiFi pública no carga su página de acceso:** `naranjos-peel portal` (y luego `naranjos-peel portal fin`).
 - **La pantalla de inicio de sesión no aparece o falla:** pulsa Ctrl + Alt + Fn + F2, inicia sesión
   ahí y desactívala con `sudo systemctl disable greetd`.
@@ -244,7 +248,6 @@ cambian de idioma. ¿Quieres traducir NaranjOS al tuyo? Mira `/usr/share/doc/nar
 ## 11. Lo que viene
 
 - Bandeja de iconos en la barra.
-- Detector de rootkits y protección USB en NaranjOS peel.
 - zumo en varios idiomas.
 - Instalador de la ISO.
 - Driver de NVIDIA para la gráfica dedicada.

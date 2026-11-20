@@ -1,0 +1,9 @@
+[Unit]
+Description=NaranjOS peel: avisos del sistema (USB bloqueado, integridad…)
+
+[Path]
+PathChanged=/run/naranjos/avisos
+Unit=naranjos-avisos.service
+
+[Install]
+WantedBy=default.target

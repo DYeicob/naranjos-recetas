@@ -132,6 +132,7 @@ hl.bind(mainMod .. " + CTRL + B",      hl.dsp.exec_cmd("naranjos-tui bluetooth")
 hl.bind(mainMod .. " + CTRL + A",      hl.dsp.exec_cmd("naranjos-tui sonido"))
 hl.bind(mainMod .. " + CTRL + S",      hl.dsp.exec_cmd("naranjos-tui seguridad"))
 hl.bind(mainMod .. " + CTRL + V",      hl.dsp.exec_cmd("naranjos-tui vpn"))
+hl.bind(mainMod .. " + CTRL + U",      hl.dsp.exec_cmd("naranjos-tui usb"))
 hl.bind(mainMod .. " + CTRL + I",      hl.dsp.exec_cmd("naranjos-idioma menu"))
 -- Ventanas
 hl.bind(mainMod .. " + W",             hl.dsp.window.close())

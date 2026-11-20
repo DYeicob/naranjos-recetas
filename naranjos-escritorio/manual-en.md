@@ -30,6 +30,7 @@ You can see them at any time with **Super + K**.
 | Super + Ctrl + A | Sound mixer |
 | Super + Ctrl + S | Security (naranjos-peel) |
 | Super + Ctrl + V | Connect / disconnect the VPN |
+| Super + Ctrl + U | Allow a blocked USB device |
 | Super + Ctrl + I | Language |
 | Super + W | Close the window |
 | Super + F | Fullscreen |
@@ -188,7 +189,8 @@ zumo's commands are in Spanish for now (an English version is coming):
 ## 9c. Security: NaranjOS peel
 
 `naranjos-peel` is the NaranjOS security centre (**Super + Ctrl + S** or the shield on the bar).
-Out of the box: a firewall with all incoming traffic closed, an antivirus watching your downloads, encrypted DNS (Quad9), random Wi-Fi
+Out of the box: a firewall with all incoming traffic closed, an antivirus watching your downloads, a daily
+rootkit detector, USB protection (unknown devices do not work until you allow them with **Super + Ctrl + U**), encrypted DNS (Quad9), random Wi-Fi
 MAC address, an invisible computer on the local network and a hardened kernel.
 
 | Command | What it does |
@@ -241,6 +243,8 @@ language too. Want to translate NaranjOS into yours? See `/usr/share/doc/naranjo
 - **I can't power off from the menu:** check that polkit works with `systemctl status polkit`.
 - **No sound:** `wpctl status` must show your sound card. If it doesn't, log out and in again
   (sound starts with the session). Also check it isn't muted.
+- **I plug in a USB device (mouse, stick…) and it does not work:** it is blocked for security. Press
+  **Super + Ctrl + U** and allow it; NaranjOS will remember it.
 - **A public Wi-Fi doesn't load its login page:** `naranjos-peel portal` (then `naranjos-peel portal fin`).
 - **The login screen doesn't appear or fails:** press Ctrl + Alt + Fn + F2, log in there
   and disable it with `sudo systemctl disable greetd`.
@@ -248,7 +252,6 @@ language too. Want to translate NaranjOS into yours? See `/usr/share/doc/naranjo
 ## 11. Coming next
 
 - Tray icons on the bar.
-- Rootkit detector and USB protection in NaranjOS peel.
 - zumo in several languages.
 - The ISO installer.
 - NVIDIA driver for the dedicated graphics card.

@@ -34,6 +34,37 @@ NaranjOS usa el motor libre **ClamAV** con su propia integración:
 | `naranjos-peel antivirus restaura <nombre>` | Saca un fichero de la cuarentena (solo si estás seguro) |
 | `naranjos-peel antivirus vacia` | Borra todo lo que hay en la cuarentena |
 
+## Integridad (detector de rootkits)
+
+Cada día NaranjOS comprueba que ningún programa del sistema ha sido modificado: los de los paquetes,
+con las huellas que guarda zumo; los de la base del sistema, con huellas propias. Además busca señales
+típicas de un rootkit: `/etc/ld.so.preload`, módulos del kernel sin fichero, usuarios con poderes de
+root o sin contraseña, programas nuevos con permisos de root, ejecutables en carpetas temporales y
+tarjetas de red espiando todo el tráfico. Si encuentra algo, el escudo se pone amarillo o rojo y sale un aviso.
+
+| Orden | Qué hace |
+|---|---|
+| `naranjos-peel integridad` | Resultado de la última comprobación (con sudo, el detalle) |
+| `sudo naranjos-peel integridad comprueba` | Comprobar ahora (unos minutos) |
+| `sudo naranjos-peel integridad acepta` | Dar por buenos los cambios que hiciste tú |
+
+## Protección USB
+
+Un USB desconocido (memoria, ratón, teclado…) **no funciona hasta que lo permites**. Así un «teclado
+falso» que escribe órdenes solo (Rubber Ducky y similares) no puede hacer nada. Lo que estaba conectado al
+instalar NaranjOS peel (webcam, Bluetooth interno…) queda permitido, y lo que permites se recuerda.
+Usa la autorización USB del propio kernel: no hay ningún programa extra vigilando.
+
+| Orden | Qué hace |
+|---|---|
+| **Super + Ctrl + U** | Ver lo bloqueado y permitirlo |
+| `naranjos-peel usb lista` | Dispositivos conectados y su estado |
+| `naranjos-peel usb permite <1-3\|vid:pid\|todos>` | Permitir (y recordar) |
+| `naranjos-peel usb olvida <vid:pid>` | Dejar de permitir |
+| `naranjos-peel usb modo protegido\|abierto` | Bloquear lo desconocido o no |
+
+**Ojo:** permite solo lo que acabas de enchufar tú. Si aparece bloqueado un «teclado» que no esperabas, no lo permitas.
+
 ## VPN
 
 `naranjos-peel vpn` usa WireGuard con la red de NaranjOS (systemd-networkd), sin programas extra.
@@ -86,5 +117,4 @@ WireGuard configuration → «GNU/Linux» → un servidor gratuito → Create �
 
 ## Lo que viene
 
-Detector de rootkits,
-protección USB, AppArmor y el kit opcional de ciberseguridad `naranjos-ciber`.
+AppArmor y el kit opcional de ciberseguridad `naranjos-ciber`.

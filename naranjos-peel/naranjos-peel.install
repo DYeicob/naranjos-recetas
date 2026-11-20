@@ -31,6 +31,10 @@ post_install() {
   fi
   # 5) antivirus: usuario y carpeta de firmas, firmas al día y vigilancia de descargas
   peel_antivirus
+  # 6) integridad (rootkits) y protección USB
+  peel_vigilancia
+  echo "  ✔ protección USB: lo conectado ahora queda permitido; lo nuevo habrá que permitirlo (Super + Ctrl + U)"
+  echo "  ✔ integridad: guardando las huellas del sistema en segundo plano"
   echo "  ✔ antivirus: descargando las firmas en segundo plano (unos 200 MB la primera vez)"
   echo "  Mira el estado con: naranjos-peel"
 }
@@ -58,14 +62,39 @@ peel_antivirus() {
     sudo -u "$u" env XDG_RUNTIME_DIR="$d" sh -c 'systemctl --user daemon-reload; naranjos-peel antivirus vigila si' >/dev/null 2>&1 || true
   done
 }
+peel_vigilancia() {
+  systemd-tmpfiles --create /usr/lib/tmpfiles.d/naranjos-peel.conf >/dev/null 2>&1 || mkdir -p /run/naranjos/avisos /run/naranjos/usb
+  udevadm control --reload >/dev/null 2>&1 || true
+  # USB: la primera vez, recuerda lo conectado y pasa a «protegido»
+  if [ ! -e /etc/naranjos/usb/modo ]; then
+    /usr/bin/naranjos-peel usb modo protegido >/dev/null 2>&1 || true
+  else
+    /usr/lib/naranjos/naranjos-usb aplica >/dev/null 2>&1 || true
+  fi
+  systemctl enable naranjos-usb.service >/dev/null 2>&1 || true
+  systemctl enable naranjos-integridad.timer >/dev/null 2>&1 || true
+  systemctl start naranjos-integridad.timer >/dev/null 2>&1 || true
+  [ -e /var/lib/naranjos/integridad/huellas.sha256 ] || systemctl start --no-block naranjos-integridad.service >/dev/null 2>&1 || true
+  systemctl --global enable naranjos-avisos.path >/dev/null 2>&1 || true
+  local d uid u
+  for d in /run/user/*; do
+    uid=${d##*/}; [ "$uid" -ge 1000 ] 2>/dev/null || continue
+    u=$(id -nu "$uid" 2>/dev/null) || continue
+    sudo -u "$u" env XDG_RUNTIME_DIR="$d" sh -c 'systemctl --user daemon-reload; systemctl --user enable --now naranjos-avisos.path' >/dev/null 2>&1 || true
+  done
+}
 post_upgrade() {
   peel_antivirus
+  peel_vigilancia
   /usr/lib/systemd/systemd-sysctl /usr/lib/sysctl.d/60-naranjos-peel.conf >/dev/null 2>&1 || true
   systemctl is-enabled -q nftables.service 2>/dev/null && systemctl reload-or-restart nftables.service >/dev/null 2>&1
   systemctl try-restart systemd-resolved >/dev/null 2>&1
   return 0
 }
 pre_remove() {
+  echo abierto > /etc/naranjos/usb/modo 2>/dev/null && /usr/lib/naranjos/naranjos-usb aplica >/dev/null 2>&1
+  systemctl disable naranjos-usb.service naranjos-integridad.timer >/dev/null 2>&1 || true
+  systemctl --global disable naranjos-avisos.path >/dev/null 2>&1 || true
   systemctl disable --now naranjos-firmas.timer >/dev/null 2>&1 || true
   systemctl --global disable naranjos-vigia.path naranjos-analisis.timer >/dev/null 2>&1 || true
   /usr/bin/naranjos-peel vpn desconecta silencio >/dev/null 2>&1 || true

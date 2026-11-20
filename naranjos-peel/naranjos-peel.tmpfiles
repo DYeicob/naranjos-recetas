@@ -1,0 +1,5 @@
+# NaranjOS peel · carpetas de trabajo en /run
+d /run/naranjos         0755 root root -
+d /run/naranjos/avisos  0755 root root -
+d /run/naranjos/usb     0755 root root -
+d /run/naranjos/nftables 0755 root root -

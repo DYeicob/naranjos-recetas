@@ -1,0 +1,6 @@
+[Unit]
+Description=NaranjOS peel: muestra los avisos del sistema
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/naranjos-peel avisos

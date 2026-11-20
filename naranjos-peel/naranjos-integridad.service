@@ -1,0 +1,9 @@
+[Unit]
+Description=NaranjOS peel: comprueba que nada del sistema ha sido modificado (rootkits)
+Documentation=file:/usr/share/doc/naranjos/peel.md
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/naranjos-peel integridad comprueba
+Nice=19
+IOSchedulingClass=idle
