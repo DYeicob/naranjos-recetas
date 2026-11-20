@@ -20,8 +20,17 @@ for f in "$PERFILES"/*; do
   fs+=("$f")
 done
 [ ${#fs[@]} -gt 0 ] || { echo "No hay perfiles en $PERFILES"; exit 0; }
+# Los perfiles «flags=(unconfined)» (flatpak, chrome, steam…) no encierran nada: solo dan permiso para
+# crear espacios de nombres de usuario (las «cajas» de Flatpak). Forzarlos a «complain» les quita ese
+# permiso y rompe Flatpak («bwrap: setting up uid map: Permission denied»), así que se cargan tal cual.
+libres=() resto=()
+for f in "${fs[@]}"; do
+  if grep -q 'flags=([^)]*unconfined' "$f"; then libres+=("$f"); else resto+=("$f"); fi
+done
 # los que no se pueden cargar (p. ej. de programas que NaranjOS no tiene) se apuntan y se siguen los demás
-apparmor_parser "${op[@]}" "${fs[@]}" 2> "$ESTADO/errores" || true
+: > "$ESTADO/errores"
+[ ${#libres[@]} -gt 0 ] && { apparmor_parser --replace --write-cache "--cache-loc=$CACHE" --quiet "${libres[@]}" 2>> "$ESTADO/errores" || true; }
+[ ${#resto[@]} -gt 0 ]  && { apparmor_parser "${op[@]}" "${resto[@]}" 2>> "$ESTADO/errores" || true; }
 n=$(grep -c . /sys/kernel/security/apparmor/profiles 2>/dev/null || echo 0)
 printf '%s %s %s\n' "$modo" "$n" "$(date +%s)" > "$ESTADO/cargados"
 echo "AppArmor: $n perfiles cargados (modo $modo)"
