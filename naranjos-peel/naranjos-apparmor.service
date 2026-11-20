@@ -3,7 +3,8 @@ Description=NaranjOS peel: perfiles de AppArmor
 DefaultDependencies=no
 After=local-fs.target
 Before=sysinit.target
-ConditionSecurity=apparmor
+# (sin ConditionSecurity=apparmor: el systemd de LFS se compila sin AppArmor y la daría siempre por falsa;
+#  naranjos-apparmor ya comprueba él mismo si AppArmor está activo en el kernel)
 RequiresMountsFor=/var/cache/apparmor
 
 [Service]
