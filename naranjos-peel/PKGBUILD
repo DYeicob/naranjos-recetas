@@ -1,14 +1,14 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-6a2.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6j1.sh (NO editar a mano)
 pkgname=naranjos-peel
-pkgver=0.1.1
+pkgver=0.1.2
 pkgrel=1
 pkgdesc='NaranjOS peel: centro de seguridad (cortafuegos, DNS cifrado, kernel endurecido, MAC aleatoria, auditoría)'
 arch=('any')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
-depends=('nftables' 'lynis' 'iwd' 'sudo' 'naranjos-red')
-source=('00-naranjos.nft' '50-naranjos-peel.resolved' '60-naranjos-peel-dns.network.conf' '60-naranjos-peel.sysctl' 'naranjos-peel' 'nftables.conf' 'nftables.service' 'peel.md')
-sha256sums=('eb6813f7352718115bb64a5e62d711ff9306ceccc17d0ff40ad80d381daea8c3' '5b1ff31050e7ce33771a3d6ca2728e6148a4811f2955c43be347ec9223a0087e' 'b3c381f87e1732c7817ff472f6589b86408c500368ad7323866add6125512419' 'cfc40187f62fc84c5ce5ac2f258b81f9a19349ab4dd1f9aae2ec0e87ce935143' '06ae9c9fb04d8b656a66c24e8ee3e02aa914f1f2f376e1295ded96a653fcc021' '3ff656222e286666737c10c1e8ca4aeaf5c1698fe9159eec6c0fa97cc058b6e4' '417c89f656388abeacddeeaeee54f560ea3ad70ef162396ae8eaae1075626e24' '47f860b594d4c45c1b2355b5bbc4fb8b4132f4507f98c7af580956331c58082b')
+depends=('nftables' 'lynis' 'iwd' 'sudo' 'naranjos-red' 'naranjos-idiomas')
+source=('00-naranjos.nft' '50-naranjos-peel.resolved' '60-naranjos-peel-dns.network.conf' '60-naranjos-peel.sysctl' 'naranjos-peel' 'nftables.conf' 'nftables.service' 'peel-en.md' 'peel.md')
+sha256sums=('eb6813f7352718115bb64a5e62d711ff9306ceccc17d0ff40ad80d381daea8c3' '5b1ff31050e7ce33771a3d6ca2728e6148a4811f2955c43be347ec9223a0087e' 'b3c381f87e1732c7817ff472f6589b86408c500368ad7323866add6125512419' 'cfc40187f62fc84c5ce5ac2f258b81f9a19349ab4dd1f9aae2ec0e87ce935143' '536a1f828e6ab73bea91e2091f2ff013547b9c067932b2f557aaad084262a41d' '3ff656222e286666737c10c1e8ca4aeaf5c1698fe9159eec6c0fa97cc058b6e4' '417c89f656388abeacddeeaeee54f560ea3ad70ef162396ae8eaae1075626e24' 'a41af690da2902e80d4ed339a7008f33b8414b0d39856c0f7bb886b85006823a' '47f860b594d4c45c1b2355b5bbc4fb8b4132f4507f98c7af580956331c58082b')
 install=naranjos-peel.install
 backup=('etc/nftables.conf' 'etc/nftables.d/00-naranjos.nft')
 package() {
@@ -21,4 +21,5 @@ package() {
   install -Dm644 60-naranjos-peel-dns.network.conf \
                  "$pkgdir/usr/lib/systemd/network/25-naranjos-wifi.network.d/60-naranjos-peel-dns.conf"
   install -Dm644 peel.md                          "$pkgdir/usr/share/doc/naranjos/peel.md"
+  install -Dm644 peel-en.md                       "$pkgdir/usr/share/doc/naranjos/en/peel.md"
 }

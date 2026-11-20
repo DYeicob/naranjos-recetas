@@ -28,6 +28,8 @@ Puedes verlos en cualquier momento con **Super + K**.
 | Super + Ctrl + W | Menú de WiFi |
 | Super + Ctrl + B | Menú de Bluetooth |
 | Super + Ctrl + A | Mezclador de sonido |
+| Super + Ctrl + S | Seguridad (naranjos-peel) |
+| Super + Ctrl + I | Idioma |
 | Super + W | Cerrar la ventana |
 | Super + F | Pantalla completa |
 | Super + Shift + F | Maximizar |
@@ -44,6 +46,7 @@ Puedes verlos en cualquier momento con **Super + K**.
 | Super + L | Bloquear |
 | Super + Escape | Menú del sistema (bloquear, cerrar sesión, suspender, reiniciar, apagar) |
 | Super + Shift + Escape | Salir de Hyprland inmediatamente |
+| Super + Shift + R | Recargar el escritorio |
 
 ## 3. Cómo funciona el escritorio
 
@@ -78,6 +81,7 @@ De izquierda a derecha:
 - **Escritorios 1–5**: el activo sale en naranja. Pulsa uno para ir a él.
 - **Ventana activa**: su título.
 - **Reloj**, en el centro. Al pulsarlo muestra la fecha completa; al pasar el ratón, el calendario.
+- **Escudo**: la seguridad (naranjos-peel). Naranja = todo bien, amarillo = algo que revisar, rojo = cortafuegos apagado.
 - **Bluetooth**: pulsa para abrir el menú de Bluetooth (bluetui).
 - **Volumen**: rueda del ratón para subir o bajar, clic para el mezclador (wiremix),
   clic derecho para silenciar.
@@ -125,7 +129,7 @@ Se cambia en `~/.config/hypr/hypridle.conf`.
 
 ## 7. Capturas de pantalla
 
-Se guardan en `~/Imágenes/Capturas` y además se copian al portapapeles, listas para pegar.
+Se guardan en `Capturas`, dentro de tu carpeta de imágenes (`~/Imágenes/Capturas`), y además se copian al portapapeles, listas para pegar.
 
 ## 8. La terminal: zsh
 
@@ -188,6 +192,19 @@ kernel endurecido. El escudo se pone amarillo si hay algo a medias y rojo si el 
 
 Guía completa: `less /usr/share/doc/naranjos/peel.md`
 
+## 9d. Idioma
+
+NaranjOS se puede usar en varios idiomas. Pulsa **Super + Ctrl + I** y elige el tuyo, o en una terminal:
+
+| Orden | Qué hace |
+|---|---|
+| `naranjos-idioma` | Idioma actual y lista de idiomas (★ = NaranjOS ya traducido) |
+| `naranjos-idioma en` | Cambia **tu** idioma (se guarda en `~/.config/locale.conf`) |
+| `naranjos-idioma --sistema en` | Cambia el idioma del sistema: pantalla de inicio de sesión y usuarios nuevos |
+
+El cambio se ve al cerrar sesión y volver a entrar. Los programas (Firefox, las apps GTK…) también
+cambian de idioma. ¿Quieres traducir NaranjOS al tuyo? Mira `/usr/share/doc/naranjos/traducir.md`.
+
 ## 10. Problemas frecuentes
 
 - **No se abre nada al pulsar un atajo:** abre una terminal con Super + Enter y mira si
@@ -208,5 +225,6 @@ Guía completa: `less /usr/share/doc/naranjos/peel.md`
 
 - Bandeja de iconos en la barra.
 - VPN propia, antivirus y más piezas de NaranjOS peel.
+- zumo en varios idiomas.
 - Instalador de la ISO.
 - Driver de NVIDIA para la gráfica dedicada.

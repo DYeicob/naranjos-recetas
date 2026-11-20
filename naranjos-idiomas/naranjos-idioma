@@ -1,0 +1,143 @@
+#!/bin/bash
+# naranjos-idioma — elige el idioma de NaranjOS (para ti o para todo el sistema)
+#   naranjos-idioma                      idioma actual y lista de idiomas
+#   naranjos-idioma en                   cambia TU idioma (se guarda en ~/.config/locale.conf)
+#   naranjos-idioma --sistema en         cambia el idioma del sistema (inicio de sesión y usuarios nuevos)
+#   naranjos-idioma menu                 menú del escritorio (Super + Ctrl + I)
+set -u
+VERSION="0.1.0"
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; D=$'\e[2m'; Z=$'\e[0m'
+[ -t 1 ] || { O=; G=; R=; D=; Z=; }
+die(){ printf '%snaranjos-idioma:%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+
+# código | locale | nombre en su idioma | idioma de reserva para lo que aún no esté traducido
+IDIOMAS="es|es_ES|Español|
+en|en_US|English|
+gl|gl_ES|Galego|es
+ca|ca_ES|Català|es
+eu|eu_ES|Euskara|es
+pt|pt_PT|Português|en
+pt_BR|pt_BR|Português (Brasil)|en
+fr|fr_FR|Français|en
+de|de_DE|Deutsch|en
+it|it_IT|Italiano|en
+nl|nl_NL|Nederlands|en
+pl|pl_PL|Polski|en
+ru|ru_RU|Русский|en
+uk|uk_UA|Українська|en
+ja|ja_JP|日本語|en
+zh|zh_CN|中文|en"
+
+campo(){ printf '%s\n' "$IDIOMAS" | awk -F'|' -v c="$1" -v n="$2" '$1==c{print $n}'; }
+traducido(){ [ "$1" = es ] || [ -r "/usr/share/locale/$1/LC_MESSAGES/naranjos.mo" ]; }
+LOCAL="$HOME/.config/locale.conf"
+
+actual(){
+  local l=""
+  [ -r "$LOCAL" ] && l=$(sed -n 's/^LANG=//p' "$LOCAL")
+  [ -n "$l" ] || l=$(sed -n 's/^LANG=//p' /etc/locale.conf 2>/dev/null)
+  echo "${l%%.*}"
+}
+
+lista(){
+  local c loc nom res marca
+  printf '%s%s%s %s\n\n' "$O" "$(_ 'Idioma de NaranjOS')" "$Z" "$(printf "$(_ '(ahora: %s)')" "$(actual)")"
+  while IFS='|' read -r c loc nom res; do
+    if traducido "$c"; then marca="$G★$Z"; else marca=" "; fi
+    printf '  %s %-6s %s%-6s%s  %s\n' "$marca" "$c" "$D" "$loc" "$Z" "$nom"
+  done <<< "$IDIOMAS"
+  echo
+  printf '  %s★%s %s\n' "$G" "$Z" "$(_ 'NaranjOS traducido; en los demás, los programas salen en ese idioma y lo de NaranjOS aún no')"
+  echo
+  printf '  %snaranjos-idioma en%s            %s\n' "$O" "$Z" "$(_ 'cambia tu idioma')"
+  printf '  %snaranjos-idioma --sistema en%s  %s\n' "$O" "$Z" "$(_ 'cambia el del sistema (inicio de sesión y usuarios nuevos)')"
+  printf '  %s%s%s\n' "$D" "$(_ '¿Falta tu idioma? Puedes traducir NaranjOS: /usr/share/doc/naranjos/traducir.md')" "$Z"
+}
+
+# genera el locale de glibc si aún no existe (necesita sudo)
+asegura_locale(){
+  local loc="$1"
+  locale -a 2>/dev/null | grep -qix "$loc.utf8" && return 0
+  [ -r "/usr/share/i18n/locales/$loc" ] || die "$(printf "$(_ 'glibc no tiene el idioma %s')" "$loc")"
+  printf '%s\n' "$(printf "$(_ 'Preparando %s (solo la primera vez)…')" "$loc")"
+  sudo localedef -i "$loc" -f UTF-8 "$loc.UTF-8" || die "$(_ 'No se pudo preparar el idioma')"
+}
+
+valida(){
+  local c="$1"
+  [ -n "$(campo "$c" 2)" ] && { echo "$c"; return; }
+  c="${c%%[.@]*}"                       # es_ES.UTF-8 → es_ES
+  [ -n "$(campo "$c" 2)" ] && { echo "$c"; return; }
+  c="${c%%_*}"                          # es_ES → es
+  [ -n "$(campo "$c" 2)" ] && { echo "$c"; return; }
+  return 1
+}
+
+contenido(){  # contenido <código> → líneas LANG / LANGUAGE
+  local c="$1" loc res; loc=$(campo "$c" 2); res=$(campo "$c" 4)
+  echo "LANG=$loc.UTF-8"
+  case "$c" in
+    es) ;;
+    *) echo "LANGUAGE=${c}${res:+:$res}" ;;
+  esac
+}
+
+# mensaje final ya en el idioma nuevo
+en_nuevo(){ local c="$1" res; res=$(campo "$c" 4); LANGUAGE="${c}${res:+:$res}" LC_ALL="$(campo "$c" 2).UTF-8" gettext "$2" 2>/dev/null || gettext "$2"; }
+
+para_mi(){
+  local c; c=$(valida "$1") || die "$(printf "$(_ 'Idioma desconocido: %s (mira la lista con: naranjos-idioma)')" "$1")"
+  [ "$(id -u)" != 0 ] || die "$(_ 'Hazlo como tu usuario, sin sudo (para todo el sistema: --sistema)')"
+  asegura_locale "$(campo "$c" 2)"
+  mkdir -p "${LOCAL%/*}"
+  { echo "# NaranjOS · tu idioma (naranjos-idioma $c)"; contenido "$c"; } > "$LOCAL"
+  printf '%s✔%s %s\n' "$G" "$Z" "$(campo "$c" 3)"
+  en_nuevo "$c" 'Cierra sesión y vuelve a entrar para ver todo el escritorio en tu idioma.'; echo
+}
+
+sistema(){
+  local c; c=$(valida "${1:-}") || die "$(_ 'Uso:') naranjos-idioma --sistema <idioma>"
+  [ "$(id -u)" = 0 ] || exec sudo "$0" --sistema "$c"
+  asegura_locale "$(campo "$c" 2)"
+  local args; mapfile -t args < <(contenido "$c")
+  localectl set-locale "${args[@]}" || die "$(_ 'No se pudo cambiar el idioma del sistema')"
+  # saludo de la pantalla de inicio de sesión, en el idioma nuevo
+  local saludo; saludo=$(en_nuevo "$c" 'Bienvenido a NaranjOS')
+  [ -w /etc/tuigreet/config.toml ] && sed -i "s|^greeting = .*|greeting = \"${saludo//|/}\"|" /etc/tuigreet/config.toml
+  printf '%s✔%s %s: %s\n' "$G" "$Z" "$(_ 'Idioma del sistema')" "$(campo "$c" 3)"
+  en_nuevo "$c" 'Se aplica en el próximo inicio de sesión.'; echo
+}
+
+menu(){
+  local opciones c loc nom res elegido
+  opciones=$(while IFS='|' read -r c loc nom res; do
+    if traducido "$c"; then printf '★ %s  (%s)\n' "$nom" "$c"; else printf '   %s  (%s)\n' "$nom" "$c"; fi
+  done <<< "$IDIOMAS")
+  elegido=$(printf '%s\n' "$opciones" | fuzzel --dmenu --prompt "$(_ 'Idioma') ❯ " --lines 16 --width 34) || exit 0
+  c=$(sed -n 's/.*(\(.*\))$/\1/p' <<< "$elegido"); [ -n "$c" ] || exit 0
+  if locale -a 2>/dev/null | grep -qix "$(campo "$c" 2).utf8"; then
+    para_mi "$c" >/dev/null
+    naranjos-notifica "$(campo "$c" 3)" "$(en_nuevo "$c" 'Cierra sesión y vuelve a entrar para ver todo el escritorio en tu idioma.')"
+  else
+    # hace falta sudo para preparar el idioma: en una terminal
+    exec foot --app-id=naranjos-tui -T "$(_ 'Idioma')" bash -c 'naranjos-idioma "$1"; echo; read -rsn1 -p "$2"' _ "$c" "$(_ 'Pulsa una tecla para cerrar…')"
+  fi
+}
+
+menu_terminal(){
+  lista; echo
+  local c; read -rp "$(_ 'Escribe el código del idioma (Enter para salir):') " c
+  [ -n "$c" ] && para_mi "$c"
+  read -rsn1 -p "$(_ 'Pulsa una tecla para cerrar…')"
+}
+
+case "${1:-}" in
+  "")                    lista ;;
+  --sistema|--system)    shift; sistema "$@" ;;
+  menu)                  menu ;;
+  menu-terminal)         menu_terminal ;;
+  -h|--help|ayuda|help)  lista ;;
+  --version|version)     echo "naranjos-idioma $VERSION" ;;
+  *)                     para_mi "$1" ;;
+esac

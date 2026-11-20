@@ -21,7 +21,7 @@
   },
   "custom/naranjos": {
     "format": "NaranjOS",
-    "tooltip-format": "Aplicaciones (Super + Espacio)",
+    "tooltip": false,
     "on-click": "fuzzel"
   },
   "hyprland/workspaces": {
@@ -35,8 +35,7 @@
   },
   "clock": {
     "format": "{:%H:%M}",
-    "format-alt": "{:%A %d de %B · %H:%M}",
-    "locale": "es_ES.UTF-8",
+    "format-alt": "{:%A %d %B · %H:%M}",
     "tooltip-format": "<tt>{calendar}</tt>",
     "calendar": {
       "mode": "month",
@@ -45,7 +44,7 @@
   },
   "wireplumber": {
     "format": "{icon}  {volume}%",
-    "format-muted": "\uf026  mudo",
+    "format-muted": "\uf026  ✕",
     "format-icons": ["\uf026", "\uf027", "\uf028"],
     "scroll-step": 5,
     "max-volume": 100,
@@ -55,7 +54,7 @@
   },
   "bluetooth": {
     "format": "\uf294",
-    "format-off": "\uf294  off",
+    "format-off": "\uf294  ✕",
     "format-disabled": "",
     "format-no-controller": "",
     "format-connected": "\uf294  {device_alias}",
@@ -66,8 +65,8 @@
   },
   "network": {
     "format-wifi": "  {essid}",
-    "format-ethernet": "  cable",
-    "format-disconnected": "  sin red",
+    "format-ethernet": "",
+    "format-disconnected": "  ✕",
     "tooltip-format": "{ifname} · {ipaddr}",
     "tooltip-format-wifi": "{essid} ({signalStrength}%) · {ipaddr}",
     "on-click": "naranjos-tui wifi"
@@ -92,7 +91,7 @@
   "memory": {
     "format": "  {percentage}%",
     "interval": 10,
-    "tooltip-format": "{used:0.1f} de {total:0.1f} GiB"
+    "tooltip-format": "{used:0.1f} / {total:0.1f} GiB"
   },
   "custom/peel": {
     "exec": "naranjos-peel barra",
@@ -102,7 +101,7 @@
   },
   "custom/sistema": {
     "format": "",
-    "tooltip-format": "Bloquear, salir, apagar… (Super + Escape)",
+    "tooltip": false,
     "on-click": "naranjos-sistema"
   }
 }

@@ -1,0 +1,451 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR NaranjOS
+# This file is distributed under the same license as the NaranjOS package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: NaranjOS 0.1\n"
+"Report-Msgid-Bugs-To: https://github.com/DYeicob/naranjos-recetas/issues\n"
+"POT-Creation-Date: 2026-11-20 10:23+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: peel/naranjos-peel:36
+msgid "Las reglas tienen un error; no se ha cambiado nada"
+msgstr ""
+
+#: peel/naranjos-peel:37
+msgid "No se pudo recargar el cortafuegos"
+msgstr ""
+
+#: peel/naranjos-peel:46
+msgid "(la piel que protege la naranja)"
+msgstr ""
+
+#: peel/naranjos-peel:48
+msgid "Cortafuegos"
+msgstr ""
+
+#: peel/naranjos-peel:50 peel/naranjos-peel:52
+msgid "cortafuegos"
+msgstr ""
+
+#: peel/naranjos-peel:50
+msgid "activo (entrante cerrado, saliente abierto)"
+msgstr ""
+
+#: peel/naranjos-peel:52
+msgid "APAGADO"
+msgstr ""
+
+#: peel/naranjos-peel:55
+msgid "puertos abiertos"
+msgstr ""
+
+#: peel/naranjos-peel:55
+msgid "ninguno"
+msgstr ""
+
+#: peel/naranjos-peel:59
+msgid "DNS del sistema"
+msgstr ""
+
+#: peel/naranjos-peel:59
+msgid "/etc/resolv.conf no usa systemd-resolved (el DNS NO va cifrado)"
+msgstr ""
+
+#: peel/naranjos-peel:61 peel/naranjos-peel:63 peel/naranjos-peel:130
+msgid "DNS cifrado"
+msgstr ""
+
+#: peel/naranjos-peel:61
+msgid "estricto (solo DNS-over-TLS)"
+msgstr ""
+
+#: peel/naranjos-peel:63
+msgid "flexible (cifra siempre que la red lo permite)"
+msgstr ""
+
+#: peel/naranjos-peel:67
+msgid "servidores: %s"
+msgstr ""
+
+#: peel/naranjos-peel:69
+msgid "(systemd-resolved no dice que use DNS-over-TLS: puede ir sin cifrar)"
+msgstr ""
+
+#: peel/naranjos-peel:71 peel/naranjos-peel:73
+msgid "red local"
+msgstr ""
+
+#: peel/naranjos-peel:71
+msgid "visible (LLMNR/mDNS encendidos)"
+msgstr ""
+
+#: peel/naranjos-peel:73
+msgid "invisible (tu nombre de equipo no se anuncia)"
+msgstr ""
+
+#: peel/naranjos-peel:78 peel/naranjos-peel:80
+msgid "MAC aleatoria"
+msgstr ""
+
+#: peel/naranjos-peel:78
+msgid "sí (una distinta por cada red; se aplica al reiniciar iwd)"
+msgstr ""
+
+#: peel/naranjos-peel:80
+msgid "no configurada"
+msgstr ""
+
+#: peel/naranjos-peel:94 peel/naranjos-peel:97
+msgid "endurecimiento"
+msgstr ""
+
+#: peel/naranjos-peel:94
+msgid "aplicado (%s/%s)"
+msgstr ""
+
+#: peel/naranjos-peel:95
+msgid "(%s más solo se pueden comprobar con: sudo naranjos-peel)"
+msgstr ""
+
+#: peel/naranjos-peel:97
+msgid "%s/%s (reinicia para aplicarlo todo)"
+msgstr ""
+
+#: peel/naranjos-peel:98
+msgid "faltan:"
+msgstr ""
+
+#: peel/naranjos-peel:102
+msgid "activo"
+msgstr ""
+
+#: peel/naranjos-peel:103
+msgid "desactivado"
+msgstr ""
+
+#: peel/naranjos-peel:104
+msgid "desconocido"
+msgstr ""
+
+#: peel/naranjos-peel:107
+msgid "Auditoría"
+msgstr ""
+
+#: peel/naranjos-peel:111
+msgid "última auditoría"
+msgstr ""
+
+#: peel/naranjos-peel:111
+msgid "puntuación Lynis: %s/100"
+msgstr ""
+
+#: peel/naranjos-peel:113
+msgid "Hay una auditoría hecha; para ver la puntuación: sudo naranjos-peel"
+msgstr ""
+
+#: peel/naranjos-peel:115
+msgid "Haz una con: naranjos-peel auditoria"
+msgstr ""
+
+#: peel/naranjos-peel:118
+msgid "Más: naranjos-peel ayuda"
+msgstr ""
+
+#: peel/naranjos-peel:125
+msgid "Cortafuegos activo"
+msgstr ""
+
+#: peel/naranjos-peel:126
+msgid "abiertos:"
+msgstr ""
+
+#: peel/naranjos-peel:128
+msgid "¡Cortafuegos APAGADO!"
+msgstr ""
+
+#: peel/naranjos-peel:131
+msgid "DNS sin cifrar"
+msgstr ""
+
+#: peel/naranjos-peel:132
+msgid "clic: centro de seguridad"
+msgstr ""
+
+#: peel/naranjos-peel:140
+msgid "Puerto no válido: %s (ejemplo: 22/tcp)"
+msgstr ""
+
+#: peel/naranjos-peel:142
+msgid "Protocolo no válido: %s (tcp o udp)"
+msgstr ""
+
+#: peel/naranjos-peel:146 peel/naranjos-peel:155 peel/naranjos-peel:173
+#: peel/naranjos-peel:215 idiomas/naranjos-idioma:100 esc/naranjos-tui:10
+#: esc/naranjos-captura:12
+msgid "Uso:"
+msgstr ""
+
+#: peel/naranjos-peel:151
+msgid "Regla no válida; no se ha cambiado nada"
+msgstr ""
+
+#: peel/naranjos-peel:152
+msgid "Abierto:"
+msgstr ""
+
+#: peel/naranjos-peel:159
+msgid "Cerrado:"
+msgstr ""
+
+#: peel/naranjos-peel:169
+msgid ""
+"DNS estricto: si la red bloquea DNS-over-TLS no habrá DNS (vuelve con: "
+"naranjos-peel dns flexible)"
+msgstr ""
+
+#: peel/naranjos-peel:172
+msgid "DNS flexible: cifrado siempre que la red lo permita"
+msgstr ""
+
+#: peel/naranjos-peel:183
+msgid "No hay conexión de red"
+msgstr ""
+
+#: peel/naranjos-peel:186
+msgid "Vuelve el DNS cifrado de NaranjOS en %s"
+msgstr ""
+
+#: peel/naranjos-peel:189
+msgid "No encuentro el router de %s"
+msgstr ""
+
+#: peel/naranjos-peel:192
+msgid ""
+"Modo portal en %s: usa el DNS de la red (%s). Abre el navegador e inicia "
+"sesión."
+msgstr ""
+
+#: peel/naranjos-peel:193
+msgid "Cuando termines:"
+msgstr ""
+
+#: peel/naranjos-peel:197
+msgid "Falta lynis (zumo instala lynis)"
+msgstr ""
+
+#: peel/naranjos-peel:200
+msgid "Informe completo:"
+msgstr ""
+
+#: peel/naranjos-peel:210
+msgid ""
+"Red local visible: impresoras, Chromecast y equipos por nombre (vuelve con: "
+"naranjos-peel red-local no)"
+msgstr ""
+
+#: peel/naranjos-peel:214
+msgid "Red local invisible: tu equipo no anuncia su nombre"
+msgstr ""
+
+#: peel/naranjos-peel:226
+msgid "centro de seguridad de NaranjOS"
+msgstr ""
+
+#: peel/naranjos-peel:229
+msgid "estado de todo (cortafuegos, DNS, WiFi, kernel…)"
+msgstr ""
+
+#: peel/naranjos-peel:230
+msgid "abre un puerto de entrada (tcp por defecto)"
+msgstr ""
+
+#: peel/naranjos-peel:231
+msgid "lo vuelve a cerrar"
+msgstr ""
+
+#: peel/naranjos-peel:232
+msgid "lo último que ha frenado el cortafuegos (hoy)"
+msgstr ""
+
+#: peel/naranjos-peel:233
+msgid "DNS siempre cifrado (si la red lo bloquea, no hay DNS)"
+msgstr ""
+
+#: peel/naranjos-peel:234
+msgid "cifrado cuando se puede (por defecto)"
+msgstr ""
+
+#: peel/naranjos-peel:235
+msgid "ver impresoras/Chromecast por nombre (por defecto: no)"
+msgstr ""
+
+#: peel/naranjos-peel:236
+msgid "para WiFi de hotel/tren con página de acceso"
+msgstr ""
+
+#: peel/naranjos-peel:237
+msgid "auditoría completa del sistema con Lynis"
+msgstr ""
+
+#: peel/naranjos-peel:240
+msgid "En el escritorio: Super + Ctrl + S, o clic en el escudo de la barra."
+msgstr ""
+
+#: peel/naranjos-peel:241
+msgid "Más información:"
+msgstr ""
+
+#: idiomas/naranjos-idioma:45
+msgid "Idioma de NaranjOS"
+msgstr ""
+
+#: idiomas/naranjos-idioma:45
+msgid "(ahora: %s)"
+msgstr ""
+
+#: idiomas/naranjos-idioma:51
+msgid ""
+"NaranjOS traducido; en los demás, los programas salen en ese idioma y lo de "
+"NaranjOS aún no"
+msgstr ""
+
+#: idiomas/naranjos-idioma:53
+msgid "cambia tu idioma"
+msgstr ""
+
+#: idiomas/naranjos-idioma:54
+msgid "cambia el del sistema (inicio de sesión y usuarios nuevos)"
+msgstr ""
+
+#: idiomas/naranjos-idioma:55
+msgid ""
+"¿Falta tu idioma? Puedes traducir NaranjOS: /usr/share/doc/naranjos/traducir."
+"md"
+msgstr ""
+
+#: idiomas/naranjos-idioma:62
+msgid "glibc no tiene el idioma %s"
+msgstr ""
+
+#: idiomas/naranjos-idioma:63
+msgid "Preparando %s (solo la primera vez)…"
+msgstr ""
+
+#: idiomas/naranjos-idioma:64
+msgid "No se pudo preparar el idioma"
+msgstr ""
+
+#: idiomas/naranjos-idioma:90
+msgid "Idioma desconocido: %s (mira la lista con: naranjos-idioma)"
+msgstr ""
+
+#: idiomas/naranjos-idioma:91
+msgid "Hazlo como tu usuario, sin sudo (para todo el sistema: --sistema)"
+msgstr ""
+
+#: idiomas/naranjos-idioma:96 idiomas/naranjos-idioma:121
+msgid ""
+"Cierra sesión y vuelve a entrar para ver todo el escritorio en tu idioma."
+msgstr ""
+
+#: idiomas/naranjos-idioma:104
+msgid "No se pudo cambiar el idioma del sistema"
+msgstr ""
+
+#: idiomas/naranjos-idioma:106
+msgid "Bienvenido a NaranjOS"
+msgstr ""
+
+#: idiomas/naranjos-idioma:108
+msgid "Idioma del sistema"
+msgstr ""
+
+#: idiomas/naranjos-idioma:109
+msgid "Se aplica en el próximo inicio de sesión."
+msgstr ""
+
+#: idiomas/naranjos-idioma:117 idiomas/naranjos-idioma:124 esc/naranjos-tui:9
+msgid "Idioma"
+msgstr ""
+
+#: idiomas/naranjos-idioma:124 idiomas/naranjos-idioma:132 esc/naranjos-tui:8
+msgid "Pulsa una tecla para cerrar…"
+msgstr ""
+
+#: idiomas/naranjos-idioma:130
+msgid "Escribe el código del idioma (Enter para salir):"
+msgstr ""
+
+#: esc/naranjos-tui:7
+msgid "Sonido"
+msgstr ""
+
+#: esc/naranjos-tui:8
+msgid "Seguridad"
+msgstr ""
+
+#: esc/naranjos-sistema:5
+msgid "Bloquear"
+msgstr ""
+
+#: esc/naranjos-sistema:5
+msgid "Cerrar sesión"
+msgstr ""
+
+#: esc/naranjos-sistema:5
+msgid "Suspender"
+msgstr ""
+
+#: esc/naranjos-sistema:5
+msgid "Reiniciar"
+msgstr ""
+
+#: esc/naranjos-sistema:5
+msgid "Apagar"
+msgstr ""
+
+#: esc/naranjos-captura:6
+msgid "Imágenes"
+msgstr ""
+
+#: esc/naranjos-captura:7
+msgid "Capturas"
+msgstr ""
+
+#: esc/naranjos-captura:8
+msgid "captura"
+msgstr ""
+
+#: esc/naranjos-captura:15
+msgid "Captura guardada"
+msgstr ""
+
+#: esc/naranjos-captura:15
+msgid "también está en el portapapeles"
+msgstr ""
+
+#: esc/naranjos-navegador:7
+msgid "Firefox no está instalado"
+msgstr ""
+
+#: esc/naranjos-navegador:7
+msgid "En una terminal:"
+msgstr ""
+
+#: esc/naranjos-atajos:4
+msgid "Atajos"
+msgstr ""
+
+#: esc/naranjos-ayuda:5
+msgid "Manual de NaranjOS"
+msgstr ""

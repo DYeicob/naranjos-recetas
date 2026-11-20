@@ -1,13 +1,14 @@
 #!/bin/bash
 # naranjos-sistema — menú de bloquear / cerrar sesión / suspender / reiniciar / apagar (Super + Escape)
-op=$(printf '%s\n' \
-  $'  Bloquear' $'  Cerrar sesión' $'  Suspender' $'  Reiniciar' $'  Apagar' |
-  fuzzel --dmenu --prompt "NaranjOS ❯ " --lines 5 --width 24) || exit 0
+. /usr/lib/naranjos/naranjos-i18n.sh
+i=$(printf '%s\n' \
+  "  $(_ 'Bloquear')" "  $(_ 'Cerrar sesión')" "  $(_ 'Suspender')" "  $(_ 'Reiniciar')" "  $(_ 'Apagar')" |
+  fuzzel --dmenu --index --prompt "NaranjOS ❯ " --lines 5 --width 24) || exit 0
 energia(){ systemctl "$1" 2>/dev/null || sudo -n /usr/bin/systemctl "$1"; }
-case "$op" in
-  *Bloquear)  pidof hyprlock || hyprlock ;;
-  *sesión)    hyprctl dispatch 'hl.dsp.exit()' ;;
-  *Suspender) energia suspend ;;
-  *Reiniciar) energia reboot ;;
-  *Apagar)    energia poweroff ;;
+case "$i" in
+  0) pidof hyprlock || hyprlock ;;
+  1) hyprctl dispatch 'hl.dsp.exit()' ;;
+  2) energia suspend ;;
+  3) energia reboot ;;
+  4) energia poweroff ;;
 esac

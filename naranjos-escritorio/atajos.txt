@@ -9,6 +9,7 @@ Super + Ctrl + W          Menú de WiFi
 Super + Ctrl + B          Menú de Bluetooth
 Super + Ctrl + A          Mezclador de sonido
 Super + Ctrl + S          Seguridad (naranjos-peel)
+Super + Ctrl + I          Idioma
 ── VENTANAS ─────────────────────────────────────────────
 Super + W                 Cerrar la ventana
 Super + F                 Pantalla completa

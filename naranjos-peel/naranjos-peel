@@ -1,8 +1,11 @@
 #!/bin/bash
 # naranjos-peel — la piel de NaranjOS: centro de seguridad
 # (cortafuegos, DNS cifrado, endurecimiento del kernel, MAC aleatoria y auditoría)
+# Textos traducibles con gettext (dominio «naranjos»): /usr/share/locale/<idioma>/LC_MESSAGES/naranjos.mo
 set -u
-VERSION="0.1.1"
+VERSION="0.1.2"
+export TEXTDOMAIN=naranjos TEXTDOMAINDIR=/usr/share/locale
+_(){ gettext "$1"; }
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
 [ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
 PUERTOS=/etc/nftables.d/naranjos-puertos.nft
@@ -12,10 +15,13 @@ RED_LOCAL_DNS=/etc/systemd/resolved.conf.d/60-naranjos-peel-red-local.conf
 RED_LOCAL_FW=/etc/nftables.d/naranjos-red-local.nft
 STUB=/run/systemd/resolve/stub-resolv.conf
 
-bien(){  printf '  %s✔%s %-20s %s\n' "$G" "$Z" "$1" "$2"; }
-aviso(){ printf '  %s!%s %-20s %s\n' "$A" "$Z" "$1" "$2"; }
-mal(){   printf '  %s✘%s %-20s %s\n' "$R" "$Z" "$1" "$2"; }
-die(){   echo "${R}naranjos-peel:${Z} $*" >&2; exit 1; }
+bien(){  printf '  %s✔%s %-22s %s\n' "$G" "$Z" "$1" "$2"; }
+aviso(){ printf '  %s!%s %-22s %s\n' "$A" "$Z" "$1" "$2"; }
+mal(){   printf '  %s✘%s %-22s %s\n' "$R" "$Z" "$1" "$2"; }
+nota(){  printf '    %s%s%s\n' "$D" "$1" "$Z"; }
+titulo(){ printf '\n%s%s%s\n' "$O" "$1" "$Z"; }
+hecho(){ printf '%s✔%s %s\n' "$G" "$Z" "$1"; }
+die(){   printf '%snaranjos-peel:%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
 como_root(){ [ "$(id -u)" = 0 ] || exec sudo "$0" "$@"; }
 sysctl_val(){ local f="/proc/sys/${1//.//}"; [ -r "$f" ] && cat "$f" || echo "?"; }
 
@@ -27,8 +33,8 @@ SYSCTL_NARANJOS="kernel.kptr_restrict:2 kernel.dmesg_restrict:1 kernel.unprivile
   net.ipv4.conf.all.accept_source_route:0 net.ipv4.tcp_syncookies:1 net.ipv4.conf.all.rp_filter:2"
 
 recargar_cortafuegos(){
-  nft -c -f /etc/nftables.conf || die "Las reglas tienen un error; no se ha cambiado nada"
-  systemctl reload-or-restart nftables.service || die "No se pudo recargar el cortafuegos"
+  nft -c -f /etc/nftables.conf || die "$(_ 'Las reglas tienen un error; no se ha cambiado nada')"
+  systemctl reload-or-restart nftables.service || die "$(_ 'No se pudo recargar el cortafuegos')"
 }
 
 puertos_abiertos(){
@@ -37,43 +43,44 @@ puertos_abiertos(){
 
 # ------------------------------------------------------------------------------------------
 estado(){
-  echo "${O}NaranjOS · peel${Z} ${D}(la piel que protege la naranja)${Z}"
-  echo
-  echo "${O}Cortafuegos${Z}"
+  printf '%sNaranjOS · peel%s %s%s%s\n' "$O" "$Z" "$D" "$(_ '(la piel que protege la naranja)')" "$Z"
+
+  titulo "$(_ 'Cortafuegos')"
   if systemctl is-active -q nftables.service 2>/dev/null; then
-    bien "cortafuegos" "activo (entrante cerrado, saliente abierto)"
+    bien "$(_ 'cortafuegos')" "$(_ 'activo (entrante cerrado, saliente abierto)')"
   else
-    mal "cortafuegos" "APAGADO → sudo systemctl enable --now nftables"
+    mal "$(_ 'cortafuegos')" "$(_ 'APAGADO')  →  sudo systemctl enable --now nftables"
   fi
   local p; p=$(puertos_abiertos)
-  if [ -n "$p" ]; then aviso "puertos abiertos" "$p"; else bien "puertos abiertos" "ninguno"; fi
+  if [ -n "$p" ]; then aviso "$(_ 'puertos abiertos')" "$p"; else bien "$(_ 'puertos abiertos')" "$(_ 'ninguno')"; fi
 
-  echo; echo "${O}DNS${Z}"
+  titulo "DNS"
   if [ "$(readlink -f /etc/resolv.conf)" != "$STUB" ]; then
-    mal "DNS del sistema" "/etc/resolv.conf no usa systemd-resolved (el DNS NO va cifrado)"
+    mal "$(_ 'DNS del sistema')" "$(_ '/etc/resolv.conf no usa systemd-resolved (el DNS NO va cifrado)')"
   elif [ -f "$DNS_ESTRICTO" ]; then
-    bien "DNS cifrado" "estricto (solo DNS-over-TLS)"
+    bien "$(_ 'DNS cifrado')" "$(_ 'estricto (solo DNS-over-TLS)')"
   else
-    bien "DNS cifrado" "flexible (cifra siempre que la red lo permite)"
+    bien "$(_ 'DNS cifrado')" "$(_ 'flexible (cifra siempre que la red lo permite)')"
   fi
   local srv; srv=$(resolvectl dns 2>/dev/null | awk -F': ' '/^Global/{print $2}')
-  [ -n "$srv" ] && echo "    ${D}servidores: $srv${Z}"
+  # shellcheck disable=SC2059
+  [ -n "$srv" ] && nota "$(printf "$(_ 'servidores: %s')" "$srv")"
   resolvectl status 2>/dev/null | grep -qE '\+DNSOverTLS|DNSOverTLS=opportunistic' || \
-    echo "    ${D}(systemd-resolved no dice que use DNS-over-TLS: puede ir sin cifrar)${Z}"
+    nota "$(_ '(systemd-resolved no dice que use DNS-over-TLS: puede ir sin cifrar)')"
   if [ -f "$RED_LOCAL_DNS" ]; then
-    aviso "red local" "visible (LLMNR/mDNS encendidos) → naranjos-peel red-local no"
+    aviso "$(_ 'red local')" "$(_ 'visible (LLMNR/mDNS encendidos)')  →  naranjos-peel red-local no"
   else
-    bien "red local" "invisible (tu nombre de equipo no se anuncia)"
+    bien "$(_ 'red local')" "$(_ 'invisible (tu nombre de equipo no se anuncia)')"
   fi
 
-  echo; echo "${O}WiFi${Z}"
+  titulo "WiFi"
   if grep -q '^AddressRandomization=network' "$IWD" 2>/dev/null; then
-    bien "MAC aleatoria" "sí (una distinta por cada red; se aplica al reiniciar iwd)"
+    bien "$(_ 'MAC aleatoria')" "$(_ 'sí (una distinta por cada red; se aplica al reiniciar iwd)')"
   else
-    aviso "MAC aleatoria" "no configurada"
+    aviso "$(_ 'MAC aleatoria')" "$(_ 'no configurada')"
   fi
 
-  echo; echo "${O}Kernel${Z}"
+  titulo "Kernel"
   local k v ok=0 tot=0 fallan="" ocultos=0
   for k in $SYSCTL_NARANJOS; do
     v=$(sysctl_val "${k%%:*}")
@@ -82,62 +89,74 @@ estado(){
     tot=$((tot+1))
     if [ "$v" = "${k##*:}" ]; then ok=$((ok+1)); else fallan="$fallan ${k%%:*}"; fi
   done
+  # shellcheck disable=SC2059
   if [ "$ok" = "$tot" ]; then
-    bien "endurecimiento" "aplicado ($ok/$tot)"
-    [ "$ocultos" -gt 0 ] && echo "    ${D}($ocultos más solo se pueden comprobar con: sudo naranjos-peel)${Z}"
-  else aviso "endurecimiento" "$ok/$tot (reinicia para aplicarlo todo)"; echo "    ${D}faltan:$fallan${Z}"; fi
+    bien "$(_ 'endurecimiento')" "$(printf "$(_ 'aplicado (%s/%s)')" "$ok" "$tot")"
+    [ "$ocultos" -gt 0 ] && nota "$(printf "$(_ '(%s más solo se pueden comprobar con: sudo naranjos-peel)')" "$ocultos")"
+  else
+    aviso "$(_ 'endurecimiento')" "$(printf "$(_ '%s/%s (reinicia para aplicarlo todo)')" "$ok" "$tot")"
+    nota "$(_ 'faltan:')$fallan"
+  fi
   local sb; sb=$(od -An -t u1 /sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c 2>/dev/null | awk '{print $NF}')
-  case "$sb" in 1) bien "Secure Boot" "activo";; 0) aviso "Secure Boot" "desactivado";; *) aviso "Secure Boot" "desconocido";; esac
+  case "$sb" in
+    1) bien  "Secure Boot" "$(_ 'activo')";;
+    0) aviso "Secure Boot" "$(_ 'desactivado')";;
+    *) aviso "Secure Boot" "$(_ 'desconocido')";;
+  esac
 
-  echo; echo "${O}Auditoría${Z}"
+  titulo "$(_ 'Auditoría')"
   if [ -r /var/log/lynis-report.dat ]; then
     local idx; idx=$(sed -n 's/^hardening_index=//p' /var/log/lynis-report.dat)
-    bien "última auditoría" "puntuación Lynis: ${idx:-?}/100"
+    # shellcheck disable=SC2059
+    bien "$(_ 'última auditoría')" "$(printf "$(_ 'puntuación Lynis: %s/100')" "${idx:-?}")"
   elif [ -e /var/log/lynis-report.dat ]; then
-    echo "    ${D}Hay una auditoría hecha; para ver la puntuación: sudo naranjos-peel${Z}"
+    nota "$(_ 'Hay una auditoría hecha; para ver la puntuación: sudo naranjos-peel')"
   else
-    echo "    ${D}Haz una con: naranjos-peel auditoria${Z}"
+    nota "$(_ 'Haz una con: naranjos-peel auditoria')"
   fi
   echo
-  echo "${D}Más: naranjos-peel ayuda${Z}"
+  nota "$(_ 'Más: naranjos-peel ayuda')"
 }
 
 # Para la barra (Waybar): JSON con el escudo
 barra(){
-  local cls=ok txt tip p
+  local cls=ok tip p
   if systemctl is-active -q nftables.service 2>/dev/null; then
-    tip="Cortafuegos activo"
-    p=$(puertos_abiertos); [ -n "$p" ] && { tip="$tip · abiertos: $p"; cls=aviso; }
+    tip="$(_ 'Cortafuegos activo')"
+    p=$(puertos_abiertos); [ -n "$p" ] && { tip="$tip · $(_ 'abiertos:') $p"; cls=aviso; }
   else
-    tip="¡Cortafuegos APAGADO!"; cls=mal
+    tip="$(_ '¡Cortafuegos APAGADO!')"; cls=mal
   fi
-  [ "$(readlink -f /etc/resolv.conf)" = "$STUB" ] && tip="$tip\\nDNS cifrado" || { tip="$tip\\nDNS sin cifrar"; [ "$cls" = ok ] && cls=aviso; }
-  txt=$(printf '\xef\x84\xb2')   # escudo (Nerd Font)
-  printf '{"text":"%s","class":"%s","tooltip":"NaranjOS peel\\n%s\\n(clic: centro de seguridad · Super + Ctrl + S)"}\n' "$txt" "$cls" "$tip"
+  if [ "$(readlink -f /etc/resolv.conf)" = "$STUB" ]; then tip="$tip\\n$(_ 'DNS cifrado')"
+  else tip="$tip\\n$(_ 'DNS sin cifrar')"; [ "$cls" = ok ] && cls=aviso; fi
+  tip="$tip\\n($(_ 'clic: centro de seguridad') · Super + Ctrl + S)"
+  printf '{"text":"%s","class":"%s","tooltip":"NaranjOS peel\\n%s"}\n' "$(printf '\xef\x84\xb2')" "$cls" "${tip//\"/\'}"
 }
 
 # ------------------------------------------------------------------------------------------
 puerto_valido(){
   local p="${1%%/*}" pr="tcp"; [[ "$1" == */* ]] && pr="${1##*/}"
-  [[ "$p" =~ ^[0-9]+$ ]] && [ "$p" -ge 1 ] && [ "$p" -le 65535 ] || die "Puerto no válido: $1 (ejemplo: 22/tcp)"
-  [[ "$pr" == tcp || "$pr" == udp ]] || die "Protocolo no válido: $pr (tcp o udp)"
+  # shellcheck disable=SC2059
+  [[ "$p" =~ ^[0-9]+$ ]] && [ "$p" -ge 1 ] && [ "$p" -le 65535 ] || die "$(printf "$(_ 'Puerto no válido: %s (ejemplo: 22/tcp)')" "$1")"
+  # shellcheck disable=SC2059
+  [[ "$pr" == tcp || "$pr" == udp ]] || die "$(printf "$(_ 'Protocolo no válido: %s (tcp o udp)')" "$pr")"
   REGLA="add rule inet naranjos abiertos $pr dport $p accept comment \"naranjos-peel\""
 }
 abre(){
-  [ $# -ge 1 ] || die "Uso: naranjos-peel abre <puerto>[/tcp|/udp]"
+  [ $# -ge 1 ] || die "$(_ 'Uso:') naranjos-peel abre <puerto>[/tcp|/udp]"
   como_root abre "$@"
   puerto_valido "$1"; mkdir -p /etc/nftables.d; touch "$PUERTOS"
-  grep -qxF "$REGLA" "$PUERTOS" && { echo "Ese puerto ya estaba abierto."; return; }
+  grep -qxF "$REGLA" "$PUERTOS" && { _ 'Ese puerto ya estaba abierto.'; echo; return; }
   cp "$PUERTOS" "$PUERTOS.antes"; echo "$REGLA" >> "$PUERTOS"
-  if ! nft -c -f /etc/nftables.conf; then mv "$PUERTOS.antes" "$PUERTOS"; die "Regla no válida; no se ha cambiado nada"; fi
-  rm -f "$PUERTOS.antes"; recargar_cortafuegos; echo "${G}✔${Z} Abierto: $1"
+  if ! nft -c -f /etc/nftables.conf; then mv "$PUERTOS.antes" "$PUERTOS"; die "$(_ 'Regla no válida; no se ha cambiado nada')"; fi
+  rm -f "$PUERTOS.antes"; recargar_cortafuegos; hecho "$(_ 'Abierto:') $1"
 }
 cierra(){
-  [ $# -ge 1 ] || die "Uso: naranjos-peel cierra <puerto>[/tcp|/udp]"
+  [ $# -ge 1 ] || die "$(_ 'Uso:') naranjos-peel cierra <puerto>[/tcp|/udp]"
   como_root cierra "$@"
-  puerto_valido "$1"; [ -f "$PUERTOS" ] && grep -qxF "$REGLA" "$PUERTOS" || { echo "Ese puerto no estaba abierto."; return; }
+  puerto_valido "$1"; [ -f "$PUERTOS" ] && grep -qxF "$REGLA" "$PUERTOS" || { _ 'Ese puerto no estaba abierto.'; echo; return; }
   grep -vxF "$REGLA" "$PUERTOS" > "$PUERTOS.nuevo" || true; mv "$PUERTOS.nuevo" "$PUERTOS"
-  recargar_cortafuegos; echo "${G}✔${Z} Cerrado: $1"
+  recargar_cortafuegos; hecho "$(_ 'Cerrado:') $1"
 }
 
 # ------------------------------------------------------------------------------------------
@@ -145,13 +164,13 @@ dns(){
   case "${1:-}" in
     estricto)
       como_root dns estricto; mkdir -p "${DNS_ESTRICTO%/*}"
-      printf '# NaranjOS peel · DNS cifrado estricto (lo creó «naranjos-peel dns estricto»)\n[Resolve]\nDNSOverTLS=yes\n' > "$DNS_ESTRICTO"
+      printf '# NaranjOS peel · DNS-over-TLS estricto (naranjos-peel dns estricto)\n[Resolve]\nDNSOverTLS=yes\n' > "$DNS_ESTRICTO"
       systemctl restart systemd-resolved
-      echo "${G}✔${Z} DNS estricto: si la red bloquea DNS-over-TLS no habrá DNS (vuelve con: naranjos-peel dns flexible)";;
+      hecho "$(_ 'DNS estricto: si la red bloquea DNS-over-TLS no habrá DNS (vuelve con: naranjos-peel dns flexible)')";;
     flexible)
       como_root dns flexible; rm -f "$DNS_ESTRICTO"
-      systemctl restart systemd-resolved; echo "${G}✔${Z} DNS flexible: cifrado siempre que la red lo permita";;
-    *) die "Uso: naranjos-peel dns estricto|flexible";;
+      systemctl restart systemd-resolved; hecho "$(_ 'DNS flexible: cifrado siempre que la red lo permita')";;
+    *) die "$(_ 'Uso:') naranjos-peel dns estricto|flexible";;
   esac
 }
 
@@ -161,36 +180,39 @@ portal(){
   local dev gw
   dev=$(ip route show default 2>/dev/null | awk '{for(i=1;i<NF;i++) if($i=="dev"){print $(i+1); exit}}')
   gw=$(ip route show default 2>/dev/null | awk '{for(i=1;i<NF;i++) if($i=="via"){print $(i+1); exit}}')
-  [ -n "$dev" ] || die "No hay conexión de red"
+  [ -n "$dev" ] || die "$(_ 'No hay conexión de red')"
+  # shellcheck disable=SC2059
   if [ "${1:-}" = "fin" ]; then
-    resolvectl revert "$dev"; echo "${G}✔${Z} Vuelve el DNS cifrado de NaranjOS en $dev"; return
+    resolvectl revert "$dev"; hecho "$(printf "$(_ 'Vuelve el DNS cifrado de NaranjOS en %s')" "$dev")"; return
   fi
-  [ -n "$gw" ] || die "No encuentro el router de $dev"
+  # shellcheck disable=SC2059
+  [ -n "$gw" ] || die "$(printf "$(_ 'No encuentro el router de %s')" "$dev")"
   resolvectl dns "$dev" "$gw" && resolvectl domain "$dev" '~.' && resolvectl dnsovertls "$dev" no
-  echo "${G}✔${Z} Modo portal en $dev: usa el DNS de la red ($gw). Abre el navegador e inicia sesión."
-  echo "  Cuando termines: ${O}naranjos-peel portal fin${Z}"
+  # shellcheck disable=SC2059
+  hecho "$(printf "$(_ 'Modo portal en %s: usa el DNS de la red (%s). Abre el navegador e inicia sesión.')" "$dev" "$gw")"
+  printf '  %s %snaranjos-peel portal fin%s\n' "$(_ 'Cuando termines:')" "$O" "$Z"
 }
 
 auditoria(){
-  command -v lynis >/dev/null || die "Falta lynis (zumo instala lynis)"
+  command -v lynis >/dev/null || die "$(_ 'Falta lynis (zumo instala lynis)')"
   como_root auditoria "$@"
   lynis audit system "$@"
-  echo; echo "${O}Informe completo:${Z} /var/log/lynis-report.dat · registro: /var/log/lynis.log"
+  printf '\n%s%s%s /var/log/lynis-report.dat · /var/log/lynis.log\n' "$O" "$(_ 'Informe completo:')" "$Z"
 }
 
 red_local(){
   case "${1:-}" in
-    si|sí)
+    si|sí|yes|on)
       como_root red-local si; mkdir -p "${RED_LOCAL_DNS%/*}" /etc/nftables.d
-      printf '# NaranjOS peel · red local visible (lo creó «naranjos-peel red-local si»)\n[Resolve]\nLLMNR=yes\nMulticastDNS=yes\n' > "$RED_LOCAL_DNS"
-      printf '# NaranjOS peel · red local (LLMNR y mDNS) — lo creó «naranjos-peel red-local si»\nadd rule inet naranjos abiertos udp dport { 5353, 5355 } accept comment "naranjos-peel red-local"\nadd rule inet naranjos abiertos tcp dport 5355 accept comment "naranjos-peel red-local"\n' > "$RED_LOCAL_FW"
+      printf '# NaranjOS peel · red local visible (naranjos-peel red-local si)\n[Resolve]\nLLMNR=yes\nMulticastDNS=yes\n' > "$RED_LOCAL_DNS"
+      printf '# NaranjOS peel · red local (LLMNR y mDNS) — naranjos-peel red-local si\nadd rule inet naranjos abiertos udp dport { 5353, 5355 } accept comment "naranjos-peel red-local"\nadd rule inet naranjos abiertos tcp dport 5355 accept comment "naranjos-peel red-local"\n' > "$RED_LOCAL_FW"
       recargar_cortafuegos; systemctl restart systemd-resolved
-      echo "${G}✔${Z} Red local visible: impresoras, Chromecast y equipos por nombre (vuelve con: naranjos-peel red-local no)";;
-    no)
+      hecho "$(_ 'Red local visible: impresoras, Chromecast y equipos por nombre (vuelve con: naranjos-peel red-local no)')";;
+    no|off)
       como_root red-local no; rm -f "$RED_LOCAL_DNS" "$RED_LOCAL_FW"
       recargar_cortafuegos; systemctl restart systemd-resolved
-      echo "${G}✔${Z} Red local invisible: tu equipo no anuncia su nombre";;
-    *) die "Uso: naranjos-peel red-local si|no";;
+      hecho "$(_ 'Red local invisible: tu equipo no anuncia su nombre')";;
+    *) die "$(_ 'Uso:') naranjos-peel red-local si|no";;
   esac
 }
 
@@ -200,35 +222,42 @@ bloqueados(){
 }
 
 ayuda(){
-  cat << EOF
-${O}naranjos-peel${Z} $VERSION — centro de seguridad de NaranjOS
+  local f='  %s%-32s%s %s\n'
+  printf '%snaranjos-peel%s %s — %s\n\n' "$O" "$Z" "$VERSION" "$(_ 'centro de seguridad de NaranjOS')"
+  # shellcheck disable=SC2059
+  {
+  printf "$f" "$O" "naranjos-peel"                 "$Z" "$(_ 'estado de todo (cortafuegos, DNS, WiFi, kernel…)')"
+  printf "$f" "$O" "naranjos-peel abre 22/tcp"     "$Z" "$(_ 'abre un puerto de entrada (tcp por defecto)')"
+  printf "$f" "$O" "naranjos-peel cierra 22/tcp"   "$Z" "$(_ 'lo vuelve a cerrar')"
+  printf "$f" "$O" "naranjos-peel bloqueados"      "$Z" "$(_ 'lo último que ha frenado el cortafuegos (hoy)')"
+  printf "$f" "$O" "naranjos-peel dns estricto"    "$Z" "$(_ 'DNS siempre cifrado (si la red lo bloquea, no hay DNS)')"
+  printf "$f" "$O" "naranjos-peel dns flexible"    "$Z" "$(_ 'cifrado cuando se puede (por defecto)')"
+  printf "$f" "$O" "naranjos-peel red-local si|no" "$Z" "$(_ 'ver impresoras/Chromecast por nombre (por defecto: no)')"
+  printf "$f" "$O" "naranjos-peel portal [fin]"    "$Z" "$(_ 'para WiFi de hotel/tren con página de acceso')"
+  printf "$f" "$O" "naranjos-peel auditoria"       "$Z" "$(_ 'auditoría completa del sistema con Lynis')"
+  }
+  echo
+  _ 'En el escritorio: Super + Ctrl + S, o clic en el escudo de la barra.'; echo
+  printf '%s %s\n' "$(_ 'Más información:')" "$(naranjos_doc peel.md)"
+}
 
-  ${O}naranjos-peel${Z}                     estado de todo (cortafuegos, DNS, WiFi, kernel…)
-  ${O}naranjos-peel abre 22/tcp${Z}         abre un puerto de entrada (tcp por defecto)
-  ${O}naranjos-peel cierra 22/tcp${Z}       lo vuelve a cerrar
-  ${O}naranjos-peel bloqueados${Z}          lo último que ha frenado el cortafuegos (hoy)
-  ${O}naranjos-peel dns estricto${Z}        DNS siempre cifrado (si la red lo bloquea, no hay DNS)
-  ${O}naranjos-peel dns flexible${Z}        cifrado cuando se puede (por defecto)
-  ${O}naranjos-peel red-local si|no${Z}     ver impresoras/Chromecast por nombre (por defecto: no)
-  ${O}naranjos-peel portal${Z} [fin]        para WiFi de hotel/tren con página de acceso
-  ${O}naranjos-peel auditoria${Z}           auditoría completa del sistema con Lynis
-
-En el escritorio: Super + Ctrl + S, o clic en el escudo de la barra.
-Más información: /usr/share/doc/naranjos/peel.md
-EOF
+# documentación en el idioma del usuario, si existe
+naranjos_doc(){
+  local l="${LANGUAGE:-${LC_ALL:-${LC_MESSAGES:-${LANG:-es}}}}"; l="${l%%[_.:@]*}"
+  if [ -r "/usr/share/doc/naranjos/$l/$1" ]; then echo "/usr/share/doc/naranjos/$l/$1"; else echo "/usr/share/doc/naranjos/$1"; fi
 }
 
 case "${1:-estado}" in
-  estado)              estado ;;
+  estado|status)       estado ;;
   barra)               barra ;;
-  abre)      shift;    abre "$@" ;;
-  cierra)    shift;    cierra "$@" ;;
-  bloqueados) shift;   bloqueados "$@" ;;
+  abre|open)  shift;   abre "$@" ;;
+  cierra|close) shift; cierra "$@" ;;
+  bloqueados|blocked) shift; bloqueados "$@" ;;
   dns)       shift;    dns "$@" ;;
   portal)    shift;    portal "$@" ;;
-  red-local) shift;    red_local "$@" ;;
-  auditoria|auditoría) shift; auditoria "$@" ;;
-  ayuda|-h|--help)     ayuda ;;
+  red-local|local-network) shift; red_local "$@" ;;
+  auditoria|auditoría|audit) shift; auditoria "$@" ;;
+  ayuda|help|-h|--help) ayuda ;;
   version|--version)   echo "naranjos-peel $VERSION" ;;
   *) ayuda; exit 1 ;;
 esac

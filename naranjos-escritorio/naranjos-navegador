@@ -1,6 +1,7 @@
 #!/bin/bash
 # naranjos-navegador — abre Firefox (Flatpak); si no está, explica cómo instalarlo (Super + B)
+. /usr/lib/naranjos/naranjos-i18n.sh
 if flatpak info org.mozilla.firefox >/dev/null 2>&1; then
   exec flatpak run org.mozilla.firefox "$@"
 fi
-naranjos-notifica "Firefox no está instalado" "En una terminal: flatpak install flathub org.mozilla.firefox"
+naranjos-notifica "$(_ 'Firefox no está instalado')" "$(_ 'En una terminal:') flatpak install flathub org.mozilla.firefox"

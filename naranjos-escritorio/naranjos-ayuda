@@ -1,4 +1,5 @@
 #!/bin/bash
-# naranjos-ayuda — abre el manual de NaranjOS (Super + H)
-M=/usr/share/doc/naranjos/manual.md
-if [ -t 1 ]; then exec less -R "$M"; else exec foot -T "Manual de NaranjOS" less -R "$M"; fi
+# naranjos-ayuda — abre el manual de NaranjOS en tu idioma (Super + H)
+. /usr/lib/naranjos/naranjos-i18n.sh
+M=$(naranjos_traducido /usr/share/doc/naranjos manual.md)
+if [ -t 1 ]; then exec less -R "$M"; else exec foot -T "$(_ 'Manual de NaranjOS')" less -R "$M"; fi

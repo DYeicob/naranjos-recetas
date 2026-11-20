@@ -1,12 +1,15 @@
 #!/bin/bash
-# naranjos-captura [region|pantalla] — guarda en ~/Imágenes/Capturas y copia al portapapeles
+# naranjos-captura [region|pantalla] — guarda en la carpeta de imágenes y copia al portapapeles
 set -u
-dir="$HOME/Imágenes/Capturas"; mkdir -p "$dir"
-f="$dir/captura-$(date +%Y%m%d-%H%M%S).png"
+. /usr/lib/naranjos/naranjos-i18n.sh
+img=$(xdg-user-dir PICTURES 2>/dev/null) || img=""
+[ -n "$img" ] && [ "$img" != "$HOME" ] || img="$HOME/$(_ 'Imágenes')"
+dir="$img/$(_ 'Capturas')"; mkdir -p "$dir"
+f="$dir/$(_ 'captura')-$(date +%Y%m%d-%H%M%S).png"
 case "${1:-region}" in
   region)   g=$(slurp -b 12121288 -c ff8700ff -w 2) || exit 0; grim -g "$g" "$f" ;;
   pantalla) grim "$f" ;;
-  *) echo "Uso: naranjos-captura [region|pantalla]"; exit 1 ;;
+  *) echo "$(_ 'Uso:') naranjos-captura [region|pantalla]"; exit 1 ;;
 esac
 wl-copy --type image/png < "$f"
-naranjos-notifica "Captura guardada" "${f/#$HOME/~} · también está en el portapapeles"
+naranjos-notifica "$(_ 'Captura guardada')" "${f/#$HOME/\~} · $(_ 'también está en el portapapeles')"

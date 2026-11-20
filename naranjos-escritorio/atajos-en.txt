@@ -1,0 +1,41 @@
+── APPLICATIONS ─────────────────────────────────────────
+Super + Enter             Open the terminal
+Super + Space             Application launcher
+Super + B                 Web browser (Firefox)
+Super + K                 This list of shortcuts
+Super + H                 NaranjOS manual
+Super + Shift + B         Show / hide the bar
+Super + Ctrl + W          Wi-Fi menu
+Super + Ctrl + B          Bluetooth menu
+Super + Ctrl + A          Sound mixer
+Super + Ctrl + S          Security (naranjos-peel)
+Super + Ctrl + I          Language
+── WINDOWS ──────────────────────────────────────────────
+Super + W                 Close the window
+Super + F                 Fullscreen
+Super + Shift + F         Maximize (keeps the bar visible)
+Super + T                 Floating / tiled window
+Super + J                 Toggle split (horizontal/vertical)
+Super + P                 Pseudo-tiling
+Super + arrows            Move focus
+Super + Shift + arrows    Move the window
+Super + left click        Drag the window
+Super + right click       Resize
+── WORKSPACES ───────────────────────────────────────────
+Super + 1 … 0             Go to workspace 1 … 10
+Super + Shift + 1 … 0     Send the window to a workspace
+Super + mouse wheel       Next / previous workspace
+Touchpad 3 fingers ← →    Next / previous workspace
+Super + S                 Show/hide the drawer
+Super + Alt + S           Put the window in the drawer
+── SCREENSHOTS ──────────────────────────────────────────
+Super + Shift + S         Capture an area
+Print                     Capture an area
+Shift + Print             Capture the whole screen
+── SYSTEM ───────────────────────────────────────────────
+Super + L                 Lock
+Super + Escape            Menu: lock, log out, power off…
+Super + Shift + Escape    Quit Hyprland immediately
+Super + Shift + R         Reload the desktop
+Fn + brightness keys      Brightness up / down
+Fn + volume keys          Volume up / down / mute

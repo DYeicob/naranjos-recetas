@@ -4,4 +4,10 @@
 #  ni aplicaciones de Flatpak en el lanzador, ni configuración nueva del usuario)
 [ -r /etc/profile ] && . /etc/profile
 [ -r "$HOME/.profile" ] && . "$HOME/.profile"
+# Idioma: /etc/profile pone C.UTF-8 cuando viene de la consola (y greetd arranca desde ella).
+# Aquí manda el idioma del sistema y, si lo elegiste con naranjos-idioma, el tuyo.
+for f in /etc/locale.conf "$HOME/.config/locale.conf"; do
+  [ -r "$f" ] && { set -a; . "$f"; set +a; }
+done
+unset f
 exec start-hyprland "$@"
