@@ -14,6 +14,17 @@ the shield on the bar or by typing `naranjos-peel` in a terminal.
 | Hardened kernel | `sysctl` settings that make local and network attacks harder (`/usr/lib/sysctl.d/60-naranjos-peel.conf`). |
 | Audit | Lynis checks the whole system and gives a score with advice. |
 
+## VPN
+
+`naranjos-peel vpn` uses WireGuard with the NaranjOS network stack (systemd-networkd), no extra programs.
+While connected there is a **kill switch**: if the tunnel goes down nothing goes out to the Internet until
+it comes back or you disconnect. It disconnects at reboot unless you enable `naranjos-peel vpn arranque si`.
+
+Free with Proton VPN: free account at https://account.protonvpn.com → Downloads →
+WireGuard configuration → «GNU/Linux» → a free server → Create → download the `.conf` and run
+`naranjos-peel vpn importa ~/Downloads/<file>.conf proton`. Keys are stored in `/etc/naranjos/vpn/`,
+readable by root only.
+
 ## Commands
 
 The sub-commands are in Spanish; most also accept an English alias (`open`, `close`, `audit`…).
@@ -23,6 +34,12 @@ The sub-commands are in Spanish; most also accept an English alias (`open`, `clo
 | `naranjos-peel` | Status of everything |
 | `naranjos-peel abre 22/tcp` | Opens an incoming port (e.g. for SSH) |
 | `naranjos-peel cierra 22/tcp` | Closes it again |
+| `naranjos-peel vpn` | VPN status and how to get one for free |
+| `naranjos-peel vpn importa <f.conf> [name]` | Imports a WireGuard profile |
+| `naranjos-peel vpn conecta [name]` | Connects (Super + Ctrl + V) |
+| `naranjos-peel vpn desconecta` | Disconnects and removes the kill switch |
+| `naranjos-peel vpn lista` / `borra <name>` | Saved profiles / delete one |
+| `naranjos-peel vpn arranque si\|no` | Connect automatically at boot |
 | `naranjos-peel bloqueados` | The latest things the firewall stopped |
 | `naranjos-peel dns estricto` | Always-encrypted DNS: if the network blocks it, there is no DNS |
 | `naranjos-peel dns flexible` | Encrypted whenever possible (default) |
@@ -51,5 +68,5 @@ The sub-commands are in Spanish; most also accept an English alias (`open`, `clo
 
 ## Coming next
 
-Own VPN (WireGuard, with kill switch), antivirus watching Downloads, rootkit detector,
+Antivirus watching Downloads, rootkit detector,
 USB protection, AppArmor and the optional `naranjos-ciber` security kit.

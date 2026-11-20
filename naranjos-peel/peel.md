@@ -14,6 +14,17 @@ en el escudo de la barra o escribiendo `naranjos-peel` en una terminal.
 | Kernel endurecido | Ajustes `sysctl` que dificultan los ataques locales y de red (`/usr/lib/sysctl.d/60-naranjos-peel.conf`). |
 | Auditoría | Lynis revisa todo el sistema y da una puntuación con consejos. |
 
+## VPN
+
+`naranjos-peel vpn` usa WireGuard con la red de NaranjOS (systemd-networkd), sin programas extra.
+Mientras está conectada hay **kill switch**: si el túnel se cae, no sale nada a Internet hasta que
+vuelva o desconectes. Al reiniciar se desconecta, salvo que actives `naranjos-peel vpn arranque si`.
+
+Gratis con Proton VPN: cuenta gratuita en https://account.protonvpn.com → Downloads →
+WireGuard configuration → «GNU/Linux» → un servidor gratuito → Create → descarga el `.conf` y
+`naranjos-peel vpn importa ~/Descargas/<fichero>.conf proton`. Las claves se guardan en
+`/etc/naranjos/vpn/` y solo las puede leer root.
+
 ## Órdenes
 
 | Orden | Qué hace |
@@ -21,6 +32,12 @@ en el escudo de la barra o escribiendo `naranjos-peel` en una terminal.
 | `naranjos-peel` | Estado de todo |
 | `naranjos-peel abre 22/tcp` | Abre un puerto de entrada (p. ej. para SSH) |
 | `naranjos-peel cierra 22/tcp` | Lo vuelve a cerrar |
+| `naranjos-peel vpn` | Estado de la VPN y cómo conseguir una gratis |
+| `naranjos-peel vpn importa <f.conf> [nombre]` | Importa un perfil de WireGuard |
+| `naranjos-peel vpn conecta [nombre]` | Conecta (Super + Ctrl + V) |
+| `naranjos-peel vpn desconecta` | Desconecta y quita el kill switch |
+| `naranjos-peel vpn lista` / `borra <nombre>` | Perfiles guardados / borrar uno |
+| `naranjos-peel vpn arranque si\|no` | Conectar sola al encender |
 | `naranjos-peel bloqueados` | Lo último que ha frenado el cortafuegos |
 | `naranjos-peel dns estricto` | DNS siempre cifrado: si la red lo bloquea, no hay DNS |
 | `naranjos-peel dns flexible` | Cifrado siempre que se pueda (por defecto) |
@@ -49,5 +66,5 @@ en el escudo de la barra o escribiendo `naranjos-peel` en una terminal.
 
 ## Lo que viene
 
-VPN propia (WireGuard, con kill switch), antivirus que vigila Descargas, detector de rootkits,
+Antivirus que vigila Descargas, detector de rootkits,
 protección USB, AppArmor y el kit opcional de ciberseguridad `naranjos-ciber`.

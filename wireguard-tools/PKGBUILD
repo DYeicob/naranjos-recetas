@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6b.sh
+pkgname=wireguard-tools
+pkgver=1.0.20260223
+pkgrel=1
+pkgdesc='WireGuard: la orden wg para ver y ajustar túneles'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-only')
+depends=()
+makedepends=()
+source=('https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-1.0.20260223.tar.xz')
+sha256sums=('af459827b80bfd31b83b08077f4b5843acb7d18ad9a33a2ef532d3090f291fbf')
+build()   { cd wireguard-tools-$pkgver/src; make; }
+package() {
+  cd wireguard-tools-$pkgver/src
+  make DESTDIR="$pkgdir" PREFIX=/usr WITH_BASHCOMPLETION=no WITH_WGQUICK=no WITH_SYSTEMDUNITS=no install
+}

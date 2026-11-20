@@ -1,0 +1,4 @@
+wireguard-tools
+naranjos-idiomas
+naranjos-peel
+naranjos-escritorio

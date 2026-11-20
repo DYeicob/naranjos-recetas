@@ -29,6 +29,7 @@ Puedes verlos en cualquier momento con **Super + K**.
 | Super + Ctrl + B | Menú de Bluetooth |
 | Super + Ctrl + A | Mezclador de sonido |
 | Super + Ctrl + S | Seguridad (naranjos-peel) |
+| Super + Ctrl + V | Conectar / desconectar la VPN |
 | Super + Ctrl + I | Idioma |
 | Super + W | Cerrar la ventana |
 | Super + F | Pantalla completa |
@@ -81,7 +82,8 @@ De izquierda a derecha:
 - **Escritorios 1–5**: el activo sale en naranja. Pulsa uno para ir a él.
 - **Ventana activa**: su título.
 - **Reloj**, en el centro. Al pulsarlo muestra la fecha completa; al pasar el ratón, el calendario.
-- **Escudo**: la seguridad (naranjos-peel). Naranja = todo bien, amarillo = algo que revisar, rojo = cortafuegos apagado.
+- **Escudo**: la seguridad (naranjos-peel). Naranja = todo bien, amarillo = algo que revisar, rojo = cortafuegos apagado
+  o VPN caída. Con la VPN conectada sale un candado al lado. Clic derecho: conectar o desconectar la VPN.
 - **Bluetooth**: pulsa para abrir el menú de Bluetooth (bluetui).
 - **Volumen**: rueda del ratón para subir o bajar, clic para el mezclador (wiremix),
   clic derecho para silenciar.
@@ -176,8 +178,6 @@ quieras compartir (sale un marco naranja).
 | `zumo limpia` | Quitar lo que sobra |
 | `zumo ayuda` | Todas las órdenes |
 
-Cada orden tiene también su nombre en inglés (`install`, `remove`, `update`…).
-
 ## 9c. Seguridad: NaranjOS peel
 
 `naranjos-peel` es el centro de seguridad de NaranjOS (**Super + Ctrl + S** o el escudo de la barra).
@@ -191,6 +191,19 @@ kernel endurecido. El escudo se pone amarillo si hay algo a medias y rojo si el 
 | `naranjos-peel cierra 22/tcp` | Cerrarlo |
 | `naranjos-peel portal` | WiFi de hotel/tren con página de acceso (`portal fin` al acabar) |
 | `naranjos-peel auditoria` | Auditoría completa con Lynis |
+
+### VPN (gratis)
+
+NaranjOS trae su propia VPN sobre WireGuard, con **kill switch**: mientras está conectada, si el túnel
+se cae no sale nada a Internet. Para tenerla gratis con Proton VPN (0 €, sin tarjeta):
+
+1. Crea una cuenta gratuita en https://account.protonvpn.com
+2. Downloads → WireGuard configuration → plataforma «GNU/Linux» → un servidor gratuito → Create, y descarga el `.conf`.
+3. `naranjos-peel vpn importa ~/Descargas/<fichero>.conf proton`
+4. **Super + Ctrl + V** (o `naranjos-peel vpn conecta`) para conectar y desconectar.
+
+Sirve cualquier fichero de WireGuard (de otro proveedor o de tu router). `naranjos-peel vpn arranque si`
+la conecta sola al encender.
 
 Guía completa: `less /usr/share/doc/naranjos/peel.md`
 
@@ -226,6 +239,7 @@ cambian de idioma. ¿Quieres traducir NaranjOS al tuyo? Mira `/usr/share/doc/nar
 ## 11. Lo que viene
 
 - Bandeja de iconos en la barra.
-- VPN propia, antivirus y más piezas de NaranjOS peel.
+- Antivirus y más piezas de NaranjOS peel.
+- zumo en varios idiomas.
 - Instalador de la ISO.
 - Driver de NVIDIA para la gráfica dedicada.

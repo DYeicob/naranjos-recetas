@@ -9,6 +9,7 @@ Super + Ctrl + W          Wi-Fi menu
 Super + Ctrl + B          Bluetooth menu
 Super + Ctrl + A          Sound mixer
 Super + Ctrl + S          Security (naranjos-peel)
+Super + Ctrl + V          Connect / disconnect the VPN
 Super + Ctrl + I          Language
 ── WINDOWS ──────────────────────────────────────────────
 Super + W                 Close the window

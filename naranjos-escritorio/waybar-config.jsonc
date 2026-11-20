@@ -97,7 +97,8 @@
     "exec": "naranjos-peel barra",
     "return-type": "json",
     "interval": 30,
-    "on-click": "naranjos-tui seguridad"
+    "on-click": "naranjos-tui seguridad",
+    "on-click-right": "naranjos-tui vpn"
   },
   "custom/sistema": {
     "format": "",

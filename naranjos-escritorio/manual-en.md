@@ -29,6 +29,7 @@ You can see them at any time with **Super + K**.
 | Super + Ctrl + B | Bluetooth menu |
 | Super + Ctrl + A | Sound mixer |
 | Super + Ctrl + S | Security (naranjos-peel) |
+| Super + Ctrl + V | Connect / disconnect the VPN |
 | Super + Ctrl + I | Language |
 | Super + W | Close the window |
 | Super + F | Fullscreen |
@@ -81,7 +82,8 @@ From left to right:
 - **Workspaces 1–5**: the active one is orange. Click one to go there.
 - **Active window**: its title.
 - **Clock**, in the middle. Click it for the full date; hover it for the calendar.
-- **Shield**: security (naranjos-peel). Orange = all good, yellow = something to check, red = firewall off.
+- **Shield**: security (naranjos-peel). Orange = all good, yellow = something to check, red = firewall off
+  or VPN down. With the VPN connected a padlock appears next to it. Right click: connect or disconnect the VPN.
 - **Bluetooth**: click to open the Bluetooth menu (bluetui).
 - **Volume**: mouse wheel to turn it up or down, click for the mixer (wiremix),
   right click to mute.
@@ -167,17 +169,17 @@ want to share (an orange frame appears).
 
 ## 9b. zumo, the package manager
 
-Every zumo command has a Spanish and an English name; use whichever you prefer:
+zumo's commands are in Spanish for now (an English version is coming):
 
 | Command | What it does |
 |---|---|
-| `zumo search <text>` (`busca`) | Search for programs |
-| `zumo install <package>` (`instala`) | Install |
-| `zumo remove <package>` (`quita`) | Uninstall |
-| `zumo update` (`actualiza`) | Update the whole system |
+| `zumo busca <text>` | Search for programs |
+| `zumo instala <package>` | Install |
+| `zumo quita <package>` | Uninstall |
+| `zumo actualiza` | Update the whole system |
 | `zumo info <package>` | Information about a package |
-| `zumo clean` (`limpia`) | Remove what is not needed |
-| `zumo help` (`ayuda`) | All the commands |
+| `zumo limpia` | Remove what is not needed |
+| `zumo ayuda` | All the commands |
 
 ## 9c. Security: NaranjOS peel
 
@@ -193,6 +195,19 @@ MAC address, an invisible computer on the local network and a hardened kernel.
 | `naranjos-peel red-local si` | Show printers / Chromecast by name (`red-local no` to hide again) |
 | `naranjos-peel portal` | Hotel/train Wi-Fi with a login page (`portal fin` when done) |
 | `naranjos-peel auditoria` | Full audit with Lynis |
+
+### VPN (free)
+
+NaranjOS ships its own VPN on top of WireGuard, with a **kill switch**: while it is connected, if the
+tunnel goes down nothing goes out to the Internet. To get it for free with Proton VPN (0 €, no card):
+
+1. Create a free account at https://account.protonvpn.com
+2. Downloads → WireGuard configuration → platform «GNU/Linux» → a free server → Create, and download the `.conf`.
+3. `naranjos-peel vpn importa ~/Downloads/<file>.conf proton`
+4. **Super + Ctrl + V** (or `naranjos-peel vpn conecta`) to connect and disconnect.
+
+Any WireGuard file works (from another provider or from your router). `naranjos-peel vpn arranque si`
+connects it automatically at boot.
 
 Full guide: `less /usr/share/doc/naranjos/en/peel.md`
 
@@ -228,6 +243,7 @@ language too. Want to translate NaranjOS into yours? See `/usr/share/doc/naranjo
 ## 11. Coming next
 
 - Tray icons on the bar.
-- Own VPN, antivirus and more NaranjOS peel pieces.
+- Antivirus and more NaranjOS peel pieces.
+- zumo in several languages.
 - The ISO installer.
 - NVIDIA driver for the dedicated graphics card.

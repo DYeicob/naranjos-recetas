@@ -1,9 +1,9 @@
 #!/bin/bash
 # naranjos-peel — la piel de NaranjOS: centro de seguridad
-# (cortafuegos, DNS cifrado, endurecimiento del kernel, MAC aleatoria y auditoría)
+# (cortafuegos, VPN, DNS cifrado, endurecimiento del kernel, MAC aleatoria y auditoría)
 # Textos traducibles con gettext (dominio «naranjos»): /usr/share/locale/<idioma>/LC_MESSAGES/naranjos.mo
 set -u
-VERSION="0.1.2"
+VERSION="0.2.0"
 export TEXTDOMAIN=naranjos TEXTDOMAINDIR=/usr/share/locale
 _(){ gettext "$1"; }
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
@@ -53,6 +53,9 @@ estado(){
   fi
   local p; p=$(puertos_abiertos)
   if [ -n "$p" ]; then aviso "$(_ 'puertos abiertos')" "$p"; else bien "$(_ 'puertos abiertos')" "$(_ 'ninguno')"; fi
+
+  titulo "VPN"
+  vpn_estado
 
   titulo "DNS"
   if [ "$(readlink -f /etc/resolv.conf)" != "$STUB" ]; then
@@ -127,10 +130,19 @@ barra(){
   else
     tip="$(_ '¡Cortafuegos APAGADO!')"; cls=mal
   fi
+  local txt a; txt=$(printf '\xef\x84\xb2'); a=$(vpn_activa)
+  if [ -n "$a" ] && ip link show "$VPN_IF" >/dev/null 2>&1; then
+    txt="$txt $(printf '\xef\x80\xa3')"; tip="$tip\\nVPN: $a"; [ "$cls" = ok ] && cls=vpn
+  elif [ -n "$a" ]; then
+    tip="$tip\\nVPN: $(_ 'caída') — $(_ 'Internet bloqueado por el kill switch')"; cls=mal
+  else
+    tip="$tip\\nVPN: $(_ 'desconectada')"
+  fi
   if [ "$(readlink -f /etc/resolv.conf)" = "$STUB" ]; then tip="$tip\\n$(_ 'DNS cifrado')"
   else tip="$tip\\n$(_ 'DNS sin cifrar')"; [ "$cls" = ok ] && cls=aviso; fi
   tip="$tip\\n($(_ 'clic: centro de seguridad') · Super + Ctrl + S)"
-  printf '{"text":"%s","class":"%s","tooltip":"NaranjOS peel\\n%s"}\n' "$(printf '\xef\x84\xb2')" "$cls" "${tip//\"/\'}"
+  tip="$tip\\n($(_ 'clic derecho: conectar/desconectar la VPN') · Super + Ctrl + V)"
+  printf '{"text":"%s","class":"%s","tooltip":"NaranjOS peel\\n%s"}\n' "$txt" "$cls" "${tip//\"/\'}"
 }
 
 # ------------------------------------------------------------------------------------------
@@ -216,13 +228,274 @@ red_local(){
   esac
 }
 
+# ==========================================================================================
+#  VPN de NaranjOS (WireGuard + systemd-networkd, sin wg-quick)
+#   · perfiles en /etc/naranjos/vpn/<nombre>.perfil (+ .key / .psk, solo root y systemd-network)
+#   · al conectar: interfaz «naranjos-vpn» en /run (desaparece al reiniciar) y kill switch:
+#     si el túnel se cae, no sale nada a Internet hasta que desconectes
+# ==========================================================================================
+VPN_DIR=/etc/naranjos/vpn
+VPN_IF=naranjos-vpn
+VPN_MARCA=0x6e6a            # «nj»: marca de los paquetes del propio túnel
+VPN_TABLA=28266             # tabla de rutas del túnel (0x6e6a)
+VPN_RUN=/run/naranjos
+VPN_NET=/run/systemd/network
+VPN_KS="$VPN_RUN/nftables/vpn.nft"
+VPN_ULTIMA=/etc/naranjos/vpn-ultima   # último perfil usado (solo el nombre, lo pueden leer todos)
+
+vpn_activa(){ [ -r "$VPN_RUN/vpn-activa" ] && cat "$VPN_RUN/vpn-activa"; }
+vpn_perfiles(){ local f; for f in "$VPN_DIR"/*.perfil; do [ -e "$f" ] && basename "$f" .perfil; done; }
+vpn_valor(){ sed -n "s/^$2=//p" "$VPN_DIR/$1.perfil" 2>/dev/null | head -n1; }
+vpn_nombre_valido(){ [[ "$1" =~ ^[A-Za-z0-9_-]{1,32}$ ]]; }
+
+vpn_estado(){
+  local a; a=$(vpn_activa)
+  if [ -n "$a" ] && ip link show "$VPN_IF" >/dev/null 2>&1; then
+    bien "VPN" "$(_ 'conectada') · $a"
+    nota "$(_ 'kill switch activo: si el túnel se cae, no sale nada a Internet')"
+    if [ "$(id -u)" = 0 ] && command -v wg >/dev/null; then
+      local hs; hs=$(wg show "$VPN_IF" latest-handshakes 2>/dev/null | awk '{print $2; exit}')
+      # shellcheck disable=SC2059
+      if [ -n "$hs" ] && [ "$hs" != 0 ]; then nota "$(printf "$(_ 'último contacto con el servidor: hace %s s')" "$(( $(date +%s) - hs ))")"
+      else nota "$(_ 'todavía sin contacto con el servidor')"; fi
+    fi
+  elif [ -n "$a" ]; then
+    mal "VPN" "$(_ 'caída') ($a) — $(_ 'Internet bloqueado por el kill switch')  →  naranjos-peel vpn desconecta"
+  elif [ -e "$VPN_ULTIMA" ]; then
+    aviso "VPN" "$(_ 'desconectada')  →  naranjos-peel vpn conecta"
+  else
+    nota "VPN: $(_ 'sin perfiles. Importa uno con: naranjos-peel vpn importa <fichero.conf>')"
+  fi
+}
+
+# importa un fichero de WireGuard (el formato estándar que dan Proton VPN y casi todos)
+vpn_importa(){
+  local f="${1:-}" nombre="${2:-}"
+  [ -r "$f" ] || die "$(_ 'Uso:') naranjos-peel vpn importa <fichero.conf> [nombre]"
+  f=$(readlink -f "$f")
+  [ -n "$nombre" ] || nombre=$(basename "$f" .conf)
+  nombre=$(printf '%s' "$nombre" | tr -c 'A-Za-z0-9_-' '-' | cut -c1-32)
+  vpn_nombre_valido "$nombre" || die "$(_ 'Nombre de perfil no válido')"
+  como_root vpn importa "$f" "$nombre"
+  local datos; datos=$(awk -F= '
+    function limpia(s){ gsub(/^[ \t]+|[ \t\r]+$/, "", s); return s }
+    /^[ \t]*#/ || /^[ \t]*$/ { next }
+    /^\[/ { sec=tolower($0); gsub(/[ \t\r]/, "", sec); if (sec=="[peer]") np++; next }
+    { k=tolower(limpia($1)); v=$0; sub(/^[^=]*=/, "", v); v=limpia(v)
+      if (sec=="[interface]") {
+        if (k=="privatekey") print "PRIVKEY=" v
+        else if (k=="address") addr = addr (addr? ",":"") v
+        else if (k=="dns") dns = dns (dns? ",":"") v
+        else if (k=="mtu") print "MTU=" v
+      } else if (sec=="[peer]" && np==1) {
+        if (k=="publickey") print "PUBKEY=" v
+        else if (k=="presharedkey") print "PSK=" v
+        else if (k=="allowedips") aips = aips (aips? ",":"") v
+        else if (k=="endpoint") print "ENDPOINT=" v
+        else if (k=="persistentkeepalive") print "KEEPALIVE=" v
+      } }
+    END { print "ADDRESS=" addr; print "DNS=" dns; print "ALLOWEDIPS=" aips; print "PEERS=" np+0 }' "$f")
+  local priv pub psk addr ep aips dns mtu ka peers
+  priv=$(sed -n 's/^PRIVKEY=//p' <<< "$datos"); pub=$(sed -n 's/^PUBKEY=//p' <<< "$datos")
+  psk=$(sed -n 's/^PSK=//p' <<< "$datos");      addr=$(sed -n 's/^ADDRESS=//p' <<< "$datos")
+  ep=$(sed -n 's/^ENDPOINT=//p' <<< "$datos");  aips=$(sed -n 's/^ALLOWEDIPS=//p' <<< "$datos")
+  dns=$(sed -n 's/^DNS=//p' <<< "$datos");      mtu=$(sed -n 's/^MTU=//p' <<< "$datos")
+  ka=$(sed -n 's/^KEEPALIVE=//p' <<< "$datos"); peers=$(sed -n 's/^PEERS=//p' <<< "$datos")
+  local clave='^[A-Za-z0-9+/]{42}[AEIMQUYcgkosw480]=$'
+  [[ "$priv" =~ $clave ]] || die "$(_ 'El fichero no tiene una clave privada de WireGuard válida')"
+  [[ "$pub" =~ $clave ]]  || die "$(_ 'El fichero no tiene la clave pública del servidor')"
+  [ -z "$psk" ] || [[ "$psk" =~ $clave ]] || die "$(_ 'La clave precompartida no es válida')"
+  [ -n "$addr" ] && [ -n "$ep" ] || die "$(_ 'Faltan la dirección (Address) o el servidor (Endpoint)')"
+  [ "$peers" = 1 ] || aviso "VPN" "$(_ 'el fichero tiene varios servidores; NaranjOS usa el primero')"
+  aips="${aips// /}"; [ -n "$aips" ] || aips="0.0.0.0/0,::/0"
+  install -dm750 -o root -g systemd-network "$VPN_DIR"
+  local base="${VPN_DIR:?}/${nombre:?}"
+  ( umask 077
+    printf '%s\n' "$priv" > "$base.key"
+    if [ -n "$psk" ]; then printf '%s\n' "$psk" > "$base.psk"; fi
+    { echo "# NaranjOS · perfil de VPN «$nombre» (importado de $(basename "$f"))"
+      echo "ADDRESS=$addr"; echo "DNS=$dns"; echo "PUBKEY=$pub"; echo "ENDPOINT=$ep"
+      echo "ALLOWEDIPS=$aips"; echo "MTU=$mtu"; echo "KEEPALIVE=${ka:-25}"; } > "$base.perfil" )
+  chgrp systemd-network "$base.key"; chmod 640 "$base.key"
+  if [ -e "$base.psk" ]; then chgrp systemd-network "$base.psk"; chmod 640 "$base.psk"; fi
+  echo "$nombre" > "$VPN_ULTIMA"; chmod 644 "$VPN_ULTIMA"
+  # shellcheck disable=SC2059
+  hecho "$(printf "$(_ 'Perfil «%s» importado. Conéctate con: naranjos-peel vpn conecta %s')" "$nombre" "$nombre")"
+  nota "$(_ 'Ya puedes borrar el fichero original: la clave queda guardada solo para root.')"
+}
+
+vpn_conecta(){
+  local nombre="${1:-}"
+  como_root vpn conecta "$@"
+  [ -n "$nombre" ] || nombre=$(cat "$VPN_ULTIMA" 2>/dev/null)
+  [ -n "$nombre" ] || nombre=$(vpn_perfiles | head -n1)
+  [ -n "$nombre" ] || { vpn_ayuda_proton; die "$(_ 'No hay perfiles de VPN. Importa uno con: naranjos-peel vpn importa <fichero.conf>')"; }
+  # shellcheck disable=SC2059
+  { vpn_nombre_valido "$nombre" && [ -r "$VPN_DIR/$nombre.perfil" ]; } || die "$(printf "$(_ 'No existe el perfil «%s»')" "$nombre")"
+  [ -z "$(vpn_activa)" ] || vpn_desconecta silencio
+  modprobe wireguard 2>/dev/null || die "$(_ 'El kernel no tiene WireGuard (módulo «wireguard»)')"
+  local addr dns pub ep aips mtu ka host puerto ip
+  addr=$(vpn_valor "$nombre" ADDRESS); dns=$(vpn_valor "$nombre" DNS); pub=$(vpn_valor "$nombre" PUBKEY)
+  ep=$(vpn_valor "$nombre" ENDPOINT); aips=$(vpn_valor "$nombre" ALLOWEDIPS)
+  mtu=$(vpn_valor "$nombre" MTU); ka=$(vpn_valor "$nombre" KEEPALIVE)
+  # el servidor como IP ahora (con el kill switch puesto ya no se podría preguntar al DNS)
+  puerto="${ep##*:}"; host="${ep%:*}"; host="${host#[}"; host="${host%]}"
+  if [[ "$host" =~ ^[0-9.]+$ || "$host" == *:* ]]; then ip="$host"
+  else ip=$(getent ahosts "$host" | awk 'NR==1{print $1}'); fi
+  # shellcheck disable=SC2059
+  [ -n "$ip" ] || die "$(printf "$(_ 'No encuentro la dirección del servidor %s')" "$host")"
+  [[ "$ip" == *:* ]] && ip="[$ip]"
+
+  mkdir -p "$VPN_NET" "$VPN_RUN/nftables"
+  { echo "# NaranjOS · VPN «$nombre» (naranjos-peel vpn)"
+    echo "[NetDev]"; echo "Name=$VPN_IF"; echo "Kind=wireguard"; [ -n "$mtu" ] && echo "MTUBytes=$mtu"
+    echo; echo "[WireGuard]"; echo "PrivateKeyFile=$VPN_DIR/$nombre.key"
+    echo "FirewallMark=$VPN_MARCA"; echo "RouteTable=$VPN_TABLA"
+    echo; echo "[WireGuardPeer]"; echo "PublicKey=$pub"
+    [ -e "$VPN_DIR/$nombre.psk" ] && echo "PresharedKeyFile=$VPN_DIR/$nombre.psk"
+    echo "AllowedIPs=$aips"; echo "Endpoint=$ip:$puerto"; echo "PersistentKeepalive=${ka:-25}"
+  } > "$VPN_NET/90-naranjos-vpn.netdev"
+  { echo "# NaranjOS · VPN «$nombre» (naranjos-peel vpn)"
+    echo "[Match]"; echo "Name=$VPN_IF"
+    echo; echo "[Network]"
+    local a d; IFS=, read -ra a <<< "$addr"; for d in "${a[@]}"; do echo "Address=${d// /}"; done
+    IFS=, read -ra a <<< "$dns";  for d in "${a[@]}"; do [ -n "${d// /}" ] && echo "DNS=${d// /}"; done
+    echo "Domains=~."; echo "DNSDefaultRoute=yes"
+    echo; echo "# todo lo que no sea del propio túnel va por el túnel"
+    echo "[RoutingPolicyRule]"; echo "FirewallMark=$VPN_MARCA"; echo "InvertRule=yes"
+    echo "Table=$VPN_TABLA"; echo "Priority=10"; echo "Family=both"
+    echo; echo "# salvo la red local (rutas más concretas que la de por defecto)"
+    echo "[RoutingPolicyRule]"; echo "Table=main"; echo "SuppressPrefixLength=0"
+    echo "Priority=9"; echo "Family=both"
+  } > "$VPN_NET/90-naranjos-vpn.network"
+  chmod 644 "$VPN_NET/90-naranjos-vpn.netdev" "$VPN_NET/90-naranjos-vpn.network"
+
+  # kill switch: solo puede salir el túnel, lo que va por él y lo imprescindible de la red local
+  {
+    echo "# NaranjOS peel · kill switch de la VPN (naranjos-peel vpn desconecta lo quita)"
+    echo "table inet naranjos_vpn {"
+    echo "	chain salida {"
+    echo "		type filter hook output priority filter + 10; policy drop;"
+    echo "		oifname \"lo\" accept"
+    echo "		oifname \"$VPN_IF\" accept"
+    echo "		meta mark $VPN_MARCA accept"
+    echo "		udp dport { 67, 547 } accept"
+    echo "		meta l4proto ipv6-icmp accept"
+    echo "		limit rate 3/minute burst 5 packets log prefix \"naranjos-killswitch: \" level info"
+    echo "	}"
+    echo "}"
+  } > "$VPN_KS"
+  if ! nft -f "$VPN_KS"; then
+    vpn_limpia
+    die "$(_ 'No se pudo poner el kill switch; no se ha conectado')"
+  fi
+  echo "$nombre" > "$VPN_RUN/vpn-activa"; echo "$nombre" > "$VPN_ULTIMA"
+  networkctl reload
+  # shellcheck disable=SC2059
+  printf '%s\n' "$(printf "$(_ 'Conectando a «%s»…')" "$nombre")"
+  local _i hs=""
+  for _i in $(seq 1 15); do
+    sleep 1
+    if command -v wg >/dev/null; then
+      hs=$(wg show "$VPN_IF" latest-handshakes 2>/dev/null | awk '{print $2; exit}')
+      [ -n "$hs" ] && [ "$hs" != 0 ] && break
+    elif ip link show "$VPN_IF" >/dev/null 2>&1; then hs=sin-wg; break
+    fi
+  done
+  if ip link show "$VPN_IF" >/dev/null 2>&1 && [ -n "$hs" ] && [ "$hs" != 0 ]; then
+    # shellcheck disable=SC2059
+    hecho "$(printf "$(_ 'VPN conectada: %s (kill switch activo)')" "$nombre")"
+  else
+    aviso "VPN" "$(_ 'el servidor aún no responde; Internet queda bloqueado hasta que conecte o desconectes')"
+    nota "naranjos-peel vpn desconecta"
+  fi
+}
+
+# quita el túnel, sus reglas de red y el kill switch (sin mensajes)
+vpn_limpia(){
+  rm -f /run/systemd/network/90-naranjos-vpn.netdev /run/systemd/network/90-naranjos-vpn.network
+  networkctl delete "$VPN_IF" >/dev/null 2>&1 || ip link delete "$VPN_IF" 2>/dev/null
+  networkctl reload >/dev/null 2>&1
+  nft delete table inet naranjos_vpn 2>/dev/null
+  rm -f /run/naranjos/nftables/vpn.nft /run/naranjos/vpn-activa
+}
+
+vpn_desconecta(){
+  como_root vpn desconecta "$@"
+  vpn_limpia
+  [ "${1:-}" = silencio ] || hecho "$(_ 'VPN desconectada (kill switch quitado)')"
+}
+
+vpn_alterna(){ if [ -n "$(vpn_activa)" ]; then vpn_desconecta; else vpn_conecta "$@"; fi; }
+
+vpn_lista(){
+  [ "$(id -u)" = 0 ] || exec sudo "$0" vpn lista
+  local p a n=0; a=$(vpn_activa)
+  for p in $(vpn_perfiles); do
+    n=$((n+1))
+    if [ "$p" = "$a" ]; then printf '  %s●%s %s  %s(%s)%s\n' "$G" "$Z" "$p" "$D" "$(_ 'conectada')" "$Z"
+    else printf '  ○ %s\n' "$p"; fi
+  done
+  [ "$n" -gt 0 ] || { nota "$(_ 'sin perfiles. Importa uno con: naranjos-peel vpn importa <fichero.conf>')"; vpn_ayuda_proton; }
+}
+
+vpn_borra(){
+  local nombre="${1:-}"; [ -n "$nombre" ] || die "$(_ 'Uso:') naranjos-peel vpn borra <nombre>"
+  como_root vpn borra "$nombre"
+  # shellcheck disable=SC2059
+  { vpn_nombre_valido "$nombre" && [ -e "$VPN_DIR/$nombre.perfil" ]; } || die "$(printf "$(_ 'No existe el perfil «%s»')" "$nombre")"
+  [ "$(vpn_activa)" = "$nombre" ] && vpn_desconecta silencio
+  local base="${VPN_DIR:?}/${nombre:?}"
+  rm -f "$base.perfil" "$base.key" "$base.psk"
+  [ "$(cat "$VPN_ULTIMA" 2>/dev/null)" = "$nombre" ] && rm -f /etc/naranjos/vpn-ultima
+  # shellcheck disable=SC2059
+  hecho "$(printf "$(_ 'Perfil «%s» borrado')" "$nombre")"
+}
+
+vpn_arranque(){
+  case "${1:-}" in
+    si|sí|yes|on)
+      como_root vpn arranque si
+      systemctl enable naranjos-vpn.service >/dev/null 2>&1 && hecho "$(_ 'La VPN se conectará sola al encender (con el último perfil usado)')";;
+    no|off)
+      como_root vpn arranque no
+      systemctl disable naranjos-vpn.service >/dev/null 2>&1; hecho "$(_ 'La VPN ya no se conecta sola al encender')";;
+    *) die "$(_ 'Uso:') naranjos-peel vpn arranque si|no";;
+  esac
+}
+
+vpn_ayuda_proton(){
+  echo
+  printf '%s%s%s\n' "$O" "$(_ 'VPN gratis con Proton VPN (0 €, sin tarjeta):')" "$Z"
+  printf '  1. %s\n' "$(_ 'Crea una cuenta gratuita en https://account.protonvpn.com')"
+  printf '  2. %s\n' "$(_ 'Downloads → WireGuard configuration → plataforma «GNU/Linux» → un servidor gratuito → Create')"
+  printf '  3. %s\n' "$(_ 'Descarga el fichero .conf y en una terminal:')"
+  printf '     %snaranjos-peel vpn importa ~/Descargas/<fichero>.conf proton%s\n' "$O" "$Z"
+  printf '  4. %snaranjos-peel vpn conecta%s  %s\n' "$O" "$Z" "$(_ '(o Super + Ctrl + V)')"
+}
+
+vpn(){
+  case "${1:-}" in
+    ""|estado|status) printf '%sVPN%s\n' "$O" "$Z"; vpn_estado; [ -e "$VPN_ULTIMA" ] || vpn_ayuda_proton ;;
+    importa|import)   shift; vpn_importa "$@" ;;
+    conecta|connect|on)  shift; vpn_conecta "$@" ;;
+    desconecta|disconnect|off) shift; vpn_desconecta "$@" ;;
+    alterna|toggle)   shift; vpn_alterna "$@" ;;
+    lista|list)       vpn_lista ;;
+    borra|delete)     shift; vpn_borra "$@" ;;
+    arranque|boot)    shift; vpn_arranque "$@" ;;
+    proton)           vpn_ayuda_proton ;;
+    *) die "$(_ 'Uso:') naranjos-peel vpn [importa|conecta|desconecta|lista|borra|arranque|proton]" ;;
+  esac
+}
+
 bloqueados(){
   como_root bloqueados "$@"
   journalctl -k -g 'naranjos-cortafuegos' --since "${1:-today}" --no-pager | tail -n 40
 }
 
 ayuda(){
-  local f='  %s%-32s%s %s\n'
+  local f='  %s%-36s%s %s\n'
   printf '%snaranjos-peel%s %s — %s\n\n' "$O" "$Z" "$VERSION" "$(_ 'centro de seguridad de NaranjOS')"
   # shellcheck disable=SC2059
   {
@@ -230,6 +503,12 @@ ayuda(){
   printf "$f" "$O" "naranjos-peel abre 22/tcp"     "$Z" "$(_ 'abre un puerto de entrada (tcp por defecto)')"
   printf "$f" "$O" "naranjos-peel cierra 22/tcp"   "$Z" "$(_ 'lo vuelve a cerrar')"
   printf "$f" "$O" "naranjos-peel bloqueados"      "$Z" "$(_ 'lo último que ha frenado el cortafuegos (hoy)')"
+  printf "$f" "$O" "naranjos-peel vpn"             "$Z" "$(_ 'estado de la VPN (y cómo conseguir una gratis)')"
+  printf "$f" "$O" "naranjos-peel vpn importa f.conf" "$Z" "$(_ 'importa un perfil de WireGuard (Proton VPN, etc.)')"
+  printf "$f" "$O" "naranjos-peel vpn conecta [n]" "$Z" "$(_ 'conecta (con kill switch)')"
+  printf "$f" "$O" "naranjos-peel vpn desconecta"  "$Z" "$(_ 'desconecta')"
+  printf "$f" "$O" "naranjos-peel vpn lista|borra" "$Z" "$(_ 'perfiles guardados / borrar uno')"
+  printf "$f" "$O" "naranjos-peel vpn arranque si|no" "$Z" "$(_ 'conectar sola al encender')"
   printf "$f" "$O" "naranjos-peel dns estricto"    "$Z" "$(_ 'DNS siempre cifrado (si la red lo bloquea, no hay DNS)')"
   printf "$f" "$O" "naranjos-peel dns flexible"    "$Z" "$(_ 'cifrado cuando se puede (por defecto)')"
   printf "$f" "$O" "naranjos-peel red-local si|no" "$Z" "$(_ 'ver impresoras/Chromecast por nombre (por defecto: no)')"
@@ -238,6 +517,7 @@ ayuda(){
   }
   echo
   _ 'En el escritorio: Super + Ctrl + S, o clic en el escudo de la barra.'; echo
+  _ 'VPN: Super + Ctrl + V, o clic derecho en el escudo.'; echo
   printf '%s %s\n' "$(_ 'Más información:')" "$(naranjos_doc peel.md)"
 }
 
@@ -256,6 +536,7 @@ case "${1:-estado}" in
   dns)       shift;    dns "$@" ;;
   portal)    shift;    portal "$@" ;;
   red-local|local-network) shift; red_local "$@" ;;
+  vpn)       shift;    vpn "$@" ;;
   auditoria|auditoría|audit) shift; auditoria "$@" ;;
   ayuda|help|-h|--help) ayuda ;;
   version|--version)   echo "naranjos-peel $VERSION" ;;

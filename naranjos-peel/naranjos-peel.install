@@ -38,5 +38,7 @@ post_upgrade() {
   return 0
 }
 pre_remove() {
+  /usr/bin/naranjos-peel vpn desconecta silencio >/dev/null 2>&1 || true
+  systemctl disable naranjos-vpn.service >/dev/null 2>&1 || true
   systemctl disable --now nftables.service >/dev/null 2>&1 || true
 }

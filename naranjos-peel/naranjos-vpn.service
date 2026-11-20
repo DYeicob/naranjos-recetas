@@ -1,0 +1,14 @@
+[Unit]
+Description=VPN de NaranjOS (naranjos-peel vpn, último perfil usado)
+Documentation=file:/usr/share/doc/naranjos/peel.md
+Wants=network-online.target
+After=network-online.target systemd-networkd.service systemd-resolved.service nftables.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/naranjos-peel vpn conecta
+ExecStop=/usr/bin/naranjos-peel vpn desconecta silencio
+
+[Install]
+WantedBy=multi-user.target

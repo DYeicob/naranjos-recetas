@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-6j2.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6b.sh (NO editar a mano)
 pkgname=naranjos-idiomas
-pkgver=0.1.1
+pkgver=0.1.2
 pkgrel=1
 pkgdesc='Idiomas de NaranjOS: orden naranjos-idioma, traducciones y guía para traducir'
 arch=('any')
@@ -9,7 +9,7 @@ license=('GPL-3.0-or-later')
 depends=('gettext' 'glibc')
 makedepends=('gettext')
 source=('en.po' 'naranjos-i18n.sh' 'naranjos-idioma' 'naranjos.pot' 'traducir.md')
-sha256sums=('be0fcfba5eaa53bd5acf821c36c6d2b35bc98c955b857254aae7d75394b9fe5a' 'fd8f015496e91025760c8f69fbb0d925779186fe1c34431daac1028ec9f6fd68' 'cf2cbe3401f2aad2a6745c0549084cc522683cce535340ba8cfa9001b4f0c63e' 'ad7bf52f0d401ad2ceacce77e35ebc950237e54a88e2db41bdafcdb23fee072f' '16974bcae3c0d40d0d1f25137ab783e38e5024b6a87e433797f6f99642b11148')
+sha256sums=('e4f7d84511471519b624f3826e81a4bbf853895dde4fe6ac434db36b8b180679' 'fd8f015496e91025760c8f69fbb0d925779186fe1c34431daac1028ec9f6fd68' 'cf2cbe3401f2aad2a6745c0549084cc522683cce535340ba8cfa9001b4f0c63e' 'c44da66f07324dbe0766bfef7c7a8ac5ab7f4b6ff6c034d96dd29af2796d85c3' '16974bcae3c0d40d0d1f25137ab783e38e5024b6a87e433797f6f99642b11148')
 package() {
   install -Dm755 naranjos-idioma   "$pkgdir/usr/bin/naranjos-idioma"
   install -Dm644 naranjos-i18n.sh  "$pkgdir/usr/lib/naranjos/naranjos-i18n.sh"
