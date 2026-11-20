@@ -71,6 +71,10 @@ La base de NaranjOS está en `/usr/share/naranjos/hypr/naranjos.lua` y se actual
 el sistema. **No la edites**: pon tus cambios en `~/.config/hypr/hyprland.lua`, debajo
 de la línea `require(...)`. Lo que escribas ahí manda sobre la base.
 
+Tus carpetas personales (Descargas, Documentos, Imágenes, Música y Vídeos) se crean solas al entrar,
+con el nombre en tu idioma, y las aplicaciones las usan para guardar. Están apuntadas en
+`~/.config/user-dirs.dirs` (puedes cambiarlas ahí).
+
 Si rompes algo, `naranjos-config-usuario --forzar` vuelve a poner la configuración
 original de NaranjOS (guarda la tuya con la extensión `.anterior`).
 

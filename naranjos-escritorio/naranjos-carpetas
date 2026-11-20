@@ -1,0 +1,26 @@
+#!/bin/bash
+# naranjos-carpetas — crea tus carpetas personales (Descargas, Documentos, Imágenes, Música, Vídeos)
+# con el nombre en tu idioma y las apunta en ~/.config/user-dirs.dirs, para que las aplicaciones
+# (Firefox, la tienda, las capturas…) sepan dónde guardar. Nunca renombra ni borra nada tuyo.
+set -u
+. /usr/lib/naranjos/naranjos-i18n.sh
+F="${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
+mkdir -p "${F%/*}"
+[ -e "$F" ] || printf '# NaranjOS · tus carpetas personales (las crea naranjos-carpetas; puedes cambiarlas)\n' > "$F"
+nueva=0
+for par in "DOWNLOAD:$(_ 'Descargas')" "DOCUMENTS:$(_ 'Documentos')" "PICTURES:$(_ 'Imágenes')" \
+           "MUSIC:$(_ 'Música')" "VIDEOS:$(_ 'Vídeos')" "DESKTOP:" "TEMPLATES:" "PUBLICSHARE:"; do
+  clave=${par%%:*}; nombre=${par#*:}
+  if grep -q "^XDG_${clave}_DIR=" "$F"; then
+    d=$(naranjos_carpeta "$clave"); [ -d "$d" ] || mkdir -p "$d"     # apuntada pero borrada: se vuelve a crear
+    continue
+  fi
+  if [ -n "$nombre" ]; then
+    mkdir -p "$HOME/$nombre"; echo "XDG_${clave}_DIR=\"\$HOME/$nombre\"" >> "$F"
+  else
+    echo "XDG_${clave}_DIR=\"\$HOME\"" >> "$F"      # escritorio, plantillas y público: tu carpeta personal
+  fi
+  nueva=1
+done
+[ "$nueva" = 1 ] && [ -t 1 ] && { _ 'Carpetas personales listas:'; echo; grep '^XDG_' "$F" | grep -v '"\$HOME"$' | sed 's/^XDG_\(.*\)_DIR="\$HOME\/\(.*\)"$/  ~\/\2/'; }
+exit 0

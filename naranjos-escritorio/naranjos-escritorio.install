@@ -10,6 +10,8 @@ post_upgrade() {
     uid=$(stat -c %u "$d"); sig=$(basename "$d"); u=$(id -nu "$uid" 2>/dev/null) || continue
     # nuevos ficheros de configuración del usuario (sin pisar lo que haya cambiado)
     sudo -u "$u" -H naranjos-config-usuario >/dev/null 2>&1 || true
+    # sus carpetas personales (Descargas, Documentos…) en su idioma
+    sudo -u "$u" -H sh -c '. /etc/locale.conf; [ -r "$HOME/.config/locale.conf" ] && . "$HOME/.config/locale.conf"; export LANG LANGUAGE; naranjos-carpetas' >/dev/null 2>&1 || true
     if sudo -u "$u" env XDG_RUNTIME_DIR="/run/user/$uid" HYPRLAND_INSTANCE_SIGNATURE="$sig" \
          hyprctl reload >/dev/null 2>&1; then
       echo "  NaranjOS: escritorio de $u recargado"

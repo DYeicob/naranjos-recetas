@@ -3,7 +3,7 @@
 # (cortafuegos, VPN, DNS cifrado, endurecimiento del kernel, MAC aleatoria y auditoría)
 # Textos traducibles con gettext (dominio «naranjos»): /usr/share/locale/<idioma>/LC_MESSAGES/naranjos.mo
 set -u
-VERSION="0.2.0"
+VERSION="0.2.1"
 export TEXTDOMAIN=naranjos TEXTDOMAINDIR=/usr/share/locale
 _(){ gettext "$1"; }
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
@@ -131,7 +131,7 @@ barra(){
     tip="$(_ '¡Cortafuegos APAGADO!')"; cls=mal
   fi
   local txt a; txt=$(printf '\xef\x84\xb2'); a=$(vpn_activa)
-  if [ -n "$a" ] && ip link show "$VPN_IF" >/dev/null 2>&1; then
+  if [ -n "$a" ] && vpn_tunel; then
     txt="$txt $(printf '\xef\x80\xa3')"; tip="$tip\\nVPN: $a"; [ "$cls" = ok ] && cls=vpn
   elif [ -n "$a" ]; then
     tip="$tip\\nVPN: $(_ 'caída') — $(_ 'Internet bloqueado por el kill switch')"; cls=mal
@@ -243,6 +243,8 @@ VPN_NET=/run/systemd/network
 VPN_KS="$VPN_RUN/nftables/vpn.nft"
 VPN_ULTIMA=/etc/naranjos/vpn-ultima   # último perfil usado (solo el nombre, lo pueden leer todos)
 
+# ¿existe el túnel? (sin «ip», que está en /usr/sbin y los usuarios no lo tienen en el PATH)
+vpn_tunel(){ [ -e "/sys/class/net/$VPN_IF" ]; }
 vpn_activa(){ [ -r "$VPN_RUN/vpn-activa" ] && cat "$VPN_RUN/vpn-activa"; }
 vpn_perfiles(){ local f; for f in "$VPN_DIR"/*.perfil; do [ -e "$f" ] && basename "$f" .perfil; done; }
 vpn_valor(){ sed -n "s/^$2=//p" "$VPN_DIR/$1.perfil" 2>/dev/null | head -n1; }
@@ -250,7 +252,7 @@ vpn_nombre_valido(){ [[ "$1" =~ ^[A-Za-z0-9_-]{1,32}$ ]]; }
 
 vpn_estado(){
   local a; a=$(vpn_activa)
-  if [ -n "$a" ] && ip link show "$VPN_IF" >/dev/null 2>&1; then
+  if [ -n "$a" ] && vpn_tunel; then
     bien "VPN" "$(_ 'conectada') · $a"
     nota "$(_ 'kill switch activo: si el túnel se cae, no sale nada a Internet')"
     if [ "$(id -u)" = 0 ] && command -v wg >/dev/null; then
@@ -302,6 +304,11 @@ vpn_importa(){
   dns=$(sed -n 's/^DNS=//p' <<< "$datos");      mtu=$(sed -n 's/^MTU=//p' <<< "$datos")
   ka=$(sed -n 's/^KEEPALIVE=//p' <<< "$datos"); peers=$(sed -n 's/^PEERS=//p' <<< "$datos")
   local clave='^[A-Za-z0-9+/]{42}[AEIMQUYcgkosw480]=$'
+  if [[ "$priv" =~ ^\*+$ ]]; then
+    printf '%s\n' "$(_ 'Este fichero no trae la clave: Proton la tapa con ***** si lo descargas más tarde desde la lista.')" >&2
+    printf '%s\n' "$(_ 'Crea una configuración NUEVA y pulsa Download en la ventana que sale justo después de Create.')" >&2
+    exit 1
+  fi
   [[ "$priv" =~ $clave ]] || die "$(_ 'El fichero no tiene una clave privada de WireGuard válida')"
   [[ "$pub" =~ $clave ]]  || die "$(_ 'El fichero no tiene la clave pública del servidor')"
   [ -z "$psk" ] || [[ "$psk" =~ $clave ]] || die "$(_ 'La clave precompartida no es válida')"
@@ -399,10 +406,10 @@ vpn_conecta(){
     if command -v wg >/dev/null; then
       hs=$(wg show "$VPN_IF" latest-handshakes 2>/dev/null | awk '{print $2; exit}')
       [ -n "$hs" ] && [ "$hs" != 0 ] && break
-    elif ip link show "$VPN_IF" >/dev/null 2>&1; then hs=sin-wg; break
+    elif vpn_tunel; then hs=sin-wg; break
     fi
   done
-  if ip link show "$VPN_IF" >/dev/null 2>&1 && [ -n "$hs" ] && [ "$hs" != 0 ]; then
+  if vpn_tunel && [ -n "$hs" ] && [ "$hs" != 0 ]; then
     # shellcheck disable=SC2059
     hecho "$(printf "$(_ 'VPN conectada: %s (kill switch activo)')" "$nombre")"
   else

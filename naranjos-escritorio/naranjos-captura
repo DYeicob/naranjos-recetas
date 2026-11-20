@@ -2,8 +2,8 @@
 # naranjos-captura [region|pantalla] — guarda en la carpeta de imágenes y copia al portapapeles
 set -u
 . /usr/lib/naranjos/naranjos-i18n.sh
-img=$(xdg-user-dir PICTURES 2>/dev/null) || img=""
-[ -n "$img" ] && [ "$img" != "$HOME" ] || img="$HOME/$(_ 'Imágenes')"
+img=$(naranjos_carpeta PICTURES)
+[ "$img" != "$HOME" ] || img="$HOME/$(_ 'Imágenes')"
 dir="$img/$(_ 'Capturas')"; mkdir -p "$dir"
 f="$dir/$(_ 'captura')-$(date +%Y%m%d-%H%M%S).png"
 case "${1:-region}" in

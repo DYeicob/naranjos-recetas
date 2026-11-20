@@ -10,4 +10,6 @@ for f in /etc/locale.conf "$HOME/.config/locale.conf"; do
   [ -r "$f" ] && { set -a; . "$f"; set +a; }
 done
 unset f
+# tus carpetas personales (Descargas, Documentos…) en tu idioma, si aún no existen
+command -v naranjos-carpetas >/dev/null 2>&1 && naranjos-carpetas >/dev/null 2>&1
 exec start-hyprland "$@"

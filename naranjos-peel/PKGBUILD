@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-6b.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6b2.sh (NO editar a mano)
 pkgname=naranjos-peel
-pkgver=0.2.0
+pkgver=0.2.1
 pkgrel=1
 pkgdesc='NaranjOS peel: centro de seguridad (cortafuegos, VPN, DNS cifrado, kernel endurecido, MAC aleatoria, auditoría)'
 arch=('any')
@@ -8,7 +8,7 @@ url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
 depends=('nftables' 'lynis' 'iwd' 'sudo' 'naranjos-red' 'naranjos-idiomas' 'wireguard-tools')
 source=('00-naranjos.nft' '50-naranjos-peel.resolved' '60-naranjos-peel-dns.network.conf' '60-naranjos-peel.sysctl' 'naranjos-peel' 'naranjos-vpn.service' 'nftables.conf' 'nftables.service' 'peel-en.md' 'peel.md')
-sha256sums=('eb6813f7352718115bb64a5e62d711ff9306ceccc17d0ff40ad80d381daea8c3' '5b1ff31050e7ce33771a3d6ca2728e6148a4811f2955c43be347ec9223a0087e' 'b3c381f87e1732c7817ff472f6589b86408c500368ad7323866add6125512419' 'cfc40187f62fc84c5ce5ac2f258b81f9a19349ab4dd1f9aae2ec0e87ce935143' '26e960bc3fcae7d7f8a5b5b652797fdbd8048b86fafec21f1a7f7278b4aa7b66' 'd1702a50122049d2718c7ea9cfa07c52a6a80c1487014d3c66ae14835554a957' '0a6de84e816a0e2261b688ee836a77f2133179cb618d0cdf3a1d10ed1e572c5d' '417c89f656388abeacddeeaeee54f560ea3ad70ef162396ae8eaae1075626e24' '125f1db26999b0209ad7a40c39720334c6ab52c4d9d2faa7050c12bb76002085' 'b9c7924ac7c0ee5cd5f34acf7f9dd3d00a5c656c106cab857fa79b3960497518')
+sha256sums=('eb6813f7352718115bb64a5e62d711ff9306ceccc17d0ff40ad80d381daea8c3' '5b1ff31050e7ce33771a3d6ca2728e6148a4811f2955c43be347ec9223a0087e' 'b3c381f87e1732c7817ff472f6589b86408c500368ad7323866add6125512419' 'cfc40187f62fc84c5ce5ac2f258b81f9a19349ab4dd1f9aae2ec0e87ce935143' '570e30751443fdf41bac53551f607703c6c3b4642b1facc3296ee489ca44bc47' 'd1702a50122049d2718c7ea9cfa07c52a6a80c1487014d3c66ae14835554a957' '0a6de84e816a0e2261b688ee836a77f2133179cb618d0cdf3a1d10ed1e572c5d' '417c89f656388abeacddeeaeee54f560ea3ad70ef162396ae8eaae1075626e24' '125f1db26999b0209ad7a40c39720334c6ab52c4d9d2faa7050c12bb76002085' 'b9c7924ac7c0ee5cd5f34acf7f9dd3d00a5c656c106cab857fa79b3960497518')
 install=naranjos-peel.install
 backup=('etc/nftables.conf' 'etc/nftables.d/00-naranjos.nft')
 package() {

@@ -71,6 +71,10 @@ The NaranjOS base lives in `/usr/share/naranjos/hypr/naranjos.lua` and is update
 the system. **Do not edit it**: put your changes in `~/.config/hypr/hyprland.lua`, below
 the line that loads the base. Whatever you write there overrides the base.
 
+Your personal folders (Downloads, Documents, Pictures, Music and Videos) are created automatically when you
+log in, named in your language, and applications use them to save files. They are listed in
+`~/.config/user-dirs.dirs` (you can change them there).
+
 If you break something, `naranjos-config-usuario --forzar` restores the original
 NaranjOS configuration (yours is kept with the `.anterior` extension).
 
