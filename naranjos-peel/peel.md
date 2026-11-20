@@ -9,6 +9,7 @@ en el escudo de la barra o escribiendo `naranjos-peel` en una terminal.
 |---|---|
 | Cortafuegos (nftables) | Cierra **todas** las conexiones de entrada, salvo las respuestas a lo que tú inicias. Lo que sale de tu equipo no se toca. |
 | DNS cifrado | Las consultas DNS van cifradas (DNS-over-TLS) a Quad9, que no guarda tu IP y bloquea dominios de malware y phishing. |
+| Red local invisible | LLMNR y mDNS apagados: en una WiFi pública tu portátil no anuncia su nombre. |
 | MAC aleatoria | En cada red WiFi tu portátil usa una dirección MAC distinta, para que no te sigan de una red a otra. |
 | Kernel endurecido | Ajustes `sysctl` que dificultan los ataques locales y de red (`/usr/lib/sysctl.d/60-naranjos-peel.conf`). |
 | Auditoría | Lynis revisa todo el sistema y da una puntuación con consejos. |
@@ -23,6 +24,8 @@ en el escudo de la barra o escribiendo `naranjos-peel` en una terminal.
 | `naranjos-peel bloqueados` | Lo último que ha frenado el cortafuegos |
 | `naranjos-peel dns estricto` | DNS siempre cifrado: si la red lo bloquea, no hay DNS |
 | `naranjos-peel dns flexible` | Cifrado siempre que se pueda (por defecto) |
+| `naranjos-peel red-local si` | Hace visible tu equipo en la red local (impresoras, Chromecast, equipos por nombre) |
+| `naranjos-peel red-local no` | Lo vuelve invisible (por defecto) |
 | `naranjos-peel portal` | WiFi de hotel/tren con página de acceso: usa el DNS de la red un rato |
 | `naranjos-peel portal fin` | Vuelve al DNS cifrado |
 | `naranjos-peel auditoria` | Auditoría completa con Lynis |
@@ -40,6 +43,7 @@ en el escudo de la barra o escribiendo `naranjos-peel` en una terminal.
   en el navegador y luego `naranjos-peel portal fin`.
 - **Un programa necesita que le lleguen conexiones** (servidor web, juego en LAN…):
   `naranjos-peel abre <puerto>`.
+- **No encuentro mi impresora o mi Chromecast:** `naranjos-peel red-local si`.
 - **Quiero apagar el cortafuegos un momento:** `sudo systemctl stop nftables`
   (vuelve con `sudo systemctl start nftables`). No es recomendable.
 

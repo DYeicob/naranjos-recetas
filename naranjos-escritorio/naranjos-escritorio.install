@@ -8,8 +8,14 @@ post_upgrade() {
   for d in /run/user/*/hypr/*/; do
     [ -S "$d.socket.sock" ] || continue
     uid=$(stat -c %u "$d"); sig=$(basename "$d"); u=$(id -nu "$uid" 2>/dev/null) || continue
-    runuser -u "$u" -- env XDG_RUNTIME_DIR="/run/user/$uid" HYPRLAND_INSTANCE_SIGNATURE="$sig" \
-      hyprctl reload >/dev/null 2>&1 && echo "  NaranjOS: escritorio de $u recargado"
+    # nuevos ficheros de configuración del usuario (sin pisar lo que haya cambiado)
+    sudo -u "$u" -H naranjos-config-usuario >/dev/null 2>&1 || true
+    if sudo -u "$u" env XDG_RUNTIME_DIR="/run/user/$uid" HYPRLAND_INSTANCE_SIGNATURE="$sig" \
+         hyprctl reload >/dev/null 2>&1; then
+      echo "  NaranjOS: escritorio de $u recargado"
+    else
+      echo "  NaranjOS: no pude recargar el escritorio de $u; hazlo tú con Super + Shift + R"
+    fi
   done
   return 0
 }

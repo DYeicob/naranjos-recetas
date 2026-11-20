@@ -166,6 +166,7 @@ hl.bind("SHIFT + Print",               hl.dsp.exec_cmd("naranjos-captura pantall
 hl.bind(mainMod .. " + L",             hl.dsp.exec_cmd("pidof hyprlock || hyprlock"))
 hl.bind(mainMod .. " + Escape",        hl.dsp.exec_cmd("naranjos-sistema"))
 hl.bind(mainMod .. " + SHIFT + Escape", hl.dsp.exit())
+hl.bind(mainMod .. " + SHIFT + R",     hl.dsp.exec_cmd("hyprctl reload"))
 -- Teclas multimedia del portátil (el volumen funcionará con PipeWire, tanda 5c3)
 hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
 hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })

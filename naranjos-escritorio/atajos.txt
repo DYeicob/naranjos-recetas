@@ -35,5 +35,6 @@ Shift + Impr              Capturar toda la pantalla
 Super + L                 Bloquear
 Super + Escape            Menú: bloquear, salir, apagar…
 Super + Shift + Escape    Salir de Hyprland al momento
+Super + Shift + R         Recargar el escritorio
 Fn + teclas de brillo     Subir / bajar el brillo
 Fn + teclas de volumen    Subir / bajar / silenciar el volumen

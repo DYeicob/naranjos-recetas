@@ -193,7 +193,8 @@ Guía completa: `less /usr/share/doc/naranjos/peel.md`
 - **No se abre nada al pulsar un atajo:** abre una terminal con Super + Enter y mira si
   el programa existe con `which <programa>`.
 - **La pantalla sale con un aviso rojo arriba:** hay un error en tu `hyprland.lua`. El aviso
-  dice la línea. Corrígela; Hyprland recarga solo al guardar.
+  dice la línea. Corrígela; Hyprland recarga solo al guardar (o pulsa Super + Shift + R).
+- **Tras actualizar quedan pocos atajos:** pulsa Super + Shift + R para recargar el escritorio.
 - **Volver a la consola sin cerrar Hyprland:** Ctrl + Alt + **Fn** + F2 (en los portátiles
   MSI las teclas F necesitan Fn). Para volver: Ctrl + Alt + Fn + F1.
 - **No puedo apagar desde el menú:** comprueba que polkit funciona con `systemctl status polkit`.
