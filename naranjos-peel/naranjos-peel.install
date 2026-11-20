@@ -35,8 +35,17 @@ post_install() {
   echo "  Mira el estado con: naranjos-peel"
 }
 peel_antivirus() {
-  systemd-sysusers /usr/lib/sysusers.d/naranjos-clamav.conf >/dev/null 2>&1 || true
-  systemd-tmpfiles --create /usr/lib/tmpfiles.d/naranjos-clamav.conf >/dev/null 2>&1 || true
+  # usuario del antivirus (el systemd de NaranjOS no trae systemd-sysusers: se crea a mano)
+  if ! id clamav >/dev/null 2>&1; then
+    if command -v systemd-sysusers >/dev/null 2>&1; then
+      systemd-sysusers /usr/lib/sysusers.d/naranjos-clamav.conf >/dev/null 2>&1
+    else
+      getent group clamav >/dev/null || groupadd -r clamav
+      useradd -r -g clamav -d /var/lib/clamav -s /bin/false -c "Antivirus de NaranjOS (ClamAV)" clamav
+    fi
+  fi
+  install -dm755 -o clamav -g clamav /var/lib/clamav 2>/dev/null || true
+  chown -R clamav:clamav /var/lib/clamav 2>/dev/null || true
   systemctl enable --now naranjos-firmas.timer >/dev/null 2>&1 || true
   ls /var/lib/clamav/daily.c?d >/dev/null 2>&1 || systemctl start --no-block naranjos-firmas.service >/dev/null 2>&1 || true
   # vigilancia de descargas y análisis semanal para todos los usuarios (se arrancan al iniciar sesión)
