@@ -1,0 +1,15 @@
+naranjos-peel
+ninja
+pkgconf
+mpfr
+mpc
+attr
+acl
+libcap
+gperf
+expat
+less
+gdbm
+libpipeline
+patch
+naranjos-base

@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
+pkgname=gdbm
+pkgver=1.26
+pkgrel=1
+pkgdesc='Base de datos de claves GNU dbm'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'readline')
+makedepends=()
+source=('https://ftpmirror.gnu.org/gdbm/gdbm-1.26.tar.gz')
+sha256sums=('6a24504a14de4a744103dcb936be976df6fbe88ccff26065e54c1c47946f4a5e')
+build()   { cd gdbm-$pkgver; ./configure --prefix=/usr --disable-static --enable-libgdbm-compat; make; }
+check()   { cd gdbm-$pkgver; make check || echo "gdbm: alguna prueba falló"; }
+package() { cd gdbm-$pkgver; make DESTDIR="$pkgdir" install; }

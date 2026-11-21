@@ -5,7 +5,7 @@
 set -u
 # los servicios del sistema (integridad, VPN al arrancar) no traen HOME: se toma el de quien lo ejecuta
 : "${HOME:=$(getent passwd "$(id -u)" | cut -d: -f6)}"; export HOME
-VERSION="0.5.2"
+VERSION="0.5.3"
 . /usr/lib/naranjos/naranjos-i18n.sh
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
 [ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
@@ -66,23 +66,7 @@ estado(){
   usb_estado
 
   titulo "DNS"
-  if [ "$(readlink -f /etc/resolv.conf)" != "$STUB" ]; then
-    mal "$(_ 'DNS del sistema')" "$(_ '/etc/resolv.conf no usa systemd-resolved (el DNS NO va cifrado)')"
-  elif [ -f "$DNS_ESTRICTO" ]; then
-    bien "$(_ 'DNS cifrado')" "$(_ 'estricto (solo DNS-over-TLS)')"
-  else
-    bien "$(_ 'DNS cifrado')" "$(_ 'flexible (cifra siempre que la red lo permite)')"
-  fi
-  local srv; srv=$(resolvectl dns 2>/dev/null | awk -F': ' '/^Global/{print $2}')
-  # shellcheck disable=SC2059
-  [ -n "$srv" ] && nota "$(printf "$(_ 'servidores: %s')" "$srv")"
-  resolvectl status 2>/dev/null | grep -qE '\+DNSOverTLS|DNSOverTLS=opportunistic' || \
-    nota "$(_ '(systemd-resolved no dice que use DNS-over-TLS: puede ir sin cifrar)')"
-  if [ -f "$RED_LOCAL_DNS" ]; then
-    aviso "$(_ 'red local')" "$(_ 'visible (LLMNR/mDNS encendidos)')  →  naranjos-peel red-local no"
-  else
-    bien "$(_ 'red local')" "$(_ 'invisible (tu nombre de equipo no se anuncia)')"
-  fi
+  dns_estado
 
   titulo "WiFi"
   if grep -q '^AddressRandomization=network' "$IWD" 2>/dev/null; then
@@ -205,8 +189,30 @@ cierra(){
 }
 
 # ------------------------------------------------------------------------------------------
+dns_estado(){
+  if [ "$(readlink -f /etc/resolv.conf)" != "$STUB" ]; then
+    mal "$(_ 'DNS del sistema')" "$(_ '/etc/resolv.conf no usa systemd-resolved (el DNS NO va cifrado)')"
+  elif [ -f "$DNS_ESTRICTO" ]; then
+    bien "$(_ 'DNS cifrado')" "$(_ 'estricto (solo DNS-over-TLS)')"
+  else
+    bien "$(_ 'DNS cifrado')" "$(_ 'flexible (cifra siempre que la red lo permite)')"
+  fi
+  local srv; srv=$(resolvectl dns 2>/dev/null | awk -F': ' '/^Global/{print $2}')
+  # shellcheck disable=SC2059
+  [ -n "$srv" ] && nota "$(printf "$(_ 'servidores: %s')" "$srv")"
+  resolvectl status 2>/dev/null | grep -qE '\+DNSOverTLS|DNSOverTLS=opportunistic' || \
+    nota "$(_ '(systemd-resolved no dice que use DNS-over-TLS: puede ir sin cifrar)')"
+  if [ -f "$RED_LOCAL_DNS" ]; then
+    aviso "$(_ 'red local')" "$(_ 'visible (LLMNR/mDNS encendidos)')  →  naranjos-peel red-local no"
+  else
+    bien "$(_ 'red local')" "$(_ 'invisible (tu nombre de equipo no se anuncia)')"
+  fi
+  return 0
+}
+
 dns(){
   case "${1:-}" in
+    ""|estado|status) printf '%sDNS%s\n' "$O" "$Z"; dns_estado ;;
     estricto)
       como_root dns estricto; mkdir -p "${DNS_ESTRICTO%/*}"
       printf '# NaranjOS peel · DNS-over-TLS estricto (naranjos-peel dns estricto)\n[Resolve]\nDNSOverTLS=yes\n' > "$DNS_ESTRICTO"
@@ -215,7 +221,7 @@ dns(){
     flexible)
       como_root dns flexible; rm -f "$DNS_ESTRICTO"
       systemctl restart systemd-resolved; hecho "$(_ 'DNS flexible: cifrado siempre que la red lo permita')";;
-    *) die "$(_ 'Uso:') naranjos-peel dns estricto|flexible";;
+    *) die "$(_ 'Uso:') naranjos-peel dns [estricto|flexible]";;
   esac
 }
 

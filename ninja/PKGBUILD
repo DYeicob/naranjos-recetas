@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
+pkgname=ninja
+pkgver=1.13.2
+pkgrel=1
+pkgdesc='Sistema de compilación ninja'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Apache-2.0')
+depends=('gcc-libs' 'glibc')
+makedepends=('python')
+source=('https://github.com/ninja-build/ninja/archive/v1.13.2/ninja-1.13.2.tar.gz')
+sha256sums=('974d6b2f4eeefa25625d34da3cb36bdcebe7fbce40f4c16ac0835fd1c0cbae17')
+build() { cd ninja-$pkgver; python3 configure.py --bootstrap --verbose; }
+package() {
+  cd ninja-$pkgver
+  install -Dm755 ninja "$pkgdir/usr/bin/ninja"
+  install -Dm644 misc/bash-completion "$pkgdir/usr/share/bash-completion/completions/ninja"
+  install -Dm644 misc/zsh-completion  "$pkgdir/usr/share/zsh/site-functions/_ninja"
+}

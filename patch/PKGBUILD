@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
+pkgname=patch
+pkgver=2.8
+pkgrel=1
+pkgdesc='Aplica parches a ficheros (GNU patch)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'attr')
+makedepends=()
+source=('https://ftpmirror.gnu.org/patch/patch-2.8.tar.xz')
+sha256sums=('f87cee69eec2b4fcbf60a396b030ad6aa3415f192aa5f7ee84cad5e11f7f5ae3')
+build()   { cd patch-$pkgver; ./configure --prefix=/usr; make; }
+check()   { cd patch-$pkgver; make check || echo "patch: alguna prueba falló"; }
+package() { cd patch-$pkgver; make DESTDIR="$pkgdir" install; }

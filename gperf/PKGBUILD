@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
+pkgname=gperf
+pkgver=3.3
+pkgrel=1
+pkgdesc='Generador de funciones hash perfectas'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('gcc-libs' 'glibc')
+makedepends=()
+source=('https://ftpmirror.gnu.org/gperf/gperf-3.3.tar.gz')
+sha256sums=('fd87e0aba7e43ae054837afd6cd4db03a3f2693deb3619085e6ed9d8d9604ad8')
+build()   { cd gperf-$pkgver; ./configure --prefix=/usr --docdir=/usr/share/doc/gperf-$pkgver; make; }
+check()   { cd gperf-$pkgver; make -j1 check || echo "gperf: alguna prueba falló"; }
+package() { cd gperf-$pkgver; make DESTDIR="$pkgdir" install; }

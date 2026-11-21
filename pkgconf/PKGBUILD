@@ -1,0 +1,25 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
+pkgname=pkgconf
+pkgver=3.0.5
+pkgrel=1
+pkgdesc='Busca bibliotecas para compilar (pkgconf y pkg-config)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('ISC')
+depends=('glibc')
+makedepends=('meson' 'ninja')
+source=('https://distfiles.ariadne.space/pkgconf/pkgconf-3.0.5.tar.xz')
+sha256sums=('3acd3a8a3cce65a8d620321855d92fb602e026cbe8e13ee36bdec58483b59ace')
+build() {
+  cd pkgconf-$pkgver
+  meson setup build --prefix=/usr --buildtype=release
+  ninja -C build
+}
+check() { cd pkgconf-$pkgver; ninja -C build test; }
+package() {
+  cd pkgconf-$pkgver
+  DESTDIR="$pkgdir" ninja -C build install
+  if [ -d "$pkgdir/usr/share/doc/pkgconf" ]; then mv "$pkgdir/usr/share/doc/pkgconf" "$pkgdir/usr/share/doc/pkgconf-$pkgver"; fi
+  ln -sf pkgconf   "$pkgdir/usr/bin/pkg-config"
+  ln -sf pkgconf.1 "$pkgdir/usr/share/man/man1/pkg-config.1"
+}

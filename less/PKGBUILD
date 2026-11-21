@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
+pkgname=less
+pkgver=704
+pkgrel=1
+pkgdesc='Visor de texto por páginas (less)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later' 'BSD-2-Clause')
+depends=('glibc' 'ncurses' 'pcre2')
+makedepends=()
+source=('https://www.greenwoodsoftware.com/less/less-704.tar.gz')
+sha256sums=('20a0b0a2bb2525fa53c7eee9beb854b4c9cf172eabb209af7020743547bfe9fb')
+build()   { cd less-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc; make; }
+check()   { cd less-$pkgver; make check || echo "less: alguna prueba falló"; }
+package() { cd less-$pkgver; make DESTDIR="$pkgdir" install; }

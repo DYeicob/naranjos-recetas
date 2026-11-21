@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
+pkgname=acl
+pkgver=2.4.0
+pkgrel=1
+pkgdesc='Listas de control de acceso de los ficheros (ACL)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later' 'GPL-2.0-or-later')
+depends=('attr')
+makedepends=()
+source=('https://download.savannah.gnu.org/releases/acl/acl-2.4.0.tar.xz')
+sha256sums=('e661131456d2708a01c614a0f400e11d7d1bfaeb6f3e74b75bb980b72f0161a3')
+build() {
+  cd acl-$pkgver
+  ./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/acl-$pkgver
+  make
+}
+# test/cp.run falla siempre fuera de LFS (conocido): las pruebas no paran la tanda
+check()   { cd acl-$pkgver; make check || echo "acl: alguna prueba falló (conocido en LFS)"; }
+package() { cd acl-$pkgver; make DESTDIR="$pkgdir" install; }

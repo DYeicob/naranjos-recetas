@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
+pkgname=libpipeline
+pkgver=1.5.8
+pkgrel=1
+pkgdesc='Biblioteca para encadenar procesos (la usa man-db)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc')
+makedepends=()
+source=('https://download.savannah.gnu.org/releases/libpipeline/libpipeline-1.5.8.tar.gz')
+sha256sums=('1b1203ca152ccd63983c3f2112f7fe6fa5afd453218ede5153d1b31e11bb8405')
+build()   { cd libpipeline-$pkgver; ./configure --prefix=/usr; make; }
+package() { cd libpipeline-$pkgver; make DESTDIR="$pkgdir" install; }

@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
+pkgname=attr
+pkgver=2.6.0
+pkgrel=1
+pkgdesc='Atributos extendidos de los ficheros (attr)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later' 'GPL-2.0-or-later')
+depends=('glibc')
+makedepends=()
+source=('https://download.savannah.gnu.org/releases/attr/attr-2.6.0.tar.gz')
+sha256sums=('d42fa374513180bb48cb11a46696f488240e5124ff1e6ad88b0abff706985612')
+backup=('etc/xattr.conf')
+build() {
+  cd attr-$pkgver
+  ./configure --prefix=/usr --disable-static --sysconfdir=/etc --docdir=/usr/share/doc/attr-$pkgver
+  make
+}
+check()   { cd attr-$pkgver; make check; }
+package() { cd attr-$pkgver; make DESTDIR="$pkgdir" install; }
