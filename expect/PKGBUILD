@@ -13,6 +13,8 @@ sha256sums=('49a7da83b0bdd9f46d04a04deec19c7767bb9a323e40c4781f89caf760b92c34' '
 prepare() { cd expect$pkgver; patch -Np1 -i ../expect-5.45.4-gcc15-1.patch; }
 build() {
   cd expect$pkgver
+  # código antiguo: printf con el texto como formato; con -Werror=format-security de makepkg no compila
+  CFLAGS+=" -Wno-error=format-security"
   ./configure --prefix=/usr --with-tcl=/usr/lib --enable-shared --disable-rpath \
               --mandir=/usr/share/man --with-tclinclude=/usr/include
   make
