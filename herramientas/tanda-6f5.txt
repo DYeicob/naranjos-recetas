@@ -1,0 +1,15 @@
+naranjos-peel
+naranjos-idiomas
+man-pages
+iana-etc
+inetutils
+groff
+kbd
+tar
+vim
+iproute2
+man-db
+procps-ng
+sqlite
+mpdecimal
+naranjos-base

@@ -1,0 +1,43 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f5.sh
+pkgname=vim
+pkgver=9.2.1025
+pkgrel=1
+pkgdesc='Editor de texto vim'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Vim')
+depends=('ncurses' 'acl')
+makedepends=()
+source=('https://github.com/vim/vim/archive/v9.2.1025/vim-9.2.1025.tar.gz')
+sha256sums=('cb0dbf701f8550bb54940304fa4d8b875e078db84967e5b36a0eb7ebe8a6d0cc')
+backup=('etc/vimrc')
+prepare() { cd vim-$pkgver; echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h; }
+build()   { cd vim-$pkgver; ./configure --prefix=/usr; make; }
+package() {
+  cd vim-$pkgver
+  make DESTDIR="$pkgdir" install
+  ln -sf vim "$pkgdir/usr/bin/vi"
+  local L
+  for L in "$pkgdir"/usr/share/man/{,*/}man1/vim.1; do
+    [ -e "$L" ] && ln -sf vim.1 "$(dirname "$L")/vi.1"
+  done
+  install -d "$pkgdir/usr/share/doc"
+  ln -sfn ../vim/vim92/doc "$pkgdir/usr/share/doc/vim-$pkgver"
+  install -d "$pkgdir/etc"
+  cat > "$pkgdir/etc/vimrc" << "VIMRC"
+" Begin /etc/vimrc
+
+" Ensure defaults are set before customizing settings, not after
+source $VIMRUNTIME/defaults.vim
+let skip_defaults_vim=1
+
+set nocompatible
+set backspace=2
+set mouse=
+syntax on
+" NaranjOS: fondo oscuro siempre (identidad visual)
+set background=dark
+
+" End /etc/vimrc
+VIMRC
+}

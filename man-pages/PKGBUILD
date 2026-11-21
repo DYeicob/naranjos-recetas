@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f5.sh
+pkgname=man-pages
+pkgver=6.18
+pkgrel=1
+pkgdesc='Páginas de manual de Linux y de la biblioteca de C'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LicenseRef-man-pages')
+depends=()
+makedepends=()
+source=('https://www.kernel.org/pub/linux/docs/man-pages/man-pages-6.18.tar.xz')
+sha256sums=('c934fadc8b59748c68227a34f6581d2ddf8282b73cdcd52546c8cd88b74b24d1')
+prepare() { cd man-pages-$pkgver; rm -f man3/crypt*; }
+package() { cd man-pages-$pkgver; make -R GIT=false prefix=/usr DESTDIR="$pkgdir" install; }

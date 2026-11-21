@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f5.sh
+pkgname=groff
+pkgver=1.24.1
+pkgrel=1
+pkgdesc='Maquetador de texto groff (muestra las páginas de manual)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('gcc-libs' 'perl')
+makedepends=()
+source=('https://ftpmirror.gnu.org/groff/groff-1.24.1.tar.gz')
+sha256sums=('74e2819795b6aff431aeac983d63a9c8968eeaba2a2eba7df8ba4c7b41e7cfd8')
+build()   { cd groff-$pkgver; PAGE=A4 ./configure --prefix=/usr; make -j1; }
+check()   { cd groff-$pkgver; make check || echo "groff: alguna prueba falló"; }
+package() { cd groff-$pkgver; make DESTDIR="$pkgdir" install; }

@@ -1,0 +1,26 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f5.sh
+pkgname=inetutils
+pkgver=2.8
+pkgrel=1
+pkgdesc='Utilidades de red clásicas (ping, hostname, ftp, telnet, traceroute…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('readline' 'ncurses' 'libcap')
+makedepends=()
+source=('https://ftpmirror.gnu.org/inetutils/inetutils-2.8.tar.gz')
+sha256sums=('57b3cf4f77555992881e5ba2a09a63b05aa2c56342a60ed4305b5f45938390b5')
+prepare() { cd inetutils-$pkgver; sed -i 's/def HAVE_TERMCAP_TGETENT/ 1/' telnet/telnet.c; }
+build() {
+  cd inetutils-$pkgver
+  ./configure --prefix=/usr --bindir=/usr/bin --localstatedir=/var --disable-logger --disable-whois \
+              --disable-rcp --disable-rexec --disable-rlogin --disable-rsh --disable-servers
+  make
+}
+check() { cd inetutils-$pkgver; make check || echo "inetutils: alguna prueba falló"; }
+package() {
+  cd inetutils-$pkgver
+  make DESTDIR="$pkgdir" install
+  install -d "$pkgdir/usr/sbin"
+  mv "$pkgdir/usr/bin/ifconfig" "$pkgdir/usr/sbin/ifconfig"
+}

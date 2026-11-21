@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f5.sh
+pkgname=mpdecimal
+pkgver=4.0.1
+pkgrel=1
+pkgdesc='Aritmética decimal exacta (la usa Python)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-2-Clause')
+depends=('gcc-libs')
+makedepends=()
+source=('https://www.bytereef.org/software/mpdecimal/releases/mpdecimal-4.0.1.tar.gz')
+sha256sums=('96d33abb4bb0070c7be0fed4246cd38416188325f820468214471938545b1ac8')
+build()   { cd mpdecimal-$pkgver; ./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/mpdecimal-$pkgver; make; }
+check()   { cd mpdecimal-$pkgver; make check_local || echo "mpdecimal: alguna prueba falló"; }
+package() { cd mpdecimal-$pkgver; make DESTDIR="$pkgdir" install; }

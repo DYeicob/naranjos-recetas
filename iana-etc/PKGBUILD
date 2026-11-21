@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f5.sh
+pkgname=iana-etc
+pkgver=20260805
+pkgrel=1
+pkgdesc='Lista de servicios y protocolos de red (/etc/services, /etc/protocols)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=()
+makedepends=()
+source=('https://github.com/Mic92/iana-etc/releases/download/20260805/iana-etc-20260805.tar.gz')
+sha256sums=('29270860664e324107537f32ea476a333ca52d71b59c74bc06ecc3b0fa9cf490')
+backup=('etc/services' 'etc/protocols')
+package() {
+  cd iana-etc-$pkgver
+  install -Dm644 services  "$pkgdir/etc/services"
+  install -Dm644 protocols "$pkgdir/etc/protocols"
+}

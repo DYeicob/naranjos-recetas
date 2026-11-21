@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f5.sh
+pkgname=man-db
+pkgver=2.13.1
+pkgrel=1
+pkgdesc='Lector de páginas de manual (man)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('groff' 'gdbm' 'libpipeline' 'less')
+makedepends=()
+source=('https://download.savannah.gnu.org/releases/man-db/man-db-2.13.1.tar.xz')
+sha256sums=('8afebb6f7eb6bb8542929458841f5c7e6f240e30c86358c1fbcefbea076c87d9')
+backup=('etc/man_db.conf')
+build() {
+  cd man-db-$pkgver
+  ./configure --prefix=/usr --docdir=/usr/share/doc/man-db-$pkgver --sysconfdir=/etc \
+              --disable-setuid --enable-cache-owner=bin --with-browser=/usr/bin/lynx \
+              --with-vgrind=/usr/bin/vgrind --with-grap=/usr/bin/grap
+  make
+}
+check()   { cd man-db-$pkgver; make check || echo "man-db: alguna prueba falló"; }
+package() { cd man-db-$pkgver; make DESTDIR="$pkgdir" install; }

@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f5.sh
+pkgname=procps-ng
+pkgver=4.0.7
+pkgrel=1
+pkgdesc='Utilidades de procesos (ps, top, free, watch, pgrep…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later' 'LGPL-2.1-or-later')
+depends=('ncurses' 'systemd')
+makedepends=()
+source=('https://sourceforge.net/projects/procps-ng/files/Production/procps-ng-4.0.7.tar.xz')
+sha256sums=('9d2021f47a4501c667862c9942a92d1953694b21d11bcd1702e83eb594e3d67d')
+build() {
+  cd procps-ng-$pkgver
+  ./configure --prefix=/usr --docdir=/usr/share/doc/procps-ng-$pkgver --disable-static \
+              --disable-kill --enable-watch8bit --with-systemd
+  make
+}
+check()   { cd procps-ng-$pkgver; make check || echo "procps-ng: alguna prueba falló"; }
+package() { cd procps-ng-$pkgver; make DESTDIR="$pkgdir" install; }

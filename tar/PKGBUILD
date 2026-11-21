@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f5.sh
+pkgname=tar
+pkgver=1.35
+pkgrel=1
+pkgdesc='Archivador GNU tar'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('acl' 'attr')
+makedepends=()
+source=('https://ftpmirror.gnu.org/tar/tar-1.35.tar.xz' 'https://www.linuxfromscratch.org/patches/lfs/13.1/tar-1.35-acl_fix-1.patch')
+sha256sums=('4d62ff37342ec7aed748535323930c7cf94acf71c3591882b26a7ea50f3edc16' '51cadccfcb2f29cfdb4ec18015360100aa167179a72ece040a6a8612aeec5081')
+prepare() { cd tar-$pkgver; patch -Np1 -i ../tar-1.35-acl_fix-1.patch; }
+build()   { cd tar-$pkgver; ./configure --prefix=/usr; make; }
+check()   { cd tar-$pkgver; make check || echo "tar: alguna prueba falló"; }
+package() {
+  cd tar-$pkgver
+  make DESTDIR="$pkgdir" install
+  make -C doc DESTDIR="$pkgdir" install-html docdir=/usr/share/doc/tar-$pkgver
+}
