@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=gawk
+pkgver=5.4.1
+pkgrel=1
+pkgdesc='GNU awk'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'readline' 'mpfr')
+makedepends=()
+source=('https://ftpmirror.gnu.org/gawk/gawk-5.4.1.tar.xz')
+sha256sums=('07f6f7342b7febe4313fc2c2542ad93d64fe20ad8717200109f105a826f5fd37')
+prepare() { cd gawk-$pkgver; sed -i 's/extras//' Makefile.in; }
+build()   { cd gawk-$pkgver; ./configure --prefix=/usr; make; }
+check()   { cd gawk-$pkgver; make check || echo "gawk: alguna prueba falló"; }
+package() {
+  cd gawk-$pkgver
+  make DESTDIR="$pkgdir" install
+  rm -f "$pkgdir/usr/bin/gawk-$pkgver"
+  ln -sf gawk.1 "$pkgdir/usr/share/man/man1/awk.1"
+  install -Dm644 doc/{awkforai.txt,*.{eps,pdf,jpg}} -t "$pkgdir/usr/share/doc/gawk-$pkgver"
+}

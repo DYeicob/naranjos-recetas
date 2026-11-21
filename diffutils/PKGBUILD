@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=diffutils
+pkgver=3.12
+pkgrel=1
+pkgdesc='Compara ficheros (diff, cmp, sdiff, diff3)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc')
+makedepends=()
+source=('https://ftpmirror.gnu.org/diffutils/diffutils-3.12.tar.xz')
+sha256sums=('7c8b7f9fc8609141fdea9cece85249d308624391ff61dedaf528fcb337727dfd')
+build()   { cd diffutils-$pkgver; ./configure --prefix=/usr ; make; }
+check()   { cd diffutils-$pkgver; make check || echo "diffutils: alguna prueba falló"; }
+package() { cd diffutils-$pkgver; make DESTDIR="$pkgdir" install; }

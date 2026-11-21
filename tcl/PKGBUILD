@@ -1,0 +1,45 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=tcl
+pkgver=8.6.18
+pkgrel=1
+pkgdesc='Lenguaje Tcl (lo usan las pruebas de muchos programas)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('TCL')
+depends=('zlib')
+makedepends=()
+source=('https://downloads.sourceforge.net/tcl/tcl8.6.18-src.tar.gz' 'https://downloads.sourceforge.net/tcl/tcl8.6.18-html.tar.gz')
+sha256sums=('14f9af32b1767ff718477a8f974ad03c34341097e6b43f4ce54644ee974e268e' 'bee2d83a19ce50624eeae951be29fe5f654b171357a6391123caf18107cec543')
+options=('staticlibs')
+build() {
+  cd tcl$pkgver
+  local SRCDIR; SRCDIR=$(pwd)
+  cd unix
+  ./configure --prefix=/usr --mandir=/usr/share/man --disable-rpath
+  make
+  sed -e "s|$SRCDIR/unix|/usr/lib|" -e "s|$SRCDIR|/usr/include|" -i tclConfig.sh
+  local d
+  for d in pkgs/tdbc*/tdbcConfig.sh; do
+    [ -f "$d" ] || continue
+    local v; v=$(basename "$(dirname "$d")")
+    sed -e "s|$SRCDIR/unix/pkgs/$v|/usr/lib/$v|" -e "s|$SRCDIR/pkgs/$v/generic|/usr/include|" \
+        -e "s|$SRCDIR/pkgs/$v/library|/usr/lib/tcl8.6|" -e "s|$SRCDIR/pkgs/$v|/usr/include|" -i "$d"
+  done
+  for d in pkgs/itcl*/itclConfig.sh; do
+    [ -f "$d" ] || continue
+    local v; v=$(basename "$(dirname "$d")")
+    sed -e "s|$SRCDIR/unix/pkgs/$v|/usr/lib/$v|" -e "s|$SRCDIR/pkgs/$v/generic|/usr/include|" \
+        -e "s|$SRCDIR/pkgs/$v|/usr/include|" -i "$d"
+  done
+}
+check() { cd tcl$pkgver/unix; LC_ALL=C.UTF-8 make test || echo "tcl: alguna prueba falló"; }
+package() {
+  cd tcl$pkgver/unix
+  make INSTALL_ROOT="$pkgdir" install install-private-headers
+  chmod 644 "$pkgdir/usr/lib/libtclstub8.6.a"
+  chmod u+w "$pkgdir/usr/lib/libtcl8.6.so"
+  ln -sf tclsh8.6 "$pkgdir/usr/bin/tclsh"
+  mv "$pkgdir/usr/share/man/man3/Thread.3" "$pkgdir/usr/share/man/man3/Tcl_Thread.3"
+  install -d "$pkgdir/usr/share/doc/tcl-$pkgver"
+  cp -r ../html/* "$pkgdir/usr/share/doc/tcl-$pkgver"
+}

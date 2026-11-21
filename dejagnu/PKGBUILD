@@ -1,0 +1,26 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=dejagnu
+pkgver=1.6.3
+pkgrel=1
+pkgdesc='Marco de pruebas DejaGnu'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('expect')
+makedepends=()
+source=('https://ftpmirror.gnu.org/dejagnu/dejagnu-1.6.3.tar.gz')
+sha256sums=('87daefacd7958b4a69f88c6856dbd1634261963c414079d0c371f589cd66a2e3')
+build() {
+  cd dejagnu-$pkgver
+  mkdir -p build && cd build
+  ../configure --prefix=/usr
+  makeinfo --html --no-split -o doc/dejagnu.html ../doc/dejagnu.texi
+  makeinfo --plaintext       -o doc/dejagnu.txt  ../doc/dejagnu.texi
+}
+check() { cd dejagnu-$pkgver/build; make check || echo "dejagnu: alguna prueba falló"; }
+package() {
+  cd dejagnu-$pkgver/build
+  make DESTDIR="$pkgdir" install
+  install -d "$pkgdir/usr/share/doc/dejagnu-$pkgver"
+  install -m644 doc/dejagnu.{html,txt} "$pkgdir/usr/share/doc/dejagnu-$pkgver"
+}

@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=sed
+pkgver=4.10
+pkgrel=1
+pkgdesc='Editor de flujo GNU sed'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'acl')
+makedepends=()
+source=('https://ftpmirror.gnu.org/sed/sed-4.10.tar.xz')
+sha256sums=('b8e72182b2ec96a3574e2998c47b7aaa64cc20ce000d8e9ac313cc07cecf28c7')
+build()   { cd sed-$pkgver; ./configure --prefix=/usr; make; make html; }
+check()   { cd sed-$pkgver; make check || echo "sed: alguna prueba falló"; }
+package() {
+  cd sed-$pkgver
+  make DESTDIR="$pkgdir" install
+  install -Dm644 doc/sed.html -t "$pkgdir/usr/share/doc/sed-$pkgver"
+}

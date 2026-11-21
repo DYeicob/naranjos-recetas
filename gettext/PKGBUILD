@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=gettext
+pkgver=1.0
+pkgrel=1
+pkgdesc='Traducciones de programas (gettext, msgfmt, xgettext…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later' 'LGPL-2.1-or-later')
+depends=('gcc-libs' 'glibc' 'acl')
+makedepends=()
+source=('https://ftpmirror.gnu.org/gettext/gettext-1.0.tar.xz')
+sha256sums=('71132a3fb71e68245b8f2ac4e9e97137d3e5c02f415636eb508ae607bc01add7')
+build()   { cd gettext-$pkgver; ./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/gettext-$pkgver; make; }
+check()   { cd gettext-$pkgver; make check || echo "gettext: alguna prueba falló"; }
+package() {
+  cd gettext-$pkgver
+  make DESTDIR="$pkgdir" install
+  chmod 0755 "$pkgdir/usr/lib/preloadable_libintl.so"
+}

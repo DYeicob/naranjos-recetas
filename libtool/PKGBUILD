@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=libtool
+pkgver=2.6.2
+pkgrel=1
+pkgdesc='Herramienta para crear bibliotecas compartidas (libtool)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later' 'LGPL-2.1-or-later')
+depends=('glibc' 'm4')
+makedepends=()
+source=('https://ftpmirror.gnu.org/libtool/libtool-2.6.2.tar.xz')
+sha256sums=('2ef1067c16c97db930fd740cc9bc3d3ba9a583804ae5ac42cc3e8719e49e191e')
+build()   { cd libtool-$pkgver; ./configure --prefix=/usr; make; }
+check()   { cd libtool-$pkgver; make check || echo "libtool: alguna prueba falló"; }
+package() {
+  cd libtool-$pkgver
+  make DESTDIR="$pkgdir" install
+  rm -f "$pkgdir/usr/lib/libltdl.a"
+}

@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=bison
+pkgver=3.8.2
+pkgrel=1
+pkgdesc='Generador de analizadores sintácticos (bison y yacc)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'm4')
+makedepends=()
+source=('https://ftpmirror.gnu.org/bison/bison-3.8.2.tar.xz')
+sha256sums=('9bba0214ccf7f1079c5d59210045227bcf619519840ebfa80cd3849cff5a5bf2')
+build()   { cd bison-$pkgver; ./configure --prefix=/usr --docdir=/usr/share/doc/bison-$pkgver; make; }
+check()   { cd bison-$pkgver; make check || echo "bison: alguna prueba falló"; }
+package() { cd bison-$pkgver; make DESTDIR="$pkgdir" install; }

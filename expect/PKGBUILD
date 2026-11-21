@@ -1,0 +1,25 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=expect
+pkgver=5.45.4
+pkgrel=1
+pkgdesc='Automatiza programas interactivos (expect)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LicenseRef-expect')
+depends=('tcl')
+makedepends=()
+source=('https://prdownloads.sourceforge.net/expect/expect5.45.4.tar.gz' 'https://www.linuxfromscratch.org/patches/lfs/13.1/expect-5.45.4-gcc15-1.patch')
+sha256sums=('49a7da83b0bdd9f46d04a04deec19c7767bb9a323e40c4781f89caf760b92c34' 'ab5fc0af9e2e0f80d7623c1a3a3dbeb1da3d8c9134276792199df401f9eb2cec')
+prepare() { cd expect$pkgver; patch -Np1 -i ../expect-5.45.4-gcc15-1.patch; }
+build() {
+  cd expect$pkgver
+  ./configure --prefix=/usr --with-tcl=/usr/lib --enable-shared --disable-rpath \
+              --mandir=/usr/share/man --with-tclinclude=/usr/include
+  make
+}
+check() { cd expect$pkgver; make test || echo "expect: alguna prueba falló"; }
+package() {
+  cd expect$pkgver
+  make DESTDIR="$pkgdir" install
+  ln -sf expect$pkgver/libexpect$pkgver.so "$pkgdir/usr/lib"
+}

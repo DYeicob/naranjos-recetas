@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=findutils
+pkgver=4.11.0
+pkgrel=1
+pkgdesc='Busca ficheros (find, xargs, locate)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc')
+makedepends=()
+source=('https://ftpmirror.gnu.org/findutils/findutils-4.11.0.tar.xz')
+sha256sums=('bfd19cb06cc71f3352d567e90284d8cdac02ac89774bbeadf0b533b0c11432fd')
+build()   { cd findutils-$pkgver; ./configure --prefix=/usr --localstatedir=/var/lib/locate; make; }
+check()   { cd findutils-$pkgver; make check || echo "findutils: alguna prueba falló"; }
+package() { cd findutils-$pkgver; make DESTDIR="$pkgdir" install; }

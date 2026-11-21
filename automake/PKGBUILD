@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=automake
+pkgver=1.18.1
+pkgrel=1
+pkgdesc='Genera Makefile.in a partir de Makefile.am (automake)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('autoconf' 'perl')
+makedepends=()
+source=('https://ftpmirror.gnu.org/automake/automake-1.18.1.tar.xz')
+sha256sums=('168aa363278351b89af56684448f525a5bce5079d0b6842bd910fdd3f1646887')
+build()   { cd automake-$pkgver; ./configure --prefix=/usr --docdir=/usr/share/doc/automake-$pkgver; make; }
+package() { cd automake-$pkgver; make DESTDIR="$pkgdir" install; }

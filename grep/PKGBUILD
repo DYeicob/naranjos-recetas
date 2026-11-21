@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=grep
+pkgver=3.12
+pkgrel=1
+pkgdesc='Busca texto en ficheros (GNU grep)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'pcre2')
+makedepends=()
+source=('https://ftpmirror.gnu.org/grep/grep-3.12.tar.xz')
+sha256sums=('2649b27c0e90e632eadcd757be06c6e9a4f48d941de51e7c0f83ff76408a07b9')
+prepare() { cd grep-$pkgver; sed -i "s/echo/#echo/" src/egrep.sh; }
+build()   { cd grep-$pkgver; ./configure --prefix=/usr; make; }
+check()   { cd grep-$pkgver; make check || echo "grep: alguna prueba falló"; }
+package() { cd grep-$pkgver; make DESTDIR="$pkgdir" install; }

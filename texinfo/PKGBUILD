@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
+pkgname=texinfo
+pkgver=7.3
+pkgrel=1
+pkgdesc='Documentación en formato info (makeinfo, info, install-info)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('ncurses' 'perl')
+makedepends=()
+source=('https://ftpmirror.gnu.org/texinfo/texinfo-7.3.tar.xz')
+sha256sums=('51f74eb0f51cfa9873b85264dfdd5d46e8957ec95b88f0fb762f63d9e164c72e')
+build()   { cd texinfo-$pkgver; ./configure --prefix=/usr; make; }
+check()   { cd texinfo-$pkgver; make check || echo "texinfo: alguna prueba falló"; }
+package() { cd texinfo-$pkgver; make DESTDIR="$pkgdir" install; }
