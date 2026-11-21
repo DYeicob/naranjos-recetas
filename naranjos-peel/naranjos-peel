@@ -5,7 +5,7 @@
 set -u
 # los servicios del sistema (integridad, VPN al arrancar) no traen HOME: se toma el de quien lo ejecuta
 : "${HOME:=$(getent passwd "$(id -u)" | cut -d: -f6)}"; export HOME
-VERSION="0.5.4"
+VERSION="0.5.5"
 . /usr/lib/naranjos/naranjos-i18n.sh
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
 [ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }

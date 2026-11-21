@@ -1,10 +1,10 @@
 # NaranjOS peel · DNS cifrado (DNS-over-TLS)
-# Quad9 (Suiza): no guarda tu IP y además bloquea dominios de malware y phishing.
-# Cloudflare va de reserva, intercalado: si Quad9 falla con un dominio (SERVFAIL), se pregunta a Cloudflare.
+# Cloudflare primero (el más fiable; borra sus registros en 24 h) y Quad9 (Suiza, bloquea malware) de reserva.
+# Ojo: systemd-resolved solo cambia de servidor si uno NO responde (un SERVFAIL no cuenta).
 # Modo «flexible»: cifra siempre que la red lo permita. Estricto: naranjos-peel dns estricto
 [Resolve]
-DNS=9.9.9.9#dns.quad9.net 1.1.1.1#cloudflare-dns.com 149.112.112.112#dns.quad9.net 1.0.0.1#cloudflare-dns.com 2620:fe::fe#dns.quad9.net 2606:4700:4700::1111#cloudflare-dns.com
-FallbackDNS=1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com
+DNS=1.1.1.1#cloudflare-dns.com 1.0.0.1#cloudflare-dns.com 2606:4700:4700::1111#cloudflare-dns.com 9.9.9.9#dns.quad9.net 149.112.112.112#dns.quad9.net 2620:fe::fe#dns.quad9.net
+FallbackDNS=9.9.9.9#dns.quad9.net 149.112.112.112#dns.quad9.net
 DNSOverTLS=opportunistic
 # sin LLMNR ni mDNS: en una WiFi pública no se anuncia el nombre del equipo (naranjos-peel red-local si)
 LLMNR=no

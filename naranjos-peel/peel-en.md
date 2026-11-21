@@ -8,7 +8,7 @@ the shield on the bar or by typing `naranjos-peel` in a terminal.
 | Piece | What it does |
 |---|---|
 | Firewall (nftables) | Closes **all** incoming connections, except replies to what you start. Outgoing traffic is not touched. |
-| Encrypted DNS | DNS queries are encrypted (DNS-over-TLS) to Quad9, which does not log your IP and blocks malware and phishing domains. If Quad9 fails for a site, Cloudflare (also encrypted) is asked instead. |
+| Encrypted DNS | DNS queries are encrypted (DNS-over-TLS) to Cloudflare, the most reliable service (it deletes its logs within 24 hours). If it does not answer, Quad9 (Switzerland) is used. |
 | Invisible on the local network | LLMNR and mDNS are off: on a public Wi-Fi your laptop does not announce its name. |
 | Random MAC | On each Wi-Fi network your laptop uses a different MAC address, so you can't be tracked from one network to another. |
 | Hardened kernel | `sysctl` settings that make local and network attacks harder (`/usr/lib/sysctl.d/60-naranjos-peel.conf`). |

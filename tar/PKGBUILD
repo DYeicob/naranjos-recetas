@@ -8,7 +8,7 @@ url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
 depends=('acl' 'attr')
 makedepends=()
-source=('https://ftpmirror.gnu.org/tar/tar-1.35.tar.xz' 'https://www.linuxfromscratch.org/patches/lfs/13.1/tar-1.35-acl_fix-1.patch')
+source=('https://ftpmirror.gnu.org/tar/tar-1.35.tar.xz' 'tar-1.35-acl_fix-1.patch')
 sha256sums=('4d62ff37342ec7aed748535323930c7cf94acf71c3591882b26a7ea50f3edc16' '51cadccfcb2f29cfdb4ec18015360100aa167179a72ece040a6a8612aeec5081')
 prepare() { cd tar-$pkgver; patch -Np1 -i ../tar-1.35-acl_fix-1.patch; }
 build()   { cd tar-$pkgver; ./configure --prefix=/usr; make; }

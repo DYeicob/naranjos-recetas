@@ -8,7 +8,7 @@ en el escudo de la barra o escribiendo `naranjos-peel` en una terminal.
 | Pieza | Qué hace |
 |---|---|
 | Cortafuegos (nftables) | Cierra **todas** las conexiones de entrada, salvo las respuestas a lo que tú inicias. Lo que sale de tu equipo no se toca. |
-| DNS cifrado | Las consultas DNS van cifradas (DNS-over-TLS) a Quad9, que no guarda tu IP y bloquea dominios de malware y phishing. Si Quad9 falla con alguna web, se pregunta a Cloudflare (también cifrado). |
+| DNS cifrado | Las consultas DNS van cifradas (DNS-over-TLS) a Cloudflare, el servicio más fiable (borra sus registros en 24 horas). Si no responde, se usa Quad9 (Suiza). |
 | Red local invisible | LLMNR y mDNS apagados: en una WiFi pública tu portátil no anuncia su nombre. |
 | MAC aleatoria | En cada red WiFi tu portátil usa una dirección MAC distinta, para que no te sigan de una red a otra. |
 | Kernel endurecido | Ajustes `sysctl` que dificultan los ataques locales y de red (`/usr/lib/sysctl.d/60-naranjos-peel.conf`). |
