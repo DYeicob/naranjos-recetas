@@ -1,0 +1,6 @@
+zumo
+naranjos-idiomas
+naranjos-keyring
+gmp
+libffi
+naranjos-base

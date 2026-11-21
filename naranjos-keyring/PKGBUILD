@@ -1,0 +1,18 @@
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6f1.sh (NO editar a mano)
+pkgname=naranjos-keyring
+pkgver=20261121
+pkgrel=1
+pkgdesc='Llavero de NaranjOS: la clave pública que firma los paquetes'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('pacman')
+source=('naranjos.gpg' 'naranjos-revoked' 'naranjos-trusted')
+sha256sums=('5e9fec68c5704418a2e35817b901996da4a3273a89483663e16014e3bd25edcf' 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' 'cfb0cdf19344418bd7007039d10d65920c9f9fcd122355a1f99005e7a186816e')
+install=naranjos-keyring.install
+package() {
+  local K="$pkgdir/usr/share/pacman/keyrings"
+  install -Dm644 naranjos.gpg     "$K/naranjos.gpg"
+  install -Dm644 naranjos-trusted "$K/naranjos-trusted"
+  install -Dm644 naranjos-revoked "$K/naranjos-revoked"
+}

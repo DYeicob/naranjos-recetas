@@ -1,0 +1,12 @@
+# La clave con la que NaranjOS firma sus paquetes pasa al llavero de pacman
+post_install() {
+  if [ -d /etc/pacman.d/gnupg ]; then
+    pacman-key --populate naranjos >/dev/null 2>&1 && echo "  ✔ llavero de NaranjOS al día" \
+      || echo "  ! no se pudo actualizar el llavero: sudo pacman-key --populate naranjos"
+  else
+    echo "  ! pacman aún no tiene llavero: sudo pacman-key --init && sudo pacman-key --populate naranjos"
+  fi
+}
+post_upgrade() {
+  post_install
+}

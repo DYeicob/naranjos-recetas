@@ -1,0 +1,33 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f1.sh
+pkgname=gmp
+pkgver=6.3.0
+pkgrel=1
+pkgdesc='Aritmética de precisión arbitraria (GMP), genérica para cualquier x86-64'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-3.0-or-later' 'GPL-2.0-or-later')
+depends=('gcc-libs' 'glibc')
+makedepends=()
+source=('https://ftpmirror.gnu.org/gmp/gmp-6.3.0.tar.xz')
+sha256sums=('a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898')
+build() {
+  cd gmp-$pkgver
+  # LFS 13.1: arreglo para GCC 15
+  sed -i '/long long t1;/,+1s/()/(...)/' configure
+  # LFS la optimiza para el procesador donde se compila; NaranjOS la quiere para cualquier PC
+  ./configure --prefix=/usr --enable-cxx --disable-static --enable-fat \
+              --docdir=/usr/share/doc/gmp-$pkgver
+  make
+  make html
+}
+check() {
+  cd gmp-$pkgver
+  make check 2>&1 | tee gmp-check-log
+  local n; n=$(awk '/# PASS:/ {t+=$3} END {print t+0}' gmp-check-log)
+  echo "GMP: $n pruebas superadas (LFS pide al menos 199)"
+  [ "$n" -ge 199 ]
+}
+package() {
+  cd gmp-$pkgver
+  make DESTDIR="$pkgdir" install install-html
+}

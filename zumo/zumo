@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 # zumo — gestor de paquetes de NaranjOS (usa pacman por dentro)
 # Textos traducibles con gettext (dominio «naranjos»): naranjos-idioma cambia el idioma.
-VERSION="0.3.0"
+VERSION="0.3.1"
 export TEXTDOMAIN=naranjos TEXTDOMAINDIR=/usr/share/locale
 _(){ gettext "$1" 2>/dev/null || printf '%s' "$1"; }
 # _f <texto con %s> <datos…>: texto traducido con datos dentro
@@ -39,9 +39,10 @@ ayuda(){
   printf "$f" de        owns         "<fich>"  "$(_ 'Qué paquete instaló un fichero')"
   printf "$f" huerfanos orphans      ""        "$(_ 'Dependencias que ya nadie usa')"
   printf '\n%s%s%s\n' "$B" "$(_ 'Para quien crea paquetes')" "$Z"
-  printf "$f" exprime   build        "[-i] [-y] <receta...>" ""
+  printf "$f" exprime   build        "[-i] [-y] [-a] <receta...>" ""
   printf '               %s\n' "$(_ 'Construye, firma y añade al repositorio')"
   printf '               %s\n' "$(_ '(-i: además lo instala · -y: sin preguntar).')"
+  printf '               %s\n' "$(_ '(-a: adopta lo que la base de LFS ya instaló suelto: lo sobrescribe).')"
   printf '               %s\n' "$(_ 'Las recetas se buscan en ~/naranjos-recetas')"
   echo
   printf "$f" version   --version    ""        "$(_ 'Versión de zumo y de pacman')"
@@ -58,7 +59,7 @@ exprime(){
   local CONF="${XDG_CONFIG_HOME:-$HOME/.config}/zumo/exprime.conf"
   # shellcheck disable=SC1090
   [ -r "$CONF" ] && . "$CONF"
-  local DB="$REPO/$(basename "$REPO").db.tar.zst" INSTALA=0 SIN=() r d p f n nombres=() pkgs=()
+  local DB="$REPO/$(basename "$REPO").db.tar.zst" INSTALA=0 SIN=() ADOPTA=() r d p f n nombres=() pkgs=()
   [ -d "$REPO" ] && [ -w "$REPO" ] || die "$(_f 'no puedo escribir en el repositorio %s' "$REPO")"
   if [ -z "${GPGKEY:-}" ]; then
     GPGKEY=$(gpg --list-secret-keys --with-colons "NaranjOS Packager" 2>/dev/null | awk -F: '/^fpr/{print $10; exit}')
@@ -69,6 +70,7 @@ exprime(){
     case "$1" in
       -i|--instala|--install) INSTALA=1; shift ;;
       -y|--si|--yes)          SIN=(--noconfirm); shift ;;
+      -a|--adopta|--adopt)    ADOPTA=(--overwrite '*'); shift ;;
       -C|--limpio)            shift ;;   # (siempre se compila en limpio)
       *) break ;;
     esac
@@ -105,7 +107,7 @@ exprime(){
   done
   if [ "$INSTALA" = 1 ]; then
     msg "$(_f 'Instalando: %s' "${nombres[*]}")"
-    sudo pacman -S --needed "${SIN[@]}" "${nombres[@]}" \
+    sudo pacman -S --needed "${SIN[@]}" "${ADOPTA[@]}" "${nombres[@]}" \
       || die "$(_f 'pacman NO instaló: %s (mira el error justo encima)' "${nombres[*]}")"
   fi
   okm "$(_ 'Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)')"

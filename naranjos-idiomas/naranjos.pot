@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NaranjOS 0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DYeicob/naranjos-recetas/issues\n"
-"POT-Creation-Date: 2026-11-20 16:38+0100\n"
+"POT-Creation-Date: 2026-11-21 19:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1309,98 +1309,102 @@ msgid "(-i: además lo instala · -y: sin preguntar)."
 msgstr ""
 
 #: zumo:45
+msgid "(-a: adopta lo que la base de LFS ya instaló suelto: lo sobrescribe)."
+msgstr ""
+
+#: zumo:46
 msgid "Las recetas se buscan en ~/naranjos-recetas"
 msgstr ""
 
-#: zumo:47
+#: zumo:48
 msgid "Versión de zumo y de pacman"
 msgstr ""
 
-#: zumo:48
+#: zumo:49
 msgid "Esta ayuda"
 msgstr ""
 
-#: zumo:50
+#: zumo:51
 msgid "Ejemplos:"
 msgstr ""
 
-#: zumo:51
+#: zumo:52
 msgid ""
 "Cada orden tiene también su nombre en inglés (install, remove, update…)."
 msgstr ""
 
-#: zumo:56
+#: zumo:57
 msgid "'exprime' se usa con tu usuario normal, no como root."
 msgstr ""
 
-#: zumo:62
+#: zumo:63
 msgid "no puedo escribir en el repositorio %s"
 msgstr ""
 
-#: zumo:66
+#: zumo:67
 msgid "no encuentro la clave de firma de NaranjOS (gpg)"
 msgstr ""
 
-#: zumo:76
+#: zumo:78
 msgid "dime qué receta(s) exprimir. Ejemplo: zumo exprime wayland"
 msgstr ""
 
-#: zumo:78
+#: zumo:80
 msgid "Refrescando la lista de paquetes…"
 msgstr ""
 
-#: zumo:79
+#: zumo:81
 msgid "pacman -Sy falló"
 msgstr ""
 
-#: zumo:82
+#: zumo:84
 msgid "no encuentro la receta '%s' (ni ./%s ni %s)"
 msgstr ""
 
-#: zumo:84
+#: zumo:86
 msgid "Exprimiendo %s…"
 msgstr ""
 
-#: zumo:85
+#: zumo:87
 msgid "makepkg falló en '%s'"
 msgstr ""
 
-#: zumo:87
+#: zumo:89
 msgid "makepkg no dijo qué paquetes generó"
 msgstr ""
 
-#: zumo:89
+#: zumo:91
 msgid "repo-add falló con %s"
 msgstr ""
 
-#: zumo:107
+#: zumo:109
 msgid "Instalando: %s"
 msgstr ""
 
-#: zumo:109
+#: zumo:111
 msgid "pacman NO instaló: %s (mira el error justo encima)"
 msgstr ""
 
-#: zumo:111
+#: zumo:113
 msgid "Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)"
 msgstr ""
 
-#: zumo:119
+#: zumo:121
 msgid "Actualizando NaranjOS…"
 msgstr ""
 
-#: zumo:126 zumo:128
+#: zumo:128 zumo:130
 msgid "No hay huérfanos."
 msgstr ""
 
-#: zumo:128
+#: zumo:130
 msgid "Quitando huérfanos…"
 msgstr ""
 
-#: zumo:129
+#: zumo:131
 msgid "Vaciando la caché de versiones antiguas…"
 msgstr ""
 
-#: zumo:133
+#: zumo:135
 msgid "orden desconocida: '%s'. Mira 'zumo ayuda'."
 msgstr ""

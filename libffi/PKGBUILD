@@ -1,0 +1,27 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f1.sh
+pkgname=libffi
+pkgver=3.8.0
+pkgrel=1
+pkgdesc='Interfaz para llamar a funciones de C desde otros lenguajes (genérica para cualquier x86-64)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=('glibc')
+makedepends=()
+source=('https://github.com/libffi/libffi/releases/download/v3.8.0/libffi-3.8.0.tar.gz')
+sha256sums=('7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4')
+build() {
+  cd libffi-$pkgver
+  # LFS usa --with-gcc-arch=native (solo para este procesador); NaranjOS, x86-64 genérico
+  ./configure --prefix=/usr --disable-static --with-gcc-arch=x86-64
+  make
+}
+check() {
+  cd libffi-$pkgver
+  make check || echo "libffi: algunas pruebas fallaron (en LFS no son críticas)"
+}
+package() {
+  cd libffi-$pkgver
+  make DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

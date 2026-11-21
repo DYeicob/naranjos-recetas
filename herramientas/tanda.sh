@@ -21,7 +21,8 @@ while read -r r <&3; do
     echo "${O}[$i/$total]${Z} $r $ver ya instalado, se salta"; continue
   fi
   echo "${O}[$i/$total]${Z} ${r} ${ver}"
-  zumo exprime -i -y "$r" || { echo "${R}Falló '$r'. Corrígelo y vuelve a lanzar la tanda: seguirá desde aquí.${Z}"; exit 1; }
+  ADOPTA=""; [ -e "herramientas/tanda-${1}.adopta" ] && [ "$r" != zumo ] && ADOPTA=1
+  zumo exprime -i -y ${ADOPTA:+-a} "$r" || { echo "${R}Falló '$r'. Corrígelo y vuelve a lanzar la tanda: seguirá desde aquí.${Z}"; exit 1; }
   if [ "$(pacman -Q "$r" 2>/dev/null | cut -d' ' -f2)" != "$ver" ]; then
     echo "${R}'$r' se compiló pero NO quedó instalado (mira el error de pacman de arriba).${Z}"
     echo "${R}Haz una foto y pásasela a Claude. Al relanzar la tanda seguirá desde aquí.${Z}"; exit 1
