@@ -1,0 +1,35 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f2.sh
+pkgname=bzip2
+pkgver=1.0.8
+pkgrel=1
+pkgdesc='Compresor bzip2 y su biblioteca'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('bzip2-1.0.6')
+depends=('glibc')
+makedepends=()
+source=('https://www.sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz' 'https://www.linuxfromscratch.org/patches/lfs/13.1/bzip2-1.0.8-install_docs-1.patch')
+sha256sums=('ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269' '35e3bbd9642af51fef2a8a83afba040d272da42d7e3a251d8e43255a7b496702')
+prepare() {
+  cd bzip2-$pkgver
+  patch -Np1 -i ../bzip2-1.0.8-install_docs-1.patch
+  sed -i 's@\(ln -s -f \)$(PREFIX)/bin/@\1@' Makefile
+  sed -i "s@(PREFIX)/man@(PREFIX)/share/man@g" Makefile
+}
+build() {
+  cd bzip2-$pkgver
+  make -f Makefile-libbz2_so
+  make clean
+  make
+}
+package() {
+  cd bzip2-$pkgver
+  make PREFIX="$pkgdir/usr" install
+  cp -a libbz2.so.* "$pkgdir/usr/lib/"
+  ln -sf libbz2.so.1.0.8 "$pkgdir/usr/lib/libbz2.so"
+  ln -sf libbz2.so.1.0.8 "$pkgdir/usr/lib/libbz2.so.1"
+  install -m755 bzip2-shared "$pkgdir/usr/bin/bzip2"
+  local i; for i in bzcat bunzip2; do ln -sf bzip2 "$pkgdir/usr/bin/$i"; done
+  rm -f "$pkgdir/usr/lib/libbz2.a"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f2.sh
+pkgname=pcre2
+pkgver=10.47
+pkgrel=1
+pkgdesc='Expresiones regulares compatibles con Perl (PCRE2)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=('glibc' 'zlib' 'bzip2' 'readline')
+makedepends=()
+source=('https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.47/pcre2-10.47.tar.bz2')
+sha256sums=('47fe8c99461250d42f89e6e8fdaeba9da057855d06eb7fc08d9ca03fd08d7bc7')
+build() {
+  cd pcre2-$pkgver
+  ./configure --prefix=/usr --docdir=/usr/share/doc/pcre2-$pkgver \
+              --enable-unicode --enable-jit --enable-pcre2-16 --enable-pcre2-32 \
+              --enable-pcre2grep-libz --enable-pcre2grep-libbz2 --enable-pcre2test-libreadline \
+              --disable-static
+  make
+}
+check()   { cd pcre2-$pkgver; make check; }
+package() { cd pcre2-$pkgver; make DESTDIR="$pkgdir" install; }

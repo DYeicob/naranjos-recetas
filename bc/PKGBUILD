@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f2.sh
+pkgname=bc
+pkgver=7.0.3
+pkgrel=1
+pkgdesc='Calculadora de precisión arbitraria (bc y dc)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-2-Clause')
+depends=('glibc' 'readline')
+makedepends=()
+source=('https://github.com/gavinhoward/bc/releases/download/7.0.3/bc-7.0.3.tar.xz')
+sha256sums=('91eb74caed0ee6655b669711a4f350c25579778694df248e28363318e03c7fc4')
+build()   { cd bc-$pkgver; CC='gcc -std=c99' ./configure --prefix=/usr -G -O3 -r; make; }
+check()   { cd bc-$pkgver; make test; }
+package() { cd bc-$pkgver; make DESTDIR="$pkgdir" install; }

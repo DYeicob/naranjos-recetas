@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f2.sh
+pkgname=xz
+pkgver=5.8.3
+pkgrel=1
+pkgdesc='Compresor xz/lzma y su biblioteca'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('0BSD' 'GPL-2.0-or-later' 'LGPL-2.1-or-later')
+depends=('glibc')
+makedepends=()
+source=('https://github.com//tukaani-project/xz/releases/download/v5.8.3/xz-5.8.3.tar.xz')
+sha256sums=('fff1ffcf2b0da84d308a14de513a1aa23d4e9aa3464d17e64b9714bfdd0bbfb6')
+build()   { cd xz-$pkgver; ./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/xz-$pkgver; make; }
+check()   { cd xz-$pkgver; make check; }
+package() { cd xz-$pkgver; make DESTDIR="$pkgdir" install; }

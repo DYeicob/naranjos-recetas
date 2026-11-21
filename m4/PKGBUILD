@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f2.sh
+pkgname=m4
+pkgver=1.4.21
+pkgrel=1
+pkgdesc='Procesador de macros GNU m4'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc')
+makedepends=()
+source=('https://ftpmirror.gnu.org/m4/m4-1.4.21.tar.xz')
+sha256sums=('f25c6ab51548a73a75558742fb031e0625d6485fe5f9155949d6486a2408ab66')
+build()   { cd m4-$pkgver; ./configure --prefix=/usr; make; }
+check()   { cd m4-$pkgver; make check; }
+package() { cd m4-$pkgver; make DESTDIR="$pkgdir" install; }

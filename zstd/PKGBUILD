@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f2.sh
+pkgname=zstd
+pkgver=1.5.7
+pkgrel=1
+pkgdesc='Compresor Zstandard y su biblioteca'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause' 'GPL-2.0-only')
+depends=('glibc' 'xz' 'lz4' 'zlib')
+makedepends=()
+source=('https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-1.5.7.tar.gz')
+sha256sums=('eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3')
+build()   { cd zstd-$pkgver; make prefix=/usr; }
+check()   { cd zstd-$pkgver; make check; }
+package() {
+  cd zstd-$pkgver
+  make prefix=/usr DESTDIR="$pkgdir" install
+  rm -f "$pkgdir/usr/lib/libzstd.a"
+}
