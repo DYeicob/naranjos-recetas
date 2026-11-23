@@ -1,0 +1,13 @@
+# NaranjOS peel · tras instalar, actualizar o quitar paquetes con zumo, lo que ya es de un paquete sale de las
+# huellas de la base (lo vigila pacman). Lo que sigue sin paquete no se toca: si cambió, se sigue avisando.
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Type = Path
+Target = *
+
+[Action]
+Description = NaranjOS peel: actualizando las huellas del sistema…
+When = PostTransaction
+Exec = /usr/bin/naranjos-peel integridad acepta-paquetes

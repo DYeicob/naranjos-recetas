@@ -1,0 +1,24 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f8.sh
+pkgname=dbus
+pkgver=1.16.2
+pkgrel=1
+pkgdesc='Bus de mensajes entre programas (D-Bus)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('AFL-2.1' 'GPL-2.0-or-later')
+depends=('systemd' 'expat')
+makedepends=('meson' 'ninja')
+source=('https://dbus.freedesktop.org/releases/dbus/dbus-1.16.2.tar.xz')
+sha256sums=('0ba2a1a4b16afe7bceb2c07e9ce99a8c2c3508e5dec290dbb643384bd6beb7e2')
+provides=('libdbus')
+build() {
+  cd dbus-$pkgver
+  meson setup build --prefix=/usr --buildtype=release --wrap-mode=nofallback
+  ninja -C build
+}
+package() {
+  cd dbus-$pkgver
+  DESTDIR="$pkgdir" ninja -C build install
+  install -d "$pkgdir/var/lib/dbus"
+  ln -sf /etc/machine-id "$pkgdir/var/lib/dbus/machine-id"
+}

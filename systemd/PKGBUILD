@@ -1,0 +1,38 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f8.sh
+pkgname=systemd
+pkgver=261.2
+pkgrel=1
+pkgdesc='systemd: arranque, servicios, sesiones, red, DNS y udev'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later' 'LGPL-2.1-or-later')
+depends=('linux-pam' 'libcap' 'acl' 'kmod' 'util-linux' 'xz' 'zstd' 'lz4' 'openssl' 'libxcrypt')
+makedepends=('meson' 'ninja' 'gperf' 'python-jinja')
+source=('https://github.com/systemd/systemd/archive/v261.2/systemd-261.2.tar.gz' 'https://anduin.linuxfromscratch.org/LFS/systemd-man-pages-261.2.tar.xz' 'systemd-user' '50-profile.sh')
+sha256sums=('ed1059ff964f5df35b6056434cc17cc83f86dc913f10489948a0b19b6081c5ec' '9be13865c9c7f9fecba7b86fc5185aecef00164c87ed68b4f6884283aefebe50' '3c8d7922521000b0391648ef615143b927ad7db3fb8c4cf652eedceac9ec6123' '4d3c09b1816555c894f556f2458e2cfb558229a60ea04b38e13e186f431ef212')
+noextract=('systemd-man-pages-261.2.tar.xz')
+provides=('systemd-libs' 'libsystemd' 'udev' 'libudev' 'systemd-sysvcompat')
+backup=('etc/pam.d/systemd-user' 'etc/systemd/user-environment-generators/50-profile.sh')
+install=systemd.install
+prepare() {
+  cd systemd-$pkgver
+  sed -i -e 's/GROUP="render"/GROUP="video"/' -e 's/GROUP="sgx", //' rules.d/50-udev-default.rules.in
+}
+build() {
+  cd systemd-$pkgver
+  meson setup build --prefix=/usr --buildtype=release \
+        -D default-dnssec=no -D firstboot=false -D install-tests=false -D ldconfig=false \
+        -D man=disabled -D sysusers=false -D rpmmacrosdir=no -D homed=disabled -D mode=release \
+        -D pam=enabled -D pamconfdir=/etc/pam.d -D dev-kvm-mode=0660 -D nobody-group=nogroup \
+        -D sysupdate=disabled -D ukify=disabled -D docdir=/usr/share/doc/systemd-$pkgver
+  ninja -C build
+}
+package() {
+  cd systemd-$pkgver
+  DESTDIR="$pkgdir" ninja -C build install
+  rm -f "$pkgdir/usr/lib/systemd/system/systemd-update-utmp-runlevel.service"
+  install -d "$pkgdir/usr/share/man"
+  tar -xf ../systemd-man-pages-$pkgver.tar.xz --no-same-owner --strip-components=1 -C "$pkgdir/usr/share/man"
+  install -Dm644 ../systemd-user "$pkgdir/etc/pam.d/systemd-user"
+  install -Dm755 ../50-profile.sh "$pkgdir/etc/systemd/user-environment-generators/50-profile.sh"
+}

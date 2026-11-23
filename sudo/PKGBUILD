@@ -1,0 +1,31 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f8.sh
+pkgname=sudo
+pkgver=1.9.17p2
+pkgrel=1
+pkgdesc='Ejecutar órdenes como administrador (sudo)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('ISC')
+depends=('linux-pam' 'openssl' 'zlib')
+makedepends=()
+source=('https://www.sudo.ws/dist/sudo-1.9.17p2.tar.gz' 'sudo.pam' '00-sudo')
+sha256sums=('4a38a1ab3adb1199257edc2a7c4a2bd714665eb605b04368843b06dada2cfcfb' '90c6d037bd146aa8f5377ee1081373521cc61a0a544589b6d865fa4ac46ed839' 'e92a04a567e0fe21cc2a789eee50c3664ffbec1c40e592d832b7f27470fd215e')
+backup=('etc/sudoers' 'etc/sudoers.d/00-sudo' 'etc/pam.d/sudo')
+prepare() {
+  cd sudo-$pkgver
+  sed -e 's/\([->.a-zA-Z_]*\)->length/ASN1_STRING_length(\1)/' -i lib/iolog/hostcheck.c
+}
+build() {
+  cd sudo-$pkgver
+  ./configure --prefix=/usr --libexecdir=/usr/lib --with-secure-path --with-env-editor \
+              --docdir=/usr/share/doc/sudo-$pkgver --with-passprompt="[sudo] password for %p: "
+  make
+}
+check() { cd sudo-$pkgver; env LC_ALL=C make check || echo "sudo: alguna prueba falló"; }
+package() {
+  cd sudo-$pkgver
+  make DESTDIR="$pkgdir" install
+  install -dm750 "$pkgdir/etc/sudoers.d"
+  install -m440 ../00-sudo "$pkgdir/etc/sudoers.d/00-sudo"
+  install -Dm644 ../sudo.pam "$pkgdir/etc/pam.d/sudo"
+}

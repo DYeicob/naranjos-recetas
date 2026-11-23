@@ -1,0 +1,47 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f8.sh
+pkgname=shadow
+pkgver=4.20.2
+pkgrel=1
+pkgdesc='Usuarios y contraseñas (login, passwd, su, useradd…), con PAM'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=('linux-pam' 'libxcrypt' 'acl' 'attr')
+makedepends=()
+source=('https://github.com/shadow-maint/shadow/releases/download/4.20.2/shadow-4.20.2.tar.xz' 'login' 'passwd' 'su' 'chpasswd' 'chage')
+sha256sums=('b89f432b75ae55a2d852b446d0365484795fdf533ab97d550e325fa15594a224' '216eb2abc095566afa0ed5394f5b32765d3e3b63295c0e972ecd8ebda1a734d2' '586820a13a54e92023ad3aa5dbf2ee4e2cfe470996ebb9ee5433e60abd5d8c01' 'f0182f4cf929c6adb5e13e8691787a8778828f5ea18911b7b7febb3e1b138c54' 'fbaed8b9d2bad9278da32f6747491ef291b332d0f977009aadb993436b2084c9' '656fc19e0e36740399f9d10773ac30254b48d5327aaddd89f47127acf99ccfb5')
+backup=('etc/login.defs' 'etc/pam.d/login' 'etc/pam.d/passwd' 'etc/pam.d/su' 'etc/pam.d/chpasswd' 'etc/pam.d/newusers' 'etc/pam.d/chage' 'etc/pam.d/chfn' 'etc/pam.d/chgpasswd' 'etc/pam.d/chsh' 'etc/pam.d/groupadd' 'etc/pam.d/groupdel' 'etc/pam.d/groupmems' 'etc/pam.d/groupmod' 'etc/pam.d/useradd' 'etc/pam.d/userdel' 'etc/pam.d/usermod' )
+prepare() {
+  cd shadow-$pkgver
+  # «groups» y sus manuales ya vienen con coreutils y man-pages (como en LFS)
+  sed -i 's/groups$(EXEEXT) //' src/Makefile.in
+  find man -name Makefile.in -exec sed -i 's/groups\.1 / /'   {} \;
+  find man -name Makefile.in -exec sed -i 's/getspnam\.3 / /' {} \;
+  find man -name Makefile.in -exec sed -i 's/passwd\.5 / /'   {} \;
+  sed -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD YESCRYPT@' -e 's@/var/spool/mail@/var/mail@' \
+      -e '/PATH=/{s@/sbin:@@;s@/bin:@@}' -i etc/login.defs
+}
+build() {
+  cd shadow-$pkgver
+  ./configure --sysconfdir=/etc --disable-static --without-libbsd --with-{b,yes}crypt
+  make
+}
+package() {
+  cd shadow-$pkgver
+  make exec_prefix=/usr pamddir= DESTDIR="$pkgdir" install
+  make -C man DESTDIR="$pkgdir" install-man
+  local f
+  # con PAM, estas opciones de login.defs ya no se usan (BLFS)
+  for f in FAIL_DELAY FAILLOG_ENAB LASTLOG_ENAB MAIL_CHECK_ENAB OBSCURE_CHECKS_ENAB PORTTIME_CHECKS_ENAB \
+           QUOTAS_ENAB CONSOLE MOTD_FILE FTMP_FILE NOLOGINS_FILE ENV_HZ PASS_MIN_LEN SU_WHEEL_ONLY \
+           PASS_CHANGE_TRIES PASS_ALWAYS_WARN CHFN_AUTH ENCRYPT_METHOD ENVIRON_FILE; do
+    sed -i "s/^${f}/# &/" "$pkgdir/etc/login.defs"
+  done
+  install -d "$pkgdir/etc/pam.d"
+  for f in login passwd su chpasswd chage; do install -m644 ../$f "$pkgdir/etc/pam.d/$f"; done
+  sed -e s/chpasswd/newusers/ ../chpasswd > "$pkgdir/etc/pam.d/newusers"
+  for f in chfn chgpasswd chsh groupadd groupdel groupmems groupmod useradd userdel usermod; do
+    sed "s/chage/$f/" ../chage > "$pkgdir/etc/pam.d/$f"
+  done
+  chmod 644 "$pkgdir"/etc/pam.d/*
+}

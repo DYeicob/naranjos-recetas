@@ -1,0 +1,9 @@
+# al actualizar systemd, el sistema en marcha pasa a usar el nuevo sin reiniciar
+post_upgrade() {
+  systemctl daemon-reexec >/dev/null 2>&1 || true
+  udevadm control --reload >/dev/null 2>&1 || true
+  systemctl --global daemon-reload >/dev/null 2>&1 || true
+}
+post_install() {
+  post_upgrade
+}

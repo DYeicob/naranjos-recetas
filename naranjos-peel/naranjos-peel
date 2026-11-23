@@ -5,7 +5,7 @@
 set -u
 # los servicios del sistema (integridad, VPN al arrancar) no traen HOME: se toma el de quien lo ejecuta
 : "${HOME:=$(getent passwd "$(id -u)" | cut -d: -f6)}"; export HOME
-VERSION="0.5.5"
+VERSION="0.5.6"
 . /usr/lib/naranjos/naranjos-i18n.sh
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
 [ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
@@ -761,9 +761,25 @@ int_base(){
   hecho "$(printf "$(_ 'Huellas guardadas: %s ficheros de la base')" "$(wc -l < "$INT_DIR/huellas.sha256")")"
 }
 
+# tras cada instalación de zumo (hook de pacman): lo que ya es de un paquete sale de las huellas de la base
+# (pacman lo vigila); lo que sigue sin paquete NO se da por bueno: si cambió, se seguirá avisando
+int_poda(){
+  como_root integridad acepta-paquetes
+  [ -s "$INT_DIR/huellas.sha256" ] || return 0
+  local tmp; tmp=$(mktemp)
+  awk 'NR==FNR { o[$0] = 1; next } { f = substr($0, 67); if (!(f in o)) print }' \
+      <(int_owned) "$INT_DIR/huellas.sha256" > "$tmp"
+  install -m600 "$tmp" "$INT_DIR/huellas.sha256"; rm -f "$tmp"
+  return 0
+}
+
 int_comprueba(){
   como_root integridad comprueba
   install -dm755 "$INT_DIR"
+  # si zumo/pacman está instalando, los ficheros están a medio cambiar: se deja para la próxima vez
+  if [ -e /var/lib/pacman/db.lck ]; then
+    nota "$(_ 'zumo está instalando paquetes: la comprobación se hará más tarde')"; return 0
+  fi
   [ -s "$INT_DIR/huellas.sha256" ] || { int_base; echo "ok $(date '+%d/%m %H:%M') 0" > "$INT_ESTADO"; chmod 644 "$INT_ESTADO"; return; }
   local alertas=() avisos=() l f m p
   # 1) ficheros de paquetes modificados (solo programas y bibliotecas, no la configuración de /etc)
@@ -777,6 +793,8 @@ int_comprueba(){
   local owned; owned=$(int_owned)
   while IFS= read -r l; do
     case "$l" in *": FAILED open or read") f="${l%: FAILED open or read}" ;; *": FAILED") f="${l%: FAILED}" ;; *) continue ;; esac
+    # coreutils pone entre comillas los nombres con símbolos ('/usr/bin/[')
+    [[ "$f" == \'*\' ]] && { f=${f#\'}; f=${f%\'}; }
     grep -qxF "$f" <<< "$owned" && continue          # ahora es de un paquete (lo vigila pacman)
     case "$l" in *"open or read") avisos+=("$(_ 'desaparecido (base)'): $f") ;;
                  *) alertas+=("$(_ 'modificado (base)'): $f") ;; esac
@@ -839,6 +857,7 @@ integridad(){
   case "${1:-}" in
     ""|estado|status) printf '%s%s%s\n' "$O" "$(_ 'Integridad')" "$Z"; int_estado ;;
     comprueba|check)  int_comprueba ;;
+    acepta-paquetes)  int_poda ;;
     acepta|accept)    int_base; echo "ok $(date '+%d/%m %H:%M') 0" > "$INT_ESTADO"; chmod 644 "$INT_ESTADO" ;;
     *) die "$(_ 'Uso:') naranjos-peel integridad [comprueba|acepta]" ;;
   esac

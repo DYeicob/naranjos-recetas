@@ -1,0 +1,8 @@
+naranjos-peel
+naranjos-idiomas
+linux-pam
+shadow
+systemd
+dbus
+sudo
+naranjos-base

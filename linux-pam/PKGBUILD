@@ -1,0 +1,28 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f8.sh
+pkgname=linux-pam
+pkgver=1.7.2
+pkgrel=1
+pkgdesc='PAM: cómo se identifican los usuarios (login, sudo, pantalla de bloqueo…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-only' 'BSD-3-Clause')
+depends=('glibc' 'libxcrypt')
+makedepends=('meson' 'ninja')
+source=('https://github.com/linux-pam/linux-pam/releases/download/v1.7.2/Linux-PAM-1.7.2.tar.xz' 'system-account' 'system-auth' 'system-session' 'system-password' 'other')
+sha256sums=('3d86b6383fb5fd9eb9578d2cd47d92801191f4bf3f9bc61419bfefc8aa1e531a' 'a8295e4780b323cac83ca08c65c8cd47ca26e516d64ed857fd3f4ac1f1a8ccc4' 'da912d0b5fe0ee9d70403ca88402974f2c24b6dfeb2c8adc037c72297a859590' 'a5e5e3da4cb9fccedd4b4fc2d28da25cd9005f3d4f083c21662df856caff418b' '29ef099774837bf3fe01ef6b22fc87ac55bf222a4c0f8544d007f57b6aa4b61a' '461e53f138a8e5d1ed20033f8d9363c56f2187ce2a0551d57860140da40e1697')
+provides=('pam')
+backup=('etc/pam.d/system-account' 'etc/pam.d/system-auth' 'etc/pam.d/system-session' 'etc/pam.d/system-password' 'etc/pam.d/other' 'etc/environment' 'etc/security/access.conf' 'etc/security/faillock.conf' 'etc/security/group.conf' 'etc/security/limits.conf' 'etc/security/namespace.conf' 'etc/security/namespace.init' 'etc/security/pam_env.conf' 'etc/security/pwhistory.conf' 'etc/security/time.conf')
+build() {
+  cd Linux-PAM-$pkgver
+  meson setup build --prefix=/usr --buildtype=release -D docdir=/usr/share/doc/Linux-PAM-$pkgver
+  ninja -C build
+}
+package() {
+  cd Linux-PAM-$pkgver
+  DESTDIR="$pkgdir" ninja -C build install
+  chmod 4755 "$pkgdir/usr/sbin/unix_chkpwd"
+  local f
+  for f in system-account system-auth system-session system-password other; do
+    install -Dm644 ../$f "$pkgdir/etc/pam.d/$f"
+  done
+}
