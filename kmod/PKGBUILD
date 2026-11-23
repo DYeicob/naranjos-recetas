@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f7.sh
+pkgname=kmod
+pkgver=34.2
+pkgrel=1
+pkgdesc='Carga módulos del kernel (modprobe, lsmod, depmod…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later' 'GPL-2.0-or-later')
+depends=('zlib' 'xz' 'zstd' 'openssl')
+makedepends=('meson' 'ninja')
+source=('https://www.kernel.org/pub/linux/utils/kernel/kmod/kmod-34.2.tar.xz')
+sha256sums=('5a5d5073070cc7e0c7a7a3c6ec2a0e1780850c8b47b3e3892226b93ffcb9cb54')
+build()   { cd kmod-$pkgver; meson setup build --prefix=/usr --buildtype=release -D manpages=false; ninja -C build; }
+package() { cd kmod-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

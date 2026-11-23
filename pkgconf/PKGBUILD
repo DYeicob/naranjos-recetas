@@ -1,7 +1,7 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
 pkgname=pkgconf
 pkgver=3.0.5
-pkgrel=1
+pkgrel=2
 pkgdesc='Busca bibliotecas para compilar (pkgconf y pkg-config)'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
@@ -10,6 +10,7 @@ depends=('glibc')
 makedepends=('meson' 'ninja')
 source=('https://distfiles.ariadne.space/pkgconf/pkgconf-3.0.5.tar.xz')
 sha256sums=('3acd3a8a3cce65a8d620321855d92fb602e026cbe8e13ee36bdec58483b59ace')
+provides=('pkg-config')
 build() {
   cd pkgconf-$pkgver
   meson setup build --prefix=/usr --buildtype=release

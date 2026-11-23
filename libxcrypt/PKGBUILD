@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f7.sh
+pkgname=libxcrypt
+pkgver=4.5.2
+pkgrel=1
+pkgdesc='Cifrado de contraseñas (yescrypt, sha512…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('glibc')
+makedepends=()
+source=('https://github.com/besser82/libxcrypt/releases/download/v4.5.2/libxcrypt-4.5.2.tar.xz')
+sha256sums=('71513a31c01a428bccd5367a32fd95f115d6dac50fb5b60c779d5c7942aec071')
+prepare() { cd libxcrypt-$pkgver; sed -i '/strchr/s/const//' lib/crypt-{sm3,gost}-yescrypt.c; }
+build() {
+  cd libxcrypt-$pkgver
+  ./configure --prefix=/usr --enable-hashes=strong,glibc --enable-obsolete-api=no \
+              --disable-static --disable-failure-tokens
+  make
+}
+check()   { cd libxcrypt-$pkgver; make check; }
+package() { cd libxcrypt-$pkgver; make DESTDIR="$pkgdir" install; }

@@ -1,0 +1,30 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f7.sh
+pkgname=e2fsprogs
+pkgver=1.47.4
+pkgrel=1
+pkgdesc='Herramientas de los sistemas de ficheros ext2/3/4 (mkfs.ext4, fsck.ext4…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later' 'LGPL-2.0-or-later' 'MIT')
+depends=('util-linux')
+makedepends=()
+source=('https://downloads.sourceforge.net/project/e2fsprogs/e2fsprogs/v1.47.4/e2fsprogs-1.47.4.tar.gz')
+sha256sums=('2cec05f39c20ee621f14926195664e66e6017190ac8e4bbdb16d86082e43c5da')
+backup=('etc/mke2fs.conf' 'etc/e2scrub.conf')
+build() {
+  cd e2fsprogs-$pkgver
+  mkdir -p build && cd build
+  ../configure --prefix=/usr --sysconfdir=/etc --enable-elf-shlibs --disable-libblkid \
+               --disable-libuuid --disable-uuidd --disable-fsck
+  make
+  makeinfo -o doc/com_err.info ../lib/et/com_err.texinfo
+}
+check() { cd e2fsprogs-$pkgver/build; make check || echo "e2fsprogs: alguna prueba falló (hay fallos conocidos en LFS)"; }
+package() {
+  cd e2fsprogs-$pkgver/build
+  make DESTDIR="$pkgdir" install
+  rm -f "$pkgdir"/usr/lib/{libcom_err,libe2p,libext2fs,libss}.a
+  [ -e "$pkgdir/usr/share/info/libext2fs.info.gz" ] && gunzip -f "$pkgdir/usr/share/info/libext2fs.info.gz"
+  install -m644 doc/com_err.info "$pkgdir/usr/share/info"
+  sed 's/metadata_csum_seed,//' -i "$pkgdir/etc/mke2fs.conf"
+}

@@ -1,0 +1,15 @@
+gawk
+pkgconf
+mpc
+procps-ng
+python
+openssl
+elfutils
+kmod
+coreutils
+ncurses
+bash
+libxcrypt
+e2fsprogs
+util-linux
+naranjos-base

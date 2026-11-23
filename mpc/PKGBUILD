@@ -1,7 +1,7 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6f3.sh
 pkgname=mpc
 pkgver=1.4.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Números complejos de precisión arbitraria (MPC)'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
@@ -10,6 +10,7 @@ depends=('gmp' 'mpfr')
 makedepends=()
 source=('https://ftpmirror.gnu.org/mpc/mpc-1.4.1.tar.xz')
 sha256sums=('91204cd32f164bd3b7c992d4a6a8ce6519511aadab30f78b6982d0bf8d73e931')
+provides=('libmpc')
 build() {
   cd mpc-$pkgver
   ./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/mpc-$pkgver

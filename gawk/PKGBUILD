@@ -1,7 +1,7 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6f4.sh
 pkgname=gawk
 pkgver=5.4.1
-pkgrel=1
+pkgrel=2
 pkgdesc='GNU awk'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
@@ -10,6 +10,7 @@ depends=('glibc' 'readline' 'mpfr')
 makedepends=()
 source=('https://ftpmirror.gnu.org/gawk/gawk-5.4.1.tar.xz')
 sha256sums=('07f6f7342b7febe4313fc2c2542ad93d64fe20ad8717200109f105a826f5fd37')
+provides=('awk')
 prepare() { cd gawk-$pkgver; sed -i 's/extras//' Makefile.in; }
 build()   { cd gawk-$pkgver; ./configure --prefix=/usr; make; }
 check()   { cd gawk-$pkgver; make check || echo "gawk: alguna prueba falló"; }

@@ -1,0 +1,25 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f7.sh
+pkgname=openssl
+pkgver=4.0.1
+pkgrel=1
+pkgdesc='Criptografía y TLS (OpenSSL)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Apache-2.0')
+depends=('glibc' 'zlib')
+makedepends=()
+source=('https://github.com/openssl/openssl/releases/download/openssl-4.0.1/openssl-4.0.1.tar.gz')
+sha256sums=('2db3f3a0d6ea4b59e1f094ace2c8cd536dffb87cdc39084c5afa1e6f7f37dd09')
+backup=('etc/ssl/openssl.cnf')
+build() {
+  cd openssl-$pkgver
+  ./config --prefix=/usr --openssldir=/etc/ssl --libdir=lib shared zlib-dynamic
+  make
+}
+check() { cd openssl-$pkgver; make test || echo "openssl: alguna prueba falló (30-test_afalg depende del kernel)"; }
+package() {
+  cd openssl-$pkgver
+  make DESTDIR="$pkgdir" INSTALL_LIBS= MANSUFFIX=ssl install
+  mv "$pkgdir/usr/share/doc/openssl" "$pkgdir/usr/share/doc/openssl-$pkgver"
+  cp -fr doc/* "$pkgdir/usr/share/doc/openssl-$pkgver"
+}
