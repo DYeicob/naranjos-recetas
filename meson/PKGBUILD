@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f6.sh
+pkgname=meson
+pkgver=1.12.0
+pkgrel=1
+pkgdesc='Sistema de compilación meson'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Apache-2.0')
+depends=('python' 'ninja')
+makedepends=()
+source=('https://github.com/mesonbuild/meson/releases/download/1.12.0/meson-1.12.0.tar.gz')
+sha256sums=('88afe0c20e52030218924ac37d0c81c59b4b5f3ae3752c8c6d7470c7d365886c')
+build() {
+  cd meson-1.12.0
+  pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+}
+package() {
+  cd meson-1.12.0
+  pip3 install --root="$pkgdir" --prefix=/usr --no-index --find-links dist --no-deps --no-warn-script-location                --ignore-installed meson
+  install -Dm644 data/shell-completions/bash/meson "$pkgdir/usr/share/bash-completion/completions/meson"
+  install -Dm644 data/shell-completions/zsh/_meson "$pkgdir/usr/share/zsh/site-functions/_meson"
+}

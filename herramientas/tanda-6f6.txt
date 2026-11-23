@@ -1,0 +1,10 @@
+perl
+python
+python-flit-core
+python-packaging
+python-wheel
+python-setuptools
+meson
+python-markupsafe
+python-jinja
+naranjos-base

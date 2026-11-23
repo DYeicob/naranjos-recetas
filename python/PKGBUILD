@@ -1,0 +1,28 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f6.sh
+pkgname=python
+pkgver=3.14.7
+pkgrel=1
+pkgdesc='Lenguaje Python 3'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('PSF-2.0')
+depends=('bzip2' 'expat' 'gdbm' 'libffi' 'libxcrypt' 'mpdecimal' 'ncurses' 'openssl' 'readline' 'sqlite' 'xz' 'zlib')
+makedepends=()
+source=('https://www.python.org/ftp/python/3.14.7/Python-3.14.7.tar.xz' 'Python-3.14.7-openssl_4-1.patch' 'https://www.python.org/ftp/python/doc/3.14.7/python-3.14.7-docs-html.tar.bz2')
+sha256sums=('3b48dac8fb59f62eaa67ac83c1eb12bda1b7a08406dd286e252c11a66be27f81' '707a0c457192ac2f3b5b8a51481bc5ebd12db22d57c1dbe0256138ee6e070792' 'd484b784ec35c5776c5ff55f81fa984b5251a38b532b24bb00e43148bd73ffe9')
+backup=('etc/pip.conf')
+prepare() { cd Python-$pkgver; patch -Np1 -i ../Python-3.14.7-openssl_4-1.patch; }
+build() {
+  cd Python-$pkgver
+  ./configure --prefix=/usr --enable-shared --with-system-expat --enable-optimizations \
+              --without-static-libpython
+  make
+}
+package() {
+  cd Python-$pkgver
+  make DESTDIR="$pkgdir" install
+  install -d "$pkgdir/etc"
+  printf '[global]\nroot-user-action = ignore\ndisable-pip-version-check = true\n' > "$pkgdir/etc/pip.conf"
+  install -d "$pkgdir/usr/share/doc/python-$pkgver/html"
+  cp -R ../python-$pkgver-docs-html/. "$pkgdir/usr/share/doc/python-$pkgver/html"
+}

@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f6.sh
+pkgname=python-flit-core
+pkgver=4.0.2
+pkgrel=1
+pkgdesc='Construye paquetes de Python (flit-core)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=('python' )
+makedepends=()
+source=('https://pypi.org/packages/source/f/flit-core/flit_core-4.0.2.tar.gz')
+sha256sums=('b6929defd93884b584d7c87829e0e7b5c26ed6be17b0b873979019314aa841c8')
+build() {
+  cd flit_core-4.0.2
+  pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+}
+package() {
+  cd flit_core-4.0.2
+  pip3 install --root="$pkgdir" --prefix=/usr --no-index --find-links dist --no-deps --no-warn-script-location                --ignore-installed flit_core
+}

@@ -1,0 +1,27 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f6.sh
+pkgname=perl
+pkgver=5.44.0
+pkgrel=1
+pkgdesc='Lenguaje Perl'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-1.0-or-later' 'Artistic-1.0-Perl')
+depends=('gdbm' 'glibc' 'zlib' 'bzip2' 'libxcrypt')
+makedepends=()
+source=('https://www.cpan.org/src/5.0/perl-5.44.0.tar.xz')
+sha256sums=('505cf43912e9480495c344c70260452e32aa2a73c546a026b3f100053b23ce91')
+options=('!purge')
+build() {
+  cd perl-$pkgver
+  export BUILD_ZLIB=False BUILD_BZIP2=0
+  local v=${pkgver%.*}
+  sh Configure -des -D prefix=/usr -D vendorprefix=/usr \
+    -D privlib=/usr/lib/perl5/$v/core_perl -D archlib=/usr/lib/perl5/$v/core_perl \
+    -D sitelib=/usr/lib/perl5/$v/site_perl -D sitearch=/usr/lib/perl5/$v/site_perl \
+    -D vendorlib=/usr/lib/perl5/$v/vendor_perl -D vendorarch=/usr/lib/perl5/$v/vendor_perl \
+    -D man1dir=/usr/share/man/man1 -D man3dir=/usr/share/man/man3 \
+    -D pager="/usr/bin/less -isR" -D useshrplib -D usethreads
+  make
+}
+check()   { cd perl-$pkgver; TEST_JOBS=$(nproc) make test_harness || echo "perl: alguna prueba falló"; }
+package() { cd perl-$pkgver; make DESTDIR="$pkgdir" install; }

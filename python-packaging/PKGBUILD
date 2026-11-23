@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f6.sh
+pkgname=python-packaging
+pkgver=26.3
+pkgrel=1
+pkgdesc='Utilidades de empaquetado de Python'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Apache-2.0')
+depends=('python' )
+makedepends=()
+source=('https://files.pythonhosted.org/packages/source/p/packaging/packaging-26.3.tar.gz')
+sha256sums=('94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79')
+build() {
+  cd packaging-26.3
+  pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+}
+package() {
+  cd packaging-26.3
+  pip3 install --root="$pkgdir" --prefix=/usr --no-index --find-links dist --no-deps --no-warn-script-location                --ignore-installed packaging
+}
