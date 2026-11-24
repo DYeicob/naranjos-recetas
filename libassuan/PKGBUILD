@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f10.sh
+pkgname=libassuan
+pkgver=3.0.2
+pkgrel=1
+pkgdesc='Comunicación entre los programas de GnuPG'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('libgpg-error')
+makedepends=()
+source=('https://www.gnupg.org/ftp/gcrypt/libassuan/libassuan-3.0.2.tar.bz2')
+sha256sums=('d2931cdad266e633510f9970e1a2f346055e351bb19f9b78912475b8074c36f6')
+build() {
+  cd libassuan-$pkgver
+  ./configure --prefix=/usr
+  make
+}
+package() {
+  cd libassuan-$pkgver
+  make DESTDIR="$pkgdir" install
+}

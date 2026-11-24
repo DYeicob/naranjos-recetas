@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f10.sh
+pkgname=libarchive
+pkgver=3.8.9
+pkgrel=1
+pkgdesc='Leer y crear archivos comprimidos (bsdtar, bsdunzip…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-2-Clause')
+depends=('zlib' 'bzip2' 'xz' 'zstd' 'lz4' 'openssl' 'acl' 'attr' 'libxml2')
+makedepends=()
+source=('https://github.com/libarchive/libarchive/releases/download/v3.8.9/libarchive-3.8.9.tar.xz')
+sha256sums=('888c934f9d95648ecb9163dc8e23ab80a476ecb81a8f1154704a227b5b676dde')
+build() {
+  cd libarchive-$pkgver
+  ./configure --prefix=/usr --disable-static
+  make
+}
+package() {
+  cd libarchive-$pkgver
+  make DESTDIR="$pkgdir" install
+  ln -sf bsdunzip "$pkgdir/usr/bin/unzip"
+}

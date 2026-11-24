@@ -1,0 +1,28 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f10.sh
+pkgname=fakeroot
+pkgver=2.1.4
+pkgrel=1
+pkgdesc='Simula ser root al empaquetar (lo usa zumo/makepkg)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'libcap' 'bash')
+makedepends=('autoconf' 'automake' 'libtool')
+source=('http://deb.debian.org/debian/pool/main/f/fakeroot/fakeroot_2.1.4.orig.tar.xz')
+sha256sums=('0822bd5a9f0cf19d2ba0546b88b0432d4d3d9917db62c57b74044ccadba06e49')
+_dir() { cd "$srcdir/fakeroot-$pkgver" 2>/dev/null || cd "$srcdir"/fakeroot*/; }
+prepare() {
+  _dir
+  [ -x configure ] || ./bootstrap
+}
+build() {
+  _dir
+  ./configure --prefix=/usr --libdir=/usr/lib/libfakeroot --disable-static --with-ipc=sysv
+  make
+}
+package() {
+  _dir
+  make DESTDIR="$pkgdir" install
+  install -dm755 "$pkgdir/etc/ld.so.conf.d"
+  echo '/usr/lib/libfakeroot' > "$pkgdir/etc/ld.so.conf.d/fakeroot.conf"
+}

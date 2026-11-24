@@ -1,0 +1,23 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f10.sh
+pkgname=gnupg
+pkgver=2.5.21
+pkgrel=1
+pkgdesc='GnuPG: firmas y cifrado (con él zumo comprueba los paquetes)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('libgpg-error' 'libgcrypt' 'libassuan' 'libksba' 'npth' 'pinentry' 'sqlite' 'zlib' 'bzip2' 'readline')
+makedepends=()
+source=('https://www.gnupg.org/ftp/gcrypt/gnupg/gnupg-2.5.21.tar.bz2')
+sha256sums=('e3af2c8caa46a66a9329fa7c6880af260451914d819595beabc2c26597b31352')
+build() {
+  cd gnupg-$pkgver
+  mkdir -p build && cd build
+  ../configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc --disable-ldap \
+               --docdir=/usr/share/doc/gnupg-$pkgver
+  make
+}
+package() {
+  cd gnupg-$pkgver/build
+  make DESTDIR="$pkgdir" install
+}

@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f10.sh
+pkgname=gpgme
+pkgver=2.1.2
+pkgrel=1
+pkgdesc='GPGME: GnuPG para programas (lo usa zumo/pacman)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('gnupg' 'libassuan' 'libgpg-error')
+makedepends=()
+source=('https://www.gnupg.org/ftp/gcrypt/gpgme/gpgme-2.1.2.tar.bz2')
+sha256sums=('0687a95b299871c4141f507c0f740de6b429c9ac067d0fa4e062e3264df5fb77')
+build() {
+  cd gpgme-$pkgver
+  mkdir -p build && cd build
+  ../configure --prefix=/usr --disable-static
+  make
+}
+package() {
+  cd gpgme-$pkgver/build
+  make DESTDIR="$pkgdir" install
+}
