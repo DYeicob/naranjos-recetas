@@ -1,0 +1,18 @@
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6g1.sh (NO editar a mano)
+pkgname=naranjos-arranque
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Arranque propio de NaranjOS: menú, GRUB firmado con la MOK y shim en EFI/naranjos'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('bash' 'grub' 'naranjos-shim' 'sbsigntools' 'binutils' 'util-linux' 'coreutils' 'tar' 'gawk' 'naranjos-idiomas' 'naranjos-initramfs')
+source=('95-naranjos-arranque.hook' 'naranjos-arranque' 'sbat.csv')
+sha256sums=('f07e5c0cb7754d8742216c3b1dc3524004a03050be8586cae280bebfb2c1d765' '56f96951b398422233ecefde9bd501e9cbcf884fc1c22b80df8736d957573ee3' 'd121446da8509b4b692cd3c88134d4bedb9fc10b9d97ec9f5904c1db8e577117')
+install=naranjos-arranque.install
+package() {
+  install -Dm755 naranjos-arranque          "$pkgdir/usr/bin/naranjos-arranque"
+  install -Dm644 sbat.csv                   "$pkgdir/usr/share/naranjos/arranque/sbat.csv"
+  install -Dm644 95-naranjos-arranque.hook  "$pkgdir/usr/share/libalpm/hooks/95-naranjos-arranque.hook"
+  install -dm700 "$pkgdir/var/lib/naranjos/arranque"
+}

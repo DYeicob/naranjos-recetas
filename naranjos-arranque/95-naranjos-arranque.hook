@@ -1,0 +1,14 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Target = usr/lib/modules/*/vmlinuz
+Target = usr/lib/grub/x86_64-efi/*
+Target = usr/share/naranjos/shim/*
+Target = usr/bin/naranjos-arranque
+
+[Action]
+Description = NaranjOS: poniendo al día el arranque propio...
+When = PostTransaction
+Exec = /usr/bin/naranjos-arranque auto

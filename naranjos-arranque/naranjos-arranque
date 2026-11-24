@@ -1,0 +1,257 @@
+#!/bin/bash
+# naranjos-arranque — el arranque propio de NaranjOS (fase 6g)
+#   · menú de arranque de NaranjOS en /boot/grub/grub.cfg: los kernels de /boot, y Ubuntu y Windows si están
+#   · imagen GRUB firmada con la MOK de NaranjOS y con SBAT, detrás del shim firmado por Microsoft
+#   · escribe ÚNICAMENTE en <EFI>/EFI/naranjos (y guarda una copia de la EFI entera la primera vez)
+# Uso:  naranjos-arranque estado  ·  sudo naranjos-arranque menu  ·  sudo naranjos-arranque instala
+#       (zumo lo lanza solo con «auto» cuando cambia un kernel, GRUB o el shim)
+set -euo pipefail
+VERSION="0.1.0"
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
+[ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
+die(){   printf '%snaranjos-arranque:%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+hecho(){ printf '%s✔%s %s\n' "$G" "$Z" "$1"; }
+aviso(){ printf '%s!%s %s\n' "$A" "$Z" "$1"; }
+
+MOK=/etc/naranjos/mok
+SHIM=/usr/share/naranjos/shim
+DATOS=/usr/share/naranjos/arranque
+ESTADO=/var/lib/naranjos/arranque
+CFG=/boot/grub/grub.cfg
+GRUBDIR=/usr/lib/grub/x86_64-efi
+ESP_TIPO=c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+CARPETA=EFI/naranjos
+# módulos que van DENTRO de la imagen (con Secure Boot, GRUB no carga módulos sueltos del disco)
+MODULOS="part_gpt part_msdos fat ext2 normal boot linux chain configfile search search_fs_uuid search_fs_file
+search_label echo test true sleep reboot halt loadenv efi_gop efi_uga all_video video_fb gzio minicmd ls cat help
+efifwsetup regexp"
+MONTADA=""   # punto de montaje temporal de la EFI (si lo montamos nosotros)
+
+secure_boot(){
+  [ "$(od -An -t u1 /sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c 2>/dev/null | awk '{print $NF}')" = 1 ]
+}
+es_root(){ [ "$(id -u)" = 0 ] || die "$(_ 'Hace falta root:') sudo naranjos-arranque $1"; }
+
+# la partición EFI del mismo disco que NaranjOS (o la primera que haya)
+busca_esp(){
+  local raiz disco p
+  raiz=$(findmnt -no SOURCE /)
+  disco=$(lsblk -no PKNAME "$raiz" 2>/dev/null | head -n1)
+  p=$(lsblk -rpno PATH,PARTTYPE,FSTYPE ${disco:+/dev/$disco} 2>/dev/null \
+      | awk -v t="$ESP_TIPO" 'tolower($2)==t && $3=="vfat" {print $1; exit}')
+  [ -n "$p" ] || p=$(lsblk -rpno PATH,PARTTYPE,FSTYPE | awk -v t="$ESP_TIPO" 'tolower($2)==t && $3=="vfat" {print $1; exit}')
+  [ -n "$p" ] || die "$(_ 'No encuentro la partición EFI')"
+  echo "$p"
+}
+# monta_esp <ro|rw> → deja en ESP_DIR dónde está montada
+monta_esp(){
+  local p m; p=$(busca_esp)
+  m=$(findmnt -nro TARGET -S "$p" | head -n1 || true)
+  if [ -n "$m" ]; then
+    [ "$1" = rw ] && mount -o remount,rw "$m"
+    ESP_DIR=$m; return 0
+  fi
+  MONTADA=$(mktemp -d /run/naranjos-esp.XXXXXX)
+  mount -t vfat -o "$1",umask=0022 "$p" "$MONTADA" || { rmdir "$MONTADA"; MONTADA=""; die "$(_ 'No pude montar la partición EFI')"; }
+  ESP_DIR=$MONTADA
+}
+suelta_esp(){
+  [ -n "$MONTADA" ] || return 0
+  sync; umount "$MONTADA" 2>/dev/null || true; rmdir "$MONTADA" 2>/dev/null || true; MONTADA=""
+}
+trap suelta_esp EXIT
+
+# dónde está /boot para GRUB: el UUID del sistema de ficheros y el prefijo de las rutas
+datos_boot(){
+  if mountpoint -q /boot; then BOOT_UUID=$(findmnt -no UUID /boot); BOOT_PFX=""
+  else BOOT_UUID=$(findmnt -no UUID /); BOOT_PFX="/boot"; fi
+  RAIZ_PARTUUID=$(findmnt -no PARTUUID /)
+  [ -n "$BOOT_UUID" ] && [ -n "$RAIZ_PARTUUID" ] || die "$(_ 'No sé identificar la partición de NaranjOS')"
+}
+
+nombre_sistema(){ ( . /etc/os-release 2>/dev/null; echo "${PRETTY_NAME:-NaranjOS}" ); }
+
+# (el menú va en ASCII sencillo: la consola UEFI de GRUB no siempre pinta «·» o «…»)
+# kernels de /boot: primero linux-naranjos, luego el resto (respaldo)
+kernels(){
+  local f n
+  [ -e /boot/vmlinuz-linux-naranjos ] && echo linux-naranjos
+  for f in /boot/vmlinuz-*; do
+    [ -e "$f" ] || continue
+    n=${f#/boot/vmlinuz-}
+    case "$n" in linux-naranjos|*.nuevo|*.sinfirmar) continue ;; esac
+    echo "$n"
+  done
+  return 0
+}
+
+genera_menu(){  # genera_menu <fichero> (con la EFI montada en ESP_DIR)
+  local out="$1" n v t ini opc nombre esp_uuid primero=1
+  datos_boot
+  nombre=$(nombre_sistema)
+  opc=$(cat /etc/naranjos/cmdline 2>/dev/null || echo "ro rootwait")
+  esp_uuid=$(lsblk -no UUID "$(busca_esp)")
+  {
+    echo "# Menú de arranque de NaranjOS — lo genera naranjos-arranque $VERSION (no lo edites: se rehace solo)"
+    echo "# Opciones del kernel: /etc/naranjos/cmdline"
+    echo "set timeout=5"
+    echo "set default=0"
+    echo "set color_normal=light-gray/black"
+    echo "set menu_color_normal=light-gray/black"
+    echo "set menu_color_highlight=black/brown"
+    echo "search --no-floppy --fs-uuid --set=esp $esp_uuid"
+    for n in $(kernels); do
+      v=$n; [ -r "/boot/.version-$n" ] && v=$(cat "/boot/.version-$n")
+      if [ $primero = 1 ]; then t="$nombre"; primero=0
+      else t="$nombre - kernel $v ($(_ 'respaldo'))"; fi
+      ini=""; [ -e "/boot/initramfs-$n.img" ] && ini="$BOOT_PFX/initramfs-$n.img"
+      echo "menuentry '$t' --class naranjos --class gnu-linux --class os {"
+      echo "	search --no-floppy --fs-uuid --set=root $BOOT_UUID"
+      echo "	echo '$(_ 'Cargando NaranjOS...')'"
+      echo "	linux $BOOT_PFX/vmlinuz-$n root=PARTUUID=$RAIZ_PARTUUID $opc"
+      [ -n "$ini" ] && echo "	initrd $ini"
+      echo "}"
+    done
+    if [ -e "$ESP_DIR/EFI/ubuntu/shimx64.efi" ]; then
+      echo "menuentry 'Ubuntu' --class ubuntu --class os {"
+      echo "	chainloader (\$esp)/EFI/ubuntu/shimx64.efi"
+      echo "}"
+    fi
+    if [ -e "$ESP_DIR/EFI/Microsoft/Boot/bootmgfw.efi" ]; then
+      echo "menuentry 'Windows' --class windows --class os {"
+      echo "	chainloader (\$esp)/EFI/Microsoft/Boot/bootmgfw.efi"
+      echo "}"
+    fi
+    echo "menuentry '$(_ 'Ajustes del firmware (UEFI)')' --class efi { fwsetup }"
+    echo "menuentry '$(_ 'Reiniciar')' --class restart { reboot }"
+    echo "menuentry '$(_ 'Apagar')' --class shutdown { halt }"
+  } > "$out"
+  [ -n "$(kernels)" ] || die "$(_ 'No hay ningún kernel en /boot')"
+  if command -v grub-script-check >/dev/null; then grub-script-check "$out" || die "$(_ 'El menú generado tiene un error')"; fi
+}
+
+menu(){
+  es_root menu
+  monta_esp ro
+  install -dm755 /boot/grub "$ESTADO"
+  # un grub.cfg anterior que no sea nuestro se guarda una vez
+  if [ -e "$CFG" ] && ! grep -q 'naranjos-arranque' "$CFG" && [ ! -e "$ESTADO/grub.cfg.anterior" ]; then
+    cp -a "$CFG" "$ESTADO/grub.cfg.anterior"
+  fi
+  genera_menu "$CFG.nuevo"
+  mv -f "$CFG.nuevo" "$CFG"
+  suelta_esp
+  hecho "$(_ 'Menú de arranque al día:') $CFG"
+}
+
+# la imagen GRUB de NaranjOS, firmada: construye_imagen <carpeta-salida>
+construye_imagen(){
+  local t="$1" m mods=""
+  datos_boot
+  for m in $MODULOS; do
+    if [ -e "$GRUBDIR/$m.mod" ]; then mods+=" $m"; else aviso "$(_ 'GRUB no tiene el módulo') $m"; fi
+  done
+  cat > "$t/inicio.cfg" << FIN
+search --no-floppy --fs-uuid --set=root $BOOT_UUID
+set prefix=(\$root)$BOOT_PFX/grub
+configfile \$prefix/grub.cfg
+echo "NaranjOS: no encuentro \$prefix/grub.cfg"
+sleep 15
+FIN
+  # shellcheck disable=SC2086
+  grub-mkimage -O x86_64-efi -d "$GRUBDIR" -p "$BOOT_PFX/grub" -c "$t/inicio.cfg" --sbat "$DATOS/sbat.csv" \
+    -o "$t/grubx64.sinfirmar" $mods || die "$(_ 'grub-mkimage falló')"
+  objdump -h "$t/grubx64.sinfirmar" 2>/dev/null | grep -q '\.sbat' || die "$(_ 'La imagen GRUB no lleva SBAT: el shim la rechazaría')"
+  [ -r "$MOK/MOK.priv" ] && [ -r "$MOK/MOK.pem" ] || die "$(_ 'Falta la clave MOK en') $MOK"
+  sbsign --key "$MOK/MOK.priv" --cert "$MOK/MOK.pem" --output "$t/grubx64.efi" "$t/grubx64.sinfirmar" >/dev/null 2>&1 \
+    || die "$(_ 'No se pudo firmar GRUB')"
+  sbverify --cert "$MOK/MOK.pem" "$t/grubx64.efi" >/dev/null 2>&1 || die "$(_ 'La firma de GRUB no se verifica')"
+}
+
+ya_instalado(){ [ -e "$1/$CARPETA/grubx64.efi" ]; }
+
+instala(){  # instala [--si]
+  es_root instala
+  [ -d /sys/firmware/efi ] || die "$(_ 'Este equipo no ha arrancado en modo UEFI')"
+  local si="${1:-}" t f libre hace_falta
+  for f in shimx64.efi mmx64.efi; do [ -r "$SHIM/$f" ] || die "$(_ 'Falta el shim:') $SHIM/$f"; done
+  t=$(mktemp -d /tmp/naranjos-arranque.XXXXXX)
+  construye_imagen "$t"
+  monta_esp ro
+  install -dm755 /boot/grub "$ESTADO"
+  genera_menu "$t/grub.cfg"
+  if ! ya_instalado "$ESP_DIR" && [ "$si" != --si ]; then
+    echo
+    printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'arranque propio')" "$Z"
+    echo "  $(_ 'Partición EFI:') $(busca_esp)  →  $(_ 'solo se escribe en') /$CARPETA"
+    echo "  $(_ 'Antes se guarda una copia de la EFI entera en') $ESTADO"
+    read -r -p "  $(_ 'Escribe SI para continuar:') " r
+    [ "$r" = SI ] || die "$(_ 'Cancelado.')"
+  fi
+  suelta_esp
+  monta_esp rw
+  if ! ls "$ESTADO"/esp-*.tar >/dev/null 2>&1; then
+    ( umask 077; tar -C "$ESP_DIR" -cf "$ESTADO/esp-$(date +%Y%m%d-%H%M).tar" . ) || die "$(_ 'No pude hacer la copia de la EFI')"
+    hecho "$(_ 'Copia de la EFI en') $ESTADO"
+  fi
+  hace_falta=$(( $(du -cb "$SHIM/shimx64.efi" "$SHIM/mmx64.efi" "$t/grubx64.efi" | tail -n1 | cut -f1) / 1024 + 512 ))
+  libre=$(df -k --output=avail "$ESP_DIR" | tail -n1 | tr -dc 0-9)
+  ya_instalado "$ESP_DIR" && libre=$(( libre + $(du -sk "$ESP_DIR/$CARPETA" | cut -f1) ))
+  [ "$libre" -gt "$hace_falta" ] || die "$(_ 'No hay sitio en la partición EFI')"
+  local dest="$ESP_DIR/$CARPETA"
+  case "$dest" in "$ESP_DIR/EFI/naranjos") ;; *) die "$(_ 'Destino no permitido:') $dest" ;; esac
+  install -dm755 "$dest"
+  cp "$SHIM/shimx64.efi" "$dest/shimx64.efi.nuevo"
+  cp "$SHIM/mmx64.efi"   "$dest/mmx64.efi.nuevo"
+  cp "$t/grubx64.efi"    "$dest/grubx64.efi.nuevo"
+  sync
+  for f in shimx64.efi mmx64.efi grubx64.efi; do mv -f "$dest/$f.nuevo" "$dest/$f"; done
+  sync
+  cmp -s "$SHIM/shimx64.efi" "$dest/shimx64.efi" && cmp -s "$t/grubx64.efi" "$dest/grubx64.efi" \
+    || die "$(_ 'Lo copiado a la EFI no coincide')"
+  install -m644 "$t/grub.cfg" "$CFG.nuevo"; mv -f "$CFG.nuevo" "$CFG"
+  suelta_esp
+  rm -rf "$t"
+  hecho "$(_ 'Arranque de NaranjOS en') /$CARPETA (shim + GRUB $(_ 'firmado') + $(_ 'menú'))"
+  if [ "$si" != --si ]; then
+    echo "  $(_ 'Siguiente paso: crear la entrada en el firmware y probarla una vez (desde Ubuntu, o con efibootmgr).')"
+  fi
+}
+
+auto(){  # desde el hook de zumo: solo si el arranque propio ya está instalado
+  es_root auto
+  [ -d /sys/firmware/efi ] || exit 0
+  monta_esp ro
+  if ya_instalado "$ESP_DIR"; then suelta_esp; instala --si; else suelta_esp; fi
+}
+
+estado(){
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'arranque')" "$Z"
+  if [ -d /sys/firmware/efi ]; then
+    if secure_boot; then echo "  Secure Boot: $(_ 'activo')"; else echo "  Secure Boot: $(_ 'apagado')"; fi
+  else echo "  $(_ 'Modo BIOS (sin UEFI)')"; fi
+  echo "  $(_ 'Menú:') $CFG $( [ -e "$CFG" ] && grep -q naranjos-arranque "$CFG" && echo "✔" || echo "($(_ 'sin generar'))")"
+  echo "  $(_ 'Kernels:') $(kernels | tr '\n' ' ')"
+  if [ "$(id -u)" = 0 ]; then
+    monta_esp ro
+    if ya_instalado "$ESP_DIR"; then
+      local s=$(_ 'firma sin comprobar')
+      [ -r "$MOK/MOK.pem" ] && { sbverify --cert "$MOK/MOK.pem" "$ESP_DIR/$CARPETA/grubx64.efi" >/dev/null 2>&1 && s=$(_ 'firmado') || s=$(_ 'SIN firmar'); }
+      echo "  EFI: /$CARPETA ✔ (GRUB $s)"
+    else echo "  EFI: /$CARPETA $(_ 'sin instalar')"; fi
+    suelta_esp
+  else echo "  $D($(_ 'con sudo se ve también la partición EFI'))$Z"; fi
+  if command -v efibootmgr >/dev/null; then
+    efibootmgr 2>/dev/null | grep -i naranjos | sed 's/^/  /' || echo "  $(_ 'Sin entrada NaranjOS en el firmware')"
+  fi
+}
+
+case "${1:-estado}" in
+  estado|status)     estado ;;
+  menu)              menu ;;
+  instala|install)   instala "${2:-}" ;;
+  auto)              auto ;;
+  version|--version) echo "naranjos-arranque $VERSION" ;;
+  *) echo "naranjos-arranque estado | menu | instala"; exit 1 ;;
+esac

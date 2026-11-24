@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6g1.sh
+pkgname=naranjos-shim
+pkgver=15.8
+pkgrel=1
+pkgdesc='Shim firmado por Microsoft (de Ubuntu) para arrancar NaranjOS con Secure Boot'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-2-Clause')
+depends=()
+makedepends=()
+source=('http://archive.ubuntu.com/ubuntu/pool/main/s/shim-signed/shim-signed_1.59+15.8-0ubuntu2_amd64.deb')
+sha256sums=('f8ed71ce2d91a304b6d5eb84997f846f331b554578bc02dbfe78e13ad8ac81a9')
+noextract=('shim-signed_1.59+15.8-0ubuntu2_amd64.deb')
+options=('!strip' '!debug')
+package() {
+  local d="$srcdir/deb"
+  rm -rf "$d"; mkdir -p "$d"
+  ( cd "$d" && bsdtar -xf "$srcdir"/shim-signed_*_amd64.deb && bsdtar -xf data.tar.* )
+  install -Dm644 "$d/usr/lib/shim/shimx64.efi.signed.latest" "$pkgdir/usr/share/naranjos/shim/shimx64.efi"
+  install -Dm644 "$d/usr/lib/shim/mmx64.efi"                 "$pkgdir/usr/share/naranjos/shim/mmx64.efi"
+  install -Dm644 "$d/usr/share/doc/shim-signed/copyright"    "$pkgdir/usr/share/licenses/$pkgname/copyright"
+}

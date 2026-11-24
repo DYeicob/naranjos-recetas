@@ -1,0 +1,4 @@
+post_install() {
+  echo "  NaranjOS: para usar el arranque propio (shim + GRUB firmados en EFI/naranjos):"
+  echo "    sudo naranjos-arranque instala"
+}
