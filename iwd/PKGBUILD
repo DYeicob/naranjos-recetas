@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f11.sh
+pkgname=iwd
+pkgver=3.12
+pkgrel=1
+pkgdesc='WiFi de NaranjOS (iwd)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('glibc' 'readline' 'dbus')
+makedepends=()
+source=('https://www.kernel.org/pub/linux/network/wireless/iwd-3.12.tar.xz')
+sha256sums=('d89a5e45c7180170e19be828f9e944a768c593758094fc57a358d0e7c4cb1a49')
+build() {
+  cd iwd-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-manual-pages
+  make
+}
+package() {
+  cd iwd-$pkgver
+  make DESTDIR="$pkgdir" install
+}

@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f11.sh
+pkgname=linux-firmware
+pkgver=20261019
+pkgrel=1
+pkgdesc='Firmware para WiFi, gráficas, Bluetooth… (comprimido con zstd)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('custom' 'GPL-2.0-only')
+depends=()
+makedepends=('zstd')
+source=('https://www.kernel.org/pub/linux/kernel/firmware/linux-firmware-20261019.tar.xz')
+sha256sums=('a10d1ab5baf2c74ba92e8c7cf313e691696c26bddfa6df00db795e48d70cd4ca')
+options=('!strip' '!debug')
+package() {
+  cd linux-firmware-$pkgver
+  install -dm755 "$pkgdir/usr/lib/firmware"
+  ./copy-firmware.sh --zstd "$pkgdir/usr/lib/firmware"
+  # el sonido Intel (SOF) viene del paquete sof-firmware, más nuevo: así no chocan
+  rm -rf "$pkgdir"/usr/lib/firmware/intel/sof*
+  install -dm755 "$pkgdir/usr/share/licenses/$pkgname"
+  cp -a WHENCE LICEN[CS]E* "$pkgdir/usr/share/licenses/$pkgname/"
+}

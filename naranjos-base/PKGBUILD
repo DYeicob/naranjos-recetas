@@ -2,7 +2,7 @@
 # Registra en zumo lo que se instaló con LFS 13.1 + BLFS 13.1 (systemd).
 pkgname=naranjos-base
 pkgver=13.1
-pkgrel=11
+pkgrel=12
 pkgdesc='Sistema base de NaranjOS (construido con LFS/BLFS 13.1)'
 arch=('x86_64')
 url='https://github.com/DYeicob'
@@ -16,12 +16,7 @@ provides=(
   'libstdc++=16.2.0'
   'glibc=2.44'
   'grub=2.14'
-  'iwd=3.12'
   'linux=7.1.8'
-  'linux-firmware=20261019'
-  'sof-firmware=2026.09.2'
-  'tzdata=2026c'
-  'wireless-regdb=2026.09.03'
 )
 source=('base.txt')
 sha256sums=('875e3a8b8b55290b108e1520cf75334f124815c0797184a2075778e207dbc46f')

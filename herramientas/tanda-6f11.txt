@@ -1,0 +1,7 @@
+wireless-regdb
+sof-firmware
+linux-firmware
+iwd
+tzdata
+openssh
+naranjos-base

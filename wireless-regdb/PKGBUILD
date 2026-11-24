@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f11.sh
+pkgname=wireless-regdb
+pkgver=2026.09.03
+pkgrel=1
+pkgdesc='Canales y potencias WiFi permitidos en cada país'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('ISC')
+depends=()
+makedepends=()
+source=('https://www.kernel.org/pub/software/network/wireless-regdb/wireless-regdb-2026.09.03.tar.xz')
+sha256sums=('b22e0901227b820cd1c280abe681a15b773a5103a5e10dc442e94ebb34cbf58d')
+options=('!strip' '!debug')
+package() {
+  cd wireless-regdb-$pkgver
+  install -Dm644 regulatory.db regulatory.db.p7s -t "$pkgdir/usr/lib/firmware"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

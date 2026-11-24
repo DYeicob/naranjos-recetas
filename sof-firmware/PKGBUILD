@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f11.sh
+pkgname=sof-firmware
+pkgver=2026.09.2
+pkgrel=1
+pkgdesc='Firmware de sonido Intel (Sound Open Firmware)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause' 'custom')
+depends=()
+makedepends=()
+source=('https://github.com/thesofproject/sof-bin/releases/download/v2026.09.2/sof-bin-2026.09.2.tar.gz')
+sha256sums=('5f7bc30b2b5c1e6b0da55a33fc44e2b7f56ae9b06952edcde614f51ef6b943e1')
+options=('!strip' '!debug')
+package() {
+  cd sof-bin-$pkgver
+  install -dm755 "$pkgdir/usr/lib/firmware/intel"
+  cp -a sof* "$pkgdir/usr/lib/firmware/intel/"
+  install -dm755 "$pkgdir/usr/share/licenses/$pkgname"
+  cp -a LICENCE* Notice* "$pkgdir/usr/share/licenses/$pkgname/"
+}

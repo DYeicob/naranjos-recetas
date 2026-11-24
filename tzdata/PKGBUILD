@@ -1,0 +1,27 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f11.sh
+pkgname=tzdata
+pkgver=2026c
+pkgrel=1
+pkgdesc='Zonas horarias del mundo'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LicenseRef-Public-Domain')
+depends=()
+makedepends=()
+source=('https://www.iana.org/time-zones/repository/releases/tzdata2026c.tar.gz')
+sha256sums=('e4a178a4477f3d0ea77cc31828ff72aa38feff8d61aa13e7e99e142e9d902be4')
+options=('!strip' '!debug')
+package() {
+  cd "$srcdir"
+  local Z="$pkgdir/usr/share/zoneinfo" tz zic
+  zic=$(command -v zic || echo /usr/sbin/zic)   # /usr/sbin no está en el PATH del usuario
+  install -dm755 "$Z"/{posix,right}
+  for tz in etcetera southamerica northamerica europe africa antarctica asia australasia backward; do
+    "$zic" -L /dev/null   -d "$Z"       $tz
+    "$zic" -L /dev/null   -d "$Z/posix" $tz
+    "$zic" -L leapseconds -d "$Z/right" $tz
+  done
+  install -m644 zone.tab zone1970.tab iso3166.tab "$Z"
+  "$zic" -d "$Z" -p America/New_York
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
