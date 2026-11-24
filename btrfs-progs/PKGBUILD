@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6h1.sh
+pkgname=btrfs-progs
+pkgver=6.19.1
+pkgrel=1
+pkgdesc='Herramientas del sistema de ficheros Btrfs (mkfs.btrfs, btrfs, fsck.btrfs)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-only' 'LGPL-2.1-only')
+depends=('util-linux' 'zlib' 'zstd' 'systemd')
+makedepends=()
+source=('https://www.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v6.19.1.tar.xz')
+sha256sums=('bb27e1ec54e7c3c0b7b2e596f853a73c07a3d72f21bc94042073c24dbf045796')
+build() {
+  cd btrfs-progs-v$pkgver
+  # sin documentación (pide sphinx), sin python, sin lzo (no lo tenemos) y sin btrfs-convert (no hace falta)
+  ./configure --prefix=/usr --disable-documentation --disable-python --disable-lzo --disable-convert
+  make
+}
+package() {
+  cd btrfs-progs-v$pkgver
+  make DESTDIR="$pkgdir" install
+}

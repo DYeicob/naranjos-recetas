@@ -1,0 +1,261 @@
+#!/bin/bash
+# fotos — fotos del sistema de NaranjOS (instantáneas Btrfs) para volver atrás (fase 6h)
+#   · zumo hace una foto sola antes de cada «zumo actualiza» (y las tandas, antes de compilar)
+#   · cada foto sale en el menú de arranque, en «Fotos de NaranjOS»: se arranca tal cual, sin tocar nada
+#   · «fotos vuelve N» la convierte en el sistema de verdad (antes se guarda una foto de cómo estaba)
+# Lo que entra en la foto: la raíz (subvolumen @, con /boot y /etc). NO entran /home, /var/log,
+# la caché de paquetes (/var/cache/pacman/pkg), /srv ni el swap: son subvolúmenes aparte.
+set -euo pipefail
+VERSION="0.1.0"
+if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; fi
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
+[ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
+die(){   printf '%sfotos:%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+hecho(){ printf '%s✔%s %s\n' "$G" "$Z" "$1"; }
+aviso(){ printf '%s!%s %s\n' "$A" "$Z" "$1" >&2; }
+
+GUARDAR=5; RAIZ_SUB=@; FOTOS_SUB=@fotos
+[ -r /etc/naranjos/fotos.conf ] && . /etc/naranjos/fotos.conf
+case "$GUARDAR" in ''|*[!0-9]*) GUARDAR=5 ;; esac
+TOP=/run/naranjos-fotos/top     # aquí se monta la raíz del Btrfs (subvolid=5) cuando hace falta
+EN_FOTO=/run/naranjos-foto      # lo escribe el initramfs al arrancar una foto (n=… dev=…)
+MONTADO_AQUI=0
+
+es_root(){ [ "$(id -u)" = 0 ] || die "$(_ 'Hace falta root:') sudo fotos $1"; }
+
+# en_foto → 0 si estamos arrancados en una foto (y deja FOTO_N y FOTO_DEV)
+en_foto(){
+  [ -r "$EN_FOTO" ] || return 1
+  FOTO_N=$(sed -n 's/^n=//p' "$EN_FOTO"); FOTO_DEV=$(sed -n 's/^dev=//p' "$EN_FOTO")
+  return 0
+}
+
+# activas → 0: se pueden hacer fotos · 1: la raíz no es Btrfs con @ · 2: estamos en una foto
+#           3: se ha hecho «fotos vuelve» y falta reiniciar (lo que se cambie ahora se perdería)
+activas(){
+  en_foto && return 2
+  [ "$(findmnt -no FSTYPE / 2>/dev/null)" = btrfs ] || return 1
+  case "$(findmnt -no FSROOT / 2>/dev/null)" in
+    "/$RAIZ_SUB")          return 0 ;;
+    "/$RAIZ_SUB".viejo-*)  return 3 ;;
+  esac
+  return 1
+}
+
+dispositivo(){
+  if en_foto; then echo "$FOTO_DEV"; return 0; fi
+  [ "$(findmnt -no FSTYPE /)" = btrfs ] || die "$(_ 'NaranjOS no está en Btrfs: las fotos se activan tras la migración (fase 6h2)')"
+  findmnt -nvo SOURCE /
+}
+
+suelta_top(){
+  [ "$MONTADO_AQUI" = 1 ] || return 0
+  umount "$TOP" 2>/dev/null || true; rmdir "$TOP" 2>/dev/null || true; MONTADO_AQUI=0
+}
+trap suelta_top EXIT
+
+monta_top(){
+  local dev
+  if mountpoint -q "$TOP" 2>/dev/null; then return 0; fi
+  dev=$(dispositivo)
+  mkdir -p "$TOP"
+  mount -t btrfs -o subvolid=5,noatime "$dev" "$TOP" || { rmdir "$TOP" 2>/dev/null || true; die "$(_ 'No pude montar la raíz del Btrfs')"; }
+  MONTADO_AQUI=1
+  [ -d "$TOP/$RAIZ_SUB" ] || die "$(_ 'No encuentro el subvolumen') $RAIZ_SUB"
+  [ -d "$TOP/$FOTOS_SUB" ] || btrfs subvolume create "$TOP/$FOTOS_SUB" >/dev/null
+}
+
+numeros(){  # los números de las fotos, de menor a mayor
+  local d
+  for d in "$TOP/$FOTOS_SUB"/*/; do
+    d=${d%/}; d=${d##*/}
+    case "$d" in ''|*[!0-9]*) continue ;; esac
+    [ -d "$TOP/$FOTOS_SUB/$d/foto" ] && echo "$d"
+  done | sort -n
+}
+dato(){ sed -n "s/^$2=//p" "$TOP/$FOTOS_SUB/$1/info" 2>/dev/null | head -n1; }
+existe(){ case "$1" in ''|*[!0-9]*) return 1 ;; esac; [ -d "$TOP/$FOTOS_SUB/$1/foto" ]; }
+
+rehaz_menu(){  # el menú de arranque enseña las fotos: se rehace al crear o borrar una
+  command -v naranjos-arranque >/dev/null || return 0
+  grep -q naranjos-arranque /boot/grub/grub.cfg 2>/dev/null || return 0
+  en_foto && return 0
+  naranjos-arranque menu >/dev/null || aviso "$(_ 'No pude rehacer el menú de arranque')"
+}
+
+borra_una(){
+  local d="$TOP/$FOTOS_SUB/$1"
+  btrfs subvolume delete "$d/foto" >/dev/null || die "$(_ 'No pude borrar la foto') $1"
+  rm -rf -- "${d:?}"
+}
+
+# crea [--auto] [--sin-menu] [motivo…]
+crea(){
+  es_root crea
+  local tipo=manual menu=1 n motivo kver
+  while [ $# -gt 0 ]; do
+    case "$1" in --auto) tipo=auto; shift ;; --sin-menu) menu=0; shift ;; *) break ;; esac
+  done
+  motivo=$(printf '%s' "${*:-$(_ 'foto manual')}" | tr -d '\n\r' | cut -c1-60)
+  local e=0; activas || e=$?
+  if [ "$tipo" = auto ]; then
+    [ $e = 2 ] && die "$(_ 'Estás arrancado en una foto: lo que cambies se pierde al apagar. Primero: sudo fotos vuelve') $FOTO_N"
+    [ $e = 3 ] && die "$(_ 'Has vuelto a una foto: reinicia antes de seguir (lo que cambies ahora se perdería)')"
+  fi
+  monta_top
+  exec 9> /run/naranjos-fotos.lock; flock -w 60 9 || die "$(_ 'Hay otra operación de fotos en marcha')"
+  n=$(( $(numeros | tail -n1 || true) + 1 ))
+  mkdir "$TOP/$FOTOS_SUB/$n"
+  if ! btrfs subvolume snapshot -r "$TOP/$RAIZ_SUB" "$TOP/$FOTOS_SUB/$n/foto" >/dev/null; then
+    rmdir "$TOP/$FOTOS_SUB/$n"; die "$(_ 'No pude hacer la foto')"
+  fi
+  kver=$(pacman -Q linux-naranjos 2>/dev/null | cut -d' ' -f2 || true)
+  printf 'fecha=%s\ntipo=%s\nmotivo=%s\nkernel=%s\n' "$(date '+%Y-%m-%d %H:%M')" "$tipo" "$motivo" "${kver:-?}" \
+    > "$TOP/$FOTOS_SUB/$n/info"
+  hecho "$(_ 'Foto') $n: $motivo"
+  # solo se borran solas las automáticas más viejas (las manuales, nunca)
+  if [ "$tipo" = auto ]; then
+    local autos=() x
+    for x in $(numeros); do [ "$(dato "$x" tipo)" = auto ] && autos+=("$x"); done
+    while [ "${#autos[@]}" -gt "$GUARDAR" ]; do
+      if en_foto && [ "${autos[0]}" = "$FOTO_N" ]; then autos=("${autos[@]:1}"); continue; fi
+      borra_una "${autos[0]}"; printf '  %s%s %s%s\n' "$D" "$(_ 'Borrada la foto automática más vieja:')" "${autos[0]}" "$Z"
+      autos=("${autos[@]:1}")
+    done
+  fi
+  exec 9>&-
+  [ "$menu" = 1 ] && rehaz_menu
+  return 0
+}
+
+# lista [--grub]
+lista(){
+  local grub=0 n k i
+  [ "${1:-}" = --grub ] && grub=1
+  if [ $grub = 1 ]; then
+    # para naranjos-arranque: «n<TAB>fecha<TAB>motivo<TAB>initramfs(0|1)» de las fotos arrancables, la más nueva primero
+    [ "$(id -u)" = 0 ] || return 0
+    en_foto || [ "$(findmnt -no FSTYPE / 2>/dev/null)" = btrfs ] || return 0
+    monta_top
+    for n in $(numeros | sort -rn); do
+      k="$TOP/$FOTOS_SUB/$n/foto/boot"
+      [ -e "$k/vmlinuz-linux-naranjos" ] || continue
+      i=0; [ -e "$k/initramfs-linux-naranjos.img" ] && i=1
+      printf '%s\t%s\t%s\t%s\n' "$n" "$(dato "$n" fecha)" "$(dato "$n" motivo)" "$i"
+    done
+    return 0
+  fi
+  es_root lista
+  monta_top
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'fotos del sistema')" "$Z"
+  local hay=0 marca
+  for n in $(numeros | sort -rn); do
+    hay=1; marca=""
+    en_foto && [ "$n" = "$FOTO_N" ] && marca="  ${O}← $(_ 'arrancada ahora')${Z}"
+    printf '  %s%3s%s  %s  %-6s  %s  %s(kernel %s)%s%s\n' "$O" "$n" "$Z" "$(dato "$n" fecha)" "$(dato "$n" tipo)" \
+      "$(dato "$n" motivo)" "$D" "$(dato "$n" kernel)" "$Z" "$marca"
+  done
+  [ $hay = 1 ] || echo "  $(_ 'Aún no hay ninguna foto. Haz una con:') sudo fotos crea \"$(_ 'motivo')\""
+}
+
+borra(){
+  es_root borra
+  [ $# -gt 0 ] || die "$(_ 'Dime qué foto borrar:') sudo fotos borra <n>"
+  monta_top
+  exec 9> /run/naranjos-fotos.lock; flock -w 60 9 || die "$(_ 'Hay otra operación de fotos en marcha')"
+  local n
+  for n in "$@"; do
+    existe "$n" || die "$(_ 'No existe la foto') $n"
+    if en_foto && [ "$n" = "$FOTO_N" ]; then die "$(_ 'No se puede borrar la foto con la que has arrancado')"; fi
+  done
+  for n in "$@"; do borra_una "$n"; hecho "$(_ 'Borrada la foto') $n"; done
+  exec 9>&-
+  rehaz_menu
+}
+
+# vuelve <n> [--si]: la foto n pasa a ser el sistema (al reiniciar)
+vuelve(){
+  es_root vuelve
+  local n="${1:-}" si="${2:-}" viejo
+  monta_top
+  existe "$n" || die "$(_ 'No existe la foto') ${n:-?} ($(_ 'mira:') sudo fotos lista)"
+  if [ "$si" != --si ]; then
+    printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'volver a una foto')" "$Z"
+    echo "  $(_ 'Foto') $n: $(dato "$n" fecha) · $(dato "$n" motivo)"
+    echo "  $(_ 'El sistema (todo menos /home, /var/log, /srv y la caché de paquetes) volverá a como estaba entonces.')"
+    echo "  $(_ 'Antes se guarda una foto del estado actual, por si quieres deshacerlo.')"
+    read -r -p "  $(_ 'Escribe SI para continuar:') " r
+    [ "$r" = SI ] || die "$(_ 'Cancelado.')"
+  fi
+  crea --sin-menu "$(_ 'antes de volver a la foto') $n"
+  exec 9> /run/naranjos-fotos.lock; flock -w 60 9 || die "$(_ 'Hay otra operación de fotos en marcha')"
+  [ ! -e "$TOP/$RAIZ_SUB.nuevo" ] || btrfs subvolume delete "$TOP/$RAIZ_SUB.nuevo" >/dev/null
+  btrfs subvolume snapshot "$TOP/$FOTOS_SUB/$n/foto" "$TOP/$RAIZ_SUB.nuevo" >/dev/null || die "$(_ 'No pude copiar la foto')"
+  viejo="$TOP/$RAIZ_SUB.viejo-$(date +%Y%m%d-%H%M%S)"
+  mv -T "$TOP/$RAIZ_SUB" "$viejo"                  || die "$(_ 'No pude apartar el sistema actual')"
+  if ! mv -T "$TOP/$RAIZ_SUB.nuevo" "$TOP/$RAIZ_SUB"; then
+    mv -T "$viejo" "$TOP/$RAIZ_SUB"; die "$(_ 'No pude poner la foto en su sitio (no ha cambiado nada)')"
+  fi
+  sync
+  exec 9>&-
+  # el menú de arranque del sistema «nuevo» (el GRUB siempre lee /@/boot/grub/grub.cfg)
+  if command -v naranjos-arranque >/dev/null; then
+    naranjos-arranque menu --raiz "$TOP/$RAIZ_SUB" >/dev/null || aviso "$(_ 'No pude rehacer el menú de arranque')"
+  fi
+  hecho "$(_ 'Hecho: al reiniciar, NaranjOS será la foto') $n"
+  echo "  $(_ 'Reinicia y elige la primera entrada («NaranjOS»).')"
+  echo "  $D$(_ 'El sistema de antes queda aparte y se borra solo en el siguiente arranque (tienes su foto).')$Z"
+}
+
+# al arrancar (naranjos-fotos-limpia.service): borra los sistemas apartados por «fotos vuelve»
+limpia(){
+  es_root limpia
+  activas || exit 0
+  monta_top
+  local v
+  for v in "$TOP/$RAIZ_SUB".viejo-* "$TOP/$RAIZ_SUB.nuevo"; do
+    [ -d "$v" ] || continue
+    btrfs subvolume delete "$v" >/dev/null 2>&1 && echo "$(_ 'Borrado:') ${v##*/}" || aviso "$(_ 'No pude borrar') ${v##*/}"
+  done
+  return 0
+}
+
+estado(){
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'fotos del sistema')" "$Z"
+  local e=0; activas || e=$?
+  case $e in
+    0) echo "  $(_ 'Activas: la raíz es Btrfs') ($RAIZ_SUB) · $(_ 'se guardan') $GUARDAR $(_ 'automáticas')" ;;
+    1) echo "  $(_ 'Sin activar: NaranjOS aún no está en Btrfs (fase 6h2)')" ;;
+    2) echo "  ${A}$(_ 'Arrancado en la foto') $FOTO_N${Z}: $(_ 'lo que cambies se pierde al apagar.')"
+       echo "  $(_ 'Para quedarte con ella:') sudo fotos vuelve $FOTO_N" ;;
+    3) echo "  ${A}$(_ 'Has vuelto a una foto: reinicia para entrar en ella.')${Z}" ;;
+  esac
+  [ "$(id -u)" = 0 ] && [ $e != 1 ] && { echo; lista; }
+  return 0
+}
+
+ayuda(){
+  cat << FIN
+${O}fotos${Z} $VERSION · $(_ 'fotos del sistema de NaranjOS (vuelta atrás)')
+  fotos                     $(_ 'estado')
+  sudo fotos lista          $(_ 'las fotos que hay')
+  sudo fotos crea "motivo"  $(_ 'hace una foto ahora')
+  sudo fotos borra <n>…     $(_ 'borra fotos')
+  sudo fotos vuelve <n>     $(_ 'vuelve a la foto n (al reiniciar)')
+$(_ 'zumo hace una foto sola antes de cada «zumo actualiza». Cada foto sale en el menú de arranque,')
+$(_ 'en «Fotos de NaranjOS»: se arranca sin tocar nada, y si te convence, «fotos vuelve».')
+FIN
+}
+
+case "${1:-estado}" in
+  estado|status)       estado ;;
+  activas)             activas ;;
+  crea|create|nueva)   shift; crea "$@" ;;
+  lista|list|ls)       shift; lista "$@" ;;
+  borra|delete|rm)     shift; borra "$@" ;;
+  vuelve|rollback)     shift; vuelve "$@" ;;
+  limpia)              limpia ;;
+  version|--version)   echo "fotos $VERSION" ;;
+  ayuda|help|-h|--help) ayuda ;;
+  *) ayuda; exit 1 ;;
+esac

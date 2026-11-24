@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-6e2.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6h1.sh (NO editar a mano)
 pkgname=naranjos-initramfs
-pkgver=0.2.0
+pkgver=0.3.0
 pkgrel=1
 pkgdesc='Arranque de NaranjOS: initramfs propio y kernels firmados para Secure Boot'
 arch=('any')
@@ -8,7 +8,7 @@ url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
 depends=('bash' 'kmod' 'util-linux' 'systemd' 'libarchive' 'zstd' 'coreutils' 'findutils' 'gawk' 'naranjos-idiomas' 'intel-ucode' 'sbsigntools')
 source=('60-naranjos-kernel.hook' '60-naranjos-kernel-quita.hook' '90-naranjos-initramfs.hook' 'init' 'initramfs.conf' 'naranjos-initramfs' 'naranjos-kernel')
-sha256sums=('b4dd00182e830a78ac65dcbd555425c592c3b1c46a036905ec2740930f65a861' '51b7409939157fc2b6e9ef9e0a5053e1199645ec8ba21198f36c9cb42fcbf036' 'cbdac623a916a8950356e5b379ef44e8edc1e8d6c4bab14d96bdd4f325905f82' '2b2922073a0a742fd37368276501f7fcc05039a06cf6b7a8e1734159f602f535' '7aef95d9e0a7d465686e77cc1376566adeb8dda203409dbd5877450c6c815ddb' '896c3b48d9e79f3503478a09527cc1800b9d08c22be28faf7c4b9b594343b62b' '1af4d8daadf63c305be54a1caefa3041830f53bd5dd46c6558120261a12f9a9b')
+sha256sums=('b4dd00182e830a78ac65dcbd555425c592c3b1c46a036905ec2740930f65a861' '51b7409939157fc2b6e9ef9e0a5053e1199645ec8ba21198f36c9cb42fcbf036' 'cbdac623a916a8950356e5b379ef44e8edc1e8d6c4bab14d96bdd4f325905f82' 'e9f79a7e66c0a429f3783ed60f6a04754e43167978926ea33179340017a197bf' '7aef95d9e0a7d465686e77cc1376566adeb8dda203409dbd5877450c6c815ddb' '896c3b48d9e79f3503478a09527cc1800b9d08c22be28faf7c4b9b594343b62b' '1af4d8daadf63c305be54a1caefa3041830f53bd5dd46c6558120261a12f9a9b')
 install=naranjos-initramfs.install
 backup=('etc/naranjos/initramfs.conf')
 optdepends=('cryptsetup: arrancar desde un disco cifrado con LUKS')

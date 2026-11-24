@@ -13,6 +13,14 @@ grep -q '^default-cache-ttl' ~/.gnupg/gpg-agent.conf 2>/dev/null || {
 export GPG_TTY=$(tty)
 grep -q '^PACKAGER=' ~/.makepkg.conf 2>/dev/null || echo 'PACKAGER="NaranjOS Packager <yeicob@naranjos.invalid>"' >> ~/.makepkg.conf
 zumo ayuda 2>/dev/null | grep -- '-y' >/dev/null || { echo "${R}Necesitas zumo 0.2.1 o más nuevo:  zumo exprime -i zumo${Z}"; exit 1; }
+# con la raíz en Btrfs: una foto antes de empezar (para volver atrás si la tanda rompe algo)
+if command -v fotos >/dev/null; then
+  e=0; fotos activas || e=$?
+  case $e in
+    0) sudo fotos crea --auto "tanda ${1}" || { echo "${R}No pude hacer la foto antes de la tanda.${Z}"; exit 1; } ;;
+    2|3) echo "${R}Estás en una foto o falta reiniciar tras «fotos vuelve»: lo que compiles se perdería.${Z}"; exit 1 ;;
+  esac
+fi
 total=$(grep -c . "$L"); i=0; inicio=$SECONDS
 while read -r r <&3; do
   [ -n "$r" ] || continue; i=$((i+1))

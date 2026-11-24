@@ -4,6 +4,8 @@
 # Opciones del kernel que entiende:
 #   root=UUID=… | PARTUUID=… | LABEL=… | PARTLABEL=… | /dev/…   rootfstype=…   rootflags=…
 #   ro | rw   rootwait   rootdelay=<s>   init=<ruta>   rd.break (shell antes de arrancar)   rd.debug
+#   naranjos.foto=<n>  arranca una foto del sistema (naranjos-fotos): la foto es de solo lectura y
+#                      se le pone encima un overlay en memoria; lo que cambie se pierde al apagar
 export PATH=/usr/bin:/usr/sbin:/bin:/sbin
 mount -t proc     proc /proc -o nosuid,nodev,noexec
 mount -t sysfs    sys  /sys  -o nosuid,nodev,noexec
@@ -14,7 +16,7 @@ exec </dev/console >/dev/console 2>&1
 N=$'\e[1;38;5;208m'; Z=$'\e[0m'
 di(){ echo "${N}NaranjOS:${Z} $*"; }
 
-raiz="" tipo="" flags="" modo=ro espera=10 retraso=0 programa=/sbin/init parar=0
+raiz="" tipo="" flags="" modo=ro espera=10 retraso=0 programa=/sbin/init parar=0 foto=""
 read -r -a args < /proc/cmdline
 for a in "${args[@]}"; do
   case "$a" in
@@ -28,6 +30,7 @@ for a in "${args[@]}"; do
     init=*)       programa=${a#init=} ;;
     rd.break)     parar=1 ;;
     rd.debug)     set -x ;;
+    naranjos.foto=*) foto=${a#naranjos.foto=} ;;
   esac
 done
 
@@ -52,6 +55,7 @@ udevadm trigger --type=devices --action=add
 udevadm settle --timeout=30
 
 [ "$retraso" -gt 0 ] 2>/dev/null && sleep "$retraso"
+[ -n "$foto" ] && modo=ro
 
 dispositivo(){
   case "$raiz" in
@@ -97,6 +101,26 @@ while :; do
   fi
   tipo=""
 done
+
+# una foto: debajo, la foto (solo lectura); encima, los cambios en memoria (tmpfs)
+if [ -n "$foto" ]; then
+  F=/run/naranjos-foto.d
+  modprobe -q overlay 2>/dev/null
+  mkdir -p "$F/abajo" "$F/arriba"
+  mount --move /sysroot "$F/abajo"
+  mount -t tmpfs -o mode=0755 naranjos-foto "$F/arriba"
+  mkdir -p "$F/arriba/cambios" "$F/arriba/trabajo"
+  until mount -t overlay naranjos-foto -o "lowerdir=$F/abajo,upperdir=$F/arriba/cambios,workdir=$F/arriba/trabajo" /sysroot; do
+    emergencia "No se pudo montar la foto $foto / Could not mount snapshot $foto"
+  done
+  # la raíz ya está montada: que systemd no la vuelva a montar según el fstab (el resto, sí)
+  if [ -f /sysroot/etc/fstab ]; then
+    grep -v -E '^[[:space:]]*[^#[:space:]]+[[:space:]]+/[[:space:]]' /sysroot/etc/fstab > /run/fstab.foto || true
+    cat /run/fstab.foto > /sysroot/etc/fstab
+  fi
+  printf 'n=%s\ndev=%s\n' "$foto" "$dev" > /run/naranjos-foto
+  di "foto $foto del sistema: lo que cambies se pierde al apagar / snapshot $foto: changes are lost at shutdown"
+fi
 
 [ "$parar" = 1 ] && emergencia "rd.break: la raíz está en /sysroot / root is mounted at /sysroot"
 

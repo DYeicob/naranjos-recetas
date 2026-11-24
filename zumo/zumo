@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 # zumo — gestor de paquetes de NaranjOS (usa pacman por dentro)
 # Textos traducibles con gettext (dominio «naranjos»): naranjos-idioma cambia el idioma.
-VERSION="0.3.1"
+VERSION="0.3.2"
 export TEXTDOMAIN=naranjos TEXTDOMAINDIR=/usr/share/locale
 _(){ gettext "$1" 2>/dev/null || printf '%s' "$1"; }
 # _f <texto con %s> <datos…>: texto traducido con datos dentro
@@ -113,12 +113,32 @@ exprime(){
   okm "$(_ 'Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)')"
 }
 
+
+# actualiza [--sin-foto]: con la raíz en Btrfs, antes hace una foto del sistema (naranjos-fotos)
+actualiza(){
+  local foto=1
+  [ "${1:-}" = --sin-foto ] && { foto=0; shift; }
+  local e=1; command -v fotos >/dev/null && { e=0; fotos activas || e=$?; }
+  case $e in
+    2) die "$(_ 'Estás arrancado en una foto: lo que actualices se perdería al apagar. Primero: sudo fotos vuelve') $(sed -n 's/^n=//p' /run/naranjos-foto)" ;;
+    3) die "$(_ 'Has vuelto a una foto: reinicia antes de actualizar (lo que actualices ahora se perdería)')" ;;
+  esac
+  msg "$(_ 'Actualizando NaranjOS…')"
+  $SUDO pacman -Sy || die "$(_ 'No pude leer los repositorios')"
+  if ! pacman -Qu >/dev/null 2>&1; then msg "$(_ 'Todo al día.')"; return 0; fi
+  if [ $foto = 1 ] && [ $e = 0 ]; then
+    msg "$(_ 'Haciendo una foto del sistema antes de actualizar…')"
+    $SUDO fotos crea --auto "zumo actualiza" \
+      || die "$(_ 'No se pudo hacer la foto. Para actualizar sin ella: zumo actualiza --sin-foto')"
+  fi
+  $SUDO pacman -Su "$@"
+}
 ORDEN="${1:-ayuda}"; shift || true
 case "$ORDEN" in
   instala|install|i)          hace_falta "$@"; $SUDO pacman -S "$@" ;;
   quita|remove|rm)            hace_falta "$@"; $SUDO pacman -Rns "$@" ;;
   local|install-file)         hace_falta "$@"; $SUDO pacman -U "$@" ;;
-  actualiza|update|up)        msg "$(_ 'Actualizando NaranjOS…')"; $SUDO pacman -Syu "$@" ;;
+  actualiza|update|up)        actualiza "$@" ;;
   busca|search|s)             hace_falta "$@"; pacman -Ss "$@" ;;
   info)                       hace_falta "$@"
                               if pacman -Qq "$1" >/dev/null 2>&1; then pacman -Qi "$@"; else pacman -Si "$@"; fi ;;

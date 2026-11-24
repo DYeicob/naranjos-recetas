@@ -1,0 +1,11 @@
+[Unit]
+Description=NaranjOS: borra el sistema apartado por «fotos vuelve»
+ConditionPathExists=!/run/naranjos-foto
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/fotos limpia
+
+[Install]
+WantedBy=multi-user.target
