@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
+pkgname=libidn2
+pkgver=2.3.8
+pkgrel=1
+pkgdesc='Nombres de dominio internacionales (con tildes, eñes…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-3.0-or-later' 'GPL-2.0-or-later' 'GPL-3.0-or-later')
+depends=('libunistring')
+makedepends=()
+source=('https://ftpmirror.gnu.org/libidn/libidn2-2.3.8.tar.gz')
+sha256sums=('f557911bf6171621e1f72ff35f5b1825bb35b52ed45325dcdee931e5d3c0787a')
+build() {
+  cd libidn2-$pkgver
+  ./configure --prefix=/usr --disable-static
+  make
+}
+package() {
+  cd libidn2-$pkgver
+  make DESTDIR="$pkgdir" install
+}

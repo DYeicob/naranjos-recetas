@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
+pkgname=libpsl
+pkgver=0.23.3
+pkgrel=1
+pkgdesc='Lista de sufijos públicos (para que las cookies no se crucen entre webs)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=('libidn2' 'libunistring')
+makedepends=('meson' 'ninja' 'python')
+source=('https://github.com/rockdaboot/libpsl/releases/download/0.23.3/libpsl-0.23.3.tar.gz')
+sha256sums=('93941f85a1e7bd593fa94f299233cb5dfc91cd144fd9a78a6ceb75001c5b03be')
+build() {
+  cd libpsl-$pkgver
+  meson setup build --prefix=/usr --buildtype=release
+  ninja -C build
+}
+package() {
+  cd libpsl-$pkgver
+  DESTDIR="$pkgdir" ninja -C build install
+}

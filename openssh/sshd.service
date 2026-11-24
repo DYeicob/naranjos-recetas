@@ -1,0 +1,14 @@
+# NaranjOS · servidor SSH. No se activa solo: sudo systemctl enable --now sshd
+[Unit]
+Description=Servidor SSH de NaranjOS (OpenSSH)
+After=network.target
+
+[Service]
+ExecStartPre=/usr/bin/ssh-keygen -A
+ExecStart=/usr/sbin/sshd -D
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

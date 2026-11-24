@@ -14,7 +14,7 @@ provides=('pam')
 backup=('etc/pam.d/system-account' 'etc/pam.d/system-auth' 'etc/pam.d/system-session' 'etc/pam.d/system-password' 'etc/pam.d/other' 'etc/environment' 'etc/security/access.conf' 'etc/security/faillock.conf' 'etc/security/group.conf' 'etc/security/limits.conf' 'etc/security/namespace.conf' 'etc/security/namespace.init' 'etc/security/pam_env.conf' 'etc/security/pwhistory.conf' 'etc/security/time.conf')
 build() {
   cd Linux-PAM-$pkgver
-  meson setup build --prefix=/usr --buildtype=release -D docdir=/usr/share/doc/Linux-PAM-$pkgver
+  meson setup build --prefix=/usr --buildtype=release -D docs=disabled -D docdir=/usr/share/doc/Linux-PAM-$pkgver
   ninja -C build
 }
 package() {

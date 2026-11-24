@@ -1,0 +1,13 @@
+libunistring
+libidn2
+libpsl
+libtasn1
+p11-kit
+make-ca
+nghttp2
+curl
+wget
+git
+openssh
+naranjos-red
+naranjos-base

@@ -1,16 +1,17 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-5c3.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6f9.sh (NO editar a mano)
 pkgname=naranjos-red
-pkgver=0.1.0
+pkgver=0.1.1
 pkgrel=1
-pkgdesc='Red de NaranjOS: WiFi con iwd + systemd-networkd y hora por internet'
+pkgdesc='Red de NaranjOS: WiFi con iwd + systemd-networkd, hora por internet y arranque sin esperas'
 arch=('any')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
 depends=('iwd')
-source=('25-naranjos-wifi.network' 'timesyncd-naranjos.conf')
-sha256sums=('922dd826a671214cc61f4f80f6230997036ca67e2d2f04ada01c649b56e66516' '08eed1a553f7491236f12a959d25fbf9d01f0ce796f2221e74a95323ec6ddaaf')
+source=('25-naranjos-wifi.network' 'timesyncd-naranjos.conf' 'wait-online-naranjos.conf')
+sha256sums=('922dd826a671214cc61f4f80f6230997036ca67e2d2f04ada01c649b56e66516' '08eed1a553f7491236f12a959d25fbf9d01f0ce796f2221e74a95323ec6ddaaf' 'abc824e80e301be7855d4b5c2b7e9e5eff6508e597bec534da2fd0f51b62b305')
 install=naranjos-red.install
 package() {
   install -Dm644 25-naranjos-wifi.network  "$pkgdir/usr/lib/systemd/network/25-naranjos-wifi.network"
   install -Dm644 timesyncd-naranjos.conf   "$pkgdir/usr/lib/systemd/timesyncd.conf.d/naranjos.conf"
+  install -Dm644 wait-online-naranjos.conf "$pkgdir/usr/lib/systemd/system/systemd-networkd-wait-online.service.d/naranjos.conf"
 }

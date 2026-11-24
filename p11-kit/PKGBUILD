@@ -1,0 +1,35 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
+pkgname=p11-kit
+pkgver=0.26.5
+pkgrel=1
+pkgdesc='Almacén de certificados de confianza del sistema'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=('libtasn1' 'libffi')
+makedepends=('meson' 'ninja')
+source=('https://github.com/p11-glue/p11-kit/releases/download/0.26.5/p11-kit-0.26.5.tar.xz')
+sha256sums=('f2cc09111e44bf3fea58f023180b33acea90aa82d042d6fbb623fbc5ba033bb7')
+prepare() {
+  cd p11-kit-$pkgver
+  # «update-ca-certificates» de NaranjOS: copia los cambios locales y rehace los almacenes con make-ca (BLFS)
+  sed '20,$ d' -i trust/trust-extract-compat
+  cat >> trust/trust-extract-compat << "FIN"
+# Copy existing anchor modifications to /etc/ssl/local
+/usr/libexec/make-ca/copy-trust-modifications
+
+# Update trust stores
+/usr/sbin/make-ca -r
+FIN
+}
+build() {
+  cd p11-kit-$pkgver
+  meson setup p11-build --prefix=/usr --buildtype=release -D trust_paths=/etc/pki/anchors
+  ninja -C p11-build
+}
+package() {
+  cd p11-kit-$pkgver
+  DESTDIR="$pkgdir" ninja -C p11-build install
+  ln -sf /usr/libexec/p11-kit/trust-extract-compat "$pkgdir/usr/bin/update-ca-certificates"
+  ln -sf ./pkcs11/p11-kit-trust.so "$pkgdir/usr/lib/libnssckbi.so"
+}

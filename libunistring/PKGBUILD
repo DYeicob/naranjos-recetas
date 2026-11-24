@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
+pkgname=libunistring
+pkgver=1.4.2
+pkgrel=1
+pkgdesc='Funciones para texto Unicode (las usan libidn2, wget…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-3.0-or-later' 'GPL-2.0-or-later')
+depends=('glibc')
+makedepends=()
+source=('https://ftpmirror.gnu.org/libunistring/libunistring-1.4.2.tar.xz')
+sha256sums=('5b46e74377ed7409c5b75e7a96f95377b095623b689d8522620927964a41499c')
+build() {
+  cd libunistring-$pkgver
+  ./configure --prefix=/usr --disable-static --docdir=/usr/share/doc/libunistring-$pkgver
+  make
+}
+package() {
+  cd libunistring-$pkgver
+  make DESTDIR="$pkgdir" install
+}

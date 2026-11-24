@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
+pkgname=nghttp2
+pkgver=1.70.0
+pkgrel=1
+pkgdesc='HTTP/2 (la librería que usa curl)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=('glibc')
+makedepends=()
+source=('https://github.com/nghttp2/nghttp2/releases/download/v1.70.0/nghttp2-1.70.0.tar.xz')
+sha256sums=('e05cb1388eaca3830aded4ccf20044b6e1ac1a61411dcca11b0437c4285c8bc2')
+provides=('libnghttp2')
+build() {
+  cd nghttp2-$pkgver
+  ./configure --prefix=/usr --disable-static --enable-lib-only --docdir=/usr/share/doc/nghttp2-$pkgver
+  make
+}
+package() {
+  cd nghttp2-$pkgver
+  make DESTDIR="$pkgdir" install
+}

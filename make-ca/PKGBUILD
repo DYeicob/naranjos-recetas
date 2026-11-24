@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
+pkgname=make-ca
+pkgver=1.16.1
+pkgrel=1
+pkgdesc='Genera los almacenes de certificados (OpenSSL, p11-kit, Java…) desde los de Mozilla'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT' 'GPL-3.0-or-later')
+depends=('p11-kit' 'openssl' 'coreutils')
+makedepends=('perl')
+source=('https://github.com/lfs-book/make-ca/archive/v1.16.1/make-ca-1.16.1.tar.gz')
+sha256sums=('98c7e6fded1938b972d0177b5d5e925d318be87f84ee9e4cad680656a8c29414')
+prepare() {
+  cd make-ca-$pkgver
+  sed '/mktemp/s/-t //' -i make-ca
+}
+package() {
+  cd make-ca-$pkgver
+  make DESTDIR="$pkgdir" install
+  install -dm755 "$pkgdir/etc/ssl/local"
+}

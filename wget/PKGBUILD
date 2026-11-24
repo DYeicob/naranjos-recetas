@@ -1,0 +1,28 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
+pkgname=wget
+pkgver=1.25.0
+pkgrel=1
+pkgdesc='Descargar ficheros desde la terminal'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('openssl' 'libpsl' 'libidn2' 'pcre2' 'zlib')
+makedepends=()
+source=('https://ftpmirror.gnu.org/wget/wget-1.25.0.tar.gz')
+sha256sums=('766e48423e79359ea31e41db9e5c289675947a7fcf2efdcedb726ac9d0da3784')
+backup=('etc/wgetrc')
+prepare() {
+  cd wget-$pkgver
+  # OpenSSL 4 ya no tiene SSLv3 (BLFS)
+  local l='#if !defined OPENSSL_NO_SSL3_METHOD && OPENSSL_VERSION_NUMBER < 0x40000000L'
+  sed -i "/SSL3/c $l" src/openssl.c
+}
+build() {
+  cd wget-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc --with-ssl=openssl
+  make
+}
+package() {
+  cd wget-$pkgver
+  make DESTDIR="$pkgdir" install
+}

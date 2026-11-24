@@ -1,0 +1,24 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
+pkgname=git
+pkgver=2.55.0
+pkgrel=1
+pkgdesc='Control de versiones (con él se bajan las recetas de NaranjOS)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-only')
+depends=('curl' 'expat' 'openssl' 'pcre2' 'zlib' 'perl' 'python')
+makedepends=()
+source=('https://www.kernel.org/pub/software/scm/git/git-2.55.0.tar.xz' 'https://www.kernel.org/pub/software/scm/git/git-manpages-2.55.0.tar.xz')
+sha256sums=('457fdb04dc8728e007d4688695e6912e6f680727920f2a40bf11eacc17505357' 'a32d432f80df46a14a05d1104c72d5a13fe27e9feba9aa0f017e54131db6b982')
+noextract=('git-manpages-2.55.0.tar.xz')
+build() {
+  cd git-$pkgver
+  ./configure --prefix=/usr --with-gitconfig=/etc/gitconfig --with-python=python3 --with-libpcre2
+  make NO_RUST=1
+}
+package() {
+  cd git-$pkgver
+  make NO_RUST=1 perllibdir=/usr/lib/perl5/5.44/site_perl DESTDIR="$pkgdir" install
+  install -d "$pkgdir/usr/share/man"
+  tar -xf ../git-manpages-$pkgver.tar.xz -C "$pkgdir/usr/share/man" --no-same-owner --no-overwrite-dir
+}

@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
+pkgname=libtasn1
+pkgver=4.21.0
+pkgrel=1
+pkgdesc='Lector de ASN.1 (el formato de los certificados)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later' 'GPL-3.0-or-later')
+depends=('glibc')
+makedepends=()
+source=('https://ftpmirror.gnu.org/libtasn1/libtasn1-4.21.0.tar.gz')
+sha256sums=('1d8a444a223cc5464240777346e125de51d8e6abf0b8bac742ac84609167dc87')
+build() {
+  cd libtasn1-$pkgver
+  ./configure --prefix=/usr --disable-static
+  make
+}
+package() {
+  cd libtasn1-$pkgver
+  make DESTDIR="$pkgdir" install
+  make -C doc/reference DESTDIR="$pkgdir" install-data-local
+}

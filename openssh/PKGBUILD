@@ -1,0 +1,31 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
+pkgname=openssh
+pkgver=10.5p1
+pkgrel=1
+pkgdesc='SSH: conectarse a otros equipos (y servidor SSH, apagado de serie)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('SSH-OpenSSH')
+depends=('openssl' 'zlib' 'linux-pam' 'libxcrypt')
+makedepends=()
+source=('https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.5p1.tar.gz' 'sshd.service')
+sha256sums=('d44d28a839ea9daf969cc69150fde59910b2b39361dad81a3bd6cbd19218db11' '437d905c8e7222092c38c649703567f43f188a9384c067c74c2417a58fe04c1a')
+backup=('etc/ssh/ssh_config' 'etc/ssh/sshd_config' 'etc/ssh/moduli')
+install=openssh.install
+build() {
+  cd openssh-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc/ssh --with-privsep-path=/var/lib/sshd \
+              --with-default-path=/usr/bin --with-superuser-path=/usr/sbin:/usr/bin \
+              --with-pid-dir=/run --with-pam
+  make
+}
+package() {
+  cd openssh-$pkgver
+  make DESTDIR="$pkgdir" install
+  install -m755 contrib/ssh-copy-id "$pkgdir/usr/bin"
+  install -m644 contrib/ssh-copy-id.1 "$pkgdir/usr/share/man/man1"
+  install -dm755 "$pkgdir/usr/share/doc/openssh-$pkgver"
+  install -m644 INSTALL LICENCE OVERVIEW README* "$pkgdir/usr/share/doc/openssh-$pkgver"
+  install -dm700 "$pkgdir/var/lib/sshd"
+  install -Dm644 ../sshd.service "$pkgdir/usr/lib/systemd/system/sshd.service"
+}
