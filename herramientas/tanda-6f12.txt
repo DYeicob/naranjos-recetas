@@ -1,0 +1,6 @@
+binutils
+gcc
+grub
+openssh
+glibc
+naranjos-base

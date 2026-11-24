@@ -1,0 +1,34 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f12.sh
+pkgname=grub
+pkgver=2.14
+pkgrel=1
+pkgdesc='GRUB: cargador de arranque (BIOS y UEFI)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'xz')
+makedepends=()
+source=('https://ftpmirror.gnu.org/grub/grub-2.14.tar.xz')
+sha256sums=('bc8d3c73535b8838d8c8e2654d73edc4e6ae8c8acdb45d5df5dc9a1547446d43')
+options=('!buildflags' '!lto' '!strip' '!debug')
+backup=('etc/grub.d/40_custom' 'etc/grub.d/41_custom')
+prepare() {
+  cd grub-$pkgver
+  sed 's/--image-base/--nonexist-linker-option/' -i configure
+  cd ..
+  rm -rf grub-efi && cp -a grub-$pkgver grub-efi
+}
+build() {
+  cd grub-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc --disable-efiemu --disable-werror
+  make
+  cd ../grub-efi
+  ./configure --prefix=/usr --sysconfdir=/etc --target=x86_64 --with-platform=efi --disable-efiemu --disable-werror
+  make
+}
+package() {
+  cd grub-$pkgver
+  make DESTDIR="$pkgdir" install
+  cd ../grub-efi
+  make DESTDIR="$pkgdir" install
+}

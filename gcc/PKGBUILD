@@ -1,0 +1,38 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f12.sh
+pkgname=gcc
+pkgver=16.2.0
+pkgrel=1
+pkgdesc='Compilador de C y C++ (GCC), con sus librerías'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later' 'GCC-exception-3.1')
+depends=('glibc' 'binutils' 'gmp' 'mpfr' 'mpc' 'zlib' 'zstd')
+makedepends=()
+source=('https://ftpmirror.gnu.org/gcc/gcc-16.2.0/gcc-16.2.0.tar.xz')
+sha256sums=('e6738e29597f733270731aa90600f37ffdc045079dfc27ec7e8192cc81085c3e')
+options=('!buildflags' '!lto' '!strip' '!debug' 'staticlibs')
+provides=('gcc-libs' 'libgcc' 'libstdc++')
+prepare() {
+  cd gcc-$pkgver
+  sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
+}
+build() {
+  cd gcc-$pkgver
+  mkdir -p build && cd build
+  ../configure --prefix=/usr LD=ld --enable-languages=c,c++ --enable-default-pie --enable-default-ssp \
+               --enable-host-pie --enable-targets=all --disable-multilib --disable-bootstrap \
+               --disable-fixincludes --with-system-zlib
+  make
+}
+package() {
+  cd gcc-$pkgver/build
+  make DESTDIR="$pkgdir" install
+  ln -s gcc "$pkgdir/usr/bin/cc"
+  ln -sr "$pkgdir/usr/bin/cpp" "$pkgdir/usr/lib/cpp"
+  ln -s gcc.1 "$pkgdir/usr/share/man/man1/cc.1"
+  install -dm755 "$pkgdir/usr/lib/bfd-plugins"
+  ln -sr "$pkgdir"/usr/libexec/gcc/*/$pkgver/liblto_plugin.so "$pkgdir/usr/lib/bfd-plugins/"
+  install -dm755 "$pkgdir/usr/share/gdb/auto-load/usr/lib"
+  local f
+  for f in "$pkgdir"/usr/lib/*gdb.py; do [ -e "$f" ] && mv "$f" "$pkgdir/usr/share/gdb/auto-load/usr/lib/"; done
+}

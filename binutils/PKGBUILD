@@ -1,0 +1,26 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f12.sh
+pkgname=binutils
+pkgver=2.47
+pkgrel=1
+pkgdesc='Ensamblador, enlazador y compañía (as, ld…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'zlib' 'zstd')
+makedepends=()
+source=('https://sourceware.org/pub/binutils/releases/binutils-2.47.tar.xz')
+sha256sums=('154ab23b60070e8f27013c22977f1129425d67d1e8acd6e13010e617811e4cff')
+options=('!buildflags' '!lto' '!strip' '!debug' 'staticlibs')
+build() {
+  cd binutils-$pkgver
+  mkdir -p build && cd build
+  ../configure --prefix=/usr --sysconfdir=/etc --enable-ld=default --enable-plugins --enable-shared \
+               --disable-werror --enable-64-bit-bfd --enable-new-dtags --with-system-zlib \
+               --with-lib-path=/usr/lib --enable-default-hash-style=gnu
+  make tooldir=/usr
+}
+package() {
+  cd binutils-$pkgver/build
+  make tooldir=/usr DESTDIR="$pkgdir" install
+  rm -rf "$pkgdir"/usr/lib/lib{bfd,ctf,ctf-nobfd,gprofng,opcodes,sframe}.a "$pkgdir/usr/share/doc/gprofng"
+}

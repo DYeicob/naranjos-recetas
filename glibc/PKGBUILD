@@ -1,0 +1,92 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6f12.sh
+pkgname=glibc
+pkgver=2.44
+pkgrel=1
+pkgdesc='Librería de C de GNU (glibc), con los idiomas de NaranjOS'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later' 'GPL-2.0-or-later')
+depends=()
+makedepends=()
+source=('https://ftpmirror.gnu.org/glibc/glibc-2.44.tar.xz' 'glibc-fhs-1.patch' 'glibc-2.44-upstream_fixes-1.patch' 'ld.so.conf' 'nsswitch.conf')
+sha256sums=('37f600f2bef3c5e8300147059568b2a2e40a7ad6ccc65ce942556d49429cc667' '643552db030e2f2d7ffde4f558e0f5f83d3fabf34a2e0e56ebdb49750ac27b0d' '500567ff0a22e295bfe3b55e9b397796f71a19f01e1ff7fb29c9189482ee1809' '174aa7ad122e99d181a1f37175033d933c22b873867dbd06cc6822ea08d77fb6' 'f86fc39cffef8960af4006d478f2e33d1aba708c019e0337cceed8b2c4853b58')
+options=('!buildflags' '!lto' '!strip' '!debug' 'staticlibs')
+backup=('etc/ld.so.conf' 'etc/nsswitch.conf')
+prepare() {
+  cd glibc-$pkgver
+  patch -Np1 -i ../glibc-fhs-1.patch
+  patch -Np1 -i ../glibc-2.44-upstream_fixes-1.patch
+  sed '/test-installation/s@$(PERL)@echo not running@' -i Makefile
+}
+build() {
+  cd glibc-$pkgver
+  mkdir -p build && cd build
+  # ldconfig y sln a /usr/sbin (en NaranjOS /sbin es un enlace a usr/sbin)
+  echo "rootsbindir=/usr/sbin" > configparms
+  ../configure --prefix=/usr --disable-werror --disable-nscd libc_cv_slibdir=/usr/lib \
+               --enable-stack-protector=strong --enable-kernel=5.10
+  make
+}
+package() {
+  cd glibc-$pkgver/build
+  install -dm755 "$pkgdir/etc/ld.so.conf.d"
+  install -m644 "$srcdir/ld.so.conf" "$pkgdir/etc/ld.so.conf"
+  make install_root="$pkgdir" install
+  rm -f "$pkgdir/etc/ld.so.cache"
+  sed '/RTLDLIST=/s@/usr@@g' -i "$pkgdir/usr/bin/ldd"
+  install -m644 "$srcdir/nsswitch.conf" "$pkgdir/etc/nsswitch.conf"
+  # el cargador dinámico en /lib64, como lo dejó LFS (/lib64 es una carpeta de verdad)
+  install -dm755 "$pkgdir/lib64"
+  ln -sf ../lib/ld-linux-x86-64.so.2 "$pkgdir/lib64/ld-linux-x86-64.so.2"
+  ln -sf ../lib/ld-linux-x86-64.so.2 "$pkgdir/lib64/ld-lsb-x86-64.so.3"
+  # /bin, /sbin y /lib son enlaces a usr/ en NaranjOS: el paquete NO puede traerlos como carpetas
+  local d
+  for d in bin sbin lib; do
+    [ ! -e "$pkgdir/$d" ] || { echo "glibc: el paquete trae /$d (debe ir en /usr/$d)"; return 1; }
+  done
+  # idiomas: la lista de LFS + español y gallego de NaranjOS (con el localedef del sistema, misma versión)
+  install -dm755 "$pkgdir/usr/lib/locale"
+  local l
+  while read -r l; do
+    set -- $l
+    localedef --prefix="$pkgdir" -i "$1" -f "$2" "$3" || echo "glibc: aviso en el idioma $3 (LFS: inofensivo)"
+  done << "FIN"
+C UTF-8 C.UTF-8
+cs_CZ UTF-8 cs_CZ.UTF-8
+de_DE ISO-8859-1 de_DE
+de_DE@euro ISO-8859-15 de_DE@euro
+de_DE UTF-8 de_DE.UTF-8
+el_GR ISO-8859-7 el_GR
+en_GB ISO-8859-1 en_GB
+en_GB UTF-8 en_GB.UTF-8
+en_HK ISO-8859-1 en_HK
+en_PH ISO-8859-1 en_PH
+en_US ISO-8859-1 en_US
+en_US UTF-8 en_US.UTF-8
+es_ES ISO-8859-15 es_ES@euro
+es_MX ISO-8859-1 es_MX
+fa_IR UTF-8 fa_IR
+fr_FR ISO-8859-1 fr_FR
+fr_FR@euro ISO-8859-15 fr_FR@euro
+fr_FR UTF-8 fr_FR.UTF-8
+is_IS ISO-8859-1 is_IS
+is_IS UTF-8 is_IS.UTF-8
+it_IT ISO-8859-1 it_IT
+it_IT ISO-8859-15 it_IT@euro
+it_IT UTF-8 it_IT.UTF-8
+ja_JP EUC-JP ja_JP
+ja_JP UTF-8 ja_JP.UTF-8
+nl_NL@euro ISO-8859-15 nl_NL@euro
+ru_RU KOI8-R ru_RU.KOI8-R
+ru_RU UTF-8 ru_RU.UTF-8
+se_NO UTF-8 se_NO.UTF-8
+ta_IN UTF-8 ta_IN.UTF-8
+tr_TR UTF-8 tr_TR.UTF-8
+zh_CN GB18030 zh_CN.GB18030
+zh_HK BIG5-HKSCS zh_HK.BIG5-HKSCS
+zh_TW UTF-8 zh_TW.UTF-8
+es_ES UTF-8 es_ES.UTF-8
+gl_ES UTF-8 gl_ES.UTF-8
+FIN
+  [ -s "$pkgdir/usr/lib/locale/locale-archive" ] || { echo "glibc: no se generaron los idiomas"; return 1; }
+}
