@@ -1,0 +1,4 @@
+popt
+efivar
+efibootmgr
+naranjos-base

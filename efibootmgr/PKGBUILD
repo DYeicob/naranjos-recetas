@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6g2.sh
+pkgname=efibootmgr
+pkgver=18
+pkgrel=1
+pkgdesc='Entradas de arranque del firmware UEFI (efibootmgr)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('efivar' 'popt')
+makedepends=()
+source=('https://github.com/rhboot/efibootmgr/releases/download/18/efibootmgr-18.tar.bz2')
+sha256sums=('2b195f912aa353f0d11f21f207684c91460fbc37f9a4f2673e63e5e32d108b10')
+options=('!lto')
+build() {
+  cd efibootmgr-$pkgver
+  make EFIDIR=naranjos EFI_LOADER=shimx64.efi
+}
+package() {
+  cd efibootmgr-$pkgver
+  make install EFIDIR=naranjos DESTDIR="$pkgdir"
+}

@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6g2.sh
+pkgname=efivar
+pkgver=39
+pkgrel=1
+pkgdesc='Leer y escribir variables UEFI (efivar, libefivar, libefiboot)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('glibc')
+makedepends=()
+source=('https://github.com/rhboot/efivar/archive/39/efivar-39.tar.gz')
+sha256sums=('c9edd15f2eeeea63232f3e669a48e992c7be9aff57ee22672ac31f5eca1609a6')
+options=('!lto')
+build() {
+  cd efivar-$pkgver
+  # makepkg exporta CFLAGS: así no entra el -Werror de efivar (GCC 16 avisa de más)
+  make ENABLE_DOCS=0
+}
+package() {
+  cd efivar-$pkgver
+  make install ENABLE_DOCS=0 LIBDIR=/usr/lib DESTDIR="$pkgdir"
+}
