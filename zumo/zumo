@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 # zumo — gestor de paquetes de NaranjOS (usa pacman por dentro)
 # Textos traducibles con gettext (dominio «naranjos»): naranjos-idioma cambia el idioma.
-VERSION="0.3.2"
+VERSION="0.3.3"
 export TEXTDOMAIN=naranjos TEXTDOMAINDIR=/usr/share/locale
 _(){ gettext "$1" 2>/dev/null || printf '%s' "$1"; }
 # _f <texto con %s> <datos…>: texto traducido con datos dentro
@@ -38,6 +38,8 @@ ayuda(){
   printf "$f" archivos  files        "<paq>"   "$(_ 'Ficheros que instaló un paquete')"
   printf "$f" de        owns         "<fich>"  "$(_ 'Qué paquete instaló un fichero')"
   printf "$f" huerfanos orphans      ""        "$(_ 'Dependencias que ya nadie usa')"
+  printf "$f" licencia  license      "<paq>"   "$(_ 'Licencia de un paquete')"
+  printf "$f" fuentes   source       "<paq>"   "$(_ 'Baja su código fuente (receta, parches y original)')"
   printf '\n%s%s%s\n' "$B" "$(_ 'Para quien crea paquetes')" "$Z"
   printf "$f" exprime   build        "[-i] [-y] [-a] <receta...>" ""
   printf '               %s\n' "$(_ 'Construye, firma y añade al repositorio')"
@@ -133,6 +135,56 @@ actualiza(){
   fi
   $SUDO pacman -Su "$@"
 }
+
+# versión y receta (pkgbase) de un paquete instalado o del repositorio: «receta versión»
+version_de(){
+  local v d b
+  v=$(pacman -Q "$1" 2>/dev/null | awk '{print $2}')
+  if [ -n "$v" ]; then
+    d="/var/lib/pacman/local/$1-$v/desc"
+    b=$(awk '/^%BASE%$/{getline; print; exit}' "$d" 2>/dev/null)
+    echo "${b:-$1} $v"; return 0
+  fi
+  v=$(pacman -Sl naranjos-core 2>/dev/null | awk -v p="$1" '$2==p{print $3; exit}')
+  [ -n "$v" ] && { echo "$1 $v"; return 0; }
+  return 1
+}
+
+# zumo fuentes <paq…>: baja a la carpeta actual el código fuente con el que se hizo el paquete
+fuentes(){
+  hace_falta "$@"
+  local p b v f l="${ZUMO_FUENTES:-/srv/zumo/naranjos-fuentes}"
+  local url="https://github.com/DYeicob/naranjos-recetas/releases/download/naranjos-fuentes"
+  for p in "$@"; do
+    read -r b v < <(version_de "$p") || die "$(_f "no conozco el paquete '%s'" "$p")"
+    f="$b-$v.src.tar.gz"
+    if [ -s "$l/$f" ]; then cp "$l/$f" "./$f"
+    else
+      msg "$(_f 'Bajando %s…' "$f")"
+      curl -fL --retry 3 --progress-bar -o "./$f.part" "$url/$f" && mv "./$f.part" "./$f" \
+        || { rm -f "./$f.part"; die "$(_f 'No pude bajar %s (¿está publicado en la Release naranjos-fuentes?)' "$f")"; }
+    fi
+    okm "$(_f '%s: receta, parches y fuente original (ábrelo con: bsdtar -xf %s)' "$PWD/$f" "$f")"
+  done
+}
+
+# zumo licencia <paq…>: la licencia de un paquete instalado y dónde está su texto
+licencia(){
+  hace_falta "$@"
+  local p b v lic d hay
+  for p in "$@"; do
+    pacman -Q "$p" >/dev/null 2>&1 || die "$(_f "'%s' no está instalado" "$p")"
+    read -r b v < <(version_de "$p")
+    lic=$(awk '/^%LICENSE%$/{f=1; next} /^$/{f=0} f' "/var/lib/pacman/local/$p-$v/desc" | tr '\n' ' ')
+    msg "${B}$p${Z} $v · ${lic:-?}"
+    hay=0
+    for d in "/usr/share/licenses/$p" "/usr/share/licenses/$b"; do
+      [ -d "$d" ] || continue
+      find "$d" -type f | sort | sed 's/^/     /'; hay=1; break
+    done
+    [ $hay = 1 ] || printf '     %s\n' "$(_f 'Texto completo: en su código fuente (zumo fuentes %s)' "$p")"
+  done
+}
 ORDEN="${1:-ayuda}"; shift || true
 case "$ORDEN" in
   instala|install|i)          hace_falta "$@"; $SUDO pacman -S "$@" ;;
@@ -145,6 +197,8 @@ case "$ORDEN" in
   lista|list|ls)              pacman -Q "$@" ;;
   archivos|files)             hace_falta "$@"; pacman -Ql "$@" ;;
   de|owns)                    hace_falta "$@"; pacman -Qo "$@" ;;
+  fuentes|source|src)         fuentes "$@" ;;
+  licencia|license|lic)       licencia "$@" ;;
   huerfanos|huérfanos|orphans) pacman -Qdt || msg "$(_ 'No hay huérfanos.')" ;;
   limpia|clean)               H=$(pacman -Qdtq 2>/dev/null || true)
                               if [ -n "$H" ]; then msg "$(_ 'Quitando huérfanos…')"; $SUDO pacman -Rns $H; else msg "$(_ 'No hay huérfanos.')"; fi
