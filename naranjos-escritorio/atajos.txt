@@ -1,6 +1,9 @@
 ── APLICACIONES ─────────────────────────────────────────
 Super + Enter             Abrir la terminal
-Super + Espacio           Lanzador de aplicaciones
+Super + Espacio           Menú de NaranjOS (aplicaciones, ajustes, temas…; escribe para buscar)
+Super + Alt + Espacio     Solo aplicaciones
+Super + Ctrl + Espacio    Otro fondo de pantalla
+Super + Ctrl + N          Luz nocturna
 Super + B                 Navegador (Firefox)
 Super + K                 Esta lista de atajos
 Super + H                 Manual de NaranjOS

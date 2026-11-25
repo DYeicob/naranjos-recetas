@@ -6,6 +6,7 @@
 #   naranjos-tema siguiente       pasa al siguiente
 #   naranjos-tema menu            elegirlo en un menú (Super + Ctrl + T)
 #   naranjos-tema revisa          qué ficheros tuyos de ~/.config no siguen el tema
+#   naranjos-tema fondo [siguiente] otro fondo del tema (Super + Ctrl + Espacio)
 # El tema elegido es un enlace: ~/.config/naranjos/tema → /usr/share/naranjos/temas/<tema>
 set -uo pipefail
 if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; fi
@@ -59,11 +60,15 @@ revisa(){
 }
 
 # el fondo: solo se cambia si el tuyo es uno de NaranjOS (si pusiste otra imagen, se respeta)
-pon_fondo(){
+pon_fondo(){  # pon_fondo <imagen> [--siempre]
   local fondo="$1" f="$CONF/hypr/hyprpaper.conf" m ok=0
   [ -f "$f" ] || return 0
-  grep -qE '^[[:space:]]*path[[:space:]]*=[[:space:]]*/usr/share/backgrounds/naranjos/' "$f" || return 0
-  sed -i -E "s|^([[:space:]]*path[[:space:]]*=[[:space:]]*)/usr/share/backgrounds/naranjos/[^[:space:]]*|\1$fondo|" "$f"
+  if [ "${2:-}" = --siempre ]; then
+    sed -i -E "0,/^[[:space:]]*path[[:space:]]*=/s|^([[:space:]]*path[[:space:]]*=[[:space:]]*).*|\1$fondo|" "$f"
+  else
+    grep -qE '^[[:space:]]*path[[:space:]]*=[[:space:]]*/usr/share/backgrounds/naranjos/' "$f" || return 0
+    sed -i -E "s|^([[:space:]]*path[[:space:]]*=[[:space:]]*)/usr/share/backgrounds/naranjos/[^[:space:]]*|\1$fondo|" "$f"
+  fi
   [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] || return 0
   # en caliente, por IPC (sin reiniciar hyprpaper): pantalla a pantalla
   if pgrep -x hyprpaper >/dev/null; then
@@ -130,6 +135,20 @@ pon(){
   revisa >/dev/null || revisa || true
 }
 
+# otro fondo del tema puesto (los naranjos-0N.jpg de su carpeta), en orden
+fondo(){
+  local t FONDO="" dir act l=() i sig
+  t=$(actual); . "$TEMAS/$t/colores"
+  dir=$(dirname "$FONDO")
+  mapfile -t l < <(ls "$dir"/naranjos-0[0-9].jpg 2>/dev/null | sort)
+  [ ${#l[@]} -gt 0 ] || die "$(_ 'No encuentro fondos en') $dir"
+  act=$(sed -nE 's/^[[:space:]]*path[[:space:]]*=[[:space:]]*//p' "$CONF/hypr/hyprpaper.conf" 2>/dev/null | head -n1)
+  sig=${l[0]}
+  for i in "${!l[@]}"; do [ "${l[$i]}" = "$act" ] && sig=${l[$(( (i + 1) % ${#l[@]} ))]}; done
+  pon_fondo "$sig" --siempre
+  printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Fondo:')" "$(basename "$sig")"
+}
+
 siguiente(){
   local a i n=${#ORDEN[@]}; a=$(actual)
   for i in "${!ORDEN[@]}"; do [ "${ORDEN[$i]}" = "$a" ] && { pon "${ORDEN[$(( (i + 1) % n ))]}"; return; }; done
@@ -155,6 +174,7 @@ case "${1:-}" in
   siguiente|next)  siguiente ;;
   menu)            menu ;;
   actual|current)  actual ;;
+  fondo|wallpaper) fondo ;;
   revisa|check)    revisa && printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Todo sigue el tema.')" ;;
   ayuda|help|-h|--help)
     sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//' ;;

@@ -11,18 +11,18 @@
 
   "modules-left":   ["image#naranjos", "custom/naranjos", "hyprland/workspaces", "hyprland/window"],
   "modules-center": ["clock"],
-  "modules-right":  ["custom/peel", "bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "custom/sistema"],
+  "modules-right":  ["custom/peel", "custom/noche", "bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "custom/sistema"],
 
   "image#naranjos": {
     "path": "/usr/share/naranjos/logo/naranjos-logo-plano-48.png",
     "size": 20,
     "tooltip": false,
-    "on-click": "fuzzel"
+    "on-click": "naranjos-menu"
   },
   "custom/naranjos": {
     "format": "NaranjOS",
     "tooltip": false,
-    "on-click": "fuzzel"
+    "on-click": "naranjos-menu"
   },
   "hyprland/workspaces": {
     "format": "{id}",
@@ -99,6 +99,14 @@
     "interval": 30,
     "on-click": "naranjos-tui seguridad",
     "on-click-right": "naranjos-tui vpn"
+  },
+  "custom/noche": {
+    "exec": "naranjos-noche barra",
+    "return-type": "json",
+    "interval": 60,
+    "signal": 9,
+    "on-click": "naranjos-noche alterna",
+    "on-click-right": "naranjos-noche menu"
   },
   "custom/sistema": {
     "format": "",

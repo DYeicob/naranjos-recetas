@@ -1,0 +1,68 @@
+#!/bin/bash
+# naranjos-osd — aviso en pantalla de NaranjOS al cambiar el volumen, el micrófono o el brillo (fase 6k2)
+#   naranjos-osd volumen +5 | -5 | silencio
+#   naranjos-osd micro                     (silenciar / activar el micrófono)
+#   naranjos-osd brillo +5 | -5
+# Es una notificación de mako con barra de progreso (del color del tema) que se va sola;
+# cada aviso sustituye al anterior.
+set -uo pipefail
+if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; fi
+ID=${XDG_RUNTIME_DIR:-/tmp}/naranjos-osd.id
+
+# muestra <icono+texto> [valor 0-100]
+muestra(){
+  local texto="$1" valor="${2:-}" viejo=0 nuevo
+  [ -r "$ID" ] && viejo=$(cat "$ID" 2>/dev/null || echo 0)
+  [[ "$viejo" =~ ^[0-9]+$ ]] || viejo=0
+  if [ -n "$valor" ]; then
+    nuevo=$(busctl --user call org.freedesktop.Notifications /org/freedesktop/Notifications \
+      org.freedesktop.Notifications Notify 'susssasa{sv}i' \
+      naranjos-osd "$viejo" "" "$texto" "" 0 2 urgency y 0 value i "$valor" 1500 2>/dev/null)
+  else
+    nuevo=$(busctl --user call org.freedesktop.Notifications /org/freedesktop/Notifications \
+      org.freedesktop.Notifications Notify 'susssasa{sv}i' \
+      naranjos-osd "$viejo" "" "$texto" "" 0 1 urgency y 0 1500 2>/dev/null)
+  fi
+  nuevo=${nuevo#u }
+  [[ "$nuevo" =~ ^[0-9]+$ ]] && echo "$nuevo" > "$ID"
+  return 0
+}
+
+volumen(){
+  local s=@DEFAULT_AUDIO_SINK@ l v pct icono
+  case "${1:-}" in
+    +*) wpctl set-mute "$s" 0; wpctl set-volume -l 1 "$s" "${1#+}%+" ;;
+    -*) wpctl set-volume "$s" "${1#-}%-" ;;
+    silencio|mute) wpctl set-mute "$s" toggle ;;
+  esac
+  l=$(wpctl get-volume "$s" 2>/dev/null) || { muestra "󰖁  $(_ 'Sin salida de sonido')"; return; }
+  v=$(awk '{print $2}' <<< "$l"); pct=$(awk -v v="$v" 'BEGIN{printf "%d", v*100 + 0.5}')
+  if [[ "$l" == *MUTED* ]]; then muestra "󰖁  $(_ 'Silencio')" 0; return; fi
+  if [ "$pct" -ge 66 ]; then icono=󰕾; elif [ "$pct" -ge 33 ]; then icono=󰖀; else icono=󰕿; fi
+  muestra "$icono  $pct%" "$pct"
+}
+
+micro(){
+  local s=@DEFAULT_AUDIO_SOURCE@
+  wpctl set-mute "$s" toggle
+  if wpctl get-volume "$s" 2>/dev/null | grep -q MUTED; then muestra "󰍭  $(_ 'Micrófono silenciado')"
+  else muestra "󰍬  $(_ 'Micrófono activo')"; fi
+}
+
+brillo(){
+  local pct
+  case "${1:-}" in
+    +*) brightnessctl -q -e4 -n2 set "${1#+}%+" ;;
+    -*) brightnessctl -q -e4 -n2 set "${1#-}%-" ;;
+  esac
+  pct=$(brightnessctl -m 2>/dev/null | awk -F, '{gsub("%","",$4); print $4; exit}')
+  [[ "$pct" =~ ^[0-9]+$ ]] || return 0
+  muestra "󰃠  $pct%" "$pct"
+}
+
+case "${1:-}" in
+  volumen|volume) volumen "${2:-}" ;;
+  micro|mic)      micro ;;
+  brillo|brightness) brillo "${2:-}" ;;
+  *) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

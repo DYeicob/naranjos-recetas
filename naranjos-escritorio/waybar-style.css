@@ -67,3 +67,6 @@ tooltip label { color: @texto; }
   color: @acento;
   padding: 0 16px 0 10px;
 }
+#custom-noche          { color: @apagado; padding: 0 9px; }
+#custom-noche.calida   { color: @acento2; }
+#custom-noche.apagada  { color: @inactivo; }

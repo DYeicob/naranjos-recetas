@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6k2.sh
+pkgname=hyprsunset
+pkgver=0.4.0
+pkgrel=1
+pkgdesc='Filtro de luz azul de Hyprland (lo usa la luz nocturna de NaranjOS)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=('hyprlang' 'hyprutils' 'wayland')
+makedepends=('cmake' 'ninja' 'hyprland-protocols' 'hyprwayland-scanner' 'wayland-protocols')
+source=('https://github.com/hyprwm/hyprsunset/archive/v0.4.0/hyprsunset-0.4.0.tar.gz')
+sha256sums=('5980e65ec650010e36c52e5f5acc0df9fd2d20051c63b89305bdc13276f237a6')
+build()   { cd hyprsunset-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+package() { cd hyprsunset-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

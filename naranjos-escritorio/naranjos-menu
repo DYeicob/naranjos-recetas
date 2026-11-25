@@ -1,0 +1,133 @@
+#!/bin/bash
+# naranjos-menu — el menú de NaranjOS (Super + Espacio) (fase 6k2)
+#   Arriba, las secciones; debajo, TODO lo demás (aplicaciones y cada opción de cada sección),
+#   así que basta con empezar a escribir: «lima», «wifi», «firefox», «apagar»…
+#   naranjos-menu [aplicaciones|aspecto|ajustes|seguridad|sistema|capturas|ayuda|energia]
+set -uo pipefail
+if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; fi
+
+ETIQ=(); ACC=()
+mete(){ ETIQ+=("$1"); ACC+=("$2"); }
+
+# en una terminal flotante, esperando una tecla al final
+terminal(){ # terminal <título> <orden de bash>
+  setsid -f foot --app-id=naranjos-tui -T "$1" bash -c "$2"'; echo; read -rsn1 -p "$0"' "$(_ 'Pulsa una tecla para cerrar…')" >/dev/null 2>&1
+}
+energia(){ systemctl "$1" 2>/dev/null || sudo -n /usr/bin/systemctl "$1"; }
+
+# --- aplicaciones (.desktop visibles), «nombre<TAB>fichero» ordenado ---------------------------------
+aplicaciones(){
+  local d dirs=() ids=() idioma=${LANG%%.*}; idioma=${idioma%%_*}
+  IFS=: read -ra dirs <<< "${XDG_DATA_HOME:-$HOME/.local/share}:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+  for d in "${dirs[@]}"; do
+    [ -d "$d/applications" ] && ids+=("$d/applications")
+  done
+  [ ${#ids[@]} -gt 0 ] || return 0
+  # (en el orden de XDG: lo del usuario manda sobre lo del sistema)
+  find "${ids[@]}" -maxdepth 2 -name '*.desktop' -print0 2>/dev/null | xargs -r -0 awk -v L="$idioma" '
+    function suelta() { id = previo; sub(".*/", "", id); if (previo != "" && app && ok && !(id in visto)) { visto[id] = 1; printf "%s\t%s\n", (nl != "" ? nl : n), previo } }
+    FNR == 1 { suelta(); previo = FILENAME; sec = 0; n = ""; nl = ""; ok = 1; app = 0 }
+    /^\[/ { sec = ($0 == "[Desktop Entry]"); next }
+    !sec { next }
+    /^Type=/ { app = ($0 == "Type=Application") }
+    /^NoDisplay=true/ || /^Hidden=true/ { ok = 0 }
+    /^Name=/ { n = substr($0, 6) }
+    index($0, "Name[" L "]=") == 1 { nl = substr($0, index($0, "=") + 1) }
+    END { suelta() }
+  ' | sort -f -t$'\t' -k1,1
+}
+
+seccion_aspecto(){
+  local t n a
+  a=$(naranjos-tema actual 2>/dev/null || echo naranja)
+  for t in naranja sanguina lima pomelo limon brisa azahar; do
+    n=$(sed -n 's/^NOMBRE=//p' "/usr/share/naranjos/temas/$t/colores" 2>/dev/null | tr -d '"')
+    [ -n "$n" ] || continue
+    if [ "$t" = "$a" ]; then mete "●  $(_ 'Tema'): $n" "naranjos-tema pon $t"
+    else mete "󰏘  $(_ 'Tema'): $n" "naranjos-tema pon $t"; fi
+  done
+  mete "󰸉  $(_ 'Siguiente fondo')"                 "naranjos-tema fondo siguiente"
+  mete "󰖔  $(_ 'Luz nocturna')…"                  "naranjos-noche menu"
+  mete "󰍜  $(_ 'Mostrar / ocultar la barra')"     "pkill -SIGUSR1 -x waybar || setsid -f waybar"
+}
+seccion_ajustes(){
+  mete "󰖩  WiFi"                                   "naranjos-tui wifi"
+  mete "󰂯  Bluetooth"                              "naranjos-tui bluetooth"
+  mete "󰕾  $(_ 'Sonido')"                          "naranjos-tui sonido"
+  mete "󰗊  $(_ 'Idioma')"                          "naranjos-idioma menu"
+  mete "  $(_ 'Mi configuración de Hyprland (avanzado)')" "setsid -f foot --app-id=naranjos-tui -T Hyprland vim \"\$HOME/.config/hypr/hyprland.lua\""
+}
+seccion_seguridad(){
+  mete "󰒃  $(_ 'Estado de la seguridad')"          "naranjos-tui seguridad"
+  mete "󰖂  $(_ 'VPN: conectar / desconectar')"      "naranjos-tui vpn"
+  mete "󰕓  $(_ 'Permitir un USB bloqueado')"        "naranjos-tui usb"
+}
+seccion_sistema(){
+  mete "󰚰  $(_ 'Actualizar NaranjOS')"            "terminal \"$(_ 'Actualizar')\" 'zumo actualiza'"
+  mete "󰄀  $(_ 'Fotos del sistema')"              "terminal \"$(_ 'Fotos')\" 'sudo fotos lista'"
+  mete "󰄄  $(_ 'Hacer una foto del sistema ahora')" "terminal \"$(_ 'Fotos')\" 'sudo fotos crea \"$(_ 'desde el menú')\"'"
+  mete "󰃢  $(_ 'Limpiar paquetes que sobran')"     "terminal \"$(_ 'Limpiar')\" 'zumo limpia'"
+}
+seccion_capturas(){
+  mete "󰩭  $(_ 'Captura de una zona')"             "naranjos-captura region"
+  mete "󰹑  $(_ 'Captura de la pantalla')"          "naranjos-captura pantalla"
+}
+seccion_ayuda(){
+  mete "󰌌  $(_ 'Atajos de teclado')"              "naranjos-atajos"
+  mete "󰋖  $(_ 'Manual de NaranjOS')"             "naranjos-ayuda"
+}
+seccion_energia(){
+  mete "  $(_ 'Bloquear')"                        "pidof hyprlock || hyprlock"
+  mete "󰍃  $(_ 'Cerrar sesión')"                  "hyprctl dispatch 'hl.dsp.exit()'"
+  mete "󰤄  $(_ 'Suspender')"                      "energia suspend"
+  mete "󰜉  $(_ 'Reiniciar')"                      "energia reboot"
+  mete "  $(_ 'Apagar')"                         "energia poweroff"
+}
+
+SECCIONES=(aplicaciones aspecto ajustes seguridad sistema capturas ayuda energia)
+titulo(){
+  case "$1" in
+    aplicaciones) echo "󰀻  $(_ 'Aplicaciones')" ;; aspecto) echo "󰏘  $(_ 'Aspecto')" ;;
+    ajustes) echo "  $(_ 'Ajustes')" ;; seguridad) echo "󰒃  $(_ 'Seguridad')" ;;
+    sistema) echo "  $(_ 'Sistema')" ;; capturas) echo "󰄀  $(_ 'Capturas')" ;;
+    ayuda) echo "󰋖  $(_ 'Ayuda')" ;; energia) echo "  $(_ 'Energía')" ;;
+  esac
+}
+
+elige(){ # elige <prompt> → ejecuta la acción elegida
+  local i
+  i=$(printf '%s\n' "${ETIQ[@]}" | fuzzel --dmenu --index --prompt "$1 ❯ " --width 46 --lines 14) || exit 0
+  [[ "$i" =~ ^[0-9]+$ ]] && [ "$i" -lt ${#ACC[@]} ] || exit 0
+  eval "${ACC[$i]}"
+}
+
+menu_seccion(){
+  local s="$1" n a
+  if [ "$s" = aplicaciones ]; then
+    while IFS=$'\t' read -r n a; do mete "   $n" "gio launch \"$a\" >/dev/null 2>&1 &"; done < <(aplicaciones)
+  else
+    "seccion_$s"
+  fi
+  elige "$(titulo "$s" | sed 's/^[^ ]* *//')"
+}
+
+principal(){
+  local s n a pref
+  for s in "${SECCIONES[@]}"; do mete "$(titulo "$s")  ›" "menu_seccion $s"; done
+  # todo lo demás, para encontrarlo escribiendo
+  for s in aspecto ajustes seguridad sistema capturas ayuda energia; do
+    pref=$(titulo "$s" | sed 's/^[^ ]* *//')
+    local antes=${#ETIQ[@]}
+    "seccion_$s"
+    for ((n = antes; n < ${#ETIQ[@]}; n++)); do ETIQ[n]="${ETIQ[n]}   · $pref"; done
+  done
+  while IFS=$'\t' read -r n a; do mete "   $n" "gio launch \"$a\" >/dev/null 2>&1 &"; done < <(aplicaciones)
+  elige "NaranjOS"
+}
+
+case "${1:-}" in
+  "")  principal ;;
+  aplicaciones|aspecto|ajustes|seguridad|sistema|capturas|ayuda|energia) menu_seccion "$1" ;;
+  lista) principal() { :; }; for s in "${SECCIONES[@]}"; do [ "$s" = aplicaciones ] || "seccion_$s"; done; printf '%s\n' "${ETIQ[@]}"; aplicaciones | cut -f1 ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

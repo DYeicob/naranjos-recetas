@@ -1,6 +1,9 @@
 ── APPLICATIONS ─────────────────────────────────────────
 Super + Enter             Open the terminal
-Super + Space             Application launcher
+Super + Space             NaranjOS menu (apps, settings, themes…; type to search)
+Super + Alt + Space       Applications only
+Super + Ctrl + Space      Next wallpaper
+Super + Ctrl + N          Night light
 Super + B                 Web browser (Firefox)
 Super + K                 This list of shortcuts
 Super + H                 NaranjOS manual

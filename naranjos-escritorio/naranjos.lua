@@ -8,7 +8,7 @@
 -- =====================================================================
 
 local terminal = "foot"
-local menu     = "fuzzel"
+local menu     = "naranjos-menu"   -- el menú de NaranjOS (apps, ajustes, temas…)
 local mainMod  = "SUPER"   -- la tecla de Windows
 
 ---- Aspecto: los colores del tema (naranjos-tema · Super + Ctrl + T) -----
@@ -37,6 +37,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hyprpaper")                                   -- fondo
     hl.exec_cmd("mako")                                        -- avisos
     hl.exec_cmd("hypridle")                                    -- bloqueo por inactividad
+    hl.exec_cmd("naranjos-noche arranca")                      -- luz nocturna (hyprsunset)
     hl.exec_cmd("command -v waybar >/dev/null && waybar")      -- barra (llega en la tanda 5c2)
 end)
 
@@ -134,6 +135,9 @@ hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 -- Aplicaciones
 hl.bind(mainMod .. " + Return",        hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + space",         hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + ALT + space",   hl.dsp.exec_cmd("fuzzel"))                         -- solo aplicaciones
+hl.bind(mainMod .. " + CTRL + space",  hl.dsp.exec_cmd("naranjos-tema fondo siguiente"))  -- otro fondo
+hl.bind(mainMod .. " + CTRL + N",      hl.dsp.exec_cmd("naranjos-noche menu"))            -- luz nocturna
 hl.bind(mainMod .. " + B",             hl.dsp.exec_cmd("naranjos-navegador"))
 hl.bind(mainMod .. " + K",             hl.dsp.exec_cmd("naranjos-atajos"))
 hl.bind(mainMod .. " + H",             hl.dsp.exec_cmd("naranjos-ayuda"))
@@ -183,12 +187,12 @@ hl.bind(mainMod .. " + Escape",        hl.dsp.exec_cmd("naranjos-sistema"))
 hl.bind(mainMod .. " + SHIFT + Escape", hl.dsp.exit())
 hl.bind(mainMod .. " + SHIFT + R",     hl.dsp.exec_cmd("hyprctl reload"))
 -- Teclas multimedia del portátil (el volumen funcionará con PipeWire, tanda 5c3)
-hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
-hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
-hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true })
-hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),   { locked = true })
-hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"),                  { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"),                  { locked = true, repeating = true })
+hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("naranjos-osd volumen +5"), { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("naranjos-osd volumen -5"),      { locked = true, repeating = true })
+hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("naranjos-osd volumen silencio"),     { locked = true })
+hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd("naranjos-osd micro"),   { locked = true })
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("naranjos-osd brillo +5"),                  { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("naranjos-osd brillo -5"),                  { locked = true, repeating = true })
 
 ---- Reglas de ventanas -------------------------------------------------
 hl.window_rule({

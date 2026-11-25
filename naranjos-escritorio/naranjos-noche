@@ -1,0 +1,121 @@
+#!/bin/bash
+# naranjos-noche — luz nocturna de NaranjOS (fase 6k2, con hyprsunset)
+#   naranjos-noche                     cómo está
+#   naranjos-noche auto | enciende | apaga | alterna
+#   naranjos-noche horario 21:00 07:00 de cuándo a cuándo (en «auto»)
+#   naranjos-noche calidez 4000        temperatura de color en K (2500 muy cálida · 6500 normal)
+#   naranjos-noche menu                elegir en un menú
+# Tu elección está en ~/.config/naranjos/noche.conf; de ahí sale ~/.config/hypr/hyprsunset.conf.
+set -uo pipefail
+if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; fi
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'
+[ -t 1 ] || { O=; G=; R=; Z=; }
+CONF=${XDG_CONFIG_HOME:-$HOME/.config}
+NOCHE=$CONF/naranjos/noche.conf
+SUNSET=$CONF/hypr/hyprsunset.conf
+die(){ printf '%snaranjos-noche:%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+
+MODO=auto; INICIO=21:00; FIN=07:00; CALIDEZ=4000
+lee(){ [ -r "$NOCHE" ] && . "$NOCHE"; case "$MODO" in auto|encendida|apagada) ;; *) MODO=auto ;; esac; }
+guarda(){
+  mkdir -p "$(dirname "$NOCHE")"
+  printf '# NaranjOS · luz nocturna (naranjos-noche). Se puede editar a mano.\nMODO=%s\nINICIO=%s\nFIN=%s\nCALIDEZ=%s\n' \
+    "$MODO" "$INICIO" "$FIN" "$CALIDEZ" > "$NOCHE"
+}
+hora_ok(){ [[ "$1" =~ ^([01]?[0-9]|2[0-3]):[0-5][0-9]$ ]]; }
+
+escribe_sunset(){
+  mkdir -p "$(dirname "$SUNSET")"
+  {
+    echo "# NaranjOS · luz nocturna. NO lo edites: lo escribe naranjos-noche (Super + Espacio → Aspecto)."
+    case "$MODO" in
+      auto)      printf 'profile {\n    time = %s\n    identity = 1\n}\n\nprofile {\n    time = %s\n    temperature = %s\n}\n' "$FIN" "$INICIO" "$CALIDEZ" ;;
+      encendida) printf 'profile {\n    time = 00:00\n    temperature = %s\n}\n' "$CALIDEZ" ;;
+      apagada)   printf 'profile {\n    time = 00:00\n    identity = 1\n}\n' ;;
+    esac
+  } > "$SUNSET"
+}
+
+# ¿toca luz cálida ahora? (en «auto», según la hora)
+calida_ahora(){
+  case "$MODO" in encendida) return 0 ;; apagada) return 1 ;; esac
+  local ahora i f
+  ahora=$((10#$(date +%H) * 60 + 10#$(date +%M)))
+  i=$((10#${INICIO%:*} * 60 + 10#${INICIO#*:})); f=$((10#${FIN%:*} * 60 + 10#${FIN#*:}))
+  if [ "$i" -le "$f" ]; then [ "$ahora" -ge "$i" ] && [ "$ahora" -lt "$f" ]
+  else [ "$ahora" -ge "$i" ] || [ "$ahora" -lt "$f" ]; fi
+}
+
+# aplica: perfiles nuevos (se relee al arrancar hyprsunset) y el color de ya mismo por IPC
+aplica(){
+  escribe_sunset
+  [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] || return 0
+  if pgrep -x hyprsunset >/dev/null; then
+    pkill -x hyprsunset; sleep 0.4
+  fi
+  hyprctl dispatch 'hl.dsp.exec_cmd("hyprsunset")' >/dev/null 2>&1 || setsid -f hyprsunset >/dev/null 2>&1
+  sleep 0.6
+  if calida_ahora; then hyprctl hyprsunset temperature "$CALIDEZ" >/dev/null 2>&1 || true
+  else hyprctl hyprsunset identity >/dev/null 2>&1 || true; fi
+  pkill -RTMIN+9 -x waybar 2>/dev/null || true
+}
+
+texto_modo(){
+  case "$MODO" in
+    auto)      printf '%s (%s–%s, %s K)' "$(_ 'automática')" "$INICIO" "$FIN" "$CALIDEZ" ;;
+    encendida) printf '%s (%s K)' "$(_ 'encendida')" "$CALIDEZ" ;;
+    apagada)   _ 'apagada' ;;
+  esac
+}
+
+estado(){
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'luz nocturna')" "$Z"
+  echo "  $(_ 'Modo:') $(texto_modo)"
+  if calida_ahora; then echo "  $(_ 'Ahora: luz cálida')"; else echo "  $(_ 'Ahora: luz normal')"; fi
+}
+
+# para la barra (Waybar, custom/noche): JSON
+barra(){
+  local clase icono
+  if calida_ahora; then clase=calida; icono=󰖔; else clase=normal; icono=󰖨; fi
+  [ "$MODO" = apagada ] && { clase=apagada; icono=󰖨; }
+  printf '{"text":"%s","class":"%s","tooltip":"%s: %s"}\n' "$icono" "$clase" "$(_ 'Luz nocturna')" "$(texto_modo)"
+}
+
+menu(){
+  local l=("󰖔  $(_ 'Automática') ($INICIO–$FIN)" "󰖔  $(_ 'Encender ahora')" "󰖨  $(_ 'Apagar')" \
+           "  $(_ 'Más cálida')" "  $(_ 'Menos cálida')") i
+  i=$(printf '%s\n' "${l[@]}" | fuzzel --dmenu --index --prompt "$(_ 'Luz nocturna') ❯ " --lines ${#l[@]} --width 34) || exit 0
+  case "$i" in
+    0) modo auto ;; 1) modo encendida ;; 2) modo apagada ;;
+    3) calidez $((CALIDEZ - 500)) ;; 4) calidez $((CALIDEZ + 500)) ;;
+  esac
+}
+
+modo(){ MODO=$1; guarda; aplica; echo "$(_ 'Luz nocturna:') $(texto_modo)"; }
+calidez(){
+  local k=${1:-}
+  [[ "$k" =~ ^[0-9]+$ ]] || die "$(_ 'Dime la temperatura en K, p. ej.:') naranjos-noche calidez 4000"
+  [ "$k" -lt 1500 ] && k=1500; [ "$k" -gt 6500 ] && k=6500
+  CALIDEZ=$k; [ "$MODO" = apagada ] && MODO=encendida
+  guarda; aplica; echo "$(_ 'Luz nocturna:') $(texto_modo)"
+}
+
+lee
+case "${1:-}" in
+  ""|estado)             estado ;;
+  auto)                  modo auto ;;
+  enciende|on)           modo encendida ;;
+  apaga|off)             modo apagada ;;
+  alterna|toggle)        case "$MODO" in auto) modo encendida ;; encendida) modo apagada ;; *) modo auto ;; esac ;;
+  horario)               hora_ok "${2:-}" && hora_ok "${3:-}" || die "$(_ 'Uso:') naranjos-noche horario 21:00 07:00"
+                         INICIO=$2; FIN=$3; MODO=auto; guarda; aplica; echo "$(_ 'Luz nocturna:') $(texto_modo)" ;;
+  calidez|temperatura)   calidez "${2:-}" ;;
+  menu)                  menu ;;
+  barra)                 barra ;;
+  arranca)               # al iniciar Hyprland: la configuración de hyprsunset y hyprsunset
+                         [ -f "$SUNSET" ] || escribe_sunset
+                         exec hyprsunset ;;
+  ayuda|help|-h|--help)  sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//' ;;
+  *)                     die "$(_ 'Orden desconocida. Mira:') naranjos-noche ayuda" ;;
+esac
