@@ -249,6 +249,19 @@ language too. Want to translate NaranjOS into yours? See `/usr/share/doc/naranjo
 - **Add-ons**: `naranjos-complementos instala <git-url>` adds other people's shortcuts or commands (it shows you what it brings first).
 - **Coding**: `nvim` (Neovim with the theme's colours), `lazygit`, `lazydocker`, `btop` and `mise` (language versions).
 
+## 9f. More tools
+
+- **Recommended apps** (Super + Shift + A): Obsidian, LibreOffice, Kdenlive, GIMP, Steam, virtual machines… in one click.
+- **Keep awake** (Super + Ctrl + C) and **screensaver** (after 4 minutes; any key removes it).
+- **Your own theme**: `naranjos-tema crea "My theme" 8a2be2` (dark and light); it lives in `~/.local/share/naranjos/temas`.
+- **Font**: `naranjos-pantalla fuente "Name"` (or Super + Ctrl + P → Change the font).
+- **Terminal**: `cd` learns your folders (zoxide), Ctrl + R searches history (fzf), `ls`/`ll`/`lt` with icons (eza),
+  `ver file` (bat), `rg` and `fd` to search; plus `comprime`, `descomprime`, `convierte`, `video-ligero`, `usb-iso`, `formatea-usb`.
+- **Containers**: rootless Podman (the `docker` command works too) and `lazydocker` to see them.
+- **Tailscale**: `naranjos-tailscale activa` joins your computers in a private network (free).
+- **Boot**: the NaranjOS orange while booting; `sudo naranjos-inicio bonito` logs in by itself and asks for your password on the
+  lock screen. In the boot menu, «modo texto» shows the messages if something fails.
+
 ## 10. Common problems
 
 - **Nothing opens when I press a shortcut:** open a terminal with Super + Enter and check that

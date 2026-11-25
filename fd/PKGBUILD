@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=fd
+pkgver=10.5.2
+pkgrel=1
+pkgdesc='Buscar ficheros (fd), sencillo y rápido'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT OR Apache-2.0')
+depends=()
+makedepends=('rust')
+source=('https://github.com/sharkdp/fd/archive/v10.5.2/fd-10.5.2.tar.gz')
+sha256sums=('8991b6504cac33c00528050622dfe3f2a0db1be1a6faf99f69b46d1a8f737dc5')
+prepare() { cd "$pkgname-$pkgver"; export CARGO_HOME="$srcdir/cargo"; cargo fetch --locked; }
+build() { cd "$pkgname-$pkgver"; export CARGO_HOME="$srcdir/cargo"; cargo build --release --frozen; }
+package() {
+  cd "$pkgname-$pkgver"
+  local b=$pkgname; [ "$pkgname" = ripgrep ] && b=rg
+  install -Dm755 "target/release/$b" "$pkgdir/usr/bin/$b"
+  install -Dm644 LICENSE* -t "$pkgdir/usr/share/licenses/$pkgname/" 2>/dev/null || true
+}

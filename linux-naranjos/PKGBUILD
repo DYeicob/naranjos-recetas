@@ -1,7 +1,8 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6e2.sh
-pkgname=linux-naranjos
+pkgbase=linux-naranjos
+pkgname=(linux-naranjos linux-naranjos-headers)
 pkgver=7.3.5
-pkgrel=1
+pkgrel=2
 pkgdesc='El kernel de NaranjOS (Linux estable, firmado para Secure Boot)'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
@@ -71,7 +72,7 @@ build() {
   export KBUILD_BUILD_HOST=naranjos KBUILD_BUILD_USER=naranjos
   make -j"$(nproc)" all
 }
-package() {
+package_linux-naranjos() {
   cd linux-$pkgver
   unset LDFLAGS
   local k m
@@ -83,4 +84,31 @@ package() {
   # los módulos (firmados por el propio kernel); depmod lo hace naranjos-kernel al instalar
   make INSTALL_MOD_PATH="$pkgdir/usr" INSTALL_MOD_STRIP=1 DEPMOD=/doesnt/exist modules_install
   rm -f "$m/build" "$m/source"
+}
+
+package_linux-naranjos-headers() {
+  pkgdesc='Cabeceras del kernel de NaranjOS, para compilar módulos (p. ej. NVIDIA)'
+  depends=("linux-naranjos=$pkgver-$pkgrel")
+  cd linux-$pkgver
+  local k b f
+  k=$(_kver); b="$pkgdir/usr/lib/modules/$k/build"
+  install -Dt "$b" -m644 .config Makefile Module.symvers System.map
+  [ -e localversion.10-pkgrel ] && install -Dt "$b" -m644 localversion.*
+  install -Dt "$b/kernel" -m644 kernel/Makefile
+  install -Dt "$b/arch/x86" -m644 arch/x86/Makefile
+  cp -a scripts "$b/"
+  [ -x tools/objtool/objtool ] && install -Dt "$b/tools/objtool" tools/objtool/objtool
+  [ -x tools/bpf/resolve_btfids/resolve_btfids ] && install -Dt "$b/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
+  cp -a include "$b/"
+  cp -a arch/x86/include "$b/arch/x86/"
+  install -Dt "$b/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
+  install -Dt "$b/drivers/md" -m644 drivers/md/*.h
+  install -Dt "$b/net/mac80211" -m644 net/mac80211/*.h
+  find . -name 'Kconfig*' -exec install -Dm644 {} "$b/{}" \;
+  # lo que sobra para compilar módulos
+  find "$b" -type f -name '*.o' -delete
+  find "$b/scripts" -type f \( -name '*.c' -o -name '*.cmd' \) -delete 2>/dev/null || true
+  rm -rf "$b/Documentation"
+  # clave pública con la que el kernel firmó sus módulos (la privada no sale del equipo de compilación)
+  [ -e certs/signing_key.x509 ] && install -Dm644 certs/signing_key.x509 "$b/certs/signing_key.x509"
 }

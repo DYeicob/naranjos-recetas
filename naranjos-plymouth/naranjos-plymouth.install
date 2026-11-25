@@ -1,0 +1,7 @@
+# el initramfs y el menú de arranque se rehacen para que salga la naranja al arrancar
+post_install() {
+  command -v naranjos-initramfs >/dev/null && naranjos-initramfs --todos >/dev/null 2>&1
+  command -v naranjos-arranque >/dev/null && naranjos-arranque menu >/dev/null 2>&1
+  return 0
+}
+post_upgrade() { post_install; }

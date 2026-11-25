@@ -1,0 +1,4 @@
+#!/bin/sh
+# naranjos-bloqueo-inicial — con el inicio bonito, la sesión nace bloqueada. Si la pantalla de bloqueo no pudiera
+# arrancar, se cierra la sesión (nunca se queda el escritorio abierto sin contraseña).
+hyprlock --immediate-render 2>/dev/null || hyprlock || hyprctl dispatch 'hl.dsp.exit()'

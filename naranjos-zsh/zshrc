@@ -80,6 +80,9 @@ else
   add-zsh-hook precmd _naranjos_titulo
 fi
 
+# --- Herramientas de terminal (fzf, zoxide, eza, bat…) y funciones de NaranjOS (6o7) ---
+[ -r /usr/share/naranjos/zsh/herramientas.zsh ] && source /usr/share/naranjos/zsh/herramientas.zsh
+
 # --- Complementos (sugerencias en gris, colores al escribir) ------------
 if [[ -r /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
   : ${ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE:=fg=244}

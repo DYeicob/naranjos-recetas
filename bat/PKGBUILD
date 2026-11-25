@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=bat
+pkgver=0.26.1
+pkgrel=1
+pkgdesc='Ver ficheros con colores (bat)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT OR Apache-2.0')
+depends=()
+makedepends=('rust')
+source=('https://github.com/sharkdp/bat/archive/v0.26.1/bat-0.26.1.tar.gz')
+sha256sums=('4474de87e084953eefc1120cf905a79f72bbbf85091e30cf37c9214eafcaa9c9')
+prepare() { cd "$pkgname-$pkgver"; export CARGO_HOME="$srcdir/cargo"; cargo fetch --locked; }
+build() { cd "$pkgname-$pkgver"; export CARGO_HOME="$srcdir/cargo"; cargo build --release --frozen; }
+package() {
+  cd "$pkgname-$pkgver"
+  local b=$pkgname; [ "$pkgname" = ripgrep ] && b=rg
+  install -Dm755 "target/release/$b" "$pkgdir/usr/bin/$b"
+  install -Dm644 LICENSE* -t "$pkgdir/usr/share/licenses/$pkgname/" 2>/dev/null || true
+}

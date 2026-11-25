@@ -48,6 +48,7 @@ seccion_aspecto(){
   done
   mete "󰔎  $(_ 'Modo claro / oscuro')"            "naranjos-tema modo"
   mete "󰸉  $(_ 'Siguiente fondo')"                 "naranjos-tema fondo siguiente"
+  mete "󰏘  $(_ 'Crear mi tema…')"                 "naranjos-tema-nuevo"
   mete "󰖔  $(_ 'Luz nocturna')…"                  "naranjos-noche menu"
   mete "󰍜  $(_ 'Mostrar / ocultar la barra')"     "pkill -SIGUSR1 -x waybar || setsid -f waybar"
   mete "󰍹  $(_ 'Pantalla, texto y barra')…"       "naranjos-pantalla menu"
@@ -70,6 +71,8 @@ seccion_seguridad(){
   mete "󰩺  $(_ 'Vaciar la cuarentena del antivirus')" "terminal \"$(_ 'Cuarentena')\" 'naranjos-peel antivirus cuarentena; echo; naranjos-peel antivirus vacia'"
 }
 seccion_sistema(){
+  mete "󰖂  $(_ 'Tailscale (red entre tus equipos)')" "terminal Tailscale 'naranjos-tailscale; echo; naranjos-tailscale activa'"
+  mete "󰍂  $(_ 'Inicio: bonito (bloqueado) / clásico')" "terminal \"$(_ 'Inicio')\" 'naranjos-inicio; echo; if grep -q initial_session /etc/greetd/config.toml; then sudo naranjos-inicio clasico; else sudo naranjos-inicio bonito; fi'"
   mete "󰚰  $(_ 'Actualizar NaranjOS')"            "terminal \"$(_ 'Actualizar')\" 'zumo actualiza'"
   mete "󰄀  $(_ 'Fotos del sistema')"              "terminal \"$(_ 'Fotos')\" 'sudo fotos lista'"
   mete "󰄄  $(_ 'Hacer una foto del sistema ahora')" "terminal \"$(_ 'Fotos')\" 'sudo fotos crea \"$(_ 'desde el menú')\"'"
@@ -83,6 +86,11 @@ seccion_utilidades(){
   mete "󰃰  $(_ 'Mis recordatorios')"               "terminal \"$(_ 'Recordatorios')\" 'naranjos-recuerda lista'"
   mete "󰖟  $(_ 'Nueva web app')"                   "naranjos-webapp menu"
   mete "󰏗  $(_ 'Complementos')"                    "terminal \"$(_ 'Complementos')\" 'naranjos-complementos'"
+  mete "󰀻  $(_ 'Apps recomendadas')"              "naranjos-apps"
+  mete "󰅶  $(_ 'Mantener despierto (sí / no)')"   "naranjos-despierto"
+  mete "󱄄  $(_ 'Salvapantallas')"                 "naranjos-salvapantallas"
+  mete "󰡨  $(_ 'Contenedores (lazydocker)')"      "setsid -f foot --app-id=naranjos-lazy lazydocker"
+  mete "󰊢  $(_ 'Git (lazygit)')"                  "setsid -f foot -D \"\$HOME\" lazygit"
 }
 seccion_capturas(){
   mete "󰩭  $(_ 'Captura de una zona')"             "naranjos-captura region"
@@ -113,6 +121,13 @@ titulo(){
   esac
 }
 
+naranjos-tema-nuevo(){
+  local n c
+  n=$(fuzzel --dmenu --prompt "$(_ 'Nombre del tema') ❯ " --lines 0 --width 40 < /dev/null) || exit 0
+  c=$(printf '%s\n' "ff8700 $(_ 'naranja')" "8a2be2 $(_ 'violeta')" "00bfa5 $(_ 'turquesa')" "e91e63 $(_ 'frambuesa')" "607d8b $(_ 'pizarra')" |
+      fuzzel --dmenu --prompt "$(_ 'Color (o escribe uno, p. ej. 3d9bff)') ❯ " --lines 5 --width 50) || exit 0
+  naranjos-tema crea "$n" "${c%% *}" >/dev/null 2>&1 || naranjos-notifica "$(_ 'No pude crear el tema')"
+}
 elige(){ # elige <prompt> [volver] → ejecuta la acción elegida; con «volver», Esc vuelve al menú principal
   local i
   if ! i=$(printf '%s\n' "${ETIQ[@]}" | fuzzel --dmenu --index --prompt "$1 ❯ " --width 46 --lines 14); then

@@ -1,0 +1,3 @@
+#!/bin/sh
+# NaranjOS · «docker» es Podman (sin root, sin servicio). Lo mismo que escribas con docker funciona.
+exec podman "$@"

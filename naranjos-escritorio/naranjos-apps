@@ -1,0 +1,54 @@
+#!/bin/bash
+# naranjos-apps — aplicaciones recomendadas por NaranjOS, con un clic (Flathub; gratis)
+#   naranjos-apps            elegir en un menú (● = ya instalada; elegirla otra vez la quita)
+#   naranjos-apps lista      la lista en la terminal
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+# id de Flathub | nombre | para qué
+APPS=(
+  "md.obsidian.Obsidian|Obsidian|$(_ 'notas en Markdown')"
+  "org.libreoffice.LibreOffice|LibreOffice|$(_ 'documentos, hojas de cálculo y presentaciones')"
+  "org.onlyoffice.desktopeditors|ONLYOFFICE|$(_ 'documentos compatibles con Microsoft Office')"
+  "com.github.xournalpp.xournalpp|Xournal++|$(_ 'rellenar y firmar PDF')"
+  "org.kde.kdenlive|Kdenlive|$(_ 'editor de vídeo')"
+  "com.obsproject.Studio|OBS Studio|$(_ 'grabar y emitir en directo')"
+  "org.gimp.GIMP|GIMP|$(_ 'retocar fotos')"
+  "org.inkscape.Inkscape|Inkscape|$(_ 'dibujo vectorial')"
+  "org.kde.krita|Krita|$(_ 'pintura digital')"
+  "org.videolan.VLC|VLC|$(_ 'reproductor de vídeo')"
+  "io.mpv.Mpv|mpv|$(_ 'reproductor de vídeo ligero')"
+  "org.gnome.Calculator|$(_ 'Calculadora')|$(_ 'calculadora')"
+  "org.localsend.localsend_app|LocalSend|$(_ 'pasar ficheros al móvil sin cables')"
+  "org.signal.Signal|Signal|$(_ 'mensajería cifrada')"
+  "org.telegram.desktop|Telegram|$(_ 'mensajería')"
+  "com.discordapp.Discord|Discord|$(_ 'chat y voz')"
+  "com.spotify.Client|Spotify|$(_ 'música')"
+  "com.valvesoftware.Steam|Steam|$(_ 'juegos')"
+  "org.gnome.Boxes|GNOME Boxes|$(_ 'máquinas virtuales (también Windows)')"
+  "com.visualstudio.code|VS Code|$(_ 'editor de código')"
+  "com.vscodium.codium|VSCodium|$(_ 'editor de código libre')"
+  "org.wireshark.Wireshark|Wireshark|$(_ 'analizar el tráfico de red')"
+  "org.chromium.Chromium|Chromium|$(_ 'navegador (lo usan las web apps)')"
+)
+instalada(){ flatpak info "$1" >/dev/null 2>&1; }
+lista(){
+  local a id n d
+  for a in "${APPS[@]}"; do IFS='|' read -r id n d <<< "$a"
+    if instalada "$id"; then printf '  ● %-14s %s\n' "$n" "$d"; else printf '  ○ %-14s %s\n' "$n" "$d"; fi
+  done
+}
+menu(){
+  local l=() a id n d i
+  for a in "${APPS[@]}"; do IFS='|' read -r id n d <<< "$a"
+    if instalada "$id"; then l+=("●  $n — $d"); else l+=("   $n — $d"); fi
+  done
+  i=$(printf '%s\n' "${l[@]}" | fuzzel --dmenu --index --prompt "$(_ 'Apps recomendadas') ❯ " --width 60 --lines 16) || exit 0
+  [[ "$i" =~ ^[0-9]+$ ]] || exit 0
+  IFS='|' read -r id n d <<< "${APPS[$i]}"
+  if instalada "$id"; then
+    setsid -f foot --app-id=naranjos-tui -T "$n" bash -c "flatpak uninstall --user \"$id\" || flatpak uninstall \"$id\"; echo; read -rsn1 -p '$(_ 'Pulsa una tecla para cerrar…')'"
+  else
+    setsid -f foot --app-id=naranjos-tui -T "$n" bash -c "flatpak install -y --user flathub \"$id\" && naranjos-notifica '$(_ 'Instalada:') $n'; echo; read -rsn1 -p '$(_ 'Pulsa una tecla para cerrar…')'"
+  fi
+}
+case "${1:-menu}" in lista|list) lista ;; *) menu ;; esac

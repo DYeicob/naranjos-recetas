@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=eza
+pkgver=0.23.5
+pkgrel=1
+pkgdesc='Listar ficheros con iconos y git (eza)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('EUPL-1.2')
+depends=()
+makedepends=('rust')
+source=('https://github.com/eza-community/eza/archive/v0.23.5/eza-0.23.5.tar.gz')
+sha256sums=('bbf179f2611c904014431740b559e8055276c12fcf978a7e31c271663548337f')
+prepare() { cd "$pkgname-$pkgver"; export CARGO_HOME="$srcdir/cargo"; cargo fetch --locked; }
+build() { cd "$pkgname-$pkgver"; export CARGO_HOME="$srcdir/cargo"; cargo build --release --frozen; }
+package() {
+  cd "$pkgname-$pkgver"
+  local b=$pkgname; [ "$pkgname" = ripgrep ] && b=rg
+  install -Dm755 "target/release/$b" "$pkgdir/usr/bin/$b"
+  install -Dm644 LICENSE* -t "$pkgdir/usr/share/licenses/$pkgname/" 2>/dev/null || true
+}

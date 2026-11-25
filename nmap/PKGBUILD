@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=nmap
+pkgver=7.992
+pkgrel=1
+pkgdesc='Descubrir equipos y puertos de una red'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LicenseRef-NPSL')
+depends=('libpcap' 'openssl' 'pcre2' 'zlib')
+makedepends=()
+source=('https://github.com/nmap/nmap/archive/v7.992/nmap-7.992.tar.gz')
+sha256sums=('a3763ae71e48d4f7442b59230b565fd2ba4bb0f6c398cc6ff08b2356694f0073')
+build() {
+  cd nmap-$pkgver
+  ./configure --prefix=/usr --with-libpcap=/usr --with-libpcre=/usr --with-openssl=/usr --with-liblua=included \
+    --without-zenmap --without-ndiff --without-nmap-update --without-libssh2
+  make
+}
+package() { cd nmap-$pkgver; make DESTDIR="$pkgdir" install; install -Dm644 LICENSE "$pkgdir/usr/share/licenses/nmap/LICENSE"; }

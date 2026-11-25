@@ -40,6 +40,8 @@ hl.env("HYPRCURSOR_SIZE", "24")
 
 ---- Al arrancar -------------------------------------------------------
 hl.on("hyprland.start", function()
+    -- con el inicio bonito (naranjos-inicio), la sesión nace bloqueada: lo primero, la pantalla de bloqueo
+    if os and os.getenv and os.getenv("NARANJOS_BLOQUEO_INICIAL") then hl.exec_cmd("naranjos-bloqueo-inicial") end
     hl.exec_cmd("hyprctl setcursor " .. tema.cursor .. " 24")  -- cursor del tema
     hl.exec_cmd("hyprpaper")                                   -- fondo
     hl.exec_cmd("mako")                                        -- avisos
@@ -168,6 +170,8 @@ hl.bind(mainMod .. " + CTRL + O",      hl.dsp.exec_cmd("naranjos-captura texto")
 hl.bind(mainMod .. " + CTRL + D",      hl.dsp.exec_cmd("naranjos-dictado"))             -- dictar
 hl.bind(mainMod .. " + CTRL + R",      hl.dsp.exec_cmd("naranjos-recuerda menu"))       -- recordatorio
 hl.bind(mainMod .. " + CTRL + P",      hl.dsp.exec_cmd("naranjos-pantalla menu"))       -- pantalla y barra
+hl.bind(mainMod .. " + CTRL + C",      hl.dsp.exec_cmd("naranjos-despierto"))           -- mantener despierto
+hl.bind(mainMod .. " + SHIFT + A",     hl.dsp.exec_cmd("naranjos-apps"))                -- apps recomendadas
 hl.bind("ALT + Print",                 hl.dsp.exec_cmd("naranjos-captura video region"))   -- grabar una zona
 hl.bind("ALT + SHIFT + Print",         hl.dsp.exec_cmd("naranjos-captura video pantalla")) -- grabar la pantalla
 -- Ventanas
@@ -221,6 +225,11 @@ hl.window_rule({
     float  = true,
     size   = "960 620",
     center = true,
+})
+hl.window_rule({
+    name  = "salvapantallas",
+    match = { class = "^naranjos-salvapantallas$" },
+    fullscreen = true,
 })
 hl.window_rule({
     name  = "ignorar-maximizar",

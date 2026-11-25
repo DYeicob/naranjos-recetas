@@ -11,7 +11,7 @@
 
   "modules-left":   ["image#naranjos", "custom/naranjos", "hyprland/workspaces", "hyprland/window"],
   "modules-center": ["clock"],
-  "modules-right":  ["custom/grabando", "custom/dictado", "custom/tiempo", "custom/peel", "custom/noche", "bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "tray", "custom/sistema"],
+  "modules-right":  ["custom/grabando", "custom/dictado", "custom/despierto", "custom/tailscale", "custom/tiempo", "custom/peel", "custom/noche", "bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "tray", "custom/sistema"],
 
   "image#naranjos": {
     "path": "/usr/share/naranjos/logo/naranjos-logo-plano-48.png",
@@ -129,6 +129,20 @@
     "signal": 12,
     "on-click": "foot --app-id=naranjos-tui -T NaranjOS sh -c 'naranjos-tiempo; read -r _'",
     "on-click-right": "naranjos-tiempo menu"
+  },
+  "custom/despierto": {
+    "exec": "naranjos-despierto barra",
+    "return-type": "json",
+    "interval": "once",
+    "signal": 13,
+    "on-click": "naranjos-despierto"
+  },
+  "custom/tailscale": {
+    "exec": "naranjos-tailscale barra",
+    "return-type": "json",
+    "interval": 60,
+    "signal": 14,
+    "on-click": "foot --app-id=naranjos-tui -T Tailscale sh -c 'naranjos-tailscale; read -r _'"
   },
   "tray": {
     "icon-size": 16,

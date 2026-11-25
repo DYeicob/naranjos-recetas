@@ -1,0 +1,23 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=naranjos-plymouth
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='La naranja de NaranjOS al arrancar y al apagar (tema de Plymouth)'
+install=naranjos-plymouth.install
+backup=('etc/plymouth/plymouthd.conf')
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('CC-BY-SA-4.0')
+depends=('plymouth' 'ttf-jetbrains-mono-nerd')
+makedepends=()
+source=('naranjos.plymouth' 'naranjos.script' 'plymouthd.conf' 'logo.png' )
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' )
+package() {
+  local T="$pkgdir/usr/share/plymouth/themes/naranjos"
+  install -Dm644 naranjos.plymouth naranjos.script logo.png -t "$T/"
+  install -Dm644 plymouthd.conf "$pkgdir/etc/plymouth/plymouthd.conf"
+  # Plymouth (sin pango) escribe con esta fuente
+  install -d "$pkgdir/usr/share/fonts"
+  ln -s TTF/JetBrainsMonoNerdFont-Regular.ttf "$pkgdir/usr/share/fonts/Plymouth.ttf"
+  ln -s TTF/JetBrainsMonoNerdFont-Regular.ttf "$pkgdir/usr/share/fonts/Plymouth-monospace.ttf"
+}

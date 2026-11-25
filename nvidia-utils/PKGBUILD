@@ -1,0 +1,43 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=nvidia-utils
+pkgver=620.73.04
+pkgrel=1
+pkgdesc='NVIDIA: OpenGL, Vulkan, CUDA y prime-run (la gráfica se usa solo cuando la pides)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LicenseRef-NVIDIA')
+depends=('libglvnd' 'mesa')
+makedepends=()
+source=('prime-run' 'nvidia.conf' 'nvidia-pm.rules' 'https://download.nvidia.com/XFree86/Linux-x86_64/620.73.04/NVIDIA-Linux-x86_64-620.73.04.run')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'b5f2e2d5da8435b32539304015b89bf7eb22fe0aec8cd6905b7a6e8a9f9b8f1b')
+noextract=('NVIDIA-Linux-x86_64-620.73.04.run')
+options=('!strip' '!debug')
+prepare() { rm -rf NVIDIA-Linux-x86_64-$pkgver; sh NVIDIA-Linux-x86_64-$pkgver.run --extract-only; }
+package() {
+  cd NVIDIA-Linux-x86_64-$pkgver
+  local L="$pkgdir/usr/lib" f b
+  install -d "$L" "$pkgdir/usr/bin"
+  # bibliotecas de 64 bits (las de 32 bits, para juegos viejos de Steam, van en el Flatpak de Steam)
+  for f in lib*.so.$pkgver; do
+    case "$f" in libnvidia-gtk*|libnvidia-wayland-client*) continue ;; esac
+    install -m755 "$f" "$L/"
+    b=${f%.$pkgver}; ln -sf "$f" "$L/$b.1"; ln -sf "$b.1" "$L/$b"
+  done
+  for f in libnvidia-egl-wayland.so.* libnvidia-egl-gbm.so.* libnvidia-egl-xcb.so.* libnvidia-egl-xlib.so.*; do
+    [ -e "$f" ] && install -m755 "$f" "$L/"
+  done
+  ldconfig -n "$L"
+  install -d "$L/gbm"; ln -sf ../libnvidia-allocator.so.1 "$L/gbm/nvidia-drm_gbm.so"
+  install -Dm644 10_nvidia.json "$pkgdir/usr/share/glvnd/egl_vendor.d/10_nvidia.json"
+  for f in 10_nvidia_wayland.json 15_nvidia_gbm.json; do [ -e "$f" ] && install -Dm644 "$f" "$pkgdir/usr/share/egl/egl_external_platform.d/$f"; done
+  [ -e nvidia_icd.json.template ] && sed 's/__NV_VK_ICD__/libGLX_nvidia.so.0/' nvidia_icd.json.template > nvidia_icd.json
+  install -Dm644 nvidia_icd.json "$pkgdir/usr/share/vulkan/icd.d/nvidia_icd.json"
+  for f in nvidia-smi nvidia-debugdump nvidia-cuda-mps-control nvidia-cuda-mps-server nvidia-persistenced; do
+    [ -e "$f" ] && install -Dm755 "$f" "$pkgdir/usr/bin/$f"
+  done
+  install -d "$pkgdir/usr/lib/firmware/nvidia/$pkgver"; install -m644 firmware/*.bin "$pkgdir/usr/lib/firmware/nvidia/$pkgver/"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/nvidia-utils/LICENSE"
+  install -Dm755 ../prime-run "$pkgdir/usr/bin/prime-run"
+  install -Dm644 ../nvidia.conf "$pkgdir/usr/lib/modprobe.d/nvidia.conf"
+  install -Dm644 ../nvidia-pm.rules "$pkgdir/usr/lib/udev/rules.d/80-nvidia-pm.rules"
+}

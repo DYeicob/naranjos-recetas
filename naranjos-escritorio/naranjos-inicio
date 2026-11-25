@@ -1,0 +1,36 @@
+#!/bin/bash
+# naranjos-inicio — cómo se entra en NaranjOS al encender
+#   naranjos-inicio                       cómo está
+#   sudo naranjos-inicio bonito [usuario] arranque gráfico de punta a punta: la naranja de arranque y, al terminar,
+#                                         la pantalla de bloqueo de NaranjOS pide tu contraseña (por defecto)
+#   sudo naranjos-inicio clasico          la pantalla de inicio de sesión en texto (elegir usuario)
+# Con «bonito», tu sesión arranca ya bloqueada: sin tu contraseña no se ve nada. Al cerrar sesión, sale la clásica.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { G=; R=; Z=; }
+F=/etc/greetd/config.toml
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+quita_inicial(){ python3 -I - "$F" << "PY"
+import sys, re, pathlib
+p = pathlib.Path(sys.argv[1]); k = p.read_text()
+k = re.sub(r"\n*# NaranjOS · inicio bonito.*?(?=\n\[|\Z)", "\n", k, flags=re.S)
+k = re.sub(r"\n*\[initial_session\].*?(?=\n\[|\Z)", "\n", k, flags=re.S)
+p.write_text(k.rstrip("\n") + "\n")
+PY
+}
+case "${1:-}" in
+  bonito|pretty)
+    [ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+    u="${2:-${SUDO_USER:-}}"; [ -n "$u" ] && id "$u" >/dev/null 2>&1 && [ "$(id -u "$u")" -ge 1000 ] || die "$(_ 'Dime el usuario:') sudo naranjos-inicio bonito <usuario>"
+    [ -f "$F" ] || die "$(_ 'No encuentro') $F"
+    cp -p "$F" "$F.antes-inicio"; quita_inicial
+    printf '\n# NaranjOS · inicio bonito (naranjos-inicio): entra solo y arranca BLOQUEADO (pide la contraseña)\n[initial_session]\ncommand = "naranjos-sesion --bloqueada"\nuser = "%s"\n' "$u" >> "$F"
+    printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Inicio bonito para') " "$u" ;;
+  clasico|classic)
+    [ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+    cp -p "$F" "$F.antes-inicio"; quita_inicial; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Inicio clásico (elegir usuario en texto)')" ;;
+  "") if grep -q '^\[initial_session\]' "$F" 2>/dev/null; then
+        echo "$(_ 'Inicio bonito para') $(sed -n '/^\[initial_session\]/,/^\[/s/^user *= *"\(.*\)"/\1/p' "$F")"
+      else echo "$(_ 'Inicio clásico (elegir usuario en texto)')"; fi ;;
+  *) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

@@ -1,0 +1,6 @@
+#!/bin/bash
+# naranjos-salvapantallas — salvapantallas de NaranjOS (gajos que caen con los colores del tema)
+#   naranjos-salvapantallas         lo pone ya (cualquier tecla o mover el ratón lo quita)
+# hypridle lo pone a los 4 minutos sin usar el equipo (antes del bloqueo).
+pgrep -f 'app-id=naranjos-salvapantallas' >/dev/null && exit 0
+exec foot --app-id=naranjos-salvapantallas --override=colors-dark.alpha=1 python3 -I /usr/lib/naranjos/salvapantallas.py

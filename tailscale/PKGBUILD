@@ -1,0 +1,27 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=tailscale
+pkgver=1.106.1
+pkgrel=1
+pkgdesc='Red privada entre tus equipos (Tailscale)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=()
+makedepends=('go')
+source=('https://github.com/tailscale/tailscale/archive/v1.106.1/tailscale-1.106.1.tar.gz')
+sha256sums=('923da6e093853b6313d74b729fdffd869407f5c04230f9c157689829e273add7')
+backup=('etc/default/tailscaled')
+build() {
+  cd tailscale-$pkgver
+  export CGO_ENABLED=0 GOTOOLCHAIN=local GOFLAGS="-trimpath -mod=mod" GOPATH="$srcdir/gopath" GOCACHE="$srcdir/gocache"
+  go build -ldflags "-s -w -X tailscale.com/version.longStamp=$pkgver-naranjos -X tailscale.com/version.shortStamp=$pkgver" \
+    -o . ./cmd/tailscale ./cmd/tailscaled
+}
+package() {
+  cd tailscale-$pkgver
+  install -Dm755 tailscale tailscaled -t "$pkgdir/usr/bin/"
+  sed 's|/usr/sbin/tailscaled|/usr/bin/tailscaled|' cmd/tailscaled/tailscaled.service > tailscaled.service
+  install -Dm644 tailscaled.service "$pkgdir/usr/lib/systemd/system/tailscaled.service"
+  install -Dm644 cmd/tailscaled/tailscaled.defaults "$pkgdir/etc/default/tailscaled"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/tailscale/LICENSE"
+}

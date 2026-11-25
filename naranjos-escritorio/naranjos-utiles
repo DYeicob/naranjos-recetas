@@ -1,0 +1,66 @@
+#!/bin/bash
+# naranjos-utiles — funciones de terminal de NaranjOS (también como órdenes cortas en zsh)
+#   comprime <fichero|carpeta>…          → .tar.zst (o .zip con --zip)            (alias: comprime)
+#   descomprime <fichero>                 cualquier .zip, .tar.*, .7z, .rar, .gz…  (alias: descomprime)
+#   convierte <entrada> <salida>          vídeo, audio o imagen según la extensión (ffmpeg)  (alias: convierte)
+#   video-ligero <vídeo>                  lo deja mucho más pequeño para enviarlo  (alias: video-ligero)
+#   usb-iso <imagen.iso> <disco>          graba una ISO en un USB (borra el USB; pide SI)
+#   formatea-usb <disco> [nombre]         deja un USB vacío en exFAT (borra el USB; pide SI)
+#   discos                                los discos y USB conectados
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; A=; Z=; }
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+hecho(){ printf '%s✔%s %s\n' "$G" "$Z" "$1"; }
+
+comprime(){
+  local zip=0; [ "${1:-}" = --zip ] && { zip=1; shift; }
+  [ $# -gt 0 ] || die "$(_ 'Uso:') comprime <fichero|carpeta>…"
+  local base; base=$(basename -- "${1%/}")
+  if [ "$zip" = 1 ]; then bsdtar -a -cf "$base.zip" -- "$@" && hecho "$base.zip"
+  else tar -I 'zstd -T0 -10' -cf "$base.tar.zst" -- "$@" && hecho "$base.tar.zst"; fi
+}
+descomprime(){
+  local f="${1:-}" d
+  [ -f "$f" ] || die "$(_ 'Uso:') descomprime <fichero>"
+  d=$(basename -- "$f"); d=${d%%.tar.*}; d=${d%.*}; mkdir -p -- "$d"
+  bsdtar -xf "$f" -C "$d" && hecho "$d/"
+}
+convierte(){
+  [ $# -ge 2 ] || die "$(_ 'Uso:') convierte <entrada> <salida.ext>"
+  ffmpeg -hide_banner -loglevel error -stats -i "$1" "${@:3}" "$2" && hecho "$2"
+}
+video_ligero(){
+  local f="${1:-}"; [ -f "$f" ] || die "$(_ 'Uso:') video-ligero <vídeo>"
+  local s="${f%.*}-ligero.mp4"
+  ffmpeg -hide_banner -loglevel error -stats -i "$f" -vf "scale='min(1280,iw)':-2" -c:v libx264 -crf 28 -preset veryfast \
+    -c:a aac -b:a 96k "$s" && hecho "$s ($(du -h "$s" | cut -f1))"
+}
+discos(){ lsblk -o NAME,SIZE,TYPE,TRAN,LABEL,MOUNTPOINTS -e 7; }
+confirma_usb(){ # confirma_usb <disco>: que sea un USB extraíble y que digas SI
+  local d="$1" r
+  [ -b "$d" ] || die "$(_ 'No existe el disco') $d ($(_ 'míralo con: naranjos-utiles discos'))"
+  [ "$(lsblk -dno TRAN "$d")" = usb ] || die "$d $(_ 'no es un USB: por seguridad, solo se borran USB')"
+  printf '%s%s%s\n' "$A" "$(_ 'Se BORRARÁ todo lo que hay en:')" "$Z"; lsblk -o NAME,SIZE,LABEL,MODEL "$d"
+  read -rp "$(_ 'Escribe SI para continuar:') " r; [ "$r" = SI ] || die "$(_ 'Cancelado.')"
+  local p; for p in $(lsblk -lno NAME "$d" | tail -n +2); do udisksctl unmount -b "/dev/$p" >/dev/null 2>&1 || sudo umount "/dev/$p" 2>/dev/null; done
+  return 0
+}
+usb_iso(){
+  [ $# -eq 2 ] && [ -f "$1" ] || die "$(_ 'Uso:') usb-iso <imagen.iso> /dev/sdX"
+  confirma_usb "$2"
+  sudo dd if="$1" of="$2" bs=4M conv=fsync oflag=direct status=progress && sync && hecho "$(_ 'USB listo para arrancar')"
+}
+formatea_usb(){
+  local d="${1:-}" n="${2:-NARANJOS}"; [ -n "$d" ] || die "$(_ 'Uso:') formatea-usb /dev/sdX [nombre]"
+  confirma_usb "$d"
+  command -v mkfs.exfat >/dev/null || die "$(_ 'Falta mkfs.exfat (exfatprogs)')"
+  sudo wipefs -aq "$d" && printf 'label: gpt\n,,EBD0A0A2-B9E5-4433-87C0-68B6B72699C7\n' | sudo sfdisk -q "$d" && sleep 1 &&
+    sudo mkfs.exfat -L "$n" "$(lsblk -lnpo NAME "$d" | sed -n 2p)" >/dev/null && hecho "$(_ 'USB vacío y listo:') $n"
+}
+case "${1:-}" in
+  comprime) shift; comprime "$@" ;; descomprime) shift; descomprime "$@" ;; convierte) shift; convierte "$@" ;;
+  video-ligero) shift; video_ligero "$@" ;; usb-iso) shift; usb_iso "$@" ;; formatea-usb) shift; formatea_usb "$@" ;;
+  discos) discos ;;
+  *) sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

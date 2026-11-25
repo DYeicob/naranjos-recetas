@@ -1,0 +1,13 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=naranjos-ciber
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Kit de ciberseguridad de NaranjOS (nmap, tcpdump, john, hydra, aircrack-ng, gobuster, ffuf, sqlmap)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('nmap' 'tcpdump' 'john' 'hydra' 'aircrack-ng' 'gobuster' 'ffuf' 'sqlmap' 'naranjos-idiomas')
+makedepends=()
+source=('naranjos-ciber' )
+sha256sums=('SKIP' )
+package() { install -Dm755 naranjos-ciber "$pkgdir/usr/bin/naranjos-ciber"; }

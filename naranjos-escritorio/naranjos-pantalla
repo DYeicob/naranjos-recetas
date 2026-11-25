@@ -5,6 +5,7 @@
 #   naranjos-pantalla escala [monitor] 1.5     escala de un monitor (1, 1.25, 1.5, 2…)
 #   naranjos-pantalla barra arriba|abajo|izquierda|derecha
 #   naranjos-pantalla barra transparencia 0-90 (0 opaca)
+#   naranjos-pantalla fuente "Nombre"          la fuente de terminal, lanzador y barra (fuentes: las que hay)
 #   naranjos-pantalla menu                     elegir en un menú
 #   naranjos-pantalla prepara                  crea los ficheros que faltan (lo hace solo al entrar)
 # Se guarda en ~/.config/naranjos/pantalla/ y ~/.config/naranjos/monitores.lua (no toca tus ficheros).
@@ -12,18 +13,18 @@ set -uo pipefail
 . /usr/lib/naranjos/naranjos-i18n.sh
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; Z=; }
 C="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos"; P="$C/pantalla"; CONF="$P/pantalla.conf"
-TEXTO=1; POSICION=top; TRANSPARENCIA=10
+TEXTO=1; POSICION=top; TRANSPARENCIA=10; FUENTE="JetBrainsMono Nerd Font"
 mkdir -p "$P"; [ -r "$CONF" ] && . "$CONF"
 die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
 num(){ awk -v a="$1" -v b="$2" 'BEGIN{printf "%d", a*b + 0.5}'; }
 
 escribe(){ # vuelve a generar los ficheros incluidos por foot, fuzzel y la barra
-  printf 'TEXTO=%s\nPOSICION=%s\nTRANSPARENCIA=%s\n' "$TEXTO" "$POSICION" "$TRANSPARENCIA" > "$CONF"
-  printf '# NaranjOS · naranjos-pantalla (no lo edites)\n[main]\nfont=JetBrainsMono Nerd Font:size=%s\n' "$(num 11 "$TEXTO")" > "$P/foot.ini"
-  printf '# NaranjOS · naranjos-pantalla (no lo edites)\n[main]\nfont=JetBrainsMono Nerd Font:size=%s\n' "$(num 12 "$TEXTO")" > "$P/fuzzel.ini"
+  printf 'TEXTO=%s\nPOSICION=%s\nTRANSPARENCIA=%s\nFUENTE="%s"\n' "$TEXTO" "$POSICION" "$TRANSPARENCIA" "$FUENTE" > "$CONF"
+  printf '# NaranjOS · naranjos-pantalla (no lo edites)\n[main]\nfont=%s:size=%s\n' "$FUENTE" "$(num 11 "$TEXTO")" > "$P/foot.ini"
+  printf '# NaranjOS · naranjos-pantalla (no lo edites)\n[main]\nfont=%s:size=%s\n' "$FUENTE" "$(num 12 "$TEXTO")" > "$P/fuzzel.ini"
   local op; op=$(awk -v t="$TRANSPARENCIA" 'BEGIN{printf "%.2f", 1 - t/100}')
-  printf '/* NaranjOS · naranjos-pantalla (no lo edites) */\n@define-color fondo_barra alpha(@fondo, %s);\n* { font-size: %spx; }\n' \
-    "$op" "$(num 13 "$TEXTO")" > "$P/waybar.css"
+  printf '/* NaranjOS · naranjos-pantalla (no lo edites) */\n@define-color fondo_barra alpha(@fondo, %s);\n* { font-size: %spx; font-family: "%s", monospace; }\n' \
+    "$op" "$(num 13 "$TEXTO")" "$FUENTE" > "$P/waybar.css"
   printf '// NaranjOS · naranjos-pantalla (no lo edites)\n{ "position": "%s" }\n' "$POSICION" > "$P/waybar.jsonc"
   [ -e "$C/monitores.lua" ] || printf -- '-- NaranjOS · monitores (naranjos-pantalla escala); vacío = automático\n' > "$C/monitores.lua"
 }
@@ -41,6 +42,16 @@ texto(){
   escribe; aplica; printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Tamaño del texto:')" "$TEXTO"
   printf '  %s\n' "$(_ 'Las terminales y programas que abras a partir de ahora ya salen así.')"
 }
+
+fuente(){
+  local f="$*"
+  [ -n "$f" ] || die "$(_ 'Dime la fuente, p. ej.:') naranjos-pantalla fuente \"JetBrainsMono Nerd Font\"   ($(_ 'mira:') naranjos-pantalla fuentes)"
+  fc-list : family | tr ',' '\n' | grep -qxF "$f" || die "$(_ 'No tengo esa fuente instalada:') $f"
+  FUENTE=$f; escribe; aplica
+  command -v gsettings >/dev/null && gsettings set org.gnome.desktop.interface monospace-font-name "$f 11" 2>/dev/null
+  printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Fuente:')" "$f"
+}
+fuentes(){ fc-list :spacing=100 family | tr ',' '\n' | sed 's/^ *//' | sort -u; }
 
 escala(){
   local m e
@@ -69,7 +80,7 @@ barra(){
 
 estado(){
   printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'pantalla')" "$Z"
-  printf '  %-16s %s\n' "$(_ 'Texto:')" "$TEXTO" "$(_ 'Barra:')" "$POSICION · $(_ 'transparencia') $TRANSPARENCIA%"
+  printf '  %-16s %s\n' "$(_ 'Texto:')" "$TEXTO" "$(_ 'Fuente:')" "$FUENTE" "$(_ 'Barra:')" "$POSICION · $(_ 'transparencia') $TRANSPARENCIA%"
   hyprctl monitors -j 2>/dev/null | python3 -Ic 'import json,sys
 for m in json.load(sys.stdin): print("  %-16s %dx%d · %s %s" % (m["name"], m["width"], m["height"], "escala", m["scale"]))' 2>/dev/null
 }
@@ -78,12 +89,13 @@ menu(){
   local o
   o=$(printf '%s\n' "$(_ 'Texto normal')" "$(_ 'Texto grande')" "$(_ 'Texto muy grande')" "$(_ 'Texto pequeño')" \
       "$(_ 'Escala de la pantalla')" "$(_ 'Barra arriba')" "$(_ 'Barra abajo')" "$(_ 'Barra a la izquierda')" "$(_ 'Barra a la derecha')" \
-      "$(_ 'Barra opaca')" "$(_ 'Barra transparente')" | fuzzel --dmenu --index --prompt "$(_ 'Pantalla') ❯ " --lines 11 --width 40) || exit 0
+      "$(_ 'Barra opaca')" "$(_ 'Barra transparente')" "$(_ 'Cambiar la fuente')" | fuzzel --dmenu --index --prompt "$(_ 'Pantalla') ❯ " --lines 12 --width 40) || exit 0
   case "$o" in
     0) texto 1 ;; 1) texto 1.15 ;; 2) texto 1.35 ;; 3) texto 0.9 ;;
     4) local e; e=$(printf '1\n1.25\n1.5\n1.75\n2\n' | fuzzel --dmenu --prompt "$(_ 'Escala') ❯ " --lines 5 --width 30) || exit 0; escala "$e" ;;
     5) barra arriba ;; 6) barra abajo ;; 7) barra izquierda ;; 8) barra derecha ;;
     9) barra transparencia 0 ;; 10) barra transparencia 30 ;;
+    11) local f; f=$(fuentes | fuzzel --dmenu --prompt "$(_ 'Fuente') ❯ " --lines 14 --width 44) || exit 0; fuente "$f" ;;
   esac >/dev/null
 }
 
@@ -93,6 +105,8 @@ case "${1:-}" in
   escala|scale) shift; escala "$@" ;;
   barra|bar) shift; barra "$@" ;;
   menu) menu ;;
+  fuente|font) shift; fuente "$@" ;;
+  fuentes|fonts) fuentes ;;
   prepara) [ -e "$P/waybar.css" ] && [ -e "$P/foot.ini" ] && [ -e "$P/waybar.jsonc" ] || escribe ;;
-  *) sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+  *) sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac

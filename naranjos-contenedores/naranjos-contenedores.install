@@ -1,0 +1,12 @@
+# subuid/subgid para los contenedores sin root, y el socket de Podman para lazydocker
+post_install() {
+  local u n=100000
+  touch /etc/subuid /etc/subgid
+  for u in $(awk -F: '$3>=1000 && $3<60000 {print $1}' /etc/passwd); do
+    grep -q "^$u:" /etc/subuid || { while grep -q ":$n:" /etc/subuid; do n=$((n + 65536)); done; echo "$u:$n:65536" >> /etc/subuid; }
+    grep -q "^$u:" /etc/subgid || echo "$(grep "^$u:" /etc/subuid)" >> /etc/subgid
+  done
+  systemctl --global enable podman.socket >/dev/null 2>&1 || true
+  return 0
+}
+post_upgrade() { post_install; }

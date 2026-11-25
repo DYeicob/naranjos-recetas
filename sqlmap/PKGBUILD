@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=sqlmap
+pkgver=1.10.11
+pkgrel=1
+pkgdesc='Detectar inyecciones SQL'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('python')
+makedepends=()
+source=('https://github.com/sqlmapproject/sqlmap/archive/1.10.11/sqlmap-1.10.11.tar.gz')
+sha256sums=('22a8dbd1b18b2249302029a3ed259a92adecc9103cc2fa4908aac0d3743e8ad0')
+package() {
+  install -d "$pkgdir/usr/share/sqlmap" "$pkgdir/usr/bin"
+  cp -a sqlmap-$pkgver/. "$pkgdir/usr/share/sqlmap/"
+  printf '#!/bin/sh\nexec python3 /usr/share/sqlmap/sqlmap.py "$@"\n' > "$pkgdir/usr/bin/sqlmap"; chmod 755 "$pkgdir/usr/bin/sqlmap"
+}

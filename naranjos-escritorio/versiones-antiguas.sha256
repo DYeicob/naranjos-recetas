@@ -26,3 +26,6 @@ f38fbc0de423f8c3518308169407d186252bfc7e9abc5d2c41d4c511017ceb05  .config/mako/c
 2d9f929784f84f6bf23e2f3dc6b26dd3892467638b4fdd93c5896bbf99df4c38  .config/waybar/style.css
 a758a2e76bb7d92ab200ccc97360d7baf8f2284c72854e9887bf154e7548af13  .config/foot/foot.ini
 d618e24672bd128f32682a4106f9ea921030a1247a182df476b4c08fec5343b1  .config/fuzzel/fuzzel.ini
+e1e060f133549241aa01bf867749404378cb75a4af338e17ba0a228770bcb1ca  .config/waybar/config.jsonc
+b332349d2833be3ed29ea17396b1fa11aa44c7c5b2b8445937ed6ec2ba7d3554  .config/waybar/style.css
+7044a44af92c3ff8b5efa5df2fa5773402941ad1b42e29699c8fec6b9e35ffa7  .config/hypr/hypridle.conf

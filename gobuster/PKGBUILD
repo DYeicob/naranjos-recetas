@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=gobuster
+pkgver=3.8.2
+pkgrel=1
+pkgdesc='Buscar rutas y subdominios web'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Apache-2.0')
+depends=()
+makedepends=('go')
+source=('https://github.com/OJ/gobuster/archive/v3.8.2/gobuster-3.8.2.tar.gz')
+sha256sums=('6919232eafbd0c4bbc9664d7f434b6a8d82133aa09f1400341ef6985ceff208a')
+build() {
+  cd $pkgname-$pkgver
+  export CGO_ENABLED=0 GOTOOLCHAIN=local GOFLAGS="-trimpath -mod=mod" GOPATH="$srcdir/gopath" GOCACHE="$srcdir/gocache"
+  go build -ldflags "-s -w" -o $pkgname .
+}
+package() { cd $pkgname-$pkgver; install -Dm755 $pkgname "$pkgdir/usr/bin/$pkgname"; install -Dm644 LICENSE* -t "$pkgdir/usr/share/licenses/$pkgname/" 2>/dev/null || true; }

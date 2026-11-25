@@ -1,0 +1,19 @@
+#!/bin/bash
+# naranjos-ciber — el kit de ciberseguridad de NaranjOS (solo para tus equipos o con permiso: es la ley)
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; Z=$'\e[0m'; [ -t 1 ] || { O=; Z=; }
+printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'kit de ciberseguridad')" "$Z"
+while IFS='|' read -r o d; do
+  command -v "$o" >/dev/null && printf '  %-14s %s\n' "$o" "$d"
+done << EOD
+nmap|$(_ 'descubrir equipos y puertos de una red')
+tcpdump|$(_ 'capturar el tráfico de red en la terminal')
+john|$(_ 'auditar contraseñas (John the Ripper)')
+hydra|$(_ 'probar contraseñas contra servicios de red')
+aircrack-ng|$(_ 'auditar redes WiFi')
+gobuster|$(_ 'buscar rutas y subdominios web')
+ffuf|$(_ 'fuzzing web rápido')
+sqlmap|$(_ 'detectar inyecciones SQL')
+EOD
+printf '\n  %s\n' "$(_ 'Wireshark (gráfico): naranjos-apps → Wireshark')"
+printf '  %s\n' "$(_ 'Úsalo solo en sistemas tuyos o con autorización por escrito.')"

@@ -9,6 +9,7 @@
 #   naranjos-tema fondo [siguiente] otro fondo del tema (Super + Ctrl + Espacio)
 #   naranjos-tema modo [claro|oscuro]  el mismo cítrico en claro u oscuro (Super + Ctrl + Mayús + T)
 #   naranjos-tema vscode          los temas de NaranjOS en VS Code / VSCodium
+#   naranjos-tema crea "Mi tema" 8a2be2   un tema tuyo a partir de un color (oscuro y claro); borra <tema> lo quita
 # El tema elegido es un enlace: ~/.config/naranjos/tema → /usr/share/naranjos/temas/<tema>
 set -uo pipefail
 if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; fi
@@ -27,8 +28,15 @@ die(){ printf '%snaranjos-tema:%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
 [ "$(id -u)" != 0 ] || die "$(_ 'Cada usuario elige su tema: ejecútalo sin sudo.')"
 
 actual(){ local d; d=$(readlink "$ENLACE" 2>/dev/null) || { echo naranja; return; }; basename "$d"; }
-nombre(){ sed -n 's/^NOMBRE=//p' "$TEMAS/$1/colores" 2>/dev/null | tr -d '"'; }
-existe(){ [ -r "$TEMAS/$1/colores" ]; }
+# (6o7) temas tuyos: ~/.local/share/naranjos/temas/<tema> (naranjos-tema crea)
+MIOS="${XDG_DATA_HOME:-$HOME/.local/share}/naranjos/temas"
+dir_de(){ if [ -r "$MIOS/$1/colores" ]; then echo "$MIOS/$1"; else echo "$TEMAS/$1"; fi; }
+for _d in "$MIOS"/*/colores; do
+  [ -r "$_d" ] || continue; _t=$(basename "$(dirname "$_d")")
+  case "$_t" in *-claro) CLAROS+=("$_t") ;; *) ORDEN+=("$_t") ;; esac
+done; unset _d _t
+nombre(){ sed -n 's/^NOMBRE=//p' "$(dir_de "$1")/colores" 2>/dev/null | tr -d '"'; }
+existe(){ [ -r "$(dir_de "$1")/colores" ]; }
 
 lista(){
   local t a; a=$(actual)
@@ -145,9 +153,9 @@ pon(){
   existe "$t" || die "$(_ 'No existe el tema') «$t» ($(_ 'mira:') naranjos-tema lista)"
   local FONDO="" CLARO=0 CURSOR=NaranjOS ICONOS=""
   # shellcheck disable=SC1090
-  . "$TEMAS/$t/colores"
+  . "$(dir_de "$t")/colores"
   mkdir -p "$CONF/naranjos"
-  ln -sfn "$TEMAS/$t" "$ENLACE"
+  ln -sfn "$(dir_de "$t")" "$ENLACE"
   pon_gtk "$CLARO"
   pon_iconos "$ICONOS"
   # (6o) btop sigue el tema: su tema «naranjos» apunta siempre al tema puesto
@@ -165,7 +173,7 @@ pon(){
 # otro fondo del tema puesto (los naranjos-0N.jpg de su carpeta), en orden
 fondo(){
   local t FONDO="" dir act l=() i sig
-  t=$(actual); . "$TEMAS/$t/colores"
+  t=$(actual); . "$(dir_de "$t")/colores"
   dir=$(dirname "$FONDO")
   mapfile -t l < <(ls "$dir"/naranjos-0[0-9].jpg 2>/dev/null | sort)
   [ ${#l[@]} -gt 0 ] || die "$(_ 'No encuentro fondos en') $dir"
@@ -180,8 +188,8 @@ fondo(){
 modo(){
   local a o; a=$(actual); o=$(pareja "$a")
   case "${1:-alterna}" in
-    claro|light)  grep -qx 'CLARO=1' "$TEMAS/$a/colores" 2>/dev/null && return 0 ;;
-    oscuro|dark)  grep -qx 'CLARO=1' "$TEMAS/$a/colores" 2>/dev/null || return 0 ;;
+    claro|light)  grep -qx 'CLARO=1' "$(dir_de "$a")/colores" 2>/dev/null && return 0 ;;
+    oscuro|dark)  grep -qx 'CLARO=1' "$(dir_de "$a")/colores" 2>/dev/null || return 0 ;;
   esac
   existe "$o" || die "$(_ 'No existe el tema') «$o»"
   pon "$o"
@@ -197,6 +205,26 @@ vscode(){
     printf '%s✔%s %s\n' "$G" "$Z" "${d/#$HOME/\~}"
   done
   [ "$hay" = 1 ] || printf '%s\n' "$(_ 'No encuentro VS Code ni VSCodium en tu usuario')"
+}
+
+# un tema nuevo a partir de un color (oscuro y claro)
+crea(){
+  local n="${1:-}" c="${2:-}" id
+  [ -n "$n" ] && [[ "${c#\#}" =~ ^[0-9a-fA-F]{6}$ ]] || die "$(_ 'Uso:') naranjos-tema crea \"$(_ 'Mi tema')\" ff8700"
+  id=$(printf '%s' "$n" | tr '[:upper:]' '[:lower:]' | sed 's/ó/o/g;s/á/a/g;s/é/e/g;s/í/i/g;s/ú/u/g;s/ñ/n/g' | tr -cs 'a-z0-9' '-' | sed 's/^-//;s/-$//')
+  [ -n "$id" ] || die "$(_ 'Ese nombre no vale')"
+  [ -r "$TEMAS/$id/colores" ] && die "$(_ 'Ya hay un tema de NaranjOS con ese nombre')"
+  python3 -I /usr/lib/naranjos/tema-generador.py "$MIOS/$id" "$id" "$n" "${c#\#}" >/dev/null || die "$(_ 'No pude crear el tema')"
+  python3 -I /usr/lib/naranjos/tema-generador.py "$MIOS/$id-claro" "$id-claro" "$n ($(_ 'claro'))" "${c#\#}" claro >/dev/null
+  printf '%s✔%s %s %s · %s\n' "$G" "$Z" "$(_ 'Tema creado:')" "$n" "${MIOS/#$HOME/\~}/$id"
+  printf '  %s\n' "$(_ 'Retócalo a tu gusto: cambia los COLOR_… de «colores» y los demás ficheros de esa carpeta.')"
+  ORDEN+=("$id"); CLAROS+=("$id-claro")
+  pon "$id"
+}
+borra_mio(){
+  local id="${1:-}"; [ -n "$id" ] && [ -d "$MIOS/$id" ] || die "$(_ 'No tienes un tema con ese nombre')"
+  [ "$(actual)" = "$id" ] || [ "$(actual)" = "$id-claro" ] && pon naranja --sin-recargar >/dev/null
+  rm -rf -- "${MIOS:?}/$id" "${MIOS:?}/$id-claro"; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Tema borrado')"
 }
 
 siguiente(){
@@ -224,11 +252,13 @@ case "${1:-}" in
   siguiente|next)  siguiente ;;
   menu)            menu ;;
   modo|mode)       shift; modo "${1:-alterna}" ;;
+  crea|new)        shift; crea "$@" ;;
+  borra|delete)    shift; borra_mio "$@" ;;
   vscode|code)     vscode ;;
   actual|current)  actual ;;
   fondo|wallpaper) fondo ;;
   revisa|check)    revisa && printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Todo sigue el tema.')" ;;
   ayuda|help|-h|--help)
-    sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//' ;;
+    sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//' ;;
   *) pon "$1" ;;
 esac

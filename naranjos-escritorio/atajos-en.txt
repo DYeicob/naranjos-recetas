@@ -26,6 +26,8 @@ Super + Ctrl + R          New reminder
 Super + Ctrl + P          Screen, text size and bar
 Alt + Print               Record an area (again: stop)
 Alt + Shift + Print       Record the screen (again: stop)
+Super + Ctrl + C          Keep awake (on / off)
+Super + Shift + A         Recommended apps
 ── WINDOWS ──────────────────────────────────────────────
 Super + W                 Close the window
 Super + F                 Fullscreen

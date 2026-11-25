@@ -1,0 +1,6 @@
+#!/bin/sh
+# NaranjOS · abre un programa con la gráfica NVIDIA (el escritorio sigue en la Intel, que gasta menos)
+#   prime-run <programa>      p. ej.: prime-run steam · prime-run blender
+export __NV_PRIME_RENDER_OFFLOAD=1 __VK_LAYER_NV_optimus=NVIDIA_only __GLX_VENDOR_LIBRARY_NAME=nvidia
+export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
+exec "$@"

@@ -26,6 +26,8 @@ Super + Ctrl + R          Nuevo recordatorio
 Super + Ctrl + P          Pantalla, tamaño del texto y barra
 Alt + Impr                Grabar una zona (otra vez: parar)
 Alt + Mayús + Impr        Grabar la pantalla (otra vez: parar)
+Super + Ctrl + C          Mantener despierto (sí / no)
+Super + Mayús + A         Apps recomendadas
 ── VENTANAS ─────────────────────────────────────────────
 Super + W                 Cerrar la ventana
 Super + F                 Pantalla completa

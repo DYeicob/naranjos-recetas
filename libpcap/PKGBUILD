@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=libpcap
+pkgver=1.10.6
+pkgrel=1
+pkgdesc='Captura de paquetes de red'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=()
+makedepends=()
+source=('https://www.tcpdump.org/release/libpcap-1.10.6.tar.gz')
+sha256sums=('872dd11337fe1ab02ad9d4fee047c9da244d695c6ddf34e2ebb733efd4ed8aa9')
+build() { cd libpcap-$pkgver; ./configure --prefix=/usr; make; sed -i '/INSTALL_DATA.*libpcap.a\|RANLIB.*libpcap.a/ s/^/#/' Makefile; }
+package() { cd libpcap-$pkgver; make DESTDIR="$pkgdir" install; }

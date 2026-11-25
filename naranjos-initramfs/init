@@ -14,7 +14,7 @@ mount -t tmpfs    run  /run  -o nosuid,nodev,mode=0755
 exec </dev/console >/dev/console 2>&1
 
 N=$'\e[1;38;5;208m'; Z=$'\e[0m'
-di(){ echo "${N}NaranjOS:${Z} $*"; }
+di(){ if command -v plymouth >/dev/null && plymouth --ping 2>/dev/null; then plymouth display-message --text="$*"; else echo "${N}NaranjOS:${Z} $*"; fi; }
 
 raiz="" tipo="" flags="" modo=ro espera=10 retraso=0 programa=/sbin/init parar=0 foto=""
 read -r -a args < /proc/cmdline
@@ -35,6 +35,7 @@ for a in "${args[@]}"; do
 done
 
 emergencia(){
+  command -v plymouth >/dev/null && plymouth --ping 2>/dev/null && plymouth quit
   echo
   di "$1"
   echo "  (es) Tienes una consola para arreglarlo; escribe «exit» para reintentar."
@@ -53,6 +54,15 @@ fi
 udevadm trigger --type=subsystems --action=add
 udevadm trigger --type=devices --action=add
 udevadm settle --timeout=30
+
+# la pantalla de arranque de NaranjOS (Plymouth), con «splash» en la línea del kernel
+splash=0
+for a in "${args[@]}"; do [ "$a" = splash ] && splash=1; done
+if [ "$splash" = 1 ] && command -v plymouthd >/dev/null; then
+  mkdir -p /run/plymouth
+  plymouthd --mode=boot --pid-file=/run/plymouth/pid --attach-to-session && plymouth show-splash
+fi
+hay_splash(){ plymouth --ping 2>/dev/null; }
 
 [ "$retraso" -gt 0 ] 2>/dev/null && sleep "$retraso"
 [ -n "$foto" ] && modo=ro
@@ -85,7 +95,12 @@ while :; do
     modprobe -q dm_crypt
     di "el disco está cifrado / the disk is encrypted"
     until [ -b /dev/mapper/naranjos-raiz ]; do
-      cryptsetup open --tries 3 "$dev" naranjos-raiz || emergencia "No se pudo abrir el disco cifrado / Could not unlock the disk"
+      if hay_splash; then
+        plymouth ask-for-password --prompt="Contraseña del disco · Disk password" --number-of-tries=3 \
+          --command="cryptsetup open $dev naranjos-raiz --key-file=-" || emergencia "No se pudo abrir el disco cifrado / Could not unlock the disk"
+      else
+        cryptsetup open --tries 3 "$dev" naranjos-raiz || emergencia "No se pudo abrir el disco cifrado / Could not unlock the disk"
+      fi
     done
     dev=/dev/mapper/naranjos-raiz
   fi
@@ -127,4 +142,5 @@ fi
 # udev se apaga: el del sistema toma el relevo
 udevadm control --exit
 udevadm info --cleanup-db >/dev/null 2>&1
+hay_splash && plymouth update-root-fs --new-root-dir=/sysroot
 exec switch_root /sysroot "$programa" "$@"

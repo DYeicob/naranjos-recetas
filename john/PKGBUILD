@@ -1,0 +1,26 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=john
+pkgver=1.9.0.jumbo.rea6b98c
+pkgrel=1
+pkgdesc='Auditar contraseñas (John the Ripper jumbo)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('openssl' 'zlib' 'gmp' 'libpcap')
+makedepends=()
+source=('https://github.com/openwall/john/archive/ea6b98c095559785903a10d51c47d90aafcc52c8/john-ea6b98c095559785903a10d51c47d90aafcc52c8.tar.gz')
+sha256sums=('7cb9fe23ba637101f0634d2040ab299040985eea21fce58bfd47d2fd02ceefbc')
+_commit=ea6b98c095559785903a10d51c47d90aafcc52c8
+build() {
+  cd john-$_commit/src
+  export CFLAGS="$CFLAGS -std=gnu17 -Wno-error"
+  ./configure --disable-native-tests --disable-opencl
+  make -s
+}
+package() {
+  cd john-$_commit
+  install -d "$pkgdir/usr/lib/john" "$pkgdir/usr/bin"
+  cp -a run/. "$pkgdir/usr/lib/john/"
+  printf '#!/bin/sh\nexec /usr/lib/john/john "$@"\n' > "$pkgdir/usr/bin/john"; chmod 755 "$pkgdir/usr/bin/john"
+  install -Dm644 doc/LICENSE -t "$pkgdir/usr/share/licenses/john/"
+}

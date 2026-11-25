@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=conmon
+pkgver=2.2.1
+pkgrel=1
+pkgdesc='Vigila cada contenedor de Podman'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Apache-2.0')
+depends=('glib2' 'libseccomp' 'systemd')
+makedepends=()
+source=('https://github.com/containers/conmon/archive/v2.2.1/conmon-2.2.1.tar.gz')
+sha256sums=('814fb5979a3a4b8576b1f901e606b482bebb41cb7e57926e6d5765ee786b96d3')
+build() { cd conmon-$pkgver; make bin/conmon GIT_COMMIT=naranjos; }
+package() { cd conmon-$pkgver; install -Dm755 bin/conmon "$pkgdir/usr/bin/conmon"; }

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NaranjOS — Linux hecho desde cero, con zumo</title>
+<meta name="description" content="NaranjOS: distribución de Linux construida desde cero (Linux From Scratch), con Hyprland, temas cítricos, seguridad de serie y fotos del sistema para volver atrás.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<style>
+  :root { --fondo:#121212; --sup:#1c1c1c; --texto:#e6e6e6; --apagado:#8a8a8a; --acento:#ff8700; --acento2:#ffaf5f; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--fondo); color: var(--texto); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  a { color: var(--acento); }
+  header { min-height: 92vh; display: grid; place-items: center; text-align: center; padding: 4rem 1.5rem;
+           background: radial-gradient(60% 50% at 50% 35%, #2a1600 0%, var(--fondo) 70%); }
+  header img { width: min(220px, 50vw); filter: drop-shadow(0 12px 40px #ff870055); }
+  h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); letter-spacing: -0.03em; margin-top: 1rem; }
+  h1 span { color: var(--acento); }
+  .lema { color: var(--apagado); font-size: 1.25rem; max-width: 40rem; margin: .6rem auto 2rem; }
+  .botones { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+  .boton { padding: .8rem 1.4rem; border-radius: 12px; text-decoration: none; font-weight: 600; border: 1px solid var(--acento); }
+  .boton.lleno { background: var(--acento); color: #121212; }
+  main { max-width: 68rem; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+  h2 { font-size: 1.9rem; margin: 3rem 0 1.2rem; }
+  .rejilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+  .carta { background: var(--sup); border: 1px solid #2a2a2a; border-radius: 16px; padding: 1.3rem; }
+  .carta b { color: var(--acento2); display: block; margin-bottom: .3rem; }
+  code { background: #1e1e1e; color: var(--acento2); padding: .1rem .4rem; border-radius: 6px; }
+  .citricos { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: .6rem; }
+  .citricos i { width: 2.2rem; height: 2.2rem; border-radius: 50%; display: inline-block; border: 2px solid #ffffff22; }
+  footer { color: var(--apagado); text-align: center; padding: 2rem; border-top: 1px solid #222; font-size: .9rem; }
+  .idioma { position: fixed; top: 1rem; right: 1rem; background: var(--sup); border: 1px solid #333; color: var(--texto);
+            border-radius: 10px; padding: .3rem .7rem; cursor: pointer; }
+  [data-en] { display: none; } body.en [data-es] { display: none; } body.en [data-en] { display: revert; }
+</style>
+</head>
+<body>
+<button class="idioma" onclick="document.body.classList.toggle('en')">ES / EN</button>
+<header>
+  <div>
+    <img src="logo.svg" alt="Logo de NaranjOS">
+    <h1>Naranj<span>OS</span></h1>
+    <p class="lema" data-es>Linux hecho desde cero, pieza a pieza. Bonito, rápido, seguro y con zumo.</p>
+    <p class="lema" data-en>Linux built from scratch, piece by piece. Beautiful, fast, secure — and juicy.</p>
+    <div class="botones">
+      <a class="boton lleno" href="https://github.com/DYeicob/naranjos-recetas/releases" data-es>Descargar (pronto: ISO)</a>
+      <a class="boton lleno" href="https://github.com/DYeicob/naranjos-recetas/releases" data-en>Download (ISO soon)</a>
+      <a class="boton" href="https://github.com/DYeicob/naranjos-recetas" data-es>Código en GitHub</a>
+      <a class="boton" href="https://github.com/DYeicob/naranjos-recetas" data-en>Code on GitHub</a>
+    </div>
+  </div>
+</header>
+<main>
+  <h2 data-es>Qué tiene</h2><h2 data-en>What's inside</h2>
+  <div class="rejilla">
+    <div class="carta"><b>Hyprland</b><span data-es>Escritorio en mosaico, rápido y fluido. Todo con el teclado, también con el ratón.</span><span data-en>Fast, fluid tiling desktop. Everything from the keyboard — the mouse works too.</span></div>
+    <div class="carta"><b data-es>Temas cítricos</b><b data-en>Citrus themes</b><span data-es>Naranja, Sanguina, Lima, Pomelo, Limón y Brisa, en claro y oscuro, de la barra al editor. O crea el tuyo.</span><span data-en>Orange, Blood orange, Lime, Grapefruit, Lemon and Breeze, light and dark, from the bar to the editor. Or make your own.</span>
+      <div class="citricos"><i style="background:#ff8700"></i><i style="background:#e0393e"></i><i style="background:#9ccc2c"></i><i style="background:#ff6f91"></i><i style="background:#f2d200"></i><i style="background:#3d9bff"></i></div></div>
+    <div class="carta"><b data-es>Fotos del sistema</b><b data-en>System snapshots</b><span data-es>Btrfs: antes de cada actualización se hace una foto, y desde el menú de arranque vuelves atrás.</span><span data-en>Btrfs: a snapshot before every update, and you can go back from the boot menu.</span></div>
+    <div class="carta"><b>peel</b><span data-es>Seguridad de serie: cortafuegos, DNS cifrado, VPN gratis, antivirus, protección USB y AppArmor.</span><span data-en>Security built in: firewall, encrypted DNS, free VPN, antivirus, USB protection and AppArmor.</span></div>
+    <div class="carta"><b>zumo</b><span data-es>Su propio gestor de paquetes, con repositorio firmado y el código fuente de todo publicado.</span><span data-en>Its own package manager, with a signed repository and every source published.</span></div>
+    <div class="carta"><b data-es>Para el día a día</b><b data-en>Everyday tools</b><span data-es>Portapapeles, emojis, grabar la pantalla, copiar texto de la pantalla, dictado por voz sin internet, recordatorios y el tiempo.</span><span data-en>Clipboard history, emojis, screen recording, text from the screen, offline dictation, reminders and weather.</span></div>
+    <div class="carta"><b data-es>Para programar</b><b data-en>For developers</b><span data-es>Neovim, lazygit, lazydocker con Podman, btop, mise y las mejores herramientas de terminal.</span><span data-en>Neovim, lazygit, lazydocker with Podman, btop, mise and the best terminal tools.</span></div>
+    <div class="carta"><b data-es>Hecho desde cero</b><b data-en>Built from scratch</b><span data-es>Basado en Linux From Scratch: cada paquete compilado a mano, sin heredar de otra distribución.</span><span data-en>Based on Linux From Scratch: every package compiled by hand, not derived from another distro.</span></div>
+  </div>
+  <h2 data-es>Una muestra</h2><h2 data-en>A taste</h2>
+  <p data-es><code>zumo actualiza</code> · <code>naranjos-tema pon lima</code> · <code>fotos vuelve 3</code> · <code>naranjos-recuerda "café" en 10m</code></p>
+  <p data-en><code>zumo actualiza</code> · <code>naranjos-tema pon lima</code> · <code>fotos vuelve 3</code> · <code>naranjos-recuerda "coffee" in 10m</code></p>
+</main>
+<footer>NaranjOS · <span data-es>software libre; arte CC BY-SA 4.0</span><span data-en>free software; artwork CC BY-SA 4.0</span> · <a href="https://github.com/DYeicob/naranjos-recetas/blob/main/AVISO-LEGAL.md">Aviso legal</a></footer>
+</body>
+</html>

@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=naranjos-contenedores
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Configuración de contenedores de NaranjOS (Podman sin root, docker = podman)'
+install=naranjos-contenedores.install
+backup=('etc/containers/registries.conf' 'etc/containers/policy.json' 'etc/containers/storage.conf' 'etc/containers/containers.conf')
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=()
+makedepends=()
+source=('registries.conf' 'policy.json' 'storage.conf' 'containers.conf' 'contenedores.sh' 'docker' )
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' )
+package() {
+  local f; for f in registries.conf policy.json storage.conf containers.conf; do install -Dm644 "$f" "$pkgdir/etc/containers/$f"; done
+  install -Dm644 contenedores.sh "$pkgdir/etc/profile.d/naranjos-contenedores.sh"
+  install -Dm755 docker "$pkgdir/usr/bin/docker"
+}

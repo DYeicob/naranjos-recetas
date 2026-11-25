@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=plymouth
+pkgver=24.004.60
+pkgrel=1
+pkgdesc='Pantalla de arranque gráfica'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('libdrm' 'libpng' 'freetype2' 'libevdev' 'libxkbcommon' 'xkeyboard-config' 'systemd')
+makedepends=('meson' 'ninja')
+source=('https://gitlab.freedesktop.org/plymouth/plymouth/-/archive/24.004.60/plymouth-24.004.60.tar.gz')
+sha256sums=('f59bc6dea9745c32e9ca03a717adc284b0ea5677243a7769eb8a7c6cc1eba801')
+backup=('etc/plymouth/plymouthd.conf')
+build() {
+  cd plymouth-$pkgver
+  meson setup build --prefix=/usr --sysconfdir=/etc --localstatedir=/var --buildtype=release \
+    -D logo=/usr/share/pixmaps/naranjos.png -D release-file=/etc/os-release \
+    -D pango=disabled -D freetype=enabled -D gtk=disabled -D docs=false -D udev=enabled \
+    -D systemd-integration=true
+  ninja -C build
+}
+package() { cd plymouth-$pkgver; DESTDIR="$pkgdir" ninja -C build install; rm -f "$pkgdir/etc/plymouth/plymouthd.conf"; }

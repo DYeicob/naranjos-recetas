@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=podman
+pkgver=6.2.1
+pkgrel=1
+pkgdesc='Contenedores sin root (compatible con docker)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Apache-2.0')
+depends=('conmon' 'crun' 'passt' 'libseccomp' 'systemd' 'shadow' 'naranjos-contenedores')
+makedepends=('go')
+source=('https://github.com/containers/podman/archive/v6.2.1/podman-6.2.1.tar.gz')
+sha256sums=('10a56f6a36c4f7ea19956d7298615a6ff1f46978fc36d31dfe31be14899d10fb')
+build() {
+  cd podman-$pkgver
+  export GOTOOLCHAIN=local GOPATH="$srcdir/gopath" GOCACHE="$srcdir/gocache" GOFLAGS="-trimpath"
+  make podman rootlessport quadlet PREFIX=/usr GIT_COMMIT=naranjos \
+    BUILDTAGS="seccomp systemd exclude_graphdriver_devicemapper exclude_graphdriver_btrfs containers_image_openpgp"
+}
+package() {
+  cd podman-$pkgver
+  make install.bin install.systemd PREFIX=/usr DESTDIR="$pkgdir" GIT_COMMIT=naranjos
+}

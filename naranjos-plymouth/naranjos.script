@@ -1,0 +1,64 @@
+# NaranjOS · pantalla de arranque (Plymouth, módulo script)
+Window.SetBackgroundTopColor(0.071, 0.071, 0.071);      # #121212
+Window.SetBackgroundBottomColor(0.071, 0.071, 0.071);
+
+W = Window.GetWidth(); H = Window.GetHeight();
+escala = Math.Min(W, H) / 1080; if (escala < 0.5) escala = 0.5;
+
+logo.image = Image("logo.png");
+tam = Math.Int(220 * escala);
+logo.image = logo.image.Scale(tam, tam);
+logo.sprite = Sprite(logo.image);
+logo.sprite.SetX(W / 2 - tam / 2); logo.sprite.SetY(H / 2 - tam / 2 - 40 * escala);
+
+fuente = "JetBrainsMono Nerd Font " + Math.Int(16 * escala);
+texto.image = Image.Text("Exprimiendo el núcleo…", 0.902, 0.902, 0.902, 1, fuente);
+texto.sprite = Sprite(texto.image);
+texto.sprite.SetX(W / 2 - texto.image.GetWidth() / 2); texto.sprite.SetY(H / 2 + tam / 2 + 10 * escala);
+
+# tres gajos que laten (naranja #ff8700)
+punto = Image.Text("●", 1, 0.529, 0, 1, "JetBrainsMono Nerd Font " + Math.Int(18 * escala));
+for (i = 0; i < 3; i++) {
+  puntos[i] = Sprite(punto);
+  puntos[i].SetX(W / 2 - punto.GetWidth() * 2 + i * punto.GetWidth() * 1.5);
+  puntos[i].SetY(H / 2 + tam / 2 + 50 * escala);
+}
+t = 0;
+fun refresca() {
+  t++;
+  for (i = 0; i < 3; i++) puntos[i].SetOpacity(0.25 + 0.75 * Math.Abs(Math.Sin((t / 12) - i * 0.6)));
+}
+Plymouth.SetRefreshFunction(refresca);
+
+# contraseña del disco cifrado (LUKS)
+fun pide_clave(prompt, balas) {
+  texto.sprite.SetOpacity(0);
+  pregunta.image = Image.Text(prompt, 1, 0.529, 0, 1, fuente);
+  pregunta.sprite = Sprite(pregunta.image);
+  pregunta.sprite.SetX(W / 2 - pregunta.image.GetWidth() / 2); pregunta.sprite.SetY(H / 2 + tam / 2 + 10 * escala);
+  s = ""; for (i = 0; i < balas && i < 40; i++) s += "•";
+  if (s == "") s = " ";
+  clave.image = Image.Text(s, 0.902, 0.902, 0.902, 1, fuente);
+  clave.sprite = Sprite(clave.image);
+  clave.sprite.SetX(W / 2 - clave.image.GetWidth() / 2); clave.sprite.SetY(H / 2 + tam / 2 + 90 * escala);
+}
+Plymouth.SetDisplayPasswordFunction(pide_clave);
+fun normal() {
+  texto.sprite.SetOpacity(1);
+  if (pregunta.sprite) pregunta.sprite.SetOpacity(0);
+  if (clave.sprite) clave.sprite.SetOpacity(0);
+}
+Plymouth.SetDisplayNormalFunction(normal);
+
+# mensajes (p. ej. «el disco está cifrado»)
+fun mensaje(m) {
+  msg.image = Image.Text(m, 0.541, 0.541, 0.541, 1, fuente);
+  msg.sprite = Sprite(msg.image);
+  msg.sprite.SetX(W / 2 - msg.image.GetWidth() / 2); msg.sprite.SetY(H - 60 * escala);
+}
+Plymouth.SetMessageFunction(mensaje);
+# al apagar
+if (Plymouth.GetMode() == "shutdown" || Plymouth.GetMode() == "reboot") {
+  texto.image = Image.Text("Hasta pronto", 0.902, 0.902, 0.902, 1, fuente);
+  texto.sprite.SetImage(texto.image); texto.sprite.SetX(W / 2 - texto.image.GetWidth() / 2);
+}

@@ -10,6 +10,10 @@ depends=('libcbor' 'openssl' 'zlib' 'systemd')
 makedepends=('cmake')
 source=('https://github.com/Yubico/libfido2/archive/1.17.0/libfido2-1.17.0.tar.gz')
 sha256sums=('ace062d14a482ff9325410ff63d06c8b5fe87e79ebc18dda07add2bc0188c77f')
+prepare() {
+  # libfido2 compila con -Werror: con GCC 16 cualquier aviso nuevo para la compilación
+  sed -i -e '/add_compile_options(-Werror)/d' -e '/add_compile_options(-pedantic-errors)/d' libfido2-$pkgver/CMakeLists.txt
+}
 build() {
   cmake -S libfido2-$pkgver -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_INSTALL_LIBDIR=lib -D CMAKE_BUILD_TYPE=Release \
     -D BUILD_EXAMPLES=OFF -D BUILD_MANPAGES=OFF -D BUILD_TESTS=OFF -D BUILD_STATIC_LIBS=OFF -D BUILD_TOOLS=ON \

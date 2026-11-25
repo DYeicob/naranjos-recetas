@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=aircrack-ng
+pkgver=1.7
+pkgrel=1
+pkgdesc='Auditar redes WiFi'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('libpcap' 'openssl' 'pcre2' 'sqlite')
+makedepends=('autoconf' 'automake' 'libtool')
+source=('https://github.com/aircrack-ng/aircrack-ng/archive/1.7/aircrack-ng-1.7.tar.gz')
+sha256sums=('05a704e3c8f7792a17315080a21214a4448fd2452c1b0dd5226a3a55f90b58c3')
+build() { cd aircrack-ng-$pkgver; export CFLAGS="$CFLAGS -std=gnu17 -Wno-error"; autoreconf -fi; ./configure --prefix=/usr --without-opt --with-experimental; make; }
+package() { cd aircrack-ng-$pkgver; make DESTDIR="$pkgdir" install; }

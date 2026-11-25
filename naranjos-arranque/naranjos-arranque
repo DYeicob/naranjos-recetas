@@ -7,7 +7,7 @@
 # Uso:  naranjos-arranque estado  ·  sudo naranjos-arranque menu  ·  sudo naranjos-arranque instala
 #       (zumo lo lanza solo con «auto» cuando cambia un kernel, GRUB o el shim)
 set -euo pipefail
-VERSION="0.2.0"
+VERSION="0.3.0"
 . /usr/lib/naranjos/naranjos-i18n.sh
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
 [ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
@@ -26,7 +26,7 @@ CARPETA=EFI/naranjos
 # módulos que van DENTRO de la imagen (con Secure Boot, GRUB no carga módulos sueltos del disco)
 MODULOS="part_gpt part_msdos fat ext2 btrfs normal boot linux chain configfile search search_fs_uuid search_fs_file
 search_label echo test true sleep reboot halt loadenv efi_gop efi_uga all_video video_fb gzio minicmd ls cat help
-efifwsetup regexp"
+efifwsetup regexp gfxterm gfxterm_background gfxmenu png font"
 MONTADA=""   # punto de montaje temporal de la EFI (si lo montamos nosotros)
 KRAIZ=""     # con «menu --raiz <dir>»: el menú es el del sistema que hay en <dir> (lo usa «fotos vuelve»)
 RAIZ_SUB=@; [ -r /etc/naranjos/fotos.conf ] && . /etc/naranjos/fotos.conf
@@ -144,11 +144,27 @@ genera_menu(){  # genera_menu <fichero> (con la EFI montada en ESP_DIR)
   datos_boot
   nombre=$(nombre_sistema)
   opc=$(cat "$KRAIZ/etc/naranjos/cmdline" 2>/dev/null || echo "ro rootwait")
+  # arranque sin mensajes y con la naranja (Plymouth), si está instalado y no lo has quitado en /etc/naranjos/arranque.conf
+  BONITO=""; local SPLASH=1; [ -r "$KRAIZ/etc/naranjos/arranque.conf" ] && . "$KRAIZ/etc/naranjos/arranque.conf"
+  if [ "$SPLASH" = 1 ] && [ -x "$KRAIZ/usr/bin/plymouth" ] && ! grep -qw splash <<< "$opc"; then
+    BONITO="quiet splash loglevel=3 rd.udev.log_level=3 systemd.show_status=auto vt.global_cursor_default=0"
+  fi
   esp_uuid=$(lsblk -no UUID "$(busca_esp)")
   {
     echo "# Menú de arranque de NaranjOS — lo genera naranjos-arranque $VERSION (no lo edites: se rehace solo)"
     echo "# Opciones del kernel: /etc/naranjos/cmdline"
     echo "set timeout=5"
+    # tema gráfico de NaranjOS (si no carga, el menú sale en texto como siempre)
+    if [ -r "$KRAIZ/boot/grub/themes/naranjos/theme.txt" ]; then
+      echo "search --no-floppy --fs-uuid --set=root $BOOT_UUID"
+      echo "set nj_tema=$BOOT_PFX/grub/themes/naranjos"
+      echo "if loadfont \$nj_tema/dejavu-16.pf2; then"
+      echo "	loadfont \$nj_tema/dejavu-bold-26.pf2"
+      echo "	set gfxmode=auto"
+      echo "	terminal_output gfxterm"
+      echo "	set theme=\$nj_tema/theme.txt"
+      echo "fi"
+    fi
     echo "set default=0"
     echo "set color_normal=light-gray/black"
     echo "set menu_color_normal=light-gray/black"
@@ -162,9 +178,17 @@ genera_menu(){  # genera_menu <fichero> (con la EFI montada en ESP_DIR)
       echo "menuentry '$t' --class naranjos --class gnu-linux --class os {"
       echo "	search --no-floppy --fs-uuid --set=root $BOOT_UUID"
       echo "	echo '$(_ 'Cargando NaranjOS...')'"
-      echo "	linux $BOOT_PFX/vmlinuz-$n $RAIZ_OPC $opc"
+      echo "	linux $BOOT_PFX/vmlinuz-$n $RAIZ_OPC $opc $BONITO"
       [ -n "$ini" ] && echo "	initrd $ini"
       echo "}"
+      # la misma, viendo los mensajes (para cuando algo falla)
+      if [ -n "$BONITO" ] && [ "$t" = "$nombre" ]; then
+        echo "menuentry '$nombre ($(_ 'modo texto'))' --class naranjos --class gnu-linux --class os {"
+        echo "	search --no-floppy --fs-uuid --set=root $BOOT_UUID"
+        echo "	linux $BOOT_PFX/vmlinuz-$n $RAIZ_OPC $opc"
+        [ -n "$ini" ] && echo "	initrd $ini"
+        echo "}"
+      fi
     done
     menu_fotos "$opc"
     if [ -e "$ESP_DIR/EFI/ubuntu/shimx64.efi" ]; then

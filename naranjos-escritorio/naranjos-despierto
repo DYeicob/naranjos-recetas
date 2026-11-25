@@ -1,0 +1,20 @@
+#!/bin/bash
+# naranjos-despierto — mantener el equipo despierto (sin bloqueo, sin apagar la pantalla, sin suspender)
+#   naranjos-despierto            cambia (encendido ↔ apagado)
+#   naranjos-despierto barra      estado para la barra (☕ cuando está despierto)
+set -u
+. /usr/lib/naranjos/naranjos-i18n.sh
+avisa_barra(){ pkill -RTMIN+13 -x waybar 2>/dev/null; }
+despierto(){ ! pgrep -x hypridle >/dev/null; }
+case "${1:-}" in
+  barra)
+    if despierto; then printf '{"text":"󰅶","tooltip":"%s","class":"despierto"}\n' "$(_ 'Despierto: no se bloquea ni se apaga la pantalla (clic para volver a lo normal)')"
+    else echo '{"text":""}'; fi ;;
+  *)
+    if despierto; then
+      setsid -f hypridle >/dev/null 2>&1; naranjos-notifica "$(_ 'Inactividad normal')" "$(_ 'Se vuelve a bloquear y apagar la pantalla cuando no lo uses')"
+    else
+      pkill -x hypridle; naranjos-notifica "󰅶  $(_ 'Mantener despierto')" "$(_ 'Ni bloqueo ni pantalla apagada hasta que lo vuelvas a pulsar')"
+    fi
+    sleep 0.3; avisa_barra ;;
+esac

@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-6r1b.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6o7.sh (NO editar a mano)
 pkgname=naranjos-arranque
-pkgver=0.2.1
+pkgver=0.3.0
 pkgrel=1
 pkgdesc='Arranque propio de NaranjOS: menú, GRUB firmado con la MOK y shim en EFI/naranjos'
 arch=('any')
@@ -8,12 +8,14 @@ url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
 depends=('bash' 'grub' 'naranjos-shim' 'sbsigntools' 'binutils' 'util-linux' 'coreutils' 'tar' 'gawk' 'naranjos-idiomas' 'naranjos-initramfs')
 optdepends=('naranjos-fotos: las fotos del sistema en el menú de arranque')
-source=('95-naranjos-arranque.hook' 'naranjos-arranque' 'sbat.csv')
-sha256sums=('f07e5c0cb7754d8742216c3b1dc3524004a03050be8586cae280bebfb2c1d765' '0e4b7af12a49e2e9c3fb34a6dc2736c817f4bc485a96989be1ad707f1ca462af' 'd121446da8509b4b692cd3c88134d4bedb9fc10b9d97ec9f5904c1db8e577117')
+source=('grub-dejavu-16.pf2' 'grub-dejavu-bold-26.pf2' 'grub-logo.png' 'grub-theme.txt' '95-naranjos-arranque.hook' 'naranjos-arranque' 'sbat.csv')
+sha256sums=('41b686825e285469673d0adf9822e98a6415d9e5997bb4bb606fe0953297658c' '10afbe2640cef82bbb81b0523187c4f0a10c1d17ca4d5e1b8d1d15649d6880c2' '4729083b2bb300cee3f06e5b25f0c7d845f721413444688c92848cd4681e3818' '52ea6869c2b3c8a245656343c5a8dde5e35746cafe4590ca2ecbbb9cc73e6a75' 'f07e5c0cb7754d8742216c3b1dc3524004a03050be8586cae280bebfb2c1d765' 'f31dfedc4c4d20f72c44d18d9861d696bea2a8f14a4db346804be6fb7590ef1a' 'd121446da8509b4b692cd3c88134d4bedb9fc10b9d97ec9f5904c1db8e577117')
 install=naranjos-arranque.install
 package() {
   install -Dm755 naranjos-arranque          "$pkgdir/usr/bin/naranjos-arranque"
   install -Dm644 sbat.csv                   "$pkgdir/usr/share/naranjos/arranque/sbat.csv"
   install -Dm644 95-naranjos-arranque.hook  "$pkgdir/usr/share/libalpm/hooks/95-naranjos-arranque.hook"
   install -dm700 "$pkgdir/var/lib/naranjos/arranque"
+  # tema gráfico de GRUB (fuentes DejaVu, licencia libre de Bitstream Vera)
+  local f; for f in dejavu-16.pf2 dejavu-bold-26.pf2 logo.png theme.txt; do install -Dm644 "grub-$f" "$pkgdir/boot/grub/themes/naranjos/$f"; done
 }

@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=crun
+pkgver=1.31
+pkgrel=1
+pkgdesc='Ejecuta contenedores OCI (rápido y ligero)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later' 'LGPL-2.1-or-later')
+depends=('json-c' 'libcap' 'libseccomp' 'systemd')
+makedepends=()
+source=('https://github.com/containers/crun/releases/download/1.31/crun-1.31.tar.gz')
+sha256sums=('17d04ba159fada1f1300a36b8afe869afb38bf1bbda28da052e83bb4bee20108')
+build() { cd crun-$pkgver; ./configure --prefix=/usr --disable-static; make; }
+package() { cd crun-$pkgver; make DESTDIR="$pkgdir" install; }

@@ -1,0 +1,27 @@
+#!/bin/bash
+# naranjos-tailscale — red privada entre tus equipos (Tailscale; gratis hasta 3 usuarios / 100 equipos)
+#   naranjos-tailscale              cómo está
+#   naranjos-tailscale activa       la enciende (la primera vez abre el navegador para entrar en tu cuenta)
+#   naranjos-tailscale apaga        la apaga (y no arranca sola)
+#   naranjos-tailscale barra        estado para la barra
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+G=$'\e[1;32m'; Z=$'\e[0m'; [ -t 1 ] || { G=; Z=; }
+avisa_barra(){ pkill -RTMIN+14 -x waybar 2>/dev/null; }
+case "${1:-}" in
+  activa|up)
+    sudo systemctl enable --now tailscaled || exit 1
+    sudo tailscale up --operator="$(id -un)" "${@:2}" && printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Tailscale encendido')"; avisa_barra ;;
+  apaga|down)
+    tailscale down 2>/dev/null; sudo systemctl disable --now tailscaled; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Tailscale apagado')"; avisa_barra ;;
+  barra)
+    if systemctl is-active -q tailscaled && t=$(tailscale status --json 2>/dev/null) && [ -n "$t" ]; then
+      python3 -I -c 'import json,sys
+d=json.loads(sys.argv[1]); s=d.get("Self",{}); on=d.get("BackendState")=="Running"
+p=[x.get("HostName","") for x in (d.get("Peer") or {}).values() if x.get("Online")]
+ip=(s.get("TailscaleIPs") or [""])[0]
+print(json.dumps({"text":"󰖂" if on else "","tooltip":"Tailscale · "+ip+("\n"+"\n".join(p) if p else ""),"class":"activo" if on else ""}))' "$t"
+    else echo '{"text":""}'; fi ;;
+  "") if systemctl is-active -q tailscaled; then tailscale status; else echo "$(_ 'Tailscale está apagado. Para encenderlo: naranjos-tailscale activa')"; fi ;;
+  *) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

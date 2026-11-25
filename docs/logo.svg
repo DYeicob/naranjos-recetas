@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>NaranjOS</title>
+  <!-- Logo de NaranjOS (CC BY-SA 4.0): naranja de gajos cuyas separaciones son pistas de circuito -->
+  <defs>
+    <radialGradient id="piel" cx="38%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#ffb347"/>
+      <stop offset="0.55" stop-color="#ff8700"/>
+      <stop offset="1" stop-color="#e05a00"/>
+    </radialGradient>
+    <linearGradient id="hoja" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8fd14f"/>
+      <stop offset="1" stop-color="#3f8f3a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="282" r="196" fill="url(#piel)"/>
+  <circle cx="256" cy="282" r="150" fill="none" stroke="#121212" stroke-opacity="0.18" stroke-width="6"/>
+  <!-- gajos: pistas que salen del centro (la raíz «/») y acaban en «pads» -->
+  <g stroke="#121212" stroke-opacity="0.55" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M256 282 V140"/>
+    <path d="M256 282 L360 200 H392"/>
+    <path d="M256 282 L392 300"/>
+    <path d="M256 282 L330 392 V420"/>
+    <path d="M256 282 L182 392 V420"/>
+    <path d="M256 282 L120 300"/>
+    <path d="M256 282 L152 200 H120"/>
+  </g>
+  <g fill="#121212" fill-opacity="0.7">
+    <circle cx="256" cy="140" r="13"/><circle cx="392" cy="200" r="13"/><circle cx="392" cy="300" r="13"/>
+    <circle cx="330" cy="420" r="13"/><circle cx="182" cy="420" r="13"/><circle cx="120" cy="300" r="13"/>
+    <circle cx="120" cy="200" r="13"/>
+  </g>
+  <circle cx="256" cy="282" r="30" fill="#121212"/>
+  <circle cx="256" cy="282" r="14" fill="#ff8700"/>
+  <!-- rabito y hoja -->
+  <path d="M256 92 C258 70 262 58 270 48" stroke="#5a3a1a" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <path d="M268 60 C300 20 368 18 404 40 C372 82 314 98 268 60 Z" fill="url(#hoja)"/>
+  <path d="M276 58 C318 46 352 44 386 42" stroke="#2f6b2b" stroke-width="5" stroke-linecap="round" fill="none"/>
+</svg>

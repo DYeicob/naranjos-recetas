@@ -245,6 +245,19 @@ cambian de idioma. ¿Quieres traducir NaranjOS al tuyo? Mira `/usr/share/doc/nar
 - **Complementos**: `naranjos-complementos instala <url-git>` añade atajos u órdenes de otros (te enseña lo que trae antes).
 - **Programar**: `nvim` (Neovim con los colores del tema), `lazygit`, `lazydocker`, `btop` y `mise` (versiones de lenguajes).
 
+## 9f. Más herramientas
+
+- **Apps recomendadas** (Super + Mayús + A): Obsidian, LibreOffice, Kdenlive, GIMP, Steam, máquinas virtuales… con un clic.
+- **Mantener despierto** (Super + Ctrl + C) y **salvapantallas** (a los 4 minutos; cualquier tecla lo quita).
+- **Tu propio tema**: `naranjos-tema crea "Mi tema" 8a2be2` (oscuro y claro); se guarda en `~/.local/share/naranjos/temas`.
+- **Fuente**: `naranjos-pantalla fuente "Nombre"` (o Super + Ctrl + P → Cambiar la fuente).
+- **Terminal**: `cd` aprende tus carpetas (zoxide), Ctrl + R busca en el historial (fzf), `ls`/`ll`/`lt` con iconos (eza),
+  `ver fichero` (bat), `rg` y `fd` para buscar; y `comprime`, `descomprime`, `convierte`, `video-ligero`, `usb-iso`, `formatea-usb`.
+- **Contenedores**: Podman sin root (la orden `docker` también vale) y `lazydocker` para verlos.
+- **Tailscale**: `naranjos-tailscale activa` une tus equipos en una red privada (gratis).
+- **Arranque**: la naranja de NaranjOS mientras arranca; `sudo naranjos-inicio bonito` entra solo y te pide la contraseña en la
+  pantalla de bloqueo. En el menú de arranque, «modo texto» enseña los mensajes si algo falla.
+
 ## 10. Problemas frecuentes
 
 - **No se abre nada al pulsar un atajo:** abre una terminal con Super + Enter y mira si

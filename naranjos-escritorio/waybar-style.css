@@ -73,6 +73,8 @@ tooltip label { color: @texto; }
 #custom-noche.apagada  { color: @inactivo; }
 #custom-grabando        { color: @mal; padding: 0 9px; font-weight: bold; }
 #custom-dictado         { color: @acento; padding: 0 9px; }
+#custom-despierto       { color: @aviso; padding: 0 9px; }
+#custom-tailscale       { color: @acento2; padding: 0 9px; }
 #custom-tiempo          { color: @texto; padding: 0 9px; }
 #tray { padding: 0 8px; }
 #tray > .passive { -gtk-icon-effect: dim; }

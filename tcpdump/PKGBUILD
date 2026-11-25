@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=tcpdump
+pkgver=4.99.6
+pkgrel=1
+pkgdesc='Ver el tráfico de red en la terminal'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=('libpcap' 'openssl')
+makedepends=()
+source=('https://www.tcpdump.org/release/tcpdump-4.99.6.tar.gz')
+sha256sums=('5839921a0f67d7d8fa3dacd9cd41e44c89ccb867e8a6db216d62628c7fd14b09')
+build() { cd tcpdump-$pkgver; ./configure --prefix=/usr; make; }
+package() { cd tcpdump-$pkgver; make DESTDIR="$pkgdir" install; }

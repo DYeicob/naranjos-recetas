@@ -1,7 +1,7 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6o.sh
 pkgname=wf-recorder
 pkgver=0.6.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Grabar la pantalla en Wayland'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
@@ -10,6 +10,14 @@ depends=('ffmpeg' 'wayland' 'pipewire' 'mesa' 'libdrm')
 makedepends=('meson' 'ninja' 'wayland-protocols' 'scdoc')
 source=('https://github.com/ammen99/wf-recorder/archive/v0.6.0/wf-recorder-0.6.0.tar.gz')
 sha256sums=('52d2c952506d63708f9a8f1aacd4d6ca176287caf3507c8ff2882fa0390cb391')
+prepare() {
+  cd wf-recorder-$pkgver
+  # FFmpeg 9 quitó AVCodec::pix_fmts/sample_fmts/ch_layouts: se piden con avcodec_get_supported_config (FFmpeg >= 7.1)
+  sed -i '/^static const AVRational US_RATIONAL/a template <typename T> static const T *nj_config(const AVCodec *c, enum AVCodecConfig k) { const void *p = nullptr; int n = 0; if (avcodec_get_supported_config(nullptr, c, k, 0, \&p, \&n) < 0) return nullptr; return (const T *)p; }' src/frame-writer.cpp
+  sed -i -e 's/codec->pix_fmts/nj_config<AVPixelFormat>(codec, AV_CODEC_CONFIG_PIX_FORMAT)/g' \
+         -e 's/codec *-> *sample_fmts/nj_config<AVSampleFormat>(codec, AV_CODEC_CONFIG_SAMPLE_FORMAT)/g' \
+         -e 's/codec->ch_layouts/nj_config<AVChannelLayout>(codec, AV_CODEC_CONFIG_CHANNEL_LAYOUT)/g' src/frame-writer.cpp
+}
 build() {
   cd wf-recorder-$pkgver
   meson setup build --prefix=/usr --buildtype=release -D pulse=disabled -D pipewire=enabled -D default_audio_backend=pipewire

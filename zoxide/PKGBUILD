@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=zoxide
+pkgver=0.10.0
+pkgrel=1
+pkgdesc='Saltar a carpetas que ya visitaste (cd inteligente)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=()
+makedepends=('rust')
+source=('https://github.com/ajeetdsouza/zoxide/archive/v0.10.0/zoxide-0.10.0.tar.gz')
+sha256sums=('4fcd4272b013a10b637dbcc299c58a9924b94470a9042677ca1a204cc2e9150e')
+prepare() { cd "$pkgname-$pkgver"; export CARGO_HOME="$srcdir/cargo"; cargo fetch --locked; }
+build() { cd "$pkgname-$pkgver"; export CARGO_HOME="$srcdir/cargo"; cargo build --release --frozen; }
+package() {
+  cd "$pkgname-$pkgver"
+  local b=$pkgname; [ "$pkgname" = ripgrep ] && b=rg
+  install -Dm755 "target/release/$b" "$pkgdir/usr/bin/$b"
+  install -Dm644 LICENSE* -t "$pkgdir/usr/share/licenses/$pkgname/" 2>/dev/null || true
+}

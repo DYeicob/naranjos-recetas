@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
+pkgname=exfatprogs
+pkgver=1.3.0
+pkgrel=1
+pkgdesc='Formatear y revisar USB en exFAT'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=()
+makedepends=()
+source=('https://github.com/exfatprogs/exfatprogs/releases/download/1.3.0/exfatprogs-1.3.0.tar.xz')
+sha256sums=('11135e5f5320935cc0623b0d394417e667edb827d04b953680f1bbffc575045f')
+build() { cd exfatprogs-$pkgver; ./configure --prefix=/usr; make; }
+package() { cd exfatprogs-$pkgver; make DESTDIR="$pkgdir" install; }

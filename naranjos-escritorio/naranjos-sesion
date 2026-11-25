@@ -12,4 +12,6 @@ done
 unset f
 # tus carpetas personales (Descargas, Documentos…) en tu idioma, si aún no existen
 command -v naranjos-carpetas >/dev/null 2>&1 && naranjos-carpetas >/dev/null 2>&1
-exec start-hyprland "$@"
+# inicio bonito (naranjos-inicio): la sesión arranca bloqueada
+if [ "${1:-}" = --bloqueada ]; then export NARANJOS_BLOQUEO_INICIAL=1; shift; fi
+exec start-hyprland "$@" >/dev/null 2>&1
