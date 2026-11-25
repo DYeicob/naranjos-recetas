@@ -8,7 +8,7 @@ url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
 depends=()
 source=('textos.tgz' 'LICENCIAS.md')
-sha256sums=('1f45bb298265e5780e4baaece4411ab0d7cfd1ca5ab1820c329a875bdd820a57' '62f4c7e4510de55d2f68408398cf4bb4c17f8b110cdedcb6d04731de2d3304b2')
+sha256sums=('1dc36a830de19db251c7b050acee51b736a3f100c78bc42c7f248fa55088351f' '3fe2240d7d04b3362bb131aeff929faa02198fda80a976753b4607caeb3445d7')
 noextract=('textos.tgz')
 package() {
   install -dm755 "$pkgdir/usr/share/licenses"
