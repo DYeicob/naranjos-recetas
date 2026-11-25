@@ -1,17 +1,19 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-5f.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6k1b.sh (NO editar a mano)
 pkgname=naranjos-cursor
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
-pkgdesc='Cursor de NaranjOS (carbón con borde naranja, basado en Bibata)'
+pkgdesc='Cursores de NaranjOS (carbón con borde del color de cada tema cítrico, basados en Bibata)'
 arch=('any')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
 depends=()
-source=('default-index.theme' 'naranjos-cursor-0.1.0.cursores')
-sha256sums=('c299e9d48c0bf6cc12bff84cdd794e2e0c45433151c2fea81c2a7a9eb5c1221f' '8e603b60917b62aa1e15eee57ddf1d858741cf4ba12dadc23bafca6cde4aa811')
-noextract=("naranjos-cursor-$pkgver.cursores")
+source=('default-index.theme' 'naranjos-cursor-0.1.0.cursores' 'naranjos-cursor-temas-0.2.0.cursores')
+sha256sums=('c299e9d48c0bf6cc12bff84cdd794e2e0c45433151c2fea81c2a7a9eb5c1221f' '8e603b60917b62aa1e15eee57ddf1d858741cf4ba12dadc23bafca6cde4aa811' '89a7e02efa0f17b802e021fe52520286e73f50f1ccc85d53c120b6cce4c1f430')
+noextract=("naranjos-cursor-0.1.0.cursores" "naranjos-cursor-temas-0.2.0.cursores")
 package() {
   install -dm755 "$pkgdir/usr/share/icons"
-  tar -C "$pkgdir/usr/share/icons" -xf "naranjos-cursor-$pkgver.cursores"
+  tar -C "$pkgdir/usr/share/icons" -xf naranjos-cursor-0.1.0.cursores
+  # cursores de los temas cítricos (recolorea-cursor.py, a partir del de NaranjOS)
+  tar -C "$pkgdir/usr/share/icons" -xf naranjos-cursor-temas-0.2.0.cursores
   install -Dm644 default-index.theme "$pkgdir/usr/share/icons/default/index.theme"
 }

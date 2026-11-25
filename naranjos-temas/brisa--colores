@@ -3,6 +3,7 @@ NOMBRE="Brisa"
 CLARO=0
 FONDO=/usr/share/backgrounds/naranjos/temas/brisa/naranjos-01.jpg
 BLOQUEO=/usr/share/backgrounds/naranjos/temas/brisa/naranjos-bloqueo.jpg
+CURSOR=NaranjOS-brisa
 COLOR_FONDO=0b1016
 COLOR_SUP=131b25
 COLOR_TEXTO=dfe7ef

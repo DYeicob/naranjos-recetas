@@ -3,6 +3,7 @@ NOMBRE="Pomelo"
 CLARO=0
 FONDO=/usr/share/backgrounds/naranjos/temas/pomelo/naranjos-01.jpg
 BLOQUEO=/usr/share/backgrounds/naranjos/temas/pomelo/naranjos-bloqueo.jpg
+CURSOR=NaranjOS-pomelo
 COLOR_FONDO=151012
 COLOR_SUP=21181b
 COLOR_TEXTO=ecdfe3

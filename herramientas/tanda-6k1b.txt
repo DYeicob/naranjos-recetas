@@ -1,0 +1,3 @@
+naranjos-cursor
+naranjos-temas
+naranjos-escritorio

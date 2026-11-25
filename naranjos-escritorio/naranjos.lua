@@ -11,25 +11,8 @@ local terminal = "foot"
 local menu     = "fuzzel"
 local mainMod  = "SUPER"   -- la tecla de Windows
 
----- Pantallas ---------------------------------------------------------
-hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
-
----- Entorno -----------------------------------------------------------
-hl.env("XCURSOR_THEME", "NaranjOS")
-hl.env("XCURSOR_SIZE", "24")
-hl.env("HYPRCURSOR_SIZE", "24")
-
----- Al arrancar -------------------------------------------------------
-hl.on("hyprland.start", function()
-    hl.exec_cmd("hyprctl setcursor NaranjOS 24")               -- cursor NaranjOS
-    hl.exec_cmd("hyprpaper")                                   -- fondo
-    hl.exec_cmd("mako")                                        -- avisos
-    hl.exec_cmd("hypridle")                                    -- bloqueo por inactividad
-    hl.exec_cmd("command -v waybar >/dev/null && waybar")      -- barra (llega en la tanda 5c2)
-end)
-
 ---- Aspecto: los colores del tema (naranjos-tema · Super + Ctrl + T) -----
-local tema = { fondo = "121212", acento = "ff8700", acento2 = "ffaf5f", inactivo = "2a2a2a", sombra = "ee0a0a0a" }
+local tema = { fondo = "121212", acento = "ff8700", acento2 = "ffaf5f", inactivo = "2a2a2a", sombra = "ee0a0a0a", cursor = "NaranjOS" }
 do
     local base = (os and os.getenv and os.getenv("HOME") or "") .. "/.config/naranjos/tema/hyprland"
     local ok, t = pcall(dofile, base .. ".lua")
@@ -39,6 +22,24 @@ do
     end
     if ok and type(t) == "table" then for c, v in pairs(t) do tema[c] = v end end
 end
+
+---- Pantallas ---------------------------------------------------------
+hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
+
+---- Entorno -----------------------------------------------------------
+hl.env("XCURSOR_THEME", tema.cursor)
+hl.env("XCURSOR_SIZE", "24")
+hl.env("HYPRCURSOR_SIZE", "24")
+
+---- Al arrancar -------------------------------------------------------
+hl.on("hyprland.start", function()
+    hl.exec_cmd("hyprctl setcursor " .. tema.cursor .. " 24")  -- cursor del tema
+    hl.exec_cmd("hyprpaper")                                   -- fondo
+    hl.exec_cmd("mako")                                        -- avisos
+    hl.exec_cmd("hypridle")                                    -- bloqueo por inactividad
+    hl.exec_cmd("command -v waybar >/dev/null && waybar")      -- barra (llega en la tanda 5c2)
+end)
+
 hl.config({
     general = {
         gaps_in  = 4,

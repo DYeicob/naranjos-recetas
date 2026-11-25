@@ -60,14 +60,34 @@ revisa(){
 
 # el fondo: solo se cambia si el tuyo es uno de NaranjOS (si pusiste otra imagen, se respeta)
 pon_fondo(){
-  local fondo="$1" f="$CONF/hypr/hyprpaper.conf"
+  local fondo="$1" f="$CONF/hypr/hyprpaper.conf" m ok=0
   [ -f "$f" ] || return 0
   grep -qE '^[[:space:]]*path[[:space:]]*=[[:space:]]*/usr/share/backgrounds/naranjos/' "$f" || return 0
   sed -i -E "s|^([[:space:]]*path[[:space:]]*=[[:space:]]*)/usr/share/backgrounds/naranjos/[^[:space:]]*|\1$fondo|" "$f"
+  [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] || return 0
+  # en caliente, por IPC (sin reiniciar hyprpaper): pantalla a pantalla
   if pgrep -x hyprpaper >/dev/null; then
-    pkill -x hyprpaper; sleep 0.3
-    setsid -f hyprpaper >/dev/null 2>&1 || true
+    for m in $(hyprctl monitors 2>/dev/null | sed -n 's/^Monitor \([^ ]*\) .*/\1/p'); do
+      hyprctl hyprpaper wallpaper "$m, $fondo, cover" >/dev/null 2>&1 && ok=1
+    done
+    hyprctl hyprpaper wallpaper ", $fondo, cover" >/dev/null 2>&1 && ok=1
   fi
+  # si no está o no hace caso: se (re)lanza desde Hyprland, que es quien debe arrancarlo
+  if [ $ok = 0 ]; then
+    pkill -x hyprpaper 2>/dev/null; sleep 0.5
+    hyprctl dispatch 'hl.dsp.exec_cmd("hyprpaper")' >/dev/null 2>&1 || setsid -f hyprpaper >/dev/null 2>&1
+  fi
+}
+
+# el cursor del tema (Hyprland, GTK y el resto de programas)
+pon_cursor(){
+  local c="$1" f="$CONF/gtk-3.0/settings.ini" d="$HOME/.local/share/icons/default"
+  [ -n "$c" ] && [ -d "/usr/share/icons/$c" ] || return 0
+  [ -f "$f" ] && sed -i "s/^gtk-cursor-theme-name=.*/gtk-cursor-theme-name=$c/" "$f"
+  mkdir -p "$d"
+  printf '[Icon Theme]\nName=Default\nComment=Cursor del tema de NaranjOS (naranjos-tema)\nInherits=%s\n' "$c" > "$d/index.theme"
+  [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && hyprctl setcursor "$c" 24 >/dev/null 2>&1
+  return 0
 }
 
 # GTK 3: claro u oscuro según el tema
@@ -94,15 +114,16 @@ pon(){
   [ -n "$t" ] || die "$(_ 'Dime qué tema:') naranjos-tema pon <tema>   ($(_ 'mira:') naranjos-tema lista)"
   t=$(printf '%s' "$t" | tr '[:upper:]' '[:lower:]' | sed 's/ó/o/g; s/á/a/g')
   existe "$t" || die "$(_ 'No existe el tema') «$t» ($(_ 'mira:') naranjos-tema lista)"
-  local FONDO="" CLARO=0
+  local FONDO="" CLARO=0 CURSOR=NaranjOS
   # shellcheck disable=SC1090
   . "$TEMAS/$t/colores"
   mkdir -p "$CONF/naranjos"
   ln -sfn "$TEMAS/$t" "$ENLACE"
   pon_gtk "$CLARO"
-  [ -n "$FONDO" ] && pon_fondo "$FONDO"
   [ "$quieto" = --sin-recargar ] && return 0
   recarga
+  pon_cursor "$CURSOR"
+  [ -n "$FONDO" ] && pon_fondo "$FONDO"
   command -v notify-send >/dev/null && [ -n "${WAYLAND_DISPLAY:-}" ] && \
     notify-send -a NaranjOS -i naranjos "$(_ 'Tema'): $(nombre "$t")" "$(_ 'Las terminales nuevas ya salen con el tema.')" 2>/dev/null
   printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Tema puesto:')" "$(nombre "$t")"
