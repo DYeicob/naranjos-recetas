@@ -17,7 +17,7 @@ energia(){ systemctl "$1" 2>/dev/null || sudo -n /usr/bin/systemctl "$1"; }
 
 # --- aplicaciones (.desktop visibles), «nombre<TAB>fichero» ordenado ---------------------------------
 aplicaciones(){
-  local d dirs=() ids=() idioma=${LANG%%.*}; idioma=${idioma%%_*}
+  local d dirs=() ids=() idioma=${LANG:-es_ES.UTF-8}; idioma=${idioma%%.*}; idioma=${idioma%%_*}
   IFS=: read -ra dirs <<< "${XDG_DATA_HOME:-$HOME/.local/share}:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
   for d in "${dirs[@]}"; do
     [ -d "$d/applications" ] && ids+=("$d/applications")
@@ -94,21 +94,26 @@ titulo(){
   esac
 }
 
-elige(){ # elige <prompt> → ejecuta la acción elegida
+elige(){ # elige <prompt> [volver] → ejecuta la acción elegida; con «volver», Esc vuelve al menú principal
   local i
-  i=$(printf '%s\n' "${ETIQ[@]}" | fuzzel --dmenu --index --prompt "$1 ❯ " --width 46 --lines 14) || exit 0
+  if ! i=$(printf '%s\n' "${ETIQ[@]}" | fuzzel --dmenu --index --prompt "$1 ❯ " --width 46 --lines 14); then
+    [ "${2:-}" = volver ] && exec "$0"
+    exit 0
+  fi
   [[ "$i" =~ ^[0-9]+$ ]] && [ "$i" -lt ${#ACC[@]} ] || exit 0
   eval "${ACC[$i]}"
 }
 
 menu_seccion(){
   local s="$1" n a
+  ETIQ=(); ACC=()                       # solo lo de la sección (y, arriba, volver)
+  mete "󰁍  $(_ 'Volver')" "exec \"\$0\""
   if [ "$s" = aplicaciones ]; then
-    while IFS=$'\t' read -r n a; do mete "   $n" "gio launch \"$a\" >/dev/null 2>&1 &"; done < <(aplicaciones)
+    while IFS=$'\t' read -r n a; do mete "   $n" "setsid -f gio launch \"$a\" >/dev/null 2>&1"; done < <(aplicaciones)
   else
     "seccion_$s"
   fi
-  elige "$(titulo "$s" | sed 's/^[^ ]* *//')"
+  elige "$(titulo "$s" | sed 's/^[^ ]* *//')" volver
 }
 
 principal(){
@@ -121,7 +126,7 @@ principal(){
     "seccion_$s"
     for ((n = antes; n < ${#ETIQ[@]}; n++)); do ETIQ[n]="${ETIQ[n]}   · $pref"; done
   done
-  while IFS=$'\t' read -r n a; do mete "   $n" "gio launch \"$a\" >/dev/null 2>&1 &"; done < <(aplicaciones)
+  while IFS=$'\t' read -r n a; do mete "   $n" "setsid -f gio launch \"$a\" >/dev/null 2>&1"; done < <(aplicaciones)
   elige "NaranjOS"
 }
 
