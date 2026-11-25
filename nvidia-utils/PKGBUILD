@@ -1,15 +1,15 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
 pkgname=nvidia-utils
 pkgver=620.73.04
-pkgrel=1
+pkgrel=2
 pkgdesc='NVIDIA: OpenGL, Vulkan, CUDA y prime-run (la gráfica se usa solo cuando la pides)'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('LicenseRef-NVIDIA')
 depends=('libglvnd' 'mesa')
 makedepends=()
-source=('prime-run' 'nvidia.conf' 'nvidia-pm.rules' 'https://download.nvidia.com/XFree86/Linux-x86_64/620.73.04/NVIDIA-Linux-x86_64-620.73.04.run')
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'b5f2e2d5da8435b32539304015b89bf7eb22fe0aec8cd6905b7a6e8a9f9b8f1b')
+source=('nvidia-carga.conf' 'nvidia-udev.rules' 'prime-run' 'nvidia.conf' 'nvidia-pm.rules' 'https://download.nvidia.com/XFree86/Linux-x86_64/620.73.04/NVIDIA-Linux-x86_64-620.73.04.run')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'b5f2e2d5da8435b32539304015b89bf7eb22fe0aec8cd6905b7a6e8a9f9b8f1b')
 noextract=('NVIDIA-Linux-x86_64-620.73.04.run')
 options=('!strip' '!debug')
 prepare() { rm -rf NVIDIA-Linux-x86_64-$pkgver; sh NVIDIA-Linux-x86_64-$pkgver.run --extract-only; }
@@ -19,14 +19,14 @@ package() {
   install -d "$L" "$pkgdir/usr/bin"
   # bibliotecas de 64 bits (las de 32 bits, para juegos viejos de Steam, van en el Flatpak de Steam)
   for f in lib*.so.$pkgver; do
-    case "$f" in libnvidia-gtk*|libnvidia-wayland-client*) continue ;; esac
+    case "$f" in libEGL.so.*|libGL.so.*|libGLX.so.*|libOpenGL.so.*|libGLdispatch.so.*|libGLESv1_CM.so.*|libGLESv2.so.*|libnvidia-gtk*|libnvidia-wayland-client*) continue ;; esac
     install -m755 "$f" "$L/"
     b=${f%.$pkgver}; ln -sf "$f" "$L/$b.1"; ln -sf "$b.1" "$L/$b"
   done
   for f in libnvidia-egl-wayland.so.* libnvidia-egl-gbm.so.* libnvidia-egl-xcb.so.* libnvidia-egl-xlib.so.*; do
     [ -e "$f" ] && install -m755 "$f" "$L/"
   done
-  ldconfig -n "$L"
+  PATH="$PATH:/usr/sbin:/sbin" ldconfig -n "$L"
   install -d "$L/gbm"; ln -sf ../libnvidia-allocator.so.1 "$L/gbm/nvidia-drm_gbm.so"
   install -Dm644 10_nvidia.json "$pkgdir/usr/share/glvnd/egl_vendor.d/10_nvidia.json"
   for f in 10_nvidia_wayland.json 15_nvidia_gbm.json; do [ -e "$f" ] && install -Dm644 "$f" "$pkgdir/usr/share/egl/egl_external_platform.d/$f"; done
@@ -40,4 +40,8 @@ package() {
   install -Dm755 ../prime-run "$pkgdir/usr/bin/prime-run"
   install -Dm644 ../nvidia.conf "$pkgdir/usr/lib/modprobe.d/nvidia.conf"
   install -Dm644 ../nvidia-pm.rules "$pkgdir/usr/lib/udev/rules.d/80-nvidia-pm.rules"
+  # nvidia-modprobe (setuid, como en Arch): crea /dev/nvidia* cuando un programa usa la gráfica
+  install -Dm4755 nvidia-modprobe "$pkgdir/usr/bin/nvidia-modprobe"
+  install -Dm644 ../nvidia-udev.rules "$pkgdir/usr/lib/udev/rules.d/60-nvidia.rules"
+  install -Dm644 ../nvidia-carga.conf "$pkgdir/usr/lib/modprobe.d/naranjos-nvidia-carga.conf"
 }

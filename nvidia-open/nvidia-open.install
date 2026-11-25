@@ -1,0 +1,23 @@
+# NaranjOS · firma los módulos de NVIDIA con la MOK de NaranjOS (Secure Boot) y rehace el índice de módulos
+PATH=$PATH:/usr/sbin:/sbin
+_firma() {
+  local d k b s h m M=/etc/naranjos/mok
+  for d in /usr/lib/modules/*/updates/nvidia; do
+    [ -d "$d" ] || continue
+    k=${d#/usr/lib/modules/}; k=${k%%/*}; b=/usr/lib/modules/$k/build; s=$b/scripts/sign-file
+    if [ -r "$M/MOK.priv" ] && [ -r "$M/MOK.pem" ] && [ -x "$s" ]; then
+      h=$(sed -n 's/^CONFIG_MODULE_SIG_HASH="\(.*\)"$/\1/p' "$b/.config" 2>/dev/null); h=${h:-sha512}
+      for m in "$d"/*.ko; do
+        [ -n "$(modinfo -F signer "$m" 2>/dev/null)" ] && continue   # ya firmado
+        "$s" "$h" "$M/MOK.priv" "$M/MOK.pem" "$m" || echo "  ⚠ No pude firmar $m"
+      done
+      echo "  ✔ NVIDIA ($k): módulos firmados con la MOK de NaranjOS"
+    else
+      echo "  ⚠ NVIDIA ($k): no encuentro la MOK (/etc/naranjos/mok) o sign-file. Con Secure Boot el driver no cargará."
+    fi
+    depmod "$k"
+  done
+}
+post_install() { _firma; echo "  Reinicia para usar la gráfica NVIDIA."; }
+post_upgrade() { _firma; }
+post_remove() { local k; for k in /usr/lib/modules/*-naranjos; do [ -d "$k/kernel" ] && depmod "$(basename "$k")"; done; return 0; }

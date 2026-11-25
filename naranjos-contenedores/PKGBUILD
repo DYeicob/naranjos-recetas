@@ -1,6 +1,6 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
 pkgname=naranjos-contenedores
-pkgver=1.0.0
+pkgver=1.1.0
 pkgrel=1
 pkgdesc='Configuración de contenedores de NaranjOS (Podman sin root, docker = podman)'
 install=naranjos-contenedores.install
@@ -8,10 +8,10 @@ backup=('etc/containers/registries.conf' 'etc/containers/policy.json' 'etc/conta
 arch=('any')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
-depends=()
+depends=('netavark' 'aardvark-dns')
 makedepends=()
 source=('registries.conf' 'policy.json' 'storage.conf' 'containers.conf' 'contenedores.sh' 'docker' )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' )
+sha256sums=('7c42d489fb392b8f99daa3cfc5f88d7073439d7f1d2babcd051dc7db9949ae10' '75402c4146ae40202c4e743f3626e0ef14566a91537fa0fd98aabda89823b74a' 'fdfb990e409ad5314421106c8b2094f6b3c9f57236cf2d0b0a3a6a623b6d77f0' '29ce00d3295f458ffc4a1295eee948f109a4ccbed6a8ce904e879fa908ece2c7' 'b6e24f5e5d56f856b02545995adc1480eb812e13481c15919a1e782740d0e553' 'a4ef4d56b2f43d893f0db622c0503c054bcdb097007fd8372a2ec1d07cc48e1d')
 package() {
   local f; for f in registries.conf policy.json storage.conf containers.conf; do install -Dm644 "$f" "$pkgdir/etc/containers/$f"; done
   install -Dm644 contenedores.sh "$pkgdir/etc/profile.d/naranjos-contenedores.sh"

@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-6a.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6o8.sh (NO editar a mano)
 pkgname=naranjos-entorno
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc='Entorno de NaranjOS: el PATH del sistema para todas las shells'
 arch=('any')
@@ -8,7 +8,7 @@ url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
 depends=()
 source=('00-naranjos-path.sh')
-sha256sums=('c5a27531e3754db71ab510c2949836bfc64b15e2cab7ea0894b8f79eaaecb87c')
+sha256sums=('1ebc27857e4276c15ace001b877f18189c34a26393490484600b9445c3a40d7e')
 package() {
   install -Dm644 00-naranjos-path.sh "$pkgdir/etc/profile.d/00-naranjos-path.sh"
 }

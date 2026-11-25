@@ -1,19 +1,21 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6o7.sh
 pkgname=nvidia-open
 pkgver=620.73.04
-pkgrel=1
+pkgrel=3
 pkgdesc='Driver abierto de NVIDIA (módulos del kernel de NaranjOS)'
+install=nvidia-open.install
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('MIT' 'GPL-2.0-only')
 depends=('linux-naranjos' 'nvidia-utils')
 makedepends=('linux-naranjos-headers')
-source=('https://github.com/NVIDIA/open-gpu-kernel-modules/archive/620.73.04/open-gpu-kernel-modules-620.73.04.tar.gz')
-sha256sums=('1397e8eff72bbaff1c2edd7a07fb7454912f2bb5629c2b047add3b7ed43bbac9')
+source=('nvidia-open-aviso.hook' 'nvidia-aviso' 'https://github.com/NVIDIA/open-gpu-kernel-modules/archive/620.73.04/open-gpu-kernel-modules-620.73.04.tar.gz')
+sha256sums=('SKIP' 'SKIP' '1397e8eff72bbaff1c2edd7a07fb7454912f2bb5629c2b047add3b7ed43bbac9')
 _kver() { basename "$(ls -d /usr/lib/modules/*-naranjos | sort -V | tail -n1)"; }
 build() {
   cd open-gpu-kernel-modules-$pkgver
-  unset LDFLAGS
+  # sin los ajustes de makepkg.conf (-fno-plt…): el kernel no sabe enlazar esos módulos («Unknown rela relocation: 42»)
+  unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
   make modules -j"$(nproc)" SYSSRC="/usr/lib/modules/$(_kver)/build" IGNORE_CC_MISMATCH=1
 }
 package() {
@@ -21,4 +23,6 @@ package() {
   local d="$pkgdir/usr/lib/modules/$(_kver)/updates/nvidia"
   install -Dm644 kernel-open/*.ko -t "$d/"
   install -Dm644 COPYING "$pkgdir/usr/share/licenses/nvidia-open/COPYING"
+  install -Dm755 ../nvidia-aviso "$pkgdir/usr/lib/naranjos/nvidia-aviso"
+  install -Dm644 ../nvidia-open-aviso.hook "$pkgdir/usr/share/libalpm/hooks/90-naranjos-nvidia.hook"
 }

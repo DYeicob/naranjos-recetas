@@ -21,7 +21,7 @@ def guarda(d):
     l = ["-- NaranjOS · naranjos-ventanas: cada aplicación vuelve a su escritorio (no lo edites)"]
     for i, (c, ws) in enumerate(sorted(d.items())):
         l.append('hl.window_rule({ name = "naranjos-ventana-%d", match = { class = "^%s$" }, workspace = "%s silent" })'
-                 % (i, re.escape(c).replace('"', ''), ws))
+                 % (i, re.escape(c).replace(chr(92), chr(92) * 2).replace('"', ''), ws))
     REGLAS.write_text("\n".join(l) + "\n")
 
 def vigila():

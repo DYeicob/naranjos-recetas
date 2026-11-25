@@ -1,0 +1,7 @@
+naranjos-entorno
+netavark
+aardvark-dns
+naranjos-contenedores
+naranjos-escritorio
+nvidia-utils
+nvidia-open

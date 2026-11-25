@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = linux-naranjos
+
+[Action]
+Description = NVIDIA: ¿está el driver compilado para el kernel nuevo?
+When = PostTransaction
+Exec = /usr/lib/naranjos/nvidia-aviso

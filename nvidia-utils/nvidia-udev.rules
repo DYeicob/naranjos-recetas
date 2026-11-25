@@ -1,0 +1,2 @@
+# NaranjOS · crea /dev/nvidia0, /dev/nvidiactl y /dev/nvidia-uvm en cuanto carga el driver
+ACTION=="add", DEVPATH=="/bus/pci/drivers/nvidia", RUN+="/usr/bin/nvidia-modprobe -c 0 -u"

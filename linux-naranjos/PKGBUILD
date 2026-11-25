@@ -107,7 +107,7 @@ package_linux-naranjos-headers() {
   find . -name 'Kconfig*' -exec install -Dm644 {} "$b/{}" \;
   # lo que sobra para compilar módulos
   find "$b" -type f -name '*.o' -delete
-  find "$b/scripts" -type f \( -name '*.c' -o -name '*.cmd' \) -delete 2>/dev/null || true
+  find "$b/scripts" -type f \( \( -name '*.c' ! -name module-common.c \) -o -name '*.cmd' \) -delete 2>/dev/null || true
   rm -rf "$b/Documentation"
   # clave pública con la que el kernel firmó sus módulos (la privada no sale del equipo de compilación)
   [ -e certs/signing_key.x509 ] && install -Dm644 certs/signing_key.x509 "$b/certs/signing_key.x509"

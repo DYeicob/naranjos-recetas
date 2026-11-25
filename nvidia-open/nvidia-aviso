@@ -1,0 +1,7 @@
+#!/bin/sh
+# NaranjOS · tras cambiar el kernel: avisa si el driver de NVIDIA no está compilado para él
+for k in /usr/lib/modules/*-naranjos; do
+  [ -d "$k/kernel" ] || continue
+  [ -d "$k/updates/nvidia" ] || echo "  ⚠ El kernel $(basename "$k") aún no tiene el driver de NVIDIA: sube pkgrel en nvidia-open/PKGBUILD y lanza la tanda."
+done
+exit 0
