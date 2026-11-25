@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=libgudev
+pkgver=238
+pkgrel=1
+pkgdesc='udev para programas GLib'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('glib2' 'systemd')
+makedepends=('meson' 'ninja')
+source=('https://download.gnome.org/sources/libgudev/238/libgudev-238.tar.xz')
+sha256sums=('61266ab1afc9d73dbc60a8b2af73e99d2fdff47d99544d085760e4fa667b5dd1')
+build() {
+  cd libgudev-$pkgver
+  meson setup build --prefix=/usr --buildtype=release -D introspection=disabled -D vapi=disabled -D tests=disabled -D gtk_doc=false
+  ninja -C build
+}
+package() { cd libgudev-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

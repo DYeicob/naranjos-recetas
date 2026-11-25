@@ -702,6 +702,13 @@ av_restaura(){
 av_vacia(){
   local n; n=$(av_n_cuarentena)
   [ "$n" -gt 0 ] || { nota "$(_ 'La cuarentena está vacía')"; return; }
+  if [ "${1:-}" != --si ]; then
+    local r
+    # shellcheck disable=SC2059
+    printf "$(_ 'Se borrarán %s fichero(s) de la cuarentena para siempre.')\n" "$n"
+    read -rp "$(_ 'Escribe SI para continuar:') " r
+    [ "$r" = SI ] || { nota "$(_ 'Cancelado.')"; return 1; }
+  fi
   rm -rf "${AV_CUARENTENA:?}"
   # shellcheck disable=SC2059
   hecho "$(printf "$(_ 'Cuarentena vaciada (%s fichero(s) borrados)')" "$n")"
@@ -715,7 +722,7 @@ antivirus(){
     vigila|watch)     shift; av_vigila "$@" ;;
     cuarentena|quarantine) av_lista_cuarentena ;;
     restaura|restore) shift; av_restaura "$@" ;;
-    vacia|empty)      av_vacia ;;
+    vacia|empty)      shift; av_vacia "$@" ;;
     vigia)            av_vigia ;;
     completo)         av_completo ;;
     *) die "$(_ 'Uso:') naranjos-peel antivirus [analiza|actualiza|vigila|cuarentena|restaura|vacia]" ;;

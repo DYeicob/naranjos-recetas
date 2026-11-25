@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=libblockdev
+pkgver=3.5.0
+pkgrel=1
+pkgdesc='Manejo de discos (particiones, LUKS, sistemas de ficheros…) para udisks2'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('glib2' 'cryptsetup' 'keyutils' 'libatasmart' 'libbytesize' 'libnvme' 'lvm2' 'e2fsprogs' 'util-linux' 'kmod' 'systemd')
+makedepends=()
+source=('https://github.com/storaged-project/libblockdev/releases/download/3.5.0/libblockdev-3.5.0.tar.gz')
+sha256sums=('bccd30e6b5d11504de60d9889ff6a2a25b07a4ec8f04070f2387e168301b3e3a')
+backup=('etc/libblockdev/3/conf.d/00-default.cfg')
+build() {
+  cd libblockdev-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc --disable-introspection --disable-tests \
+    --without-python3 --without-escrow --without-gtk-doc --without-lvm --without-lvm_dbus \
+    --without-nvdimm --without-tools --without-smartmontools --without-s390
+  make
+}
+package() { cd libblockdev-$pkgver; make DESTDIR="$pkgdir" install; }

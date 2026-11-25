@@ -1,14 +1,17 @@
-# Receta de NaranjOS — generada por naranjos-tanda-6c.sh
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
 pkgname=json-c
-pkgver=0.18
+pkgver=0.19
 pkgrel=1
-pkgdesc='Biblioteca para leer y escribir JSON en C'
+pkgdesc='Biblioteca JSON en C (la usan cryptsetup y libnvme)'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('MIT')
 depends=()
 makedepends=('cmake')
-source=('https://s3.amazonaws.com/json-c_releases/releases/json-c-0.18.tar.gz')
-sha256sums=('876ab046479166b869afc6896d288183bbc0e5843f141200c677b3e8dfb11724')
-build()   { cmake -B build -S json-c-$pkgver -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja -D CMAKE_INSTALL_LIBDIR=lib -D BUILD_STATIC_LIBS=OFF -D BUILD_TESTING=OFF -D BUILD_APPS=OFF -D CMAKE_POLICY_VERSION_MINIMUM=3.5; cmake --build build; }
+source=('https://s3.amazonaws.com/json-c_releases/releases/json-c-0.19.tar.gz')
+sha256sums=('37ad0249902e301bd9052bf712e511fcc6acff4ecaad4b5900aad9ce564e26de')
+build() {
+  cmake -S json-c-$pkgver -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -D BUILD_STATIC_LIBS=OFF
+  cmake --build build
+}
 package() { DESTDIR="$pkgdir" cmake --install build; }

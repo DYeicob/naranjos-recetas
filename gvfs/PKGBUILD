@@ -1,0 +1,23 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=gvfs
+pkgver=1.60.2
+pkgrel=1
+pkgdesc='Papelera, USB y carpetas remotas (SFTP) en Thunar'
+install=gvfs.install
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.0-or-later')
+depends=('glib2' 'dbus' 'udisks2' 'libgudev' 'libarchive' 'fuse3' 'polkit' 'libgcrypt' 'gsettings-desktop-schemas' 'systemd')
+makedepends=('meson' 'ninja')
+source=('https://download.gnome.org/sources/gvfs/1.60/gvfs-1.60.2.tar.xz')
+sha256sums=('a8d7744615a488a559302fe0cc8f418d5b44aba3c2ba2163e5a9e6f607c1be9a')
+build() {
+  cd gvfs-$pkgver
+  meson setup build --prefix=/usr --buildtype=release \
+    -D afc=false -D afp=false -D bluray=false -D cdda=false -D dnssd=false -D goa=false -D google=false \
+    -D gphoto2=false -D http=false -D mtp=false -D nfs=false -D onedrive=false -D smb=false -D wsdd=false \
+    -D gcr=false -D keyring=false -D libusb=false -D man=false \
+    -D udisks2=true -D gudev=true -D fuse=true -D archive=true -D sftp=true -D admin=true -D logind=true
+  ninja -C build
+}
+package() { cd gvfs-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=libnotify
+pkgver=0.8.8
+pkgrel=1
+pkgdesc='Avisos de escritorio para programas (notify-send)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('gdk-pixbuf2' 'glib2')
+makedepends=('meson' 'ninja')
+source=('https://download.gnome.org/sources/libnotify/0.8/libnotify-0.8.8.tar.xz')
+sha256sums=('23420ef619dc2cb5aebad613f4823a2fa41c07e5a1d05628d40f6ec4b35bfddd')
+build() {
+  cd libnotify-$pkgver
+  meson setup build --prefix=/usr --buildtype=release -D gtk_doc=false -D man=false -D tests=false -D introspection=disabled
+  ninja -C build
+}
+package() { cd libnotify-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

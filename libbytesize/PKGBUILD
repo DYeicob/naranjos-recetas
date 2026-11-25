@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=libbytesize
+pkgver=2.12
+pkgrel=1
+pkgdesc='Tamaños de disco en bytes, legibles'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('pcre2' 'gmp' 'mpfr')
+makedepends=()
+source=('https://github.com/storaged-project/libbytesize/releases/download/2.12/libbytesize-2.12.tar.gz')
+sha256sums=('8356bac2cafd2f31f39bf1ad373cef8448cab08b817aeaee5c526d54e81c3c5a')
+build() {
+  cd libbytesize-$pkgver
+  ./configure --prefix=/usr --without-python3 --without-tools --without-gtk-doc
+  make
+}
+package() { cd libbytesize-$pkgver; make DESTDIR="$pkgdir" install; }

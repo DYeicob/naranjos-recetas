@@ -61,6 +61,7 @@ seccion_seguridad(){
   mete "󰒃  $(_ 'Estado de la seguridad')"          "naranjos-tui seguridad"
   mete "󰖂  $(_ 'VPN: conectar / desconectar')"      "naranjos-tui vpn"
   mete "󰕓  $(_ 'Permitir un USB bloqueado')"        "naranjos-tui usb"
+  mete "󰩺  $(_ 'Vaciar la cuarentena del antivirus')" "terminal \"$(_ 'Cuarentena')\" 'naranjos-peel antivirus cuarentena; echo; naranjos-peel antivirus vacia'"
 }
 seccion_sistema(){
   mete "󰚰  $(_ 'Actualizar NaranjOS')"            "terminal \"$(_ 'Actualizar')\" 'zumo actualiza'"

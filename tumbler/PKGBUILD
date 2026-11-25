@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=tumbler
+pkgver=4.20.2
+pkgrel=1
+pkgdesc='Miniaturas de imágenes y fuentes en Thunar'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('glib2' 'gdk-pixbuf2' 'libxfce4util' 'freetype2' 'libpng' 'libjpeg-turbo')
+makedepends=()
+source=('https://archive.xfce.org/src/xfce/tumbler/4.20/tumbler-4.20.2.tar.bz2')
+sha256sums=('aa77fd90a88b83467cd8d2b39d80e4518ba2903d2e4ca50d32d1b96996685015')
+backup=('etc/xdg/tumbler/tumbler.rc')
+build() { cd tumbler-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc --disable-gtk-doc; make; }
+package() { cd tumbler-$pkgver; make DESTDIR="$pkgdir" install; }

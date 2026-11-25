@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=thunar-volman
+pkgver=4.20.0
+pkgrel=1
+pkgdesc='Monta los USB solos al enchufarlos (con Thunar)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('exo' 'libgudev' 'libnotify' 'libxfce4ui' 'xfconf' 'gtk3' 'gvfs')
+makedepends=()
+source=('https://archive.xfce.org/src/xfce/thunar-volman/4.20/thunar-volman-4.20.0.tar.bz2')
+sha256sums=('b0dad852959b515b8fbfd1ed552e362340347d26d5246e7f1b973027131eb1da')
+build() { cd thunar-volman-$pkgver; ./configure --prefix=/usr; make; }
+package() { cd thunar-volman-$pkgver; make DESTDIR="$pkgdir" install; }

@@ -1,7 +1,7 @@
 # Receta de NaranjOS — generada por naranjos-tanda-5b.sh a partir de BLFS 13.1-systemd
 pkgname=foot
 pkgver=1.28.0
-pkgrel=2
+pkgrel=3
 pkgdesc='Terminal Wayland rápida y ligera'
 arch=('x86_64')
 url='https://www.linuxfromscratch.org/blfs/'
@@ -11,6 +11,6 @@ makedepends=('tllist' 'wayland-protocols')
 source=('https://codeberg.org/dnkl/foot/archive/1.28.0.tar.gz')
 sha256sums=('4296be402b5684d049534598e69db92b918f92beac9dab76b585207045f0b037')
 build()   { cd foot
-  meson setup build --prefix=/usr --buildtype=plain -D docs=disabled -D grapheme-clustering=disabled -D terminfo=disabled
+  meson setup build --prefix=/usr --buildtype=plain -D docs=disabled -D grapheme-clustering=disabled -D terminfo=enabled -D default-terminfo=foot
   meson compile -C build; }
 package() { cd foot; DESTDIR="$pkgdir" meson install -C build; }

@@ -1,0 +1,2 @@
+post_install() { systemctl daemon-reload >/dev/null 2>&1 || true; udevadm control --reload >/dev/null 2>&1 || true; return 0; }
+post_upgrade() { post_install; }

@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=libnvme
+pkgver=1.16.2
+pkgrel=1
+pkgdesc='Discos NVMe'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('json-c' 'keyutils' 'openssl')
+makedepends=('meson' 'ninja')
+source=('https://github.com/linux-nvme/libnvme/archive/v1.16.2/libnvme-1.16.2.tar.gz')
+sha256sums=('1d850d5a871559abf641d6e6b63bb86047e4cb26f3ad144597c2c64b3cff7231')
+build() {
+  cd libnvme-$pkgver
+  meson setup build --prefix=/usr --buildtype=release -D libdbus=auto -D python=disabled -D docs=false -D tests=false -D examples=false
+  ninja -C build
+}
+package() { cd libnvme-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

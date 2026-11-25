@@ -1,0 +1,7 @@
+post_install() {
+  systemd-sysusers rtkit.conf >/dev/null 2>&1 || true
+  systemctl daemon-reload >/dev/null 2>&1 || true
+  systemctl reload dbus >/dev/null 2>&1 || true
+  return 0
+}
+post_upgrade() { post_install; }

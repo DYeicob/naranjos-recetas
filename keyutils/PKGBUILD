@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=keyutils
+pkgver=1.6.3
+pkgrel=1
+pkgdesc='Llavero de claves del kernel'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later' 'LGPL-2.1-or-later')
+depends=()
+makedepends=()
+source=('https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/snapshot/keyutils-1.6.3.tar.gz')
+sha256sums=('a61d5706136ae4c05bd48f86186bcfdbd88dd8bd5107e3e195c924cfc1b39bb4')
+backup=('etc/request-key.conf')
+build() { cd keyutils-$pkgver; make; }
+package() {
+  cd keyutils-$pkgver
+  make DESTDIR="$pkgdir" NO_ARLIB=1 LIBDIR=/usr/lib BINDIR=/usr/bin SBINDIR=/usr/sbin install
+}

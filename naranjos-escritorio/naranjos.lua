@@ -38,6 +38,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("mako")                                        -- avisos
     hl.exec_cmd("hypridle")                                    -- bloqueo por inactividad
     hl.exec_cmd("naranjos-noche arranca")                      -- luz nocturna (hyprsunset)
+    hl.exec_cmd("thunar --daemon")                             -- archivos al instante y USB al enchufarlos
     hl.exec_cmd("command -v waybar >/dev/null && waybar")      -- barra (llega en la tanda 5c2)
 end)
 

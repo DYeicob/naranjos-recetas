@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=libatasmart
+pkgver=0.19
+pkgrel=1
+pkgdesc='Salud de los discos (SMART)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('systemd')
+makedepends=()
+source=('https://0pointer.de/public/libatasmart-0.19.tar.xz')
+sha256sums=('61f0ea345f63d28ab2ff0dc352c22271661b66bf09642db3a4049ac9dbdb0f8d')
+build() { cd libatasmart-$pkgver; ./configure --prefix=/usr --disable-static; make; }
+package() { cd libatasmart-$pkgver; make DESTDIR="$pkgdir" docdir=/usr/share/doc/libatasmart-$pkgver install; }

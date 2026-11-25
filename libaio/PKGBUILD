@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6r2.sh
+pkgname=libaio
+pkgver=0.3.113
+pkgrel=1
+pkgdesc='E/S asíncrona del kernel (la usa LVM2)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=()
+makedepends=()
+source=('https://releases.pagure.org/libaio/libaio-0.3.113.tar.gz')
+sha256sums=('2c44d1c5fd0d43752287c9ae1eb9c023f04ef848ea8d4aafa46e9aedb678200b')
+prepare() { cd libaio-$pkgver; sed -i '/install.*libaio.a/s/^/#/' src/Makefile; }
+build() { cd libaio-$pkgver; make; }
+package() { cd libaio-$pkgver; make DESTDIR="$pkgdir" install; }
