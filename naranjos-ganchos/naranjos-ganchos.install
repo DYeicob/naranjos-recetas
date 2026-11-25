@@ -1,6 +1,6 @@
 # NaranjOS · aplica ya lo que faltaba (p. ej. el usuario rtkit) y vuelve a arrancar lo que falló por eso
 post_install() {
-  systemd-sysusers >/dev/null 2>&1 || true
+  /usr/bin/naranjos-sysusers || true
   systemd-tmpfiles --create >/dev/null 2>&1 || true
   udevadm control --reload >/dev/null 2>&1 || true
   if systemctl is-failed --quiet rtkit-daemon.service 2>/dev/null; then

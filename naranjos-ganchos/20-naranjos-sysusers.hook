@@ -7,4 +7,4 @@ Target = usr/lib/sysusers.d/*.conf
 [Action]
 Description = Creando los usuarios y grupos del sistema…
 When = PostTransaction
-Exec = /usr/bin/systemd-sysusers
+Exec = /usr/bin/naranjos-sysusers

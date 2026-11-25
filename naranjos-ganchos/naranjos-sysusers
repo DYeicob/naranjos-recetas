@@ -1,0 +1,49 @@
+#!/usr/bin/python3
+# NaranjOS · crea los usuarios y grupos que piden los paquetes en sysusers.d, con groupadd/useradd.
+# (systemd se compila sin systemd-sysusers, como en LFS). Entiende las líneas g, u y m.
+import glob, grp, os, pwd, shlex, subprocess, sys
+
+def existe_g(n):
+    try: grp.getgrnam(n); return True
+    except KeyError: return False
+def existe_u(n):
+    try: pwd.getpwnam(n); return True
+    except KeyError: return False
+def gid_libre(i):
+    try: grp.getgrgid(int(i)); return False
+    except KeyError: return True
+def uid_libre(i):
+    try: pwd.getpwuid(int(i)); return False
+    except KeyError: return True
+def orden(c):
+    r = subprocess.run(c, capture_output=True, text=True)
+    if r.returncode: print("  ! naranjos-sysusers:", " ".join(c), "→", r.stderr.strip(), file=sys.stderr)
+    else: print("  ✔ naranjos-sysusers:", " ".join(c[:1] + c[-1:]))
+
+ficheros = {}
+for d in ("/usr/lib/sysusers.d", "/run/sysusers.d", "/etc/sysusers.d"):   # /etc manda sobre /usr/lib
+    for f in sorted(glob.glob(d + "/*.conf")): ficheros[os.path.basename(f)] = f
+lineas = []
+for f in sorted(ficheros.values()):
+    for l in open(f, encoding="utf-8", errors="replace"):
+        l = l.strip()
+        if not l or l.startswith("#"): continue
+        try: t = shlex.split(l)
+        except ValueError: continue
+        lineas.append((t + ["-"] * 6)[:6])
+
+for tipo, nombre, i, *_ in lineas:          # primero los grupos
+    if tipo == "g" and not existe_g(nombre):
+        orden(["groupadd"] + (["-g", i] if i.isdigit() and gid_libre(i) else ["-r"]) + [nombre])
+for tipo, nombre, i, gecos, casa, shell in lineas:
+    if tipo != "u" or existe_u(nombre): continue
+    c = ["useradd", "-M", "-d", casa if casa != "-" else "/", "-s", shell if shell != "-" else "/usr/sbin/nologin"]
+    if gecos != "-": c += ["-c", gecos]
+    uid, _, gid = i.partition(":")
+    c += ["-u", uid] if uid.isdigit() and uid_libre(uid) else ["-r"]
+    g = gid or (nombre if existe_g(nombre) else "")
+    c += ["-g", g] if g and (existe_g(g) or g.isdigit()) else ["-U"]
+    orden(c + [nombre])
+for tipo, nombre, grupo, *_ in lineas:      # «m»: meter un usuario en un grupo
+    if tipo == "m" and existe_u(nombre) and existe_g(grupo) and nombre not in grp.getgrnam(grupo).gr_mem:
+        orden(["usermod", "-aG", grupo, nombre])

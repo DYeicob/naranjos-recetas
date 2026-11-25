@@ -70,6 +70,10 @@ _naranjos_tema() {
 }
 add-zsh-hook precmd _naranjos_tema
 add-zsh-hook precmd vcs_info
+# si un programa se cierra de golpe y deja la terminal en «modo de teclado kitty», Enter deja de funcionar:
+# se vuelve al modo normal cada vez que sale el prompt (los programas que lo usan lo activan otra vez al abrirse)
+_naranjos_teclado(){ [[ -t 1 ]] && printf '\e[=0u'; }
+add-zsh-hook precmd _naranjos_teclado
 if [[ $TERM == linux ]]; then
   # consola de texto: solo 16 colores y sin símbolos especiales
   PROMPT='%F{yellow}%n@%m%f %~${vcs_info_msg_0_} %(?.%F{yellow}.%F{red})>%f '
