@@ -9,7 +9,8 @@
 set -uo pipefail
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; Z=$'\e[0m'
 [ "$(id -u)" != 0 ] || { echo "Sin sudo, por favor."; exit 1; }
-cd "$(dirname "$0")/.." || exit 1
+HERRAMIENTAS=$(cd "$(dirname "$0")" && pwd)
+cd "$HERRAMIENTAS/.." || exit 1
 REPO=${ZUMO_REPO:-/srv/zumo/naranjos-core}
 FU=${NARANJOS_FUENTES:-/srv/zumo/naranjos-fuentes}
 LIC=$FU/licencias
@@ -17,10 +18,6 @@ LIC=$FU/licencias
 command -v bsdtar >/dev/null || { echo "${R}Falta bsdtar (libarchive)${Z}"; exit 1; }
 if [ ! -d "$FU" ]; then sudo install -d -o "$(id -un)" -g "$(id -gn)" -m 755 "$FU" || exit 1; fi
 mkdir -p "$LIC" || exit 1
-# si ~/.makepkg.conf tiene SRCDEST, las fuentes descargadas están allí y no en cada receta
-SD=$( . /etc/makepkg.conf 2>/dev/null; [ -r ~/.makepkg.conf ] && . ~/.makepkg.conf; echo "${SRCDEST:-}" )
-# patrones de los ficheros de licencia (en la raíz de la fuente, o en LICENSES/ o licenses/)
-PATRON='^[^/]+/((COPYING|COPYRIGHT|LICEN[CS]E|NOTICE|UNLICENSE|WHENCE)[^/]*|(LICENSES|licenses|LICENCES)/[^/]+|LICENCE\.[^/]+)$'
 
 fallos=(); hechas=0; saltadas=0; total=0; inicio=$SECONDS
 mapfile -t todas < <(ls -d */ | tr -d / | while read -r r; do [ -f "$r/PKGBUILD" ] && echo "$r"; done)
@@ -50,23 +47,8 @@ for r in "${todas[@]}"; do
   for v in "$FU/$base"-[0-9]*.src.tar.gz; do
     [ -e "$v" ] && [ "$v" != "$f" ] && [[ "${v#"$FU/$base"-}" =~ ^[0-9][^/]*-[0-9.]+\.src\.tar\.gz$ ]] && rm -f "$v"
   done
-  # textos de licencia sacados de cada fuente original de la receta
-  rm -rf "${LIC:?}/$base"; mkdir -p "$LIC/$base"
-  t=$(mktemp -d)
-  while read -r s; do
-    s=${s%%::*}; s=${s##*/}; a="$r/$s"
-    [ -f "$a" ] || a="$SD/$s"
-    [ -f "$a" ] || continue
-    case "$a" in *.tar|*.tar.*|*.tgz|*.tbz2|*.txz|*.zip) ;; *) continue ;; esac
-    bsdtar -tf "$a" 2>/dev/null | grep -E "$PATRON" | head -n 60 > "$t/lista" || true
-    [ -s "$t/lista" ] || continue
-    bsdtar -xf "$a" -C "$t" -T "$t/lista" 2>/dev/null || true
-  done < <(awk '/^\tsource = /{print $3}' <<< "$info")
-  ( cd "$t" && find . -type f -size -2M ! -name lista -printf '%P\n' ) | while read -r x; do
-    d="$LIC/$base/$(dirname "${x#*/}")"; mkdir -p "$d"; cp "$t/$x" "$d/"
-  done
-  rm -rf "$t"
-  echo "$ver" > "$LIC/$base/.version"
+  # textos de licencia sacados de la fuente original (herramientas/licencias.sh)
+  bash "$HERRAMIENTAS/licencias.sh" "$LIC" "$f" || true
   hechas=$((hechas + 1))
 done
 mv -f "$LIC/.indice.nuevo" "$LIC/INDICE.tsv"

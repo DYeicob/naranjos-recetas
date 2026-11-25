@@ -1,15 +1,15 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-5f.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6i2.sh (NO editar a mano)
 pkgname=naranjos-fondos
-pkgver=0.2.0
+pkgver=0.2.1
 pkgrel=1
 install=naranjos-fondos.install
 pkgdesc='Fondos de pantalla y logo de NaranjOS'
 arch=('any')
 url='https://github.com/DYeicob/naranjos-recetas'
-license=('GPL-3.0-or-later')
+license=('CC-BY-SA-4.0')
 depends=()
-source=('naranjos-01.jpg' 'naranjos-02.jpg' 'naranjos-03.jpg' 'naranjos-04.jpg' 'naranjos-05.jpg' 'naranjos-06.jpg' 'naranjos-07.jpg' 'naranjos-bloqueo.jpg' 'naranjos-logo-1024.png' 'naranjos-logo-128.png' 'naranjos-logo-256.png' 'naranjos-logo-512.png' 'naranjos-logo-plano-128.png' 'naranjos-logo-plano-16.png' 'naranjos-logo-plano-24.png' 'naranjos-logo-plano-256.png' 'naranjos-logo-plano-32.png' 'naranjos-logo-plano-48.png' 'naranjos-logo-plano-512.png' 'naranjos-logo-plano-64.png' 'naranjos-logo-plano.png' 'naranjos-logo.png')
-sha256sums=('8722492c43656c0309617ac082599b382f7fe13c178b0114dde7e44b64d30288' 'f5c263c449e722e489b1dbb7feab5a7d12254ce0bb620dd379b9e4a24db677b0' '0af0ca24cb55e9607b8e9a9828b49474887da5c2147122db71672fa281affa76' '45b2934b2811f420ec75a0676510573c99e3fbc38f53e35f1f0df5708870d612' '87532663f115729be1ddb8e94ba80ba2330a361cbf5266d5069185519f32dc50' 'a208d3684e086581cbe306ca6dbe72e690bc983bff9974a8a774a9cec0abce4f' '51194e599511e8a8f9930da498f97c87b2bfbeb06dcab8742191385f9594c6f2' 'a27d9f5390e85a1a96da8534745d6d85e9bbf647f05590341e9fafe7328be8ba' '2f2aa7897ed44441c95cf452875360260098f6b3f67523fbe999f105897b2d16' 'a85af633d36801f0d1148eff8fc5ba78ace07240420da17699ba10527bde9cc8' '8a49ff294bc7386b0fcb10525ead38c6faa728edcfa6ba9dbb10f0e8a936eaf3' '1e938584d18286b307a2c929c8cb13d7b1cde8c55dcf2c90079b660df8b7163e' '4729083b2bb300cee3f06e5b25f0c7d845f721413444688c92848cd4681e3818' 'f8e8cec465fc18e4f25dbd3e27f18b0a63ccbb51c9c6139adaef1e0d0f8a08ab' '1465fc4457643d7d7f7c27dcbbb5ab322333d2a5768ea6b4ba5987c244829266' 'f5bad3ead7cb95f289a55c9c0607a7f9768fc082ea7f91f6f3eff66d9ba1eae5' '38f0c536bbffe3fb42c9e80c3ff5ef71912b10f60cd375593eff24cc7115e5bc' 'd5dfc9bfd0d419a8129fb1136a9a892551488ae51007d7cb3d43bec8e387118d' 'e03b0470a7270012f208c97f4197bf701c1f1d00766129ce06716ebc400afbb4' '8364407025f0d89defc4d7ac9bb0361cf23225e17082f1db8bcea96a368d99d3' 'f8eb2532505844a9c423a98bc8a6beab5af8e539da89492d908f30296b0c8a69' '70b07ce0436087edb2d1ff13bde77b6885b1e4054d8d086bb075ef5e5f79b96e')
+source=('LICENSE' 'naranjos-01.jpg' 'naranjos-02.jpg' 'naranjos-03.jpg' 'naranjos-04.jpg' 'naranjos-05.jpg' 'naranjos-06.jpg' 'naranjos-07.jpg' 'naranjos-bloqueo.jpg' 'naranjos-logo-1024.png' 'naranjos-logo-128.png' 'naranjos-logo-256.png' 'naranjos-logo-512.png' 'naranjos-logo-plano-128.png' 'naranjos-logo-plano-16.png' 'naranjos-logo-plano-24.png' 'naranjos-logo-plano-256.png' 'naranjos-logo-plano-32.png' 'naranjos-logo-plano-48.png' 'naranjos-logo-plano-512.png' 'naranjos-logo-plano-64.png' 'naranjos-logo-plano.png' 'naranjos-logo.png')
+sha256sums=('cde7883b9050a1104f4ac19a1572aafd6e5d7323b68351aaf51fbf4beba54966' '8722492c43656c0309617ac082599b382f7fe13c178b0114dde7e44b64d30288' 'f5c263c449e722e489b1dbb7feab5a7d12254ce0bb620dd379b9e4a24db677b0' '0af0ca24cb55e9607b8e9a9828b49474887da5c2147122db71672fa281affa76' '45b2934b2811f420ec75a0676510573c99e3fbc38f53e35f1f0df5708870d612' '87532663f115729be1ddb8e94ba80ba2330a361cbf5266d5069185519f32dc50' 'a208d3684e086581cbe306ca6dbe72e690bc983bff9974a8a774a9cec0abce4f' '51194e599511e8a8f9930da498f97c87b2bfbeb06dcab8742191385f9594c6f2' 'a27d9f5390e85a1a96da8534745d6d85e9bbf647f05590341e9fafe7328be8ba' '2f2aa7897ed44441c95cf452875360260098f6b3f67523fbe999f105897b2d16' 'a85af633d36801f0d1148eff8fc5ba78ace07240420da17699ba10527bde9cc8' '8a49ff294bc7386b0fcb10525ead38c6faa728edcfa6ba9dbb10f0e8a936eaf3' '1e938584d18286b307a2c929c8cb13d7b1cde8c55dcf2c90079b660df8b7163e' '4729083b2bb300cee3f06e5b25f0c7d845f721413444688c92848cd4681e3818' 'f8e8cec465fc18e4f25dbd3e27f18b0a63ccbb51c9c6139adaef1e0d0f8a08ab' '1465fc4457643d7d7f7c27dcbbb5ab322333d2a5768ea6b4ba5987c244829266' 'f5bad3ead7cb95f289a55c9c0607a7f9768fc082ea7f91f6f3eff66d9ba1eae5' '38f0c536bbffe3fb42c9e80c3ff5ef71912b10f60cd375593eff24cc7115e5bc' 'd5dfc9bfd0d419a8129fb1136a9a892551488ae51007d7cb3d43bec8e387118d' 'e03b0470a7270012f208c97f4197bf701c1f1d00766129ce06716ebc400afbb4' '8364407025f0d89defc4d7ac9bb0361cf23225e17082f1db8bcea96a368d99d3' 'f8eb2532505844a9c423a98bc8a6beab5af8e539da89492d908f30296b0c8a69' '70b07ce0436087edb2d1ff13bde77b6885b1e4054d8d086bb075ef5e5f79b96e')
 package() {
   install -dm755 "$pkgdir/usr/share/backgrounds/naranjos" "$pkgdir/usr/share/naranjos/logo"
   install -m644 naranjos-0*.jpg naranjos-bloqueo.jpg "$pkgdir/usr/share/backgrounds/naranjos/"
@@ -19,4 +19,6 @@ package() {
     install -Dm644 "naranjos-logo-plano-$n.png" "$pkgdir/usr/share/icons/hicolor/${n}x${n}/apps/naranjos.png"
   done
   install -Dm644 naranjos-logo-256.png "$pkgdir/usr/share/pixmaps/naranjos.png"
+  # el arte de NaranjOS (logo y fondos) se publica con CC BY-SA 4.0
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }

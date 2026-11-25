@@ -1,0 +1,18 @@
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6i2.sh (NO editar a mano)
+pkgname=naranjos-licencias
+pkgver=20261125
+pkgrel=1
+pkgdesc='Textos de las licencias de todos los paquetes de NaranjOS (/usr/share/licenses) y LICENCIAS.md'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=()
+source=('textos.tgz' 'LICENCIAS.md')
+sha256sums=('1f45bb298265e5780e4baaece4411ab0d7cfd1ca5ab1820c329a875bdd820a57' '62f4c7e4510de55d2f68408398cf4bb4c17f8b110cdedcb6d04731de2d3304b2')
+noextract=('textos.tgz')
+package() {
+  install -dm755 "$pkgdir/usr/share/licenses"
+  bsdtar -xf textos.tgz -C "$pkgdir/usr/share/licenses" --no-same-owner
+  chmod -R u=rwX,go=rX "$pkgdir/usr/share/licenses"
+  install -Dm644 LICENCIAS.md "$pkgdir/usr/share/doc/naranjos/LICENCIAS.md"
+}

@@ -6,7 +6,7 @@ pkgrel=14
 pkgdesc='Sistema base de NaranjOS (construido con LFS/BLFS 13.1)'
 arch=('x86_64')
 url='https://github.com/DYeicob'
-license=('custom')
+license=('GPL-3.0-or-later')
 install=naranjos-base.install
 provides=(
 

@@ -37,7 +37,9 @@ makepkg -f
 ## Licencia
 
 Las recetas y `zumo` se publican bajo GPL-3.0-or-later (ver `LICENSE`).
-Cada paquete conserva la licencia de su proyecto original.
+Cada paquete conserva la licencia de su proyecto original:
+la lista completa, lo que no es libre y dónde está el código fuente de cada paquete, en [`LICENCIAS.md`](LICENCIAS.md).
+El arte de NaranjOS (logo y fondos) se publica con CC BY-SA 4.0.
 
 ## Flujo de trabajo
 
