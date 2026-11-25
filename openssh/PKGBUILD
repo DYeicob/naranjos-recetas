@@ -1,15 +1,15 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
 pkgname=openssh
-pkgver=10.5p1
-pkgrel=3
+pkgver=10.6p2
+pkgrel=1
 pkgdesc='SSH: conectarse a otros equipos (y servidor SSH, apagado de serie)'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('SSH-OpenSSH')
 depends=('openssl' 'zlib' 'linux-pam' 'libxcrypt')
 makedepends=()
-source=('https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.5p1.tar.gz' 'sshd.service' 'sshd.pam')
-sha256sums=('d44d28a839ea9daf969cc69150fde59910b2b39361dad81a3bd6cbd19218db11' '437d905c8e7222092c38c649703567f43f188a9384c067c74c2417a58fe04c1a' '15e711122662d6c7cc7f671b688f1e1709c543d2e61e61e2832c52d6d55f0530')
+source=('https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-10.6p2.tar.gz' 'sshd.service' 'sshd.pam')
+sha256sums=('9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b' '437d905c8e7222092c38c649703567f43f188a9384c067c74c2417a58fe04c1a' '15e711122662d6c7cc7f671b688f1e1709c543d2e61e61e2832c52d6d55f0530')
 backup=('etc/ssh/ssh_config' 'etc/ssh/sshd_config' 'etc/ssh/moduli' 'etc/pam.d/sshd')
 install=openssh.install
 build() {

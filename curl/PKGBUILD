@@ -1,6 +1,6 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6f9.sh
 pkgname=curl
-pkgver=8.21.0
+pkgver=8.23.0
 pkgrel=1
 pkgdesc='Descargas por internet (lo usan zumo, git, Flatpak…)'
 arch=('x86_64')
@@ -8,8 +8,8 @@ url='https://github.com/DYeicob/naranjos-recetas'
 license=('curl')
 depends=('openssl' 'zlib' 'zstd' 'brotli' 'libpsl' 'libidn2' 'nghttp2' 'make-ca')
 makedepends=()
-source=('https://curl.se/download/curl-8.21.0.tar.xz')
-sha256sums=('aa1b66a70eace83dc624508745646c08ae561de512ab403adffb93ac87fc72e6')
+source=('https://github.com/curl/curl/releases/download/curl-8_23_0/curl-8.23.0.tar.xz')
+sha256sums=('8dadd7d2536a314f982ad05a651b713f426bf7d02cc2c76cffb9796f2218e6c5')
 build() {
   cd curl-$pkgver
   ./configure --prefix=/usr --disable-static --with-openssl --with-ca-path=/etc/ssl/certs

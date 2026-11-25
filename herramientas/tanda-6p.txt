@@ -1,0 +1,6 @@
+naranjos-ganchos
+openssl
+xz
+curl
+openssh
+foot

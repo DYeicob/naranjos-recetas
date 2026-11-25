@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6p.sh
+pkgname=naranjos-ganchos
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Ganchos de pacman de NaranjOS: crea usuarios, grupos y carpetas del sistema al instalar'
+install=naranjos-ganchos.install
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('systemd')
+makedepends=()
+source=('20-naranjos-sysusers.hook' '30-naranjos-tmpfiles.hook' 'naranjos-grupos.conf' )
+sha256sums=('66e57a84af6a26397e5a33647d637f05d27a740c091bc506f80b6439d6daf09e' 'd75b9861d5750235dd4a27f0fd86bb620a09f664215348f722dd64d2374fceec' '2d4f7fe21c3e2839cd1bb1444d30ddc6e659709e895058475fbaa306f6121be1')
+package() {
+  install -Dm644 20-naranjos-sysusers.hook "$pkgdir/usr/share/libalpm/hooks/20-naranjos-sysusers.hook"
+  install -Dm644 30-naranjos-tmpfiles.hook "$pkgdir/usr/share/libalpm/hooks/30-naranjos-tmpfiles.hook"
+  install -Dm644 naranjos-grupos.conf "$pkgdir/usr/lib/sysusers.d/naranjos-grupos.conf"
+}
