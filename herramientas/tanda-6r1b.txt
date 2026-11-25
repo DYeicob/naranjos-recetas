@@ -1,0 +1,5 @@
+naranjos-idiomas
+naranjos-keyring
+naranjos-peel
+naranjos-arranque
+naranjos-escritorio

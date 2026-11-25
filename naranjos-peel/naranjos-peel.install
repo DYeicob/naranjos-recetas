@@ -1,20 +1,22 @@
+# textos traducibles (dominio «naranjos»); si aún no está naranjos-idiomas, en español
+. /usr/lib/naranjos/naranjos-i18n.sh 2>/dev/null || _(){ printf '%s' "$1"; }
 post_install() {
-  echo "  NaranjOS peel: preparando la seguridad…"
+  echo "  $(_ 'NaranjOS peel: preparando la seguridad…')"
   # 1) endurecimiento del kernel, ya mismo
   /usr/lib/systemd/systemd-sysctl /usr/lib/sysctl.d/60-naranjos-peel.conf >/dev/null 2>&1 || true
   # 2) cortafuegos
   if /usr/sbin/nft -c -f /etc/nftables.conf; then
     systemctl enable --now nftables.service >/dev/null 2>&1 \
-      && echo "  ✔ cortafuegos activo" || echo "  ! no se pudo arrancar el cortafuegos: systemctl status nftables"
+      && echo "  ✔ $(_ 'cortafuegos activo')" || echo "  ! $(_ 'no se pudo arrancar el cortafuegos: systemctl status nftables')"
   else
-    echo "  ! las reglas del cortafuegos no cargan (¿faltan módulos nf_tables en el kernel?)"
+    echo "  ! $(_ 'las reglas del cortafuegos no cargan (¿faltan módulos nf_tables en el kernel?)')"
   fi
   # 3) MAC aleatoria en la WiFi (una distinta por red)
   f=/etc/iwd/main.conf
   if [ -f "$f" ] && ! grep -q '^AddressRandomization=' "$f"; then
     if grep -q '^\[General\]' "$f"; then sed -i '/^\[General\]/a AddressRandomization=network' "$f"
     else printf '\n[General]\nAddressRandomization=network\n' >> "$f"; fi
-    echo "  ✔ MAC aleatoria en la WiFi (se aplica al reiniciar)"
+    echo "  ✔ $(_ 'MAC aleatoria en la WiFi (se aplica al reiniciar)')"
   fi
   # 4) DNS cifrado: /etc/resolv.conf tiene que pasar por systemd-resolved
   if systemctl is-active -q systemd-resolved; then
@@ -22,12 +24,12 @@ post_install() {
     if [ "$(readlink -f /etc/resolv.conf)" != /run/systemd/resolve/stub-resolv.conf ]; then
       [ -e /etc/resolv.conf ] && cp -a /etc/resolv.conf /etc/resolv.conf.antes-de-peel
       ln -sf ../run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-      echo "  ✔ /etc/resolv.conf ahora usa systemd-resolved (copia: /etc/resolv.conf.antes-de-peel)"
+      echo "  ✔ $(_ '/etc/resolv.conf ahora usa systemd-resolved (copia: /etc/resolv.conf.antes-de-peel)')"
     fi
     networkctl reload >/dev/null 2>&1 || true
-    echo "  ✔ DNS cifrado (Quad9, DNS-over-TLS)"
+    echo "  ✔ $(_ 'DNS cifrado (Quad9, DNS-over-TLS)')"
   else
-    echo "  ! systemd-resolved no está activo: el DNS cifrado no funcionará"
+    echo "  ! $(_ 'systemd-resolved no está activo: el DNS cifrado no funcionará')"
   fi
   # 5) antivirus: usuario y carpeta de firmas, firmas al día y vigilancia de descargas
   peel_antivirus
@@ -35,11 +37,11 @@ post_install() {
   peel_vigilancia
   # 7) AppArmor
   peel_apparmor
-  echo "  ✔ AppArmor: perfiles cargados en modo aprendiz (solo avisan)"
-  echo "  ✔ protección USB: lo conectado ahora queda permitido; lo nuevo habrá que permitirlo (Super + Ctrl + U)"
-  echo "  ✔ integridad: guardando las huellas del sistema en segundo plano"
-  echo "  ✔ antivirus: descargando las firmas en segundo plano (unos 200 MB la primera vez)"
-  echo "  Mira el estado con: naranjos-peel"
+  echo "  ✔ $(_ 'AppArmor: perfiles cargados en modo aprendiz (solo avisan)')"
+  echo "  ✔ $(_ 'protección USB: lo conectado ahora queda permitido; lo nuevo habrá que permitirlo (Super + Ctrl + U)')"
+  echo "  ✔ $(_ 'integridad: guardando las huellas del sistema en segundo plano')"
+  echo "  ✔ $(_ 'antivirus: descargando las firmas en segundo plano (unos 200 MB la primera vez)')"
+  echo "  $(_ 'Mira el estado con: naranjos-peel')"
 }
 peel_antivirus() {
   # usuario del antivirus (el systemd de NaranjOS no trae systemd-sysusers: se crea a mano)

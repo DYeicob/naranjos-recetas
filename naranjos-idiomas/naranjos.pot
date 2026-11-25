@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NaranjOS 0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DYeicob/naranjos-recetas/issues\n"
-"POT-Creation-Date: 2026-11-23 19:55+0100\n"
+"POT-Creation-Date: 2026-11-25 16:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,907 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: arranque/naranjos-arranque:38
+msgid ""
+"Arrancado en una foto: el arranque no se toca (los cambios se perderían). "
+"Para quedarte con ella: sudo fotos vuelve"
+msgstr ""
+
+#: arranque/naranjos-arranque:47 fotos/fotos:24 initramfs/naranjos-kernel:52
+#: initramfs/naranjos-kernel:76
+msgid "Hace falta root:"
+msgstr ""
+
+#: arranque/naranjos-arranque:57
+msgid "No encuentro la partición EFI"
+msgstr ""
+
+#: arranque/naranjos-arranque:69
+msgid "No pude montar la partición EFI"
+msgstr ""
+
+#: arranque/naranjos-arranque:98
+msgid "No sé identificar la partición de NaranjOS"
+msgstr ""
+
+#: arranque/naranjos-arranque:127
+msgid "Fotos de NaranjOS (volver atras)"
+msgstr ""
+
+#: arranque/naranjos-arranque:131 fotos/fotos:115 fotos/fotos:184
+msgid "Foto"
+msgstr ""
+
+#: arranque/naranjos-arranque:133
+msgid "Cargando la foto"
+msgstr ""
+
+#: arranque/naranjos-arranque:160
+msgid "respaldo"
+msgstr ""
+
+#: arranque/naranjos-arranque:164
+msgid "Cargando NaranjOS..."
+msgstr ""
+
+#: arranque/naranjos-arranque:180
+msgid "Ajustes del firmware (UEFI)"
+msgstr ""
+
+#: arranque/naranjos-arranque:181 esc/naranjos-menu:83 esc/naranjos-sistema:5
+msgid "Reiniciar"
+msgstr ""
+
+#: arranque/naranjos-arranque:182 esc/naranjos-menu:84 esc/naranjos-noche:86
+#: esc/naranjos-sistema:5
+msgid "Apagar"
+msgstr ""
+
+#: arranque/naranjos-arranque:184 initramfs/naranjos-initramfs:262
+msgid "No hay ningún kernel en /boot"
+msgstr ""
+
+#: arranque/naranjos-arranque:185
+msgid "El menú generado tiene un error"
+msgstr ""
+
+#: arranque/naranjos-arranque:191
+msgid "No hay /boot en"
+msgstr ""
+
+#: arranque/naranjos-arranque:206
+msgid "Menú de arranque al día:"
+msgstr ""
+
+#: arranque/naranjos-arranque:214
+msgid "GRUB no tiene el módulo"
+msgstr ""
+
+#: arranque/naranjos-arranque:225
+msgid "grub-mkimage falló"
+msgstr ""
+
+#: arranque/naranjos-arranque:226
+msgid "La imagen GRUB no lleva SBAT: el shim la rechazaría"
+msgstr ""
+
+#: arranque/naranjos-arranque:227
+msgid "Falta la clave MOK en"
+msgstr ""
+
+#: arranque/naranjos-arranque:229
+msgid "No se pudo firmar GRUB"
+msgstr ""
+
+#: arranque/naranjos-arranque:230
+msgid "La firma de GRUB no se verifica"
+msgstr ""
+
+#: arranque/naranjos-arranque:238
+msgid "Este equipo no ha arrancado en modo UEFI"
+msgstr ""
+
+#: arranque/naranjos-arranque:240
+msgid "Falta el shim:"
+msgstr ""
+
+#: arranque/naranjos-arranque:248
+msgid "arranque propio"
+msgstr ""
+
+#: arranque/naranjos-arranque:249
+msgid "Partición EFI:"
+msgstr ""
+
+#: arranque/naranjos-arranque:249
+msgid "solo se escribe en"
+msgstr ""
+
+#: arranque/naranjos-arranque:250
+msgid "Antes se guarda una copia de la EFI entera en"
+msgstr ""
+
+#: arranque/naranjos-arranque:251 fotos/fotos:187
+msgid "Escribe SI para continuar:"
+msgstr ""
+
+#: arranque/naranjos-arranque:252 fotos/fotos:188
+msgid "Cancelado."
+msgstr ""
+
+#: arranque/naranjos-arranque:257
+msgid "No pude hacer la copia de la EFI"
+msgstr ""
+
+#: arranque/naranjos-arranque:258
+msgid "Copia de la EFI en"
+msgstr ""
+
+#: arranque/naranjos-arranque:263
+msgid "No hay sitio en la partición EFI"
+msgstr ""
+
+#: arranque/naranjos-arranque:265
+msgid "Destino no permitido:"
+msgstr ""
+
+#: arranque/naranjos-arranque:274
+msgid "Lo copiado a la EFI no coincide"
+msgstr ""
+
+#: arranque/naranjos-arranque:278
+msgid "Arranque de NaranjOS en"
+msgstr ""
+
+#: arranque/naranjos-arranque:278 arranque/naranjos-arranque:305
+#: initramfs/naranjos-kernel:97
+msgid "firmado"
+msgstr ""
+
+#: arranque/naranjos-arranque:278
+msgid "menú"
+msgstr ""
+
+#: arranque/naranjos-arranque:280
+msgid ""
+"Siguiente paso: crear la entrada en el firmware y probarla una vez (desde "
+"Ubuntu, o con efibootmgr)."
+msgstr ""
+
+#: arranque/naranjos-arranque:293
+msgid "arranque"
+msgstr ""
+
+#: arranque/naranjos-arranque:295 peel/naranjos-peel:107
+msgid "activo"
+msgstr ""
+
+#: arranque/naranjos-arranque:295 peel/naranjos-peel:169
+msgid "apagado"
+msgstr ""
+
+#: arranque/naranjos-arranque:296
+msgid "Modo BIOS (sin UEFI)"
+msgstr ""
+
+#: arranque/naranjos-arranque:297
+msgid "Menú:"
+msgstr ""
+
+#: arranque/naranjos-arranque:297
+msgid "sin generar"
+msgstr ""
+
+#: arranque/naranjos-arranque:298
+msgid "Kernels:"
+msgstr ""
+
+#: arranque/naranjos-arranque:299
+msgid "Raíz:"
+msgstr ""
+
+#: arranque/naranjos-arranque:300 fotos/fotos:229
+msgid "Arrancado en la foto"
+msgstr ""
+
+#: arranque/naranjos-arranque:304 initramfs/naranjos-kernel:98
+msgid "firma sin comprobar"
+msgstr ""
+
+#: arranque/naranjos-arranque:305 initramfs/naranjos-kernel:97
+msgid "SIN firmar"
+msgstr ""
+
+#: arranque/naranjos-arranque:307
+msgid "sin instalar"
+msgstr ""
+
+#: arranque/naranjos-arranque:309
+msgid "con sudo se ve también la partición EFI"
+msgstr ""
+
+#: arranque/naranjos-arranque:311
+msgid "Sin entrada NaranjOS en el firmware"
+msgstr ""
+
+#: arranque/naranjos-arranque.install:4
+msgid ""
+"NaranjOS: para usar el arranque propio (shim + GRUB firmados en EFI/"
+"naranjos):"
+msgstr ""
+
+#: esc/naranjos-atajos:4
+msgid "Atajos"
+msgstr ""
+
+#: esc/naranjos-ayuda:5 esc/naranjos-menu:77
+msgid "Manual de NaranjOS"
+msgstr ""
+
+#: esc/naranjos-captura:6 esc/naranjos-carpetas:11
+msgid "Imágenes"
+msgstr ""
+
+#: esc/naranjos-captura:7 esc/naranjos-menu:92
+msgid "Capturas"
+msgstr ""
+
+#: esc/naranjos-captura:8
+msgid "captura"
+msgstr ""
+
+#: esc/naranjos-captura:12 esc/naranjos-noche:111 esc/naranjos-tui:12
+#: idiomas/naranjos-idioma:100 peel/naranjos-peel:185 peel/naranjos-peel:194
+#: peel/naranjos-peel:234 peel/naranjos-peel:276 peel/naranjos-peel:325
+#: peel/naranjos-peel:499 peel/naranjos-peel:519 peel/naranjos-peel:544
+#: peel/naranjos-peel:676 peel/naranjos-peel:692 peel/naranjos-peel:721
+#: peel/naranjos-peel:862 peel/naranjos-peel:905 peel/naranjos-peel:926
+#: peel/naranjos-peel:955 peel/naranjos-peel:1009 peel/naranjos-peel:1035
+#: peel/naranjos-peel:1075 zumo:24
+msgid "Uso:"
+msgstr ""
+
+#: esc/naranjos-captura:15
+msgid "Captura guardada"
+msgstr ""
+
+#: esc/naranjos-captura:15
+msgid "también está en el portapapeles"
+msgstr ""
+
+#: esc/naranjos-carpetas:11
+msgid "Descargas"
+msgstr ""
+
+#: esc/naranjos-carpetas:11
+msgid "Documentos"
+msgstr ""
+
+#: esc/naranjos-carpetas:12
+msgid "Música"
+msgstr ""
+
+#: esc/naranjos-carpetas:12
+msgid "Vídeos"
+msgstr ""
+
+#: esc/naranjos-escritorio.install:4
+msgid ""
+"NaranjOS: escritorio instalado. Cada usuario recibe su configuración al "
+"iniciar sesión"
+msgstr ""
+
+#: esc/naranjos-escritorio.install:5
+msgid "(o ya mismo con: naranjos-config-usuario). Manual: naranjos-ayuda"
+msgstr ""
+
+#: esc/naranjos-escritorio.install:19
+msgid "NaranjOS: escritorio de %s recargado"
+msgstr ""
+
+#: esc/naranjos-escritorio.install:21
+msgid ""
+"NaranjOS: no pude recargar el escritorio de %s; hazlo tú con Super + Shift + "
+"R"
+msgstr ""
+
+#: esc/naranjos-menu:14 esc/naranjos-tui:8 esc/naranjos-tui:9
+#: esc/naranjos-tui:10 idiomas/naranjos-idioma:124 idiomas/naranjos-idioma:132
+msgid "Pulsa una tecla para cerrar…"
+msgstr ""
+
+#: esc/naranjos-menu:46 esc/naranjos-menu:47 temas/naranjos-tema:152
+#: temas/naranjos-tema:184
+msgid "Tema"
+msgstr ""
+
+#: esc/naranjos-menu:49
+msgid "Siguiente fondo"
+msgstr ""
+
+#: esc/naranjos-menu:50 esc/naranjos-noche:82 esc/naranjos-noche:88
+msgid "Luz nocturna"
+msgstr ""
+
+#: esc/naranjos-menu:51
+msgid "Mostrar / ocultar la barra"
+msgstr ""
+
+#: esc/naranjos-menu:56 esc/naranjos-tui:7
+msgid "Sonido"
+msgstr ""
+
+#: esc/naranjos-menu:57 esc/naranjos-tui:11 idiomas/naranjos-idioma:117
+#: idiomas/naranjos-idioma:124
+msgid "Idioma"
+msgstr ""
+
+#: esc/naranjos-menu:58
+msgid "Mi configuración de Hyprland (avanzado)"
+msgstr ""
+
+#: esc/naranjos-menu:61
+msgid "Estado de la seguridad"
+msgstr ""
+
+#: esc/naranjos-menu:62
+msgid "VPN: conectar / desconectar"
+msgstr ""
+
+#: esc/naranjos-menu:63
+msgid "Permitir un USB bloqueado"
+msgstr ""
+
+#: esc/naranjos-menu:66
+msgid "Actualizar NaranjOS"
+msgstr ""
+
+#: esc/naranjos-menu:66
+msgid "Actualizar"
+msgstr ""
+
+#: esc/naranjos-menu:67
+msgid "Fotos del sistema"
+msgstr ""
+
+#: esc/naranjos-menu:67 esc/naranjos-menu:68
+msgid "Fotos"
+msgstr ""
+
+#: esc/naranjos-menu:68
+msgid "Hacer una foto del sistema ahora"
+msgstr ""
+
+#: esc/naranjos-menu:68
+msgid "desde el menú"
+msgstr ""
+
+#: esc/naranjos-menu:69
+msgid "Limpiar paquetes que sobran"
+msgstr ""
+
+#: esc/naranjos-menu:69
+msgid "Limpiar"
+msgstr ""
+
+#: esc/naranjos-menu:72
+msgid "Captura de una zona"
+msgstr ""
+
+#: esc/naranjos-menu:73
+msgid "Captura de la pantalla"
+msgstr ""
+
+#: esc/naranjos-menu:76
+msgid "Atajos de teclado"
+msgstr ""
+
+#: esc/naranjos-menu:80 esc/naranjos-sistema:5
+msgid "Bloquear"
+msgstr ""
+
+#: esc/naranjos-menu:81 esc/naranjos-sistema:5
+msgid "Cerrar sesión"
+msgstr ""
+
+#: esc/naranjos-menu:82 esc/naranjos-sistema:5
+msgid "Suspender"
+msgstr ""
+
+#: esc/naranjos-menu:90
+msgid "Aplicaciones"
+msgstr ""
+
+#: esc/naranjos-menu:90
+msgid "Aspecto"
+msgstr ""
+
+#: esc/naranjos-menu:91
+msgid "Ajustes"
+msgstr ""
+
+#: esc/naranjos-menu:91 esc/naranjos-tui:8
+msgid "Seguridad"
+msgstr ""
+
+#: esc/naranjos-menu:92
+msgid "Sistema"
+msgstr ""
+
+#: esc/naranjos-menu:93
+msgid "Ayuda"
+msgstr ""
+
+#: esc/naranjos-menu:93
+msgid "Energía"
+msgstr ""
+
+#: esc/naranjos-menu:110
+msgid "Volver"
+msgstr ""
+
+#: esc/naranjos-navegador:7
+msgid "Firefox no está instalado"
+msgstr ""
+
+#: esc/naranjos-navegador:7
+msgid "En una terminal:"
+msgstr ""
+
+#: esc/naranjos-noche:65
+msgid "automática"
+msgstr ""
+
+#: esc/naranjos-noche:66
+msgid "encendida"
+msgstr ""
+
+#: esc/naranjos-noche:67 peel/naranjos-peel:584
+msgid "apagada"
+msgstr ""
+
+#: esc/naranjos-noche:72
+msgid "luz nocturna"
+msgstr ""
+
+#: esc/naranjos-noche:73
+msgid "Modo:"
+msgstr ""
+
+#: esc/naranjos-noche:74
+msgid "Ahora: luz cálida"
+msgstr ""
+
+#: esc/naranjos-noche:74
+msgid "Ahora: luz normal"
+msgstr ""
+
+#: esc/naranjos-noche:86
+msgid "Automática"
+msgstr ""
+
+#: esc/naranjos-noche:86
+msgid "Encender ahora"
+msgstr ""
+
+#: esc/naranjos-noche:87
+msgid "Más cálida"
+msgstr ""
+
+#: esc/naranjos-noche:87
+msgid "Menos cálida"
+msgstr ""
+
+#: esc/naranjos-noche:95 esc/naranjos-noche:101 esc/naranjos-noche:112
+msgid "Luz nocturna:"
+msgstr ""
+
+#: esc/naranjos-noche:98
+msgid "Dime la temperatura en K, p. ej.:"
+msgstr ""
+
+#: esc/naranjos-noche:120
+msgid "Orden desconocida. Mira:"
+msgstr ""
+
+#: esc/naranjos-osd:38
+msgid "Sin salida de sonido"
+msgstr ""
+
+#: esc/naranjos-osd:40
+msgid "Silencio"
+msgstr ""
+
+#: esc/naranjos-osd:48
+msgid "Micrófono silenciado"
+msgstr ""
+
+#: esc/naranjos-osd:49
+msgid "Micrófono activo"
+msgstr ""
+
+#: fotos/fotos:47
+msgid ""
+"NaranjOS no está en Btrfs: las fotos se activan tras la migración (fase 6h2)"
+msgstr ""
+
+#: fotos/fotos:62
+msgid "No pude montar la raíz del Btrfs"
+msgstr ""
+
+#: fotos/fotos:64
+msgid "No encuentro el subvolumen"
+msgstr ""
+
+#: fotos/fotos:83 fotos/fotos:203
+msgid "No pude rehacer el menú de arranque"
+msgstr ""
+
+#: fotos/fotos:88
+msgid "No pude borrar la foto"
+msgstr ""
+
+#: fotos/fotos:99
+msgid "foto manual"
+msgstr ""
+
+#: fotos/fotos:102
+msgid ""
+"Estás arrancado en una foto: lo que cambies se pierde al apagar. Primero: "
+"sudo fotos vuelve"
+msgstr ""
+
+#: fotos/fotos:103
+msgid ""
+"Has vuelto a una foto: reinicia antes de seguir (lo que cambies ahora se "
+"perdería)"
+msgstr ""
+
+#: fotos/fotos:106 fotos/fotos:165 fotos/fotos:191
+msgid "Hay otra operación de fotos en marcha"
+msgstr ""
+
+#: fotos/fotos:110
+msgid "No pude hacer la foto"
+msgstr ""
+
+#: fotos/fotos:122
+msgid "Borrada la foto automática más vieja:"
+msgstr ""
+
+#: fotos/fotos:150 fotos/fotos:224
+msgid "fotos del sistema"
+msgstr ""
+
+#: fotos/fotos:154
+msgid "arrancada ahora"
+msgstr ""
+
+#: fotos/fotos:158
+msgid "Aún no hay ninguna foto. Haz una con:"
+msgstr ""
+
+#: fotos/fotos:158
+msgid "motivo"
+msgstr ""
+
+#: fotos/fotos:163
+msgid "Dime qué foto borrar:"
+msgstr ""
+
+#: fotos/fotos:168 fotos/fotos:181
+msgid "No existe la foto"
+msgstr ""
+
+#: fotos/fotos:169
+msgid "No se puede borrar la foto con la que has arrancado"
+msgstr ""
+
+#: fotos/fotos:171
+msgid "Borrada la foto"
+msgstr ""
+
+#: fotos/fotos:181 temas/naranjos-tema:137 temas/naranjos-tema:139
+msgid "mira:"
+msgstr ""
+
+#: fotos/fotos:183
+msgid "volver a una foto"
+msgstr ""
+
+#: fotos/fotos:185
+msgid ""
+"El sistema (todo menos /home, /var/log, /srv y la caché de paquetes) volverá "
+"a como estaba entonces."
+msgstr ""
+
+#: fotos/fotos:186
+msgid "Antes se guarda una foto del estado actual, por si quieres deshacerlo."
+msgstr ""
+
+#: fotos/fotos:190
+msgid "antes de volver a la foto"
+msgstr ""
+
+#: fotos/fotos:193
+msgid "No pude copiar la foto"
+msgstr ""
+
+#: fotos/fotos:195
+msgid "No pude apartar el sistema actual"
+msgstr ""
+
+#: fotos/fotos:197
+msgid "No pude poner la foto en su sitio (no ha cambiado nada)"
+msgstr ""
+
+#: fotos/fotos:205
+msgid "Hecho: al reiniciar, NaranjOS será la foto"
+msgstr ""
+
+#: fotos/fotos:206
+msgid "Reinicia y elige la primera entrada («NaranjOS»)."
+msgstr ""
+
+#: fotos/fotos:207
+msgid ""
+"El sistema de antes queda aparte y se borra solo en el siguiente arranque "
+"(tienes su foto)."
+msgstr ""
+
+#: fotos/fotos:218
+msgid "Borrado:"
+msgstr ""
+
+#: fotos/fotos:218
+msgid "No pude borrar"
+msgstr ""
+
+#: fotos/fotos:227
+msgid "Activas: la raíz es Btrfs"
+msgstr ""
+
+#: fotos/fotos:227
+msgid "se guardan"
+msgstr ""
+
+#: fotos/fotos:227
+msgid "automáticas"
+msgstr ""
+
+#: fotos/fotos:228
+msgid "Sin activar: NaranjOS aún no está en Btrfs (fase 6h2)"
+msgstr ""
+
+#: fotos/fotos:229
+msgid "lo que cambies se pierde al apagar."
+msgstr ""
+
+#: fotos/fotos:230
+msgid "Para quedarte con ella:"
+msgstr ""
+
+#: fotos/fotos:231
+msgid "Has vuelto a una foto: reinicia para entrar en ella."
+msgstr ""
+
+#: fotos/fotos:239
+msgid "fotos del sistema de NaranjOS (vuelta atrás)"
+msgstr ""
+
+#: fotos/fotos:240
+msgid "estado"
+msgstr ""
+
+#: fotos/fotos:241
+msgid "las fotos que hay"
+msgstr ""
+
+#: fotos/fotos:242
+msgid "hace una foto ahora"
+msgstr ""
+
+#: fotos/fotos:243
+msgid "borra fotos"
+msgstr ""
+
+#: fotos/fotos:244
+msgid "vuelve a la foto n (al reiniciar)"
+msgstr ""
+
+#: fotos/fotos:245
+msgid ""
+"zumo hace una foto sola antes de cada «zumo actualiza». Cada foto sale en el "
+"menú de arranque,"
+msgstr ""
+
+#: fotos/fotos:246
+msgid ""
+"en «Fotos de NaranjOS»: se arranca sin tocar nada, y si te convence, «fotos "
+"vuelve»."
+msgstr ""
+
+#: idiomas/naranjos-idioma:45
+msgid "Idioma de NaranjOS"
+msgstr ""
+
+#: idiomas/naranjos-idioma:45
+msgid "(ahora: %s)"
+msgstr ""
+
+#: idiomas/naranjos-idioma:51
+msgid ""
+"NaranjOS traducido; en los demás, los programas salen en ese idioma y lo de "
+"NaranjOS aún no"
+msgstr ""
+
+#: idiomas/naranjos-idioma:53
+msgid "cambia tu idioma"
+msgstr ""
+
+#: idiomas/naranjos-idioma:54
+msgid "cambia el del sistema (inicio de sesión y usuarios nuevos)"
+msgstr ""
+
+#: idiomas/naranjos-idioma:55
+msgid ""
+"¿Falta tu idioma? Puedes traducir NaranjOS: /usr/share/doc/naranjos/traducir."
+"md"
+msgstr ""
+
+#: idiomas/naranjos-idioma:62
+msgid "glibc no tiene el idioma %s"
+msgstr ""
+
+#: idiomas/naranjos-idioma:63
+msgid "Preparando %s (solo la primera vez)…"
+msgstr ""
+
+#: idiomas/naranjos-idioma:64
+msgid "No se pudo preparar el idioma"
+msgstr ""
+
+#: idiomas/naranjos-idioma:90
+msgid "Idioma desconocido: %s (mira la lista con: naranjos-idioma)"
+msgstr ""
+
+#: idiomas/naranjos-idioma:91
+msgid "Hazlo como tu usuario, sin sudo (para todo el sistema: --sistema)"
+msgstr ""
+
+#: idiomas/naranjos-idioma:104
+msgid "No se pudo cambiar el idioma del sistema"
+msgstr ""
+
+#: idiomas/naranjos-idioma:108
+msgid "Idioma del sistema"
+msgstr ""
+
+#: idiomas/naranjos-idioma:130
+msgid "Escribe el código del idioma (Enter para salir):"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:95
+msgid "Este kernel no tiene módulos: solo va el microcódigo"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:113
+msgid "depmod ha fallado"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:170
+msgid "No puedo leer %s (prueba con sudo)"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:193
+msgid "No existe /boot/vmlinuz-%s"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:196
+msgid "Creando el initramfs del kernel %s…"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:209
+msgid "No se pudo crear el initramfs"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:213
+msgid "%s (%s, en %s s)"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:235
+msgid "sin initramfs"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:239
+msgid "Microcódigo: %s · módulos extra: %s"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:239 peel/naranjos-peel:56
+msgid "ninguno"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:240
+msgid "Ajustes: %s"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:244
+msgid "el initramfs de NaranjOS"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:245
+msgid "estado de los initramfs"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:246
+msgid "rehacer el de todos los kernels"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:247
+msgid "rehacer el de un kernel"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:248
+msgid "lista lo que hay dentro"
+msgstr ""
+
+#: initramfs/naranjos-initramfs:250
+msgid ""
+"Se rehace solo cuando zumo instala un kernel, módulos o microcódigo nuevos."
+msgstr ""
+
+#: initramfs/naranjos-initramfs:251
+msgid "Ajustes (módulos extra, microcódigo):"
+msgstr ""
+
+#: initramfs/naranjos-kernel:40
+msgid "No se pudo firmar el kernel"
+msgstr ""
+
+#: initramfs/naranjos-kernel:41
+msgid "La firma del kernel no se verifica"
+msgstr ""
+
+#: initramfs/naranjos-kernel:46
+msgid ""
+"Secure Boot está activo y no hay clave MOK en /etc/naranjos/mok: este kernel "
+"NO arrancará"
+msgstr ""
+
+#: initramfs/naranjos-kernel:66
+msgid "firmado para Secure Boot"
+msgstr ""
+
+#: initramfs/naranjos-kernel:66
+msgid "sin firmar"
+msgstr ""
+
+#: initramfs/naranjos-kernel:71
+msgid "Kernel %s en /boot/vmlinuz-%s (%s)"
+msgstr ""
+
+#: initramfs/naranjos-kernel:84
+msgid "Quitado de /boot: %s"
+msgstr ""
+
+#: initramfs/naranjos-kernel:90
+msgid "en uso"
+msgstr ""
+
+#: keyring/naranjos-keyring.install:6
+msgid "llavero de NaranjOS al día"
+msgstr ""
+
+#: keyring/naranjos-keyring.install:7
+msgid "no se pudo actualizar el llavero: sudo pacman-key --populate naranjos"
+msgstr ""
+
+#: keyring/naranjos-keyring.install:9
+msgid ""
+"pacman aún no tiene llavero: sudo pacman-key --init && sudo pacman-key --"
+"populate naranjos"
+msgstr ""
 
 #: peel/naranjos-peel:37
 msgid "Las reglas tienen un error; no se ha cambiado nada"
@@ -47,10 +948,6 @@ msgstr ""
 
 #: peel/naranjos-peel:56
 msgid "puertos abiertos"
-msgstr ""
-
-#: peel/naranjos-peel:56 initramfs/naranjos-initramfs:205
-msgid "ninguno"
 msgstr ""
 
 #: peel/naranjos-peel:61 peel/naranjos-peel:712
@@ -99,10 +996,6 @@ msgstr ""
 
 #: peel/naranjos-peel:103
 msgid "faltan:"
-msgstr ""
-
-#: peel/naranjos-peel:107
-msgid "activo"
 msgstr ""
 
 #: peel/naranjos-peel:108
@@ -201,10 +1094,6 @@ msgstr ""
 msgid "USB: protegido"
 msgstr ""
 
-#: peel/naranjos-peel:169
-msgid "apagado"
-msgstr ""
-
 #: peel/naranjos-peel:170
 msgid "clic: centro de seguridad"
 msgstr ""
@@ -219,17 +1108,6 @@ msgstr ""
 
 #: peel/naranjos-peel:181
 msgid "Protocolo no válido: %s (tcp o udp)"
-msgstr ""
-
-#: peel/naranjos-peel:185 peel/naranjos-peel:194 peel/naranjos-peel:234
-#: peel/naranjos-peel:276 peel/naranjos-peel:325 peel/naranjos-peel:499
-#: peel/naranjos-peel:519 peel/naranjos-peel:544 peel/naranjos-peel:676
-#: peel/naranjos-peel:692 peel/naranjos-peel:721 peel/naranjos-peel:862
-#: peel/naranjos-peel:905 peel/naranjos-peel:926 peel/naranjos-peel:955
-#: peel/naranjos-peel:1009 peel/naranjos-peel:1035 peel/naranjos-peel:1075
-#: esc/naranjos-captura:12 esc/naranjos-tui:12 idiomas/naranjos-idioma:100
-#: zumo:24
-msgid "Uso:"
 msgstr ""
 
 #: peel/naranjos-peel:190
@@ -499,10 +1377,6 @@ msgstr ""
 
 #: peel/naranjos-peel:582
 msgid "activa en"
-msgstr ""
-
-#: peel/naranjos-peel:584
-msgid "apagada"
 msgstr ""
 
 #: peel/naranjos-peel:588 peel/naranjos-peel:589 peel/naranjos-peel:620
@@ -951,6 +1825,66 @@ msgstr ""
 msgid "Más información:"
 msgstr ""
 
+#: peel/naranjos-peel.install:4
+msgid "NaranjOS peel: preparando la seguridad…"
+msgstr ""
+
+#: peel/naranjos-peel.install:10
+msgid "cortafuegos activo"
+msgstr ""
+
+#: peel/naranjos-peel.install:10
+msgid "no se pudo arrancar el cortafuegos: systemctl status nftables"
+msgstr ""
+
+#: peel/naranjos-peel.install:12
+msgid ""
+"las reglas del cortafuegos no cargan (¿faltan módulos nf_tables en el "
+"kernel?)"
+msgstr ""
+
+#: peel/naranjos-peel.install:19
+msgid "MAC aleatoria en la WiFi (se aplica al reiniciar)"
+msgstr ""
+
+#: peel/naranjos-peel.install:27
+msgid ""
+"/etc/resolv.conf ahora usa systemd-resolved (copia: /etc/resolv.conf.antes-"
+"de-peel)"
+msgstr ""
+
+#: peel/naranjos-peel.install:30
+msgid "DNS cifrado (Quad9, DNS-over-TLS)"
+msgstr ""
+
+#: peel/naranjos-peel.install:32
+msgid "systemd-resolved no está activo: el DNS cifrado no funcionará"
+msgstr ""
+
+#: peel/naranjos-peel.install:40
+msgid "AppArmor: perfiles cargados en modo aprendiz (solo avisan)"
+msgstr ""
+
+#: peel/naranjos-peel.install:41
+msgid ""
+"protección USB: lo conectado ahora queda permitido; lo nuevo habrá que "
+"permitirlo (Super + Ctrl + U)"
+msgstr ""
+
+#: peel/naranjos-peel.install:42
+msgid "integridad: guardando las huellas del sistema en segundo plano"
+msgstr ""
+
+#: peel/naranjos-peel.install:43
+msgid ""
+"antivirus: descargando las firmas en segundo plano (unos 200 MB la primera "
+"vez)"
+msgstr ""
+
+#: peel/naranjos-peel.install:44
+msgid "Mira el estado con: naranjos-peel"
+msgstr ""
+
 #: peel/naranjos-usb:23
 msgid "NaranjOS peel: USB bloqueado"
 msgstr ""
@@ -959,289 +1893,48 @@ msgstr ""
 msgid "si lo has enchufado tú, permítelo con Super + Ctrl + U"
 msgstr ""
 
-#: initramfs/naranjos-initramfs:95
-msgid "Este kernel no tiene módulos: solo va el microcódigo"
+#: temas/naranjos-tema:21
+msgid "Cada usuario elige su tema: ejecútalo sin sudo."
 msgstr ""
 
-#: initramfs/naranjos-initramfs:113
-msgid "depmod ha fallado"
+#: temas/naranjos-tema:29
+msgid "temas"
 msgstr ""
 
-#: initramfs/naranjos-initramfs:158
-msgid "No existe /boot/vmlinuz-%s"
+#: temas/naranjos-tema:51
+msgid "Estos ficheros tuyos no siguen el tema (los cambiaste):"
 msgstr ""
 
-#: initramfs/naranjos-initramfs:161
-msgid "Creando el initramfs del kernel %s…"
+#: temas/naranjos-tema:56
+msgid "Para ponerlos como los de NaranjOS (se guarda copia .anterior):"
 msgstr ""
 
-#: initramfs/naranjos-initramfs:175
-msgid "No se pudo crear el initramfs"
+#: temas/naranjos-tema:137
+msgid "Dime qué tema:"
 msgstr ""
 
-#: initramfs/naranjos-initramfs:179
-msgid "%s (%s, en %s s)"
+#: temas/naranjos-tema:139
+msgid "No existe el tema"
 msgstr ""
 
-#: initramfs/naranjos-initramfs:201
-msgid "sin initramfs"
+#: temas/naranjos-tema:152
+msgid "Las terminales nuevas ya salen con el tema."
 msgstr ""
 
-#: initramfs/naranjos-initramfs:205
-msgid "Microcódigo: %s · módulos extra: %s"
+#: temas/naranjos-tema:153
+msgid "Tema puesto:"
 msgstr ""
 
-#: initramfs/naranjos-initramfs:206
-msgid "Ajustes: %s"
+#: temas/naranjos-tema:163
+msgid "No encuentro fondos en"
 msgstr ""
 
-#: initramfs/naranjos-initramfs:210
-msgid "el initramfs de NaranjOS"
+#: temas/naranjos-tema:168
+msgid "Fondo:"
 msgstr ""
 
-#: initramfs/naranjos-initramfs:211
-msgid "estado de los initramfs"
-msgstr ""
-
-#: initramfs/naranjos-initramfs:212
-msgid "rehacer el de todos los kernels"
-msgstr ""
-
-#: initramfs/naranjos-initramfs:213
-msgid "rehacer el de un kernel"
-msgstr ""
-
-#: initramfs/naranjos-initramfs:215
-msgid ""
-"Se rehace solo cuando zumo instala un kernel, módulos o microcódigo nuevos."
-msgstr ""
-
-#: initramfs/naranjos-initramfs:216
-msgid "Ajustes (módulos extra, microcódigo):"
-msgstr ""
-
-#: initramfs/naranjos-initramfs:226
-msgid "No hay ningún kernel en /boot"
-msgstr ""
-
-#: initramfs/naranjos-kernel:40
-msgid "No se pudo firmar el kernel"
-msgstr ""
-
-#: initramfs/naranjos-kernel:41
-msgid "La firma del kernel no se verifica"
-msgstr ""
-
-#: initramfs/naranjos-kernel:46
-msgid ""
-"Secure Boot está activo y no hay clave MOK en /etc/naranjos/mok: este kernel "
-"NO arrancará"
-msgstr ""
-
-#: initramfs/naranjos-kernel:52 initramfs/naranjos-kernel:76
-msgid "Hace falta root:"
-msgstr ""
-
-#: initramfs/naranjos-kernel:66
-msgid "firmado para Secure Boot"
-msgstr ""
-
-#: initramfs/naranjos-kernel:66
-msgid "sin firmar"
-msgstr ""
-
-#: initramfs/naranjos-kernel:71
-msgid "Kernel %s en /boot/vmlinuz-%s (%s)"
-msgstr ""
-
-#: initramfs/naranjos-kernel:84
-msgid "Quitado de /boot: %s"
-msgstr ""
-
-#: initramfs/naranjos-kernel:90
-msgid "en uso"
-msgstr ""
-
-#: initramfs/naranjos-kernel:97
-msgid "firmado"
-msgstr ""
-
-#: initramfs/naranjos-kernel:97
-msgid "SIN firmar"
-msgstr ""
-
-#: initramfs/naranjos-kernel:98
-msgid "firma sin comprobar"
-msgstr ""
-
-#: esc/naranjos-atajos:4
-msgid "Atajos"
-msgstr ""
-
-#: esc/naranjos-ayuda:5
-msgid "Manual de NaranjOS"
-msgstr ""
-
-#: esc/naranjos-captura:6 esc/naranjos-carpetas:11
-msgid "Imágenes"
-msgstr ""
-
-#: esc/naranjos-captura:7
-msgid "Capturas"
-msgstr ""
-
-#: esc/naranjos-captura:8
-msgid "captura"
-msgstr ""
-
-#: esc/naranjos-captura:15
-msgid "Captura guardada"
-msgstr ""
-
-#: esc/naranjos-captura:15
-msgid "también está en el portapapeles"
-msgstr ""
-
-#: esc/naranjos-carpetas:11
-msgid "Descargas"
-msgstr ""
-
-#: esc/naranjos-carpetas:11
-msgid "Documentos"
-msgstr ""
-
-#: esc/naranjos-carpetas:12
-msgid "Música"
-msgstr ""
-
-#: esc/naranjos-carpetas:12
-msgid "Vídeos"
-msgstr ""
-
-#: esc/naranjos-navegador:7
-msgid "Firefox no está instalado"
-msgstr ""
-
-#: esc/naranjos-navegador:7
-msgid "En una terminal:"
-msgstr ""
-
-#: esc/naranjos-sistema:5
-msgid "Bloquear"
-msgstr ""
-
-#: esc/naranjos-sistema:5
-msgid "Cerrar sesión"
-msgstr ""
-
-#: esc/naranjos-sistema:5
-msgid "Suspender"
-msgstr ""
-
-#: esc/naranjos-sistema:5
-msgid "Reiniciar"
-msgstr ""
-
-#: esc/naranjos-sistema:5
-msgid "Apagar"
-msgstr ""
-
-#: esc/naranjos-tui:7
-msgid "Sonido"
-msgstr ""
-
-#: esc/naranjos-tui:8
-msgid "Seguridad"
-msgstr ""
-
-#: esc/naranjos-tui:8 esc/naranjos-tui:9 esc/naranjos-tui:10
-#: idiomas/naranjos-idioma:124 idiomas/naranjos-idioma:132
-msgid "Pulsa una tecla para cerrar…"
-msgstr ""
-
-#: esc/naranjos-tui:11 idiomas/naranjos-idioma:117 idiomas/naranjos-idioma:124
-msgid "Idioma"
-msgstr ""
-
-#: idiomas/naranjos-idioma:45
-msgid "Idioma de NaranjOS"
-msgstr ""
-
-#: idiomas/naranjos-idioma:45
-msgid "(ahora: %s)"
-msgstr ""
-
-#: idiomas/naranjos-idioma:51
-msgid ""
-"NaranjOS traducido; en los demás, los programas salen en ese idioma y lo de "
-"NaranjOS aún no"
-msgstr ""
-
-#: idiomas/naranjos-idioma:53
-msgid "cambia tu idioma"
-msgstr ""
-
-#: idiomas/naranjos-idioma:54
-msgid "cambia el del sistema (inicio de sesión y usuarios nuevos)"
-msgstr ""
-
-#: idiomas/naranjos-idioma:55
-msgid ""
-"¿Falta tu idioma? Puedes traducir NaranjOS: /usr/share/doc/naranjos/traducir."
-"md"
-msgstr ""
-
-#: idiomas/naranjos-idioma:62
-msgid "glibc no tiene el idioma %s"
-msgstr ""
-
-#: idiomas/naranjos-idioma:63
-msgid "Preparando %s (solo la primera vez)…"
-msgstr ""
-
-#: idiomas/naranjos-idioma:64
-msgid "No se pudo preparar el idioma"
-msgstr ""
-
-#: idiomas/naranjos-idioma:90
-msgid "Idioma desconocido: %s (mira la lista con: naranjos-idioma)"
-msgstr ""
-
-#: idiomas/naranjos-idioma:91
-msgid "Hazlo como tu usuario, sin sudo (para todo el sistema: --sistema)"
-msgstr ""
-
-#: idiomas/naranjos-idioma:96 idiomas/naranjos-idioma:121
-msgid ""
-"Cierra sesión y vuelve a entrar para ver todo el escritorio en tu idioma."
-msgstr ""
-
-#: idiomas/naranjos-idioma:104
-msgid "No se pudo cambiar el idioma del sistema"
-msgstr ""
-
-#: idiomas/naranjos-idioma:106
-msgid "Bienvenido a NaranjOS"
-msgstr ""
-
-#: idiomas/naranjos-idioma:108
-msgid "Idioma del sistema"
-msgstr ""
-
-#: idiomas/naranjos-idioma:109
-msgid "Se aplica en el próximo inicio de sesión."
-msgstr ""
-
-#: idiomas/naranjos-idioma:130
-msgid "Escribe el código del idioma (Enter para salir):"
-msgstr ""
-
-#: zumo:19
-msgid "falta el nombre del paquete. Ejemplo: zumo %s firefox"
-msgstr ""
-
-#: zumo:23
-msgid "el gestor de paquetes de %s"
+#: temas/naranjos-tema:197
+msgid "Todo sigue el tema."
 msgstr ""
 
 #: zumo:24
@@ -1309,114 +2002,119 @@ msgid "Dependencias que ya nadie usa"
 msgstr ""
 
 #: zumo:41
-msgid "Para quien crea paquetes"
+msgid "Licencia de un paquete"
+msgstr ""
+
+#: zumo:42
+msgid "Baja su código fuente (receta, parches y original)"
 msgstr ""
 
 #: zumo:43
-msgid "Construye, firma y añade al repositorio"
-msgstr ""
-
-#: zumo:44
-msgid "(-i: además lo instala · -y: sin preguntar)."
+msgid "Para quien crea paquetes"
 msgstr ""
 
 #: zumo:45
-msgid "(-a: adopta lo que la base de LFS ya instaló suelto: lo sobrescribe)."
+msgid "Construye, firma y añade al repositorio"
 msgstr ""
 
 #: zumo:46
-msgid "Las recetas se buscan en ~/naranjos-recetas"
+msgid "(-i: además lo instala · -y: sin preguntar)."
+msgstr ""
+
+#: zumo:47
+msgid "(-a: adopta lo que la base de LFS ya instaló suelto: lo sobrescribe)."
 msgstr ""
 
 #: zumo:48
+msgid "Las recetas se buscan en ~/naranjos-recetas"
+msgstr ""
+
+#: zumo:50
 msgid "Versión de zumo y de pacman"
 msgstr ""
 
-#: zumo:49
+#: zumo:51
 msgid "Esta ayuda"
 msgstr ""
 
-#: zumo:51
+#: zumo:53
 msgid "Ejemplos:"
 msgstr ""
 
-#: zumo:52
+#: zumo:54
 msgid ""
 "Cada orden tiene también su nombre en inglés (install, remove, update…)."
 msgstr ""
 
-#: zumo:57
+#: zumo:59
 msgid "'exprime' se usa con tu usuario normal, no como root."
 msgstr ""
 
-#: zumo:63
-msgid "no puedo escribir en el repositorio %s"
-msgstr ""
-
-#: zumo:67
+#: zumo:69
 msgid "no encuentro la clave de firma de NaranjOS (gpg)"
 msgstr ""
 
-#: zumo:78
+#: zumo:80
 msgid "dime qué receta(s) exprimir. Ejemplo: zumo exprime wayland"
 msgstr ""
 
-#: zumo:80
+#: zumo:82
 msgid "Refrescando la lista de paquetes…"
 msgstr ""
 
-#: zumo:81
+#: zumo:83
 msgid "pacman -Sy falló"
 msgstr ""
 
-#: zumo:84
-msgid "no encuentro la receta '%s' (ni ./%s ni %s)"
-msgstr ""
-
-#: zumo:86
-msgid "Exprimiendo %s…"
-msgstr ""
-
-#: zumo:87
-msgid "makepkg falló en '%s'"
-msgstr ""
-
-#: zumo:89
+#: zumo:91
 msgid "makepkg no dijo qué paquetes generó"
 msgstr ""
 
-#: zumo:91
-msgid "repo-add falló con %s"
-msgstr ""
-
-#: zumo:109
-msgid "Instalando: %s"
-msgstr ""
-
-#: zumo:111
-msgid "pacman NO instaló: %s (mira el error justo encima)"
-msgstr ""
-
-#: zumo:113
+#: zumo:115
 msgid "Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)"
 msgstr ""
 
-#: zumo:121
+#: zumo:125
+msgid ""
+"Estás arrancado en una foto: lo que actualices se perdería al apagar. "
+"Primero: sudo fotos vuelve"
+msgstr ""
+
+#: zumo:126
+msgid ""
+"Has vuelto a una foto: reinicia antes de actualizar (lo que actualices ahora "
+"se perdería)"
+msgstr ""
+
+#: zumo:128
 msgid "Actualizando NaranjOS…"
 msgstr ""
 
-#: zumo:128 zumo:130
-msgid "No hay huérfanos."
+#: zumo:129
+msgid "No pude leer los repositorios"
 msgstr ""
 
 #: zumo:130
+msgid "Todo al día."
+msgstr ""
+
+#: zumo:132
+msgid "Haciendo una foto del sistema antes de actualizar…"
+msgstr ""
+
+#: zumo:134
+msgid ""
+"No se pudo hacer la foto. Para actualizar sin ella: zumo actualiza --sin-foto"
+msgstr ""
+
+#: zumo:202 zumo:204
+msgid "No hay huérfanos."
+msgstr ""
+
+#: zumo:204
 msgid "Quitando huérfanos…"
 msgstr ""
 
-#: zumo:131
+#: zumo:205
 msgid "Vaciando la caché de versiones antiguas…"
-msgstr ""
-
-#: zumo:135
-msgid "orden desconocida: '%s'. Mira 'zumo ayuda'."
 msgstr ""

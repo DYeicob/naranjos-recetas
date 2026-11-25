@@ -1,6 +1,8 @@
+# textos traducibles (dominio «naranjos»); si aún no está naranjos-idiomas, en español
+. /usr/lib/naranjos/naranjos-i18n.sh 2>/dev/null || _(){ printf '%s' "$1"; }
 post_install() {
-  echo "  NaranjOS: escritorio instalado. Cada usuario recibe su configuración al iniciar sesión"
-  echo "            (o ya mismo con: naranjos-config-usuario). Manual: naranjos-ayuda"
+  echo "  $(_ 'NaranjOS: escritorio instalado. Cada usuario recibe su configuración al iniciar sesión')"
+  echo "            $(_ '(o ya mismo con: naranjos-config-usuario). Manual: naranjos-ayuda')"
 }
 post_upgrade() {
   # que las sesiones de Hyprland abiertas relean la configuración ya actualizada
@@ -14,9 +16,9 @@ post_upgrade() {
     sudo -u "$u" -H sh -c '. /etc/locale.conf; [ -r "$HOME/.config/locale.conf" ] && . "$HOME/.config/locale.conf"; export LANG LANGUAGE; naranjos-carpetas' >/dev/null 2>&1 || true
     if sudo -u "$u" env XDG_RUNTIME_DIR="/run/user/$uid" HYPRLAND_INSTANCE_SIGNATURE="$sig" \
          hyprctl reload >/dev/null 2>&1; then
-      echo "  NaranjOS: escritorio de $u recargado"
+      printf '  %s\n' "$(printf "$(_ 'NaranjOS: escritorio de %s recargado')" "$u")"
     else
-      echo "  NaranjOS: no pude recargar el escritorio de $u; hazlo tú con Super + Shift + R"
+      printf '  %s\n' "$(printf "$(_ 'NaranjOS: no pude recargar el escritorio de %s; hazlo tú con Super + Shift + R')" "$u")"
     fi
   done
   return 0

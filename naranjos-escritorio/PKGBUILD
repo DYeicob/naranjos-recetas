@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-6k3c.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6r1b.sh (NO editar a mano)
 pkgname=naranjos-escritorio
-pkgver=0.12.2
+pkgver=0.12.3
 pkgrel=1
 pkgdesc='Escritorio NaranjOS: la capa NaranjOS sobre Hyprland (configuración, barra, menús, atajos, scripts y manual)'
 arch=('any')

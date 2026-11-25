@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-6h1.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6r1b.sh (NO editar a mano)
 pkgname=naranjos-arranque
-pkgver=0.2.0
+pkgver=0.2.1
 pkgrel=1
 pkgdesc='Arranque propio de NaranjOS: menú, GRUB firmado con la MOK y shim en EFI/naranjos'
 arch=('any')

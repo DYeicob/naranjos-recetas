@@ -1,4 +1,6 @@
+# textos traducibles (dominio «naranjos»); si aún no está naranjos-idiomas, en español
+. /usr/lib/naranjos/naranjos-i18n.sh 2>/dev/null || _(){ printf '%s' "$1"; }
 post_install() {
-  echo "  NaranjOS: para usar el arranque propio (shim + GRUB firmados en EFI/naranjos):"
+  echo "  $(_ 'NaranjOS: para usar el arranque propio (shim + GRUB firmados en EFI/naranjos):')"
   echo "    sudo naranjos-arranque instala"
 }

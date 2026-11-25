@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-6f1.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6r1b.sh (NO editar a mano)
 pkgname=naranjos-keyring
-pkgver=20261121
+pkgver=20261125
 pkgrel=1
 pkgdesc='Llavero de NaranjOS: la clave pública que firma los paquetes'
 arch=('any')

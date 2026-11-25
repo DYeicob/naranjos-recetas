@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-6f8.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6r1b.sh (NO editar a mano)
 pkgname=naranjos-peel
-pkgver=0.5.6
+pkgver=0.5.7
 pkgrel=1
 pkgdesc='NaranjOS peel: centro de seguridad (cortafuegos, VPN, antivirus, integridad, USB, AppArmor, DNS cifrado, kernel endurecido)'
 arch=('any')

@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NaranjOS 0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DYeicob/naranjos-recetas/issues\n"
-"POT-Creation-Date: 2026-11-23 19:55+0100\n"
-"PO-Revision-Date: 2026-11-20 13:30+0100\n"
+"POT-Creation-Date: 2026-11-25 16:02+0100\n"
+"PO-Revision-Date: 2026-11-25 16:30+0100\n"
 "Last-Translator: NaranjOS\n"
 "Language-Team: English\n"
 "Language: en\n"
@@ -12,6 +12,942 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: arranque/naranjos-arranque:38
+msgid ""
+"Arrancado en una foto: el arranque no se toca (los cambios se perderían). "
+"Para quedarte con ella: sudo fotos vuelve"
+msgstr ""
+"Booted into a snapshot: the boot setup is left untouched (changes would be "
+"lost). To keep it: sudo fotos vuelve"
+
+#: arranque/naranjos-arranque:47 fotos/fotos:24 initramfs/naranjos-kernel:52
+#: initramfs/naranjos-kernel:76
+msgid "Hace falta root:"
+msgstr "Root is needed:"
+
+#: arranque/naranjos-arranque:57
+msgid "No encuentro la partición EFI"
+msgstr "Can't find the EFI partition"
+
+#: arranque/naranjos-arranque:69
+msgid "No pude montar la partición EFI"
+msgstr "Couldn't mount the EFI partition"
+
+#: arranque/naranjos-arranque:98
+msgid "No sé identificar la partición de NaranjOS"
+msgstr "Can't identify the NaranjOS partition"
+
+#: arranque/naranjos-arranque:127
+msgid "Fotos de NaranjOS (volver atras)"
+msgstr "NaranjOS snapshots (go back)"
+
+#: arranque/naranjos-arranque:131 fotos/fotos:115 fotos/fotos:184
+msgid "Foto"
+msgstr "Snapshot"
+
+#: arranque/naranjos-arranque:133
+msgid "Cargando la foto"
+msgstr "Loading the snapshot"
+
+#: arranque/naranjos-arranque:160
+msgid "respaldo"
+msgstr "fallback"
+
+#: arranque/naranjos-arranque:164
+msgid "Cargando NaranjOS..."
+msgstr "Loading NaranjOS..."
+
+#: arranque/naranjos-arranque:180
+msgid "Ajustes del firmware (UEFI)"
+msgstr "Firmware settings (UEFI)"
+
+#: arranque/naranjos-arranque:181 esc/naranjos-menu:83 esc/naranjos-sistema:5
+msgid "Reiniciar"
+msgstr "Reboot"
+
+#: arranque/naranjos-arranque:182 esc/naranjos-menu:84 esc/naranjos-noche:86
+#: esc/naranjos-sistema:5
+msgid "Apagar"
+msgstr "Power off"
+
+#: arranque/naranjos-arranque:184 initramfs/naranjos-initramfs:262
+msgid "No hay ningún kernel en /boot"
+msgstr "There is no kernel in /boot"
+
+#: arranque/naranjos-arranque:185
+msgid "El menú generado tiene un error"
+msgstr "The generated menu has an error"
+
+#: arranque/naranjos-arranque:191
+msgid "No hay /boot en"
+msgstr "There is no /boot in"
+
+#: arranque/naranjos-arranque:206
+msgid "Menú de arranque al día:"
+msgstr "Boot menu up to date:"
+
+#: arranque/naranjos-arranque:214
+msgid "GRUB no tiene el módulo"
+msgstr "GRUB is missing the module"
+
+#: arranque/naranjos-arranque:225
+msgid "grub-mkimage falló"
+msgstr "grub-mkimage failed"
+
+#: arranque/naranjos-arranque:226
+msgid "La imagen GRUB no lleva SBAT: el shim la rechazaría"
+msgstr "The GRUB image has no SBAT: shim would reject it"
+
+#: arranque/naranjos-arranque:227
+msgid "Falta la clave MOK en"
+msgstr "The MOK key is missing in"
+
+#: arranque/naranjos-arranque:229
+msgid "No se pudo firmar GRUB"
+msgstr "Couldn't sign GRUB"
+
+#: arranque/naranjos-arranque:230
+msgid "La firma de GRUB no se verifica"
+msgstr "GRUB's signature doesn't verify"
+
+#: arranque/naranjos-arranque:238
+msgid "Este equipo no ha arrancado en modo UEFI"
+msgstr "This computer didn't boot in UEFI mode"
+
+#: arranque/naranjos-arranque:240
+msgid "Falta el shim:"
+msgstr "Shim is missing:"
+
+#: arranque/naranjos-arranque:248
+msgid "arranque propio"
+msgstr "own boot loader"
+
+#: arranque/naranjos-arranque:249
+msgid "Partición EFI:"
+msgstr "EFI partition:"
+
+#: arranque/naranjos-arranque:249
+msgid "solo se escribe en"
+msgstr "only writes to"
+
+#: arranque/naranjos-arranque:250
+msgid "Antes se guarda una copia de la EFI entera en"
+msgstr "First, a copy of the whole EFI partition is saved in"
+
+#: arranque/naranjos-arranque:251 fotos/fotos:187
+msgid "Escribe SI para continuar:"
+msgstr "Type SI to continue:"
+
+#: arranque/naranjos-arranque:252 fotos/fotos:188
+msgid "Cancelado."
+msgstr "Cancelled."
+
+#: arranque/naranjos-arranque:257
+msgid "No pude hacer la copia de la EFI"
+msgstr "Couldn't back up the EFI partition"
+
+#: arranque/naranjos-arranque:258
+msgid "Copia de la EFI en"
+msgstr "EFI backup in"
+
+#: arranque/naranjos-arranque:263
+msgid "No hay sitio en la partición EFI"
+msgstr "There's no room on the EFI partition"
+
+#: arranque/naranjos-arranque:265
+msgid "Destino no permitido:"
+msgstr "Destination not allowed:"
+
+#: arranque/naranjos-arranque:274
+msgid "Lo copiado a la EFI no coincide"
+msgstr "What was copied to the EFI partition doesn't match"
+
+#: arranque/naranjos-arranque:278
+msgid "Arranque de NaranjOS en"
+msgstr "NaranjOS boot loader in"
+
+#: arranque/naranjos-arranque:278 arranque/naranjos-arranque:305
+#: initramfs/naranjos-kernel:97
+msgid "firmado"
+msgstr "signed"
+
+#: arranque/naranjos-arranque:278
+msgid "menú"
+msgstr "menu"
+
+#: arranque/naranjos-arranque:280
+msgid ""
+"Siguiente paso: crear la entrada en el firmware y probarla una vez (desde "
+"Ubuntu, o con efibootmgr)."
+msgstr ""
+"Next step: create the firmware entry and test it once (from Ubuntu, or with "
+"efibootmgr)."
+
+#: arranque/naranjos-arranque:293
+msgid "arranque"
+msgstr "boot"
+
+#: arranque/naranjos-arranque:295 peel/naranjos-peel:107
+msgid "activo"
+msgstr "active"
+
+#: arranque/naranjos-arranque:295 peel/naranjos-peel:169
+msgid "apagado"
+msgstr "off"
+
+#: arranque/naranjos-arranque:296
+msgid "Modo BIOS (sin UEFI)"
+msgstr "BIOS mode (no UEFI)"
+
+#: arranque/naranjos-arranque:297
+msgid "Menú:"
+msgstr "Menu:"
+
+#: arranque/naranjos-arranque:297
+msgid "sin generar"
+msgstr "not generated"
+
+#: arranque/naranjos-arranque:298
+msgid "Kernels:"
+msgstr "Kernels:"
+
+#: arranque/naranjos-arranque:299
+msgid "Raíz:"
+msgstr "Root:"
+
+#: arranque/naranjos-arranque:300 fotos/fotos:229
+msgid "Arrancado en la foto"
+msgstr "Booted into snapshot"
+
+#: arranque/naranjos-arranque:304 initramfs/naranjos-kernel:98
+msgid "firma sin comprobar"
+msgstr "signature not checked"
+
+#: arranque/naranjos-arranque:305 initramfs/naranjos-kernel:97
+msgid "SIN firmar"
+msgstr "NOT signed"
+
+#: arranque/naranjos-arranque:307
+msgid "sin instalar"
+msgstr "not installed"
+
+#: arranque/naranjos-arranque:309
+msgid "con sudo se ve también la partición EFI"
+msgstr "with sudo the EFI partition is shown too"
+
+#: arranque/naranjos-arranque:311
+msgid "Sin entrada NaranjOS en el firmware"
+msgstr "No NaranjOS entry in the firmware"
+
+#: arranque/naranjos-arranque.install:4
+msgid ""
+"NaranjOS: para usar el arranque propio (shim + GRUB firmados en "
+"EFI/naranjos):"
+msgstr ""
+"NaranjOS: to use the NaranjOS boot loader (shim + GRUB signed in "
+"EFI/naranjos):"
+
+#: esc/naranjos-atajos:4
+msgid "Atajos"
+msgstr "Shortcuts"
+
+#: esc/naranjos-ayuda:5 esc/naranjos-menu:77
+msgid "Manual de NaranjOS"
+msgstr "NaranjOS manual"
+
+#: esc/naranjos-captura:6 esc/naranjos-carpetas:11
+msgid "Imágenes"
+msgstr "Pictures"
+
+#: esc/naranjos-captura:7 esc/naranjos-menu:92
+msgid "Capturas"
+msgstr "Screenshots"
+
+#: esc/naranjos-captura:8
+msgid "captura"
+msgstr "screenshot"
+
+#: esc/naranjos-captura:12 esc/naranjos-noche:111 esc/naranjos-tui:12
+#: idiomas/naranjos-idioma:100 peel/naranjos-peel:185 peel/naranjos-peel:194
+#: peel/naranjos-peel:234 peel/naranjos-peel:276 peel/naranjos-peel:325
+#: peel/naranjos-peel:499 peel/naranjos-peel:519 peel/naranjos-peel:544
+#: peel/naranjos-peel:676 peel/naranjos-peel:692 peel/naranjos-peel:721
+#: peel/naranjos-peel:862 peel/naranjos-peel:905 peel/naranjos-peel:926
+#: peel/naranjos-peel:955 peel/naranjos-peel:1009 peel/naranjos-peel:1035
+#: peel/naranjos-peel:1075 zumo:24
+msgid "Uso:"
+msgstr "Usage:"
+
+#: esc/naranjos-captura:15
+msgid "Captura guardada"
+msgstr "Screenshot saved"
+
+#: esc/naranjos-captura:15
+msgid "también está en el portapapeles"
+msgstr "also copied to the clipboard"
+
+#: esc/naranjos-carpetas:11
+msgid "Descargas"
+msgstr "Downloads"
+
+#: esc/naranjos-carpetas:11
+msgid "Documentos"
+msgstr "Documents"
+
+#: esc/naranjos-carpetas:12
+msgid "Música"
+msgstr "Music"
+
+#: esc/naranjos-carpetas:12
+msgid "Vídeos"
+msgstr "Videos"
+
+#: esc/naranjos-escritorio.install:4
+msgid ""
+"NaranjOS: escritorio instalado. Cada usuario recibe su configuración al "
+"iniciar sesión"
+msgstr ""
+"NaranjOS: desktop installed. Each user gets their settings when they log in"
+
+#: esc/naranjos-escritorio.install:5
+msgid "(o ya mismo con: naranjos-config-usuario). Manual: naranjos-ayuda"
+msgstr "(or right now with: naranjos-config-usuario). Manual: naranjos-ayuda"
+
+#: esc/naranjos-escritorio.install:19
+msgid "NaranjOS: escritorio de %s recargado"
+msgstr "NaranjOS: %s's desktop reloaded"
+
+#: esc/naranjos-escritorio.install:21
+msgid ""
+"NaranjOS: no pude recargar el escritorio de %s; hazlo tú con Super + Shift +"
+" R"
+msgstr ""
+"NaranjOS: couldn't reload %s's desktop; do it yourself with Super + Shift + "
+"R"
+
+#: esc/naranjos-menu:14 esc/naranjos-tui:8 esc/naranjos-tui:9
+#: esc/naranjos-tui:10 idiomas/naranjos-idioma:124 idiomas/naranjos-idioma:132
+msgid "Pulsa una tecla para cerrar…"
+msgstr "Press any key to close…"
+
+#: esc/naranjos-menu:46 esc/naranjos-menu:47 temas/naranjos-tema:152
+#: temas/naranjos-tema:184
+msgid "Tema"
+msgstr "Theme"
+
+#: esc/naranjos-menu:49
+msgid "Siguiente fondo"
+msgstr "Next wallpaper"
+
+#: esc/naranjos-menu:50 esc/naranjos-noche:82 esc/naranjos-noche:88
+msgid "Luz nocturna"
+msgstr "Night light"
+
+#: esc/naranjos-menu:51
+msgid "Mostrar / ocultar la barra"
+msgstr "Show / hide the bar"
+
+#: esc/naranjos-menu:56 esc/naranjos-tui:7
+msgid "Sonido"
+msgstr "Sound"
+
+#: esc/naranjos-menu:57 esc/naranjos-tui:11 idiomas/naranjos-idioma:117
+#: idiomas/naranjos-idioma:124
+msgid "Idioma"
+msgstr "Language"
+
+#: esc/naranjos-menu:58
+msgid "Mi configuración de Hyprland (avanzado)"
+msgstr "My Hyprland settings (advanced)"
+
+#: esc/naranjos-menu:61
+msgid "Estado de la seguridad"
+msgstr "Security status"
+
+#: esc/naranjos-menu:62
+msgid "VPN: conectar / desconectar"
+msgstr "VPN: connect / disconnect"
+
+#: esc/naranjos-menu:63
+msgid "Permitir un USB bloqueado"
+msgstr "Allow a blocked USB device"
+
+#: esc/naranjos-menu:66
+msgid "Actualizar NaranjOS"
+msgstr "Update NaranjOS"
+
+#: esc/naranjos-menu:66
+msgid "Actualizar"
+msgstr "Update"
+
+#: esc/naranjos-menu:67
+msgid "Fotos del sistema"
+msgstr "System snapshots"
+
+#: esc/naranjos-menu:67 esc/naranjos-menu:68
+msgid "Fotos"
+msgstr "Snapshots"
+
+#: esc/naranjos-menu:68
+msgid "Hacer una foto del sistema ahora"
+msgstr "Take a system snapshot now"
+
+#: esc/naranjos-menu:68
+msgid "desde el menú"
+msgstr "from the menu"
+
+#: esc/naranjos-menu:69
+msgid "Limpiar paquetes que sobran"
+msgstr "Remove unneeded packages"
+
+#: esc/naranjos-menu:69
+msgid "Limpiar"
+msgstr "Clean up"
+
+#: esc/naranjos-menu:72
+msgid "Captura de una zona"
+msgstr "Capture an area"
+
+#: esc/naranjos-menu:73
+msgid "Captura de la pantalla"
+msgstr "Capture the screen"
+
+#: esc/naranjos-menu:76
+msgid "Atajos de teclado"
+msgstr "Keyboard shortcuts"
+
+#: esc/naranjos-menu:80 esc/naranjos-sistema:5
+msgid "Bloquear"
+msgstr "Lock"
+
+#: esc/naranjos-menu:81 esc/naranjos-sistema:5
+msgid "Cerrar sesión"
+msgstr "Log out"
+
+#: esc/naranjos-menu:82 esc/naranjos-sistema:5
+msgid "Suspender"
+msgstr "Suspend"
+
+#: esc/naranjos-menu:90
+msgid "Aplicaciones"
+msgstr "Applications"
+
+#: esc/naranjos-menu:90
+msgid "Aspecto"
+msgstr "Appearance"
+
+#: esc/naranjos-menu:91
+msgid "Ajustes"
+msgstr "Settings"
+
+#: esc/naranjos-menu:91 esc/naranjos-tui:8
+msgid "Seguridad"
+msgstr "Security"
+
+#: esc/naranjos-menu:92
+msgid "Sistema"
+msgstr "System"
+
+#: esc/naranjos-menu:93
+msgid "Ayuda"
+msgstr "Help"
+
+#: esc/naranjos-menu:93
+msgid "Energía"
+msgstr "Power"
+
+#: esc/naranjos-menu:110
+msgid "Volver"
+msgstr "Back"
+
+#: esc/naranjos-navegador:7
+msgid "Firefox no está instalado"
+msgstr "Firefox is not installed"
+
+#: esc/naranjos-navegador:7
+msgid "En una terminal:"
+msgstr "In a terminal:"
+
+#: esc/naranjos-noche:65
+msgid "automática"
+msgstr "automatic"
+
+#: esc/naranjos-noche:66
+msgid "encendida"
+msgstr "on"
+
+#: esc/naranjos-noche:67 peel/naranjos-peel:584
+msgid "apagada"
+msgstr "off"
+
+#: esc/naranjos-noche:72
+msgid "luz nocturna"
+msgstr "night light"
+
+#: esc/naranjos-noche:73
+msgid "Modo:"
+msgstr "Mode:"
+
+#: esc/naranjos-noche:74
+msgid "Ahora: luz cálida"
+msgstr "Now: warm light"
+
+#: esc/naranjos-noche:74
+msgid "Ahora: luz normal"
+msgstr "Now: normal light"
+
+#: esc/naranjos-noche:86
+msgid "Automática"
+msgstr "Automatic"
+
+#: esc/naranjos-noche:86
+msgid "Encender ahora"
+msgstr "Turn on now"
+
+#: esc/naranjos-noche:87
+msgid "Más cálida"
+msgstr "Warmer"
+
+#: esc/naranjos-noche:87
+msgid "Menos cálida"
+msgstr "Less warm"
+
+#: esc/naranjos-noche:95 esc/naranjos-noche:101 esc/naranjos-noche:112
+msgid "Luz nocturna:"
+msgstr "Night light:"
+
+#: esc/naranjos-noche:98
+msgid "Dime la temperatura en K, p. ej.:"
+msgstr "Tell me the temperature in K, e.g.:"
+
+#: esc/naranjos-noche:120
+msgid "Orden desconocida. Mira:"
+msgstr "Unknown command. See:"
+
+#: esc/naranjos-osd:38
+msgid "Sin salida de sonido"
+msgstr "No sound output"
+
+#: esc/naranjos-osd:40
+msgid "Silencio"
+msgstr "Muted"
+
+#: esc/naranjos-osd:48
+msgid "Micrófono silenciado"
+msgstr "Microphone muted"
+
+#: esc/naranjos-osd:49
+msgid "Micrófono activo"
+msgstr "Microphone on"
+
+#: fotos/fotos:47
+msgid ""
+"NaranjOS no está en Btrfs: las fotos se activan tras la migración (fase 6h2)"
+msgstr ""
+"NaranjOS is not on Btrfs: snapshots are enabled after the migration (phase "
+"6h2)"
+
+#: fotos/fotos:62
+msgid "No pude montar la raíz del Btrfs"
+msgstr "Couldn't mount the Btrfs root"
+
+#: fotos/fotos:64
+msgid "No encuentro el subvolumen"
+msgstr "Can't find the subvolume"
+
+#: fotos/fotos:83 fotos/fotos:203
+msgid "No pude rehacer el menú de arranque"
+msgstr "Couldn't rebuild the boot menu"
+
+#: fotos/fotos:88
+msgid "No pude borrar la foto"
+msgstr "Couldn't delete the snapshot"
+
+#: fotos/fotos:99
+msgid "foto manual"
+msgstr "manual snapshot"
+
+#: fotos/fotos:102
+msgid ""
+"Estás arrancado en una foto: lo que cambies se pierde al apagar. Primero: "
+"sudo fotos vuelve"
+msgstr ""
+"You booted into a snapshot: whatever you change is lost on shutdown. First: "
+"sudo fotos vuelve"
+
+#: fotos/fotos:103
+msgid ""
+"Has vuelto a una foto: reinicia antes de seguir (lo que cambies ahora se "
+"perdería)"
+msgstr ""
+"You went back to a snapshot: reboot before continuing (whatever you change "
+"now would be lost)"
+
+#: fotos/fotos:106 fotos/fotos:165 fotos/fotos:191
+msgid "Hay otra operación de fotos en marcha"
+msgstr "Another snapshot operation is running"
+
+#: fotos/fotos:110
+msgid "No pude hacer la foto"
+msgstr "Couldn't take the snapshot"
+
+#: fotos/fotos:122
+msgid "Borrada la foto automática más vieja:"
+msgstr "Deleted the oldest automatic snapshot:"
+
+#: fotos/fotos:150 fotos/fotos:224
+msgid "fotos del sistema"
+msgstr "system snapshots"
+
+#: fotos/fotos:154
+msgid "arrancada ahora"
+msgstr "booted now"
+
+#: fotos/fotos:158
+msgid "Aún no hay ninguna foto. Haz una con:"
+msgstr "There are no snapshots yet. Take one with:"
+
+#: fotos/fotos:158
+msgid "motivo"
+msgstr "reason"
+
+#: fotos/fotos:163
+msgid "Dime qué foto borrar:"
+msgstr "Tell me which snapshot to delete:"
+
+#: fotos/fotos:168 fotos/fotos:181
+msgid "No existe la foto"
+msgstr "That snapshot doesn't exist"
+
+#: fotos/fotos:169
+msgid "No se puede borrar la foto con la que has arrancado"
+msgstr "You can't delete the snapshot you booted from"
+
+#: fotos/fotos:171
+msgid "Borrada la foto"
+msgstr "Deleted snapshot"
+
+#: fotos/fotos:181 temas/naranjos-tema:137 temas/naranjos-tema:139
+msgid "mira:"
+msgstr "see:"
+
+#: fotos/fotos:183
+msgid "volver a una foto"
+msgstr "go back to a snapshot"
+
+#: fotos/fotos:185
+msgid ""
+"El sistema (todo menos /home, /var/log, /srv y la caché de paquetes) volverá"
+" a como estaba entonces."
+msgstr ""
+"The system (everything except /home, /var/log, /srv and the package cache) "
+"will go back to how it was then."
+
+#: fotos/fotos:186
+msgid "Antes se guarda una foto del estado actual, por si quieres deshacerlo."
+msgstr ""
+"First, a snapshot of the current state is saved, in case you want to undo "
+"it."
+
+#: fotos/fotos:190
+msgid "antes de volver a la foto"
+msgstr "before going back to the snapshot"
+
+#: fotos/fotos:193
+msgid "No pude copiar la foto"
+msgstr "Couldn't copy the snapshot"
+
+#: fotos/fotos:195
+msgid "No pude apartar el sistema actual"
+msgstr "Couldn't move the current system aside"
+
+#: fotos/fotos:197
+msgid "No pude poner la foto en su sitio (no ha cambiado nada)"
+msgstr "Couldn't put the snapshot in place (nothing has changed)"
+
+#: fotos/fotos:205
+msgid "Hecho: al reiniciar, NaranjOS será la foto"
+msgstr "Done: after rebooting, NaranjOS will be the snapshot"
+
+#: fotos/fotos:206
+msgid "Reinicia y elige la primera entrada («NaranjOS»)."
+msgstr "Reboot and choose the first entry («NaranjOS»)."
+
+#: fotos/fotos:207
+msgid ""
+"El sistema de antes queda aparte y se borra solo en el siguiente arranque "
+"(tienes su foto)."
+msgstr ""
+"The previous system is kept aside and deleted automatically on the next boot"
+" (you have its snapshot)."
+
+#: fotos/fotos:218
+msgid "Borrado:"
+msgstr "Deleted:"
+
+#: fotos/fotos:218
+msgid "No pude borrar"
+msgstr "Couldn't delete"
+
+#: fotos/fotos:227
+msgid "Activas: la raíz es Btrfs"
+msgstr "On: the root is Btrfs"
+
+#: fotos/fotos:227
+msgid "se guardan"
+msgstr "kept"
+
+#: fotos/fotos:227
+msgid "automáticas"
+msgstr "automatic"
+
+#: fotos/fotos:228
+msgid "Sin activar: NaranjOS aún no está en Btrfs (fase 6h2)"
+msgstr "Off: NaranjOS is not on Btrfs yet (phase 6h2)"
+
+#: fotos/fotos:229
+msgid "lo que cambies se pierde al apagar."
+msgstr "whatever you change is lost on shutdown."
+
+#: fotos/fotos:230
+msgid "Para quedarte con ella:"
+msgstr "To keep it:"
+
+#: fotos/fotos:231
+msgid "Has vuelto a una foto: reinicia para entrar en ella."
+msgstr "You went back to a snapshot: reboot to boot into it."
+
+#: fotos/fotos:239
+msgid "fotos del sistema de NaranjOS (vuelta atrás)"
+msgstr "NaranjOS system snapshots (go back in time)"
+
+#: fotos/fotos:240
+msgid "estado"
+msgstr "status"
+
+#: fotos/fotos:241
+msgid "las fotos que hay"
+msgstr "the snapshots there are"
+
+#: fotos/fotos:242
+msgid "hace una foto ahora"
+msgstr "takes a snapshot now"
+
+#: fotos/fotos:243
+msgid "borra fotos"
+msgstr "deletes snapshots"
+
+#: fotos/fotos:244
+msgid "vuelve a la foto n (al reiniciar)"
+msgstr "goes back to snapshot n (after rebooting)"
+
+#: fotos/fotos:245
+msgid ""
+"zumo hace una foto sola antes de cada «zumo actualiza». Cada foto sale en el"
+" menú de arranque,"
+msgstr ""
+"zumo takes a snapshot automatically before every «zumo actualiza». Each "
+"snapshot shows up in the boot menu,"
+
+#: fotos/fotos:246
+msgid ""
+"en «Fotos de NaranjOS»: se arranca sin tocar nada, y si te convence, «fotos "
+"vuelve»."
+msgstr ""
+"under «NaranjOS snapshots»: it boots without changing anything, and if you "
+"like it, «fotos vuelve»."
+
+#: idiomas/naranjos-idioma:45
+msgid "Idioma de NaranjOS"
+msgstr "NaranjOS language"
+
+#: idiomas/naranjos-idioma:45
+msgid "(ahora: %s)"
+msgstr "(now: %s)"
+
+#: idiomas/naranjos-idioma:51
+msgid ""
+"NaranjOS traducido; en los demás, los programas salen en ese idioma y lo de "
+"NaranjOS aún no"
+msgstr ""
+"NaranjOS translated; in the others, programs use that language but NaranjOS "
+"itself not yet"
+
+#: idiomas/naranjos-idioma:53
+msgid "cambia tu idioma"
+msgstr "changes your language"
+
+#: idiomas/naranjos-idioma:54
+msgid "cambia el del sistema (inicio de sesión y usuarios nuevos)"
+msgstr "changes the system language (login screen and new users)"
+
+#: idiomas/naranjos-idioma:55
+msgid ""
+"¿Falta tu idioma? Puedes traducir NaranjOS: "
+"/usr/share/doc/naranjos/traducir.md"
+msgstr ""
+"Is your language missing? You can translate NaranjOS: "
+"/usr/share/doc/naranjos/traducir.md"
+
+#: idiomas/naranjos-idioma:62
+msgid "glibc no tiene el idioma %s"
+msgstr "glibc does not have the language %s"
+
+#: idiomas/naranjos-idioma:63
+msgid "Preparando %s (solo la primera vez)…"
+msgstr "Preparing %s (first time only)…"
+
+#: idiomas/naranjos-idioma:64
+msgid "No se pudo preparar el idioma"
+msgstr "Could not prepare the language"
+
+#: idiomas/naranjos-idioma:90
+msgid "Idioma desconocido: %s (mira la lista con: naranjos-idioma)"
+msgstr "Unknown language: %s (see the list with: naranjos-idioma)"
+
+#: idiomas/naranjos-idioma:91
+msgid "Hazlo como tu usuario, sin sudo (para todo el sistema: --sistema)"
+msgstr "Do it as your user, without sudo (for the whole system: --sistema)"
+
+#: idiomas/naranjos-idioma:104
+msgid "No se pudo cambiar el idioma del sistema"
+msgstr "Could not change the system language"
+
+#: idiomas/naranjos-idioma:108
+msgid "Idioma del sistema"
+msgstr "System language"
+
+#: idiomas/naranjos-idioma:130
+msgid "Escribe el código del idioma (Enter para salir):"
+msgstr "Type the language code (Enter to quit):"
+
+#: initramfs/naranjos-initramfs:95
+msgid "Este kernel no tiene módulos: solo va el microcódigo"
+msgstr "This kernel has no modules: only the microcode goes in"
+
+#: initramfs/naranjos-initramfs:113
+msgid "depmod ha fallado"
+msgstr "depmod failed"
+
+#: initramfs/naranjos-initramfs:170
+msgid "No puedo leer %s (prueba con sudo)"
+msgstr "Can't read %s (try with sudo)"
+
+#: initramfs/naranjos-initramfs:193
+msgid "No existe /boot/vmlinuz-%s"
+msgstr "/boot/vmlinuz-%s does not exist"
+
+#: initramfs/naranjos-initramfs:196
+msgid "Creando el initramfs del kernel %s…"
+msgstr "Creating the initramfs for kernel %s…"
+
+#: initramfs/naranjos-initramfs:209
+msgid "No se pudo crear el initramfs"
+msgstr "Could not create the initramfs"
+
+#: initramfs/naranjos-initramfs:213
+msgid "%s (%s, en %s s)"
+msgstr "%s (%s, in %s s)"
+
+#: initramfs/naranjos-initramfs:235
+msgid "sin initramfs"
+msgstr "no initramfs"
+
+#: initramfs/naranjos-initramfs:239
+msgid "Microcódigo: %s · módulos extra: %s"
+msgstr "Microcode: %s · extra modules: %s"
+
+#: initramfs/naranjos-initramfs:239 peel/naranjos-peel:56
+msgid "ninguno"
+msgstr "none"
+
+#: initramfs/naranjos-initramfs:240
+msgid "Ajustes: %s"
+msgstr "Settings: %s"
+
+#: initramfs/naranjos-initramfs:244
+msgid "el initramfs de NaranjOS"
+msgstr "the NaranjOS initramfs"
+
+#: initramfs/naranjos-initramfs:245
+msgid "estado de los initramfs"
+msgstr "initramfs status"
+
+#: initramfs/naranjos-initramfs:246
+msgid "rehacer el de todos los kernels"
+msgstr "rebuild it for every kernel"
+
+#: initramfs/naranjos-initramfs:247
+msgid "rehacer el de un kernel"
+msgstr "rebuild it for one kernel"
+
+#: initramfs/naranjos-initramfs:248
+msgid "lista lo que hay dentro"
+msgstr "lists what's inside"
+
+#: initramfs/naranjos-initramfs:250
+msgid ""
+"Se rehace solo cuando zumo instala un kernel, módulos o microcódigo nuevos."
+msgstr ""
+"It is rebuilt automatically when zumo installs a new kernel, modules or "
+"microcode."
+
+#: initramfs/naranjos-initramfs:251
+msgid "Ajustes (módulos extra, microcódigo):"
+msgstr "Settings (extra modules, microcode):"
+
+#: initramfs/naranjos-kernel:40
+msgid "No se pudo firmar el kernel"
+msgstr "Could not sign the kernel"
+
+#: initramfs/naranjos-kernel:41
+msgid "La firma del kernel no se verifica"
+msgstr "The kernel signature does not verify"
+
+#: initramfs/naranjos-kernel:46
+msgid ""
+"Secure Boot está activo y no hay clave MOK en /etc/naranjos/mok: este kernel"
+" NO arrancará"
+msgstr ""
+"Secure Boot is on and there is no MOK key in /etc/naranjos/mok: this kernel "
+"will NOT boot"
+
+#: initramfs/naranjos-kernel:66
+msgid "firmado para Secure Boot"
+msgstr "signed for Secure Boot"
+
+#: initramfs/naranjos-kernel:66
+msgid "sin firmar"
+msgstr "unsigned"
+
+#: initramfs/naranjos-kernel:71
+msgid "Kernel %s en /boot/vmlinuz-%s (%s)"
+msgstr "Kernel %s in /boot/vmlinuz-%s (%s)"
+
+#: initramfs/naranjos-kernel:84
+msgid "Quitado de /boot: %s"
+msgstr "Removed from /boot: %s"
+
+#: initramfs/naranjos-kernel:90
+msgid "en uso"
+msgstr "running"
+
+#: keyring/naranjos-keyring.install:6
+msgid "llavero de NaranjOS al día"
+msgstr "NaranjOS keyring up to date"
+
+#: keyring/naranjos-keyring.install:7
+msgid "no se pudo actualizar el llavero: sudo pacman-key --populate naranjos"
+msgstr "couldn't update the keyring: sudo pacman-key --populate naranjos"
+
+#: keyring/naranjos-keyring.install:9
+msgid ""
+"pacman aún no tiene llavero: sudo pacman-key --init && sudo pacman-key "
+"--populate naranjos"
+msgstr ""
+"pacman has no keyring yet: sudo pacman-key --init && sudo pacman-key "
+"--populate naranjos"
 
 #: peel/naranjos-peel:37
 msgid "Las reglas tienen un error; no se ha cambiado nada"
@@ -44,10 +980,6 @@ msgstr "OFF"
 #: peel/naranjos-peel:56
 msgid "puertos abiertos"
 msgstr "open ports"
-
-#: peel/naranjos-peel:56 initramfs/naranjos-initramfs:205
-msgid "ninguno"
-msgstr "none"
 
 #: peel/naranjos-peel:61 peel/naranjos-peel:712
 msgid "Antivirus"
@@ -96,10 +1028,6 @@ msgstr "%s/%s (reboot to apply everything)"
 #: peel/naranjos-peel:103
 msgid "faltan:"
 msgstr "missing:"
-
-#: peel/naranjos-peel:107
-msgid "activo"
-msgstr "active"
 
 #: peel/naranjos-peel:108
 msgid "desactivado"
@@ -197,10 +1125,6 @@ msgstr "Blocked USB devices: %s (Super + Ctrl + U)"
 msgid "USB: protegido"
 msgstr "USB: protected"
 
-#: peel/naranjos-peel:169
-msgid "apagado"
-msgstr "off"
-
 #: peel/naranjos-peel:170
 msgid "clic: centro de seguridad"
 msgstr "click: security centre"
@@ -216,17 +1140,6 @@ msgstr "Invalid port: %s (example: 22/tcp)"
 #: peel/naranjos-peel:181
 msgid "Protocolo no válido: %s (tcp o udp)"
 msgstr "Invalid protocol: %s (tcp or udp)"
-
-#: peel/naranjos-peel:185 peel/naranjos-peel:194 peel/naranjos-peel:234
-#: peel/naranjos-peel:276 peel/naranjos-peel:325 peel/naranjos-peel:499
-#: peel/naranjos-peel:519 peel/naranjos-peel:544 peel/naranjos-peel:676
-#: peel/naranjos-peel:692 peel/naranjos-peel:721 peel/naranjos-peel:862
-#: peel/naranjos-peel:905 peel/naranjos-peel:926 peel/naranjos-peel:955
-#: peel/naranjos-peel:1009 peel/naranjos-peel:1035 peel/naranjos-peel:1075
-#: esc/naranjos-captura:12 esc/naranjos-tui:12 idiomas/naranjos-idioma:100
-#: zumo:24
-msgid "Uso:"
-msgstr "Usage:"
 
 #: peel/naranjos-peel:190
 msgid "Regla no válida; no se ha cambiado nada"
@@ -517,10 +1430,6 @@ msgstr "watcher"
 #: peel/naranjos-peel:582
 msgid "activa en"
 msgstr "active on"
-
-#: peel/naranjos-peel:584
-msgid "apagada"
-msgstr "off"
 
 #: peel/naranjos-peel:588 peel/naranjos-peel:589 peel/naranjos-peel:620
 msgid "cuarentena"
@@ -978,6 +1887,74 @@ msgstr "VPN: Super + Ctrl + V, or right click the shield."
 msgid "Más información:"
 msgstr "More information:"
 
+#: peel/naranjos-peel.install:4
+msgid "NaranjOS peel: preparando la seguridad…"
+msgstr "NaranjOS peel: setting up security…"
+
+#: peel/naranjos-peel.install:10
+msgid "cortafuegos activo"
+msgstr "firewall on"
+
+#: peel/naranjos-peel.install:10
+msgid "no se pudo arrancar el cortafuegos: systemctl status nftables"
+msgstr "couldn't start the firewall: systemctl status nftables"
+
+#: peel/naranjos-peel.install:12
+msgid ""
+"las reglas del cortafuegos no cargan (¿faltan módulos nf_tables en el "
+"kernel?)"
+msgstr ""
+"the firewall rules don't load (are the nf_tables modules missing from the "
+"kernel?)"
+
+#: peel/naranjos-peel.install:19
+msgid "MAC aleatoria en la WiFi (se aplica al reiniciar)"
+msgstr "random MAC address on WiFi (applies after rebooting)"
+
+#: peel/naranjos-peel.install:27
+msgid ""
+"/etc/resolv.conf ahora usa systemd-resolved (copia: /etc/resolv.conf.antes-"
+"de-peel)"
+msgstr ""
+"/etc/resolv.conf now uses systemd-resolved (backup: /etc/resolv.conf.antes-"
+"de-peel)"
+
+#: peel/naranjos-peel.install:30
+msgid "DNS cifrado (Quad9, DNS-over-TLS)"
+msgstr "encrypted DNS (Quad9, DNS-over-TLS)"
+
+#: peel/naranjos-peel.install:32
+msgid "systemd-resolved no está activo: el DNS cifrado no funcionará"
+msgstr "systemd-resolved is not running: encrypted DNS won't work"
+
+#: peel/naranjos-peel.install:40
+msgid "AppArmor: perfiles cargados en modo aprendiz (solo avisan)"
+msgstr "AppArmor: profiles loaded in learning mode (warnings only)"
+
+#: peel/naranjos-peel.install:41
+msgid ""
+"protección USB: lo conectado ahora queda permitido; lo nuevo habrá que "
+"permitirlo (Super + Ctrl + U)"
+msgstr ""
+"USB protection: what's plugged in now is allowed; new devices will need "
+"allowing (Super + Ctrl + U)"
+
+#: peel/naranjos-peel.install:42
+msgid "integridad: guardando las huellas del sistema en segundo plano"
+msgstr "integrity: saving the system fingerprints in the background"
+
+#: peel/naranjos-peel.install:43
+msgid ""
+"antivirus: descargando las firmas en segundo plano (unos 200 MB la primera "
+"vez)"
+msgstr ""
+"antivirus: downloading the signatures in the background (about 200 MB the "
+"first time)"
+
+#: peel/naranjos-peel.install:44
+msgid "Mira el estado con: naranjos-peel"
+msgstr "Check the status with: naranjos-peel"
+
 #: peel/naranjos-usb:23
 msgid "NaranjOS peel: USB bloqueado"
 msgstr "NaranjOS peel: USB blocked"
@@ -986,298 +1963,49 @@ msgstr "NaranjOS peel: USB blocked"
 msgid "si lo has enchufado tú, permítelo con Super + Ctrl + U"
 msgstr "if you plugged it in yourself, allow it with Super + Ctrl + U"
 
-#: initramfs/naranjos-initramfs:95
-msgid "Este kernel no tiene módulos: solo va el microcódigo"
-msgstr "This kernel has no modules: only the microcode goes in"
-
-#: initramfs/naranjos-initramfs:113
-msgid "depmod ha fallado"
-msgstr "depmod failed"
-
-#: initramfs/naranjos-initramfs:158
-msgid "No existe /boot/vmlinuz-%s"
-msgstr "/boot/vmlinuz-%s does not exist"
-
-#: initramfs/naranjos-initramfs:161
-msgid "Creando el initramfs del kernel %s…"
-msgstr "Creating the initramfs for kernel %s…"
-
-#: initramfs/naranjos-initramfs:175
-msgid "No se pudo crear el initramfs"
-msgstr "Could not create the initramfs"
-
-#: initramfs/naranjos-initramfs:179
-msgid "%s (%s, en %s s)"
-msgstr "%s (%s, in %s s)"
-
-#: initramfs/naranjos-initramfs:201
-msgid "sin initramfs"
-msgstr "no initramfs"
-
-#: initramfs/naranjos-initramfs:205
-msgid "Microcódigo: %s · módulos extra: %s"
-msgstr "Microcode: %s · extra modules: %s"
-
-#: initramfs/naranjos-initramfs:206
-msgid "Ajustes: %s"
-msgstr "Settings: %s"
-
-#: initramfs/naranjos-initramfs:210
-msgid "el initramfs de NaranjOS"
-msgstr "the NaranjOS initramfs"
-
-#: initramfs/naranjos-initramfs:211
-msgid "estado de los initramfs"
-msgstr "initramfs status"
-
-#: initramfs/naranjos-initramfs:212
-msgid "rehacer el de todos los kernels"
-msgstr "rebuild it for every kernel"
-
-#: initramfs/naranjos-initramfs:213
-msgid "rehacer el de un kernel"
-msgstr "rebuild it for one kernel"
-
-#: initramfs/naranjos-initramfs:215
-msgid ""
-"Se rehace solo cuando zumo instala un kernel, módulos o microcódigo nuevos."
-msgstr ""
-"It is rebuilt automatically when zumo installs a new kernel, modules or "
-"microcode."
-
-#: initramfs/naranjos-initramfs:216
-msgid "Ajustes (módulos extra, microcódigo):"
-msgstr "Settings (extra modules, microcode):"
-
-#: initramfs/naranjos-initramfs:226
-msgid "No hay ningún kernel en /boot"
-msgstr "There is no kernel in /boot"
-
-#: initramfs/naranjos-kernel:40
-msgid "No se pudo firmar el kernel"
-msgstr "Could not sign the kernel"
-
-#: initramfs/naranjos-kernel:41
-msgid "La firma del kernel no se verifica"
-msgstr "The kernel signature does not verify"
-
-#: initramfs/naranjos-kernel:46
-msgid ""
-"Secure Boot está activo y no hay clave MOK en /etc/naranjos/mok: este kernel"
-" NO arrancará"
-msgstr ""
-"Secure Boot is on and there is no MOK key in /etc/naranjos/mok: this kernel "
-"will NOT boot"
-
-#: initramfs/naranjos-kernel:52 initramfs/naranjos-kernel:76
-msgid "Hace falta root:"
-msgstr "Root is needed:"
-
-#: initramfs/naranjos-kernel:66
-msgid "firmado para Secure Boot"
-msgstr "signed for Secure Boot"
-
-#: initramfs/naranjos-kernel:66
-msgid "sin firmar"
-msgstr "unsigned"
-
-#: initramfs/naranjos-kernel:71
-msgid "Kernel %s en /boot/vmlinuz-%s (%s)"
-msgstr "Kernel %s in /boot/vmlinuz-%s (%s)"
-
-#: initramfs/naranjos-kernel:84
-msgid "Quitado de /boot: %s"
-msgstr "Removed from /boot: %s"
-
-#: initramfs/naranjos-kernel:90
-msgid "en uso"
-msgstr "running"
-
-#: initramfs/naranjos-kernel:97
-msgid "firmado"
-msgstr "signed"
-
-#: initramfs/naranjos-kernel:97
-msgid "SIN firmar"
-msgstr "NOT signed"
-
-#: initramfs/naranjos-kernel:98
-msgid "firma sin comprobar"
-msgstr "signature not checked"
-
-#: esc/naranjos-atajos:4
-msgid "Atajos"
-msgstr "Shortcuts"
-
-#: esc/naranjos-ayuda:5
-msgid "Manual de NaranjOS"
-msgstr "NaranjOS manual"
-
-#: esc/naranjos-captura:6 esc/naranjos-carpetas:11
-msgid "Imágenes"
-msgstr "Pictures"
-
-#: esc/naranjos-captura:7
-msgid "Capturas"
-msgstr "Screenshots"
-
-#: esc/naranjos-captura:8
-msgid "captura"
-msgstr "screenshot"
-
-#: esc/naranjos-captura:15
-msgid "Captura guardada"
-msgstr "Screenshot saved"
-
-#: esc/naranjos-captura:15
-msgid "también está en el portapapeles"
-msgstr "also copied to the clipboard"
-
-#: esc/naranjos-carpetas:11
-msgid "Descargas"
-msgstr "Downloads"
-
-#: esc/naranjos-carpetas:11
-msgid "Documentos"
-msgstr "Documents"
-
-#: esc/naranjos-carpetas:12
-msgid "Música"
-msgstr "Music"
-
-#: esc/naranjos-carpetas:12
-msgid "Vídeos"
-msgstr "Videos"
-
-#: esc/naranjos-navegador:7
-msgid "Firefox no está instalado"
-msgstr "Firefox is not installed"
-
-#: esc/naranjos-navegador:7
-msgid "En una terminal:"
-msgstr "In a terminal:"
-
-#: esc/naranjos-sistema:5
-msgid "Bloquear"
-msgstr "Lock"
-
-#: esc/naranjos-sistema:5
-msgid "Cerrar sesión"
-msgstr "Log out"
-
-#: esc/naranjos-sistema:5
-msgid "Suspender"
-msgstr "Suspend"
-
-#: esc/naranjos-sistema:5
-msgid "Reiniciar"
-msgstr "Reboot"
-
-#: esc/naranjos-sistema:5
-msgid "Apagar"
-msgstr "Power off"
-
-#: esc/naranjos-tui:7
-msgid "Sonido"
-msgstr "Sound"
-
-#: esc/naranjos-tui:8
-msgid "Seguridad"
-msgstr "Security"
-
-#: esc/naranjos-tui:8 esc/naranjos-tui:9 esc/naranjos-tui:10
-#: idiomas/naranjos-idioma:124 idiomas/naranjos-idioma:132
-msgid "Pulsa una tecla para cerrar…"
-msgstr "Press any key to close…"
-
-#: esc/naranjos-tui:11 idiomas/naranjos-idioma:117 idiomas/naranjos-idioma:124
-msgid "Idioma"
-msgstr "Language"
-
-#: idiomas/naranjos-idioma:45
-msgid "Idioma de NaranjOS"
-msgstr "NaranjOS language"
-
-#: idiomas/naranjos-idioma:45
-msgid "(ahora: %s)"
-msgstr "(now: %s)"
-
-#: idiomas/naranjos-idioma:51
-msgid ""
-"NaranjOS traducido; en los demás, los programas salen en ese idioma y lo de "
-"NaranjOS aún no"
-msgstr ""
-"NaranjOS translated; in the others, programs use that language but NaranjOS "
-"itself not yet"
-
-#: idiomas/naranjos-idioma:53
-msgid "cambia tu idioma"
-msgstr "changes your language"
-
-#: idiomas/naranjos-idioma:54
-msgid "cambia el del sistema (inicio de sesión y usuarios nuevos)"
-msgstr "changes the system language (login screen and new users)"
-
-#: idiomas/naranjos-idioma:55
-msgid ""
-"¿Falta tu idioma? Puedes traducir NaranjOS: "
-"/usr/share/doc/naranjos/traducir.md"
-msgstr ""
-"Is your language missing? You can translate NaranjOS: "
-"/usr/share/doc/naranjos/traducir.md"
-
-#: idiomas/naranjos-idioma:62
-msgid "glibc no tiene el idioma %s"
-msgstr "glibc does not have the language %s"
-
-#: idiomas/naranjos-idioma:63
-msgid "Preparando %s (solo la primera vez)…"
-msgstr "Preparing %s (first time only)…"
-
-#: idiomas/naranjos-idioma:64
-msgid "No se pudo preparar el idioma"
-msgstr "Could not prepare the language"
-
-#: idiomas/naranjos-idioma:90
-msgid "Idioma desconocido: %s (mira la lista con: naranjos-idioma)"
-msgstr "Unknown language: %s (see the list with: naranjos-idioma)"
-
-#: idiomas/naranjos-idioma:91
-msgid "Hazlo como tu usuario, sin sudo (para todo el sistema: --sistema)"
-msgstr "Do it as your user, without sudo (for the whole system: --sistema)"
-
-#: idiomas/naranjos-idioma:96 idiomas/naranjos-idioma:121
-msgid ""
-"Cierra sesión y vuelve a entrar para ver todo el escritorio en tu idioma."
-msgstr "Log out and in again to see the whole desktop in your language."
-
-#: idiomas/naranjos-idioma:104
-msgid "No se pudo cambiar el idioma del sistema"
-msgstr "Could not change the system language"
-
-#: idiomas/naranjos-idioma:106
-msgid "Bienvenido a NaranjOS"
-msgstr "Welcome to NaranjOS"
-
-#: idiomas/naranjos-idioma:108
-msgid "Idioma del sistema"
-msgstr "System language"
-
-#: idiomas/naranjos-idioma:109
-msgid "Se aplica en el próximo inicio de sesión."
-msgstr "It applies at the next login."
-
-#: idiomas/naranjos-idioma:130
-msgid "Escribe el código del idioma (Enter para salir):"
-msgstr "Type the language code (Enter to quit):"
-
-#: zumo:19
-msgid "falta el nombre del paquete. Ejemplo: zumo %s firefox"
-msgstr "the package name is missing. Example: zumo %s firefox"
-
-#: zumo:23
-msgid "el gestor de paquetes de %s"
-msgstr "the %s package manager"
+#: temas/naranjos-tema:21
+msgid "Cada usuario elige su tema: ejecútalo sin sudo."
+msgstr "Each user chooses their own theme: run it without sudo."
+
+#: temas/naranjos-tema:29
+msgid "temas"
+msgstr "themes"
+
+#: temas/naranjos-tema:51
+msgid "Estos ficheros tuyos no siguen el tema (los cambiaste):"
+msgstr "These files of yours don't follow the theme (you changed them):"
+
+#: temas/naranjos-tema:56
+msgid "Para ponerlos como los de NaranjOS (se guarda copia .anterior):"
+msgstr "To make them like NaranjOS's (a .anterior copy is kept):"
+
+#: temas/naranjos-tema:137
+msgid "Dime qué tema:"
+msgstr "Tell me which theme:"
+
+#: temas/naranjos-tema:139
+msgid "No existe el tema"
+msgstr "That theme doesn't exist"
+
+#: temas/naranjos-tema:152
+msgid "Las terminales nuevas ya salen con el tema."
+msgstr "New terminals already open with the theme."
+
+#: temas/naranjos-tema:153
+msgid "Tema puesto:"
+msgstr "Theme set:"
+
+#: temas/naranjos-tema:163
+msgid "No encuentro fondos en"
+msgstr "Can't find wallpapers in"
+
+#: temas/naranjos-tema:168
+msgid "Fondo:"
+msgstr "Wallpaper:"
+
+#: temas/naranjos-tema:197
+msgid "Todo sigue el tema."
+msgstr "Everything follows the theme."
 
 #: zumo:24
 msgid "orden"
@@ -1344,114 +2072,125 @@ msgid "Dependencias que ya nadie usa"
 msgstr "Dependencies nobody uses any more"
 
 #: zumo:41
+msgid "Licencia de un paquete"
+msgstr "A package's license"
+
+#: zumo:42
+msgid "Baja su código fuente (receta, parches y original)"
+msgstr "Download its source code (recipe, patches and original)"
+
+#: zumo:43
 msgid "Para quien crea paquetes"
 msgstr "For package makers"
 
-#: zumo:43
+#: zumo:45
 msgid "Construye, firma y añade al repositorio"
 msgstr "Builds, signs and adds to the repository"
 
-#: zumo:44
+#: zumo:46
 msgid "(-i: además lo instala · -y: sin preguntar)."
 msgstr "(-i: also installs it · -y: without asking)."
 
-#: zumo:45
+#: zumo:47
 msgid "(-a: adopta lo que la base de LFS ya instaló suelto: lo sobrescribe)."
 msgstr "(-a: adopt files the LFS base installed loose: overwrite them)."
 
-#: zumo:46
+#: zumo:48
 msgid "Las recetas se buscan en ~/naranjos-recetas"
 msgstr "Recipes are looked up in ~/naranjos-recetas"
 
-#: zumo:48
+#: zumo:50
 msgid "Versión de zumo y de pacman"
 msgstr "zumo and pacman version"
 
-#: zumo:49
+#: zumo:51
 msgid "Esta ayuda"
 msgstr "This help"
 
-#: zumo:51
+#: zumo:53
 msgid "Ejemplos:"
 msgstr "Examples:"
 
-#: zumo:52
+#: zumo:54
 msgid ""
 "Cada orden tiene también su nombre en inglés (install, remove, update…)."
 msgstr "Every command also has an English name (install, remove, update…)."
 
-#: zumo:57
+#: zumo:59
 msgid "'exprime' se usa con tu usuario normal, no como root."
 msgstr "'exprime' is used with your normal user, not as root."
 
-#: zumo:63
-msgid "no puedo escribir en el repositorio %s"
-msgstr "cannot write to the repository %s"
-
-#: zumo:67
+#: zumo:69
 msgid "no encuentro la clave de firma de NaranjOS (gpg)"
 msgstr "cannot find the NaranjOS signing key (gpg)"
 
-#: zumo:78
+#: zumo:80
 msgid "dime qué receta(s) exprimir. Ejemplo: zumo exprime wayland"
 msgstr "tell me which recipe(s) to build. Example: zumo exprime wayland"
 
-#: zumo:80
+#: zumo:82
 msgid "Refrescando la lista de paquetes…"
 msgstr "Refreshing the package list…"
 
-#: zumo:81
+#: zumo:83
 msgid "pacman -Sy falló"
 msgstr "pacman -Sy failed"
 
-#: zumo:84
-msgid "no encuentro la receta '%s' (ni ./%s ni %s)"
-msgstr "cannot find the recipe '%s' (neither ./%s nor %s)"
-
-#: zumo:86
-msgid "Exprimiendo %s…"
-msgstr "Squeezing %s…"
-
-#: zumo:87
-msgid "makepkg falló en '%s'"
-msgstr "makepkg failed in '%s'"
-
-#: zumo:89
+#: zumo:91
 msgid "makepkg no dijo qué paquetes generó"
 msgstr "makepkg did not say which packages it built"
 
-#: zumo:91
-msgid "repo-add falló con %s"
-msgstr "repo-add failed with %s"
-
-#: zumo:109
-msgid "Instalando: %s"
-msgstr "Installing: %s"
-
-#: zumo:111
-msgid "pacman NO instaló: %s (mira el error justo encima)"
-msgstr "pacman did NOT install: %s (see the error just above)"
-
-#: zumo:113
+#: zumo:115
 msgid "Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)"
 msgstr "Done. To publish it on GitHub: naranjos-github.sh (from Ubuntu)"
 
-#: zumo:121
+#: zumo:125
+msgid ""
+"Estás arrancado en una foto: lo que actualices se perdería al apagar. "
+"Primero: sudo fotos vuelve"
+msgstr ""
+"You booted into a snapshot: whatever you update would be lost on shutdown. "
+"First: sudo fotos vuelve"
+
+#: zumo:126
+msgid ""
+"Has vuelto a una foto: reinicia antes de actualizar (lo que actualices ahora"
+" se perdería)"
+msgstr ""
+"You went back to a snapshot: reboot before updating (whatever you update now"
+" would be lost)"
+
+#: zumo:128
 msgid "Actualizando NaranjOS…"
 msgstr "Updating NaranjOS…"
 
-#: zumo:128 zumo:130
+#: zumo:129
+msgid "No pude leer los repositorios"
+msgstr "Couldn't read the repositories"
+
+#: zumo:130
+msgid "Todo al día."
+msgstr "Everything is up to date."
+
+#: zumo:132
+msgid "Haciendo una foto del sistema antes de actualizar…"
+msgstr "Taking a system snapshot before updating…"
+
+#: zumo:134
+msgid ""
+"No se pudo hacer la foto. Para actualizar sin ella: zumo actualiza --sin-"
+"foto"
+msgstr ""
+"Couldn't take the snapshot. To update without it: zumo actualiza --sin-foto"
+
+#: zumo:202 zumo:204
 msgid "No hay huérfanos."
 msgstr "There are no orphans."
 
-#: zumo:130
+#: zumo:204
 msgid "Quitando huérfanos…"
 msgstr "Removing orphans…"
 
-#: zumo:131
+#: zumo:205
 msgid "Vaciando la caché de versiones antiguas…"
 msgstr "Emptying the cache of old versions…"
-
-#: zumo:135
-msgid "orden desconocida: '%s'. Mira 'zumo ayuda'."
-msgstr "unknown command: '%s'. See 'zumo ayuda'."
