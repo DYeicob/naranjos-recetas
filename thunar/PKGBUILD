@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6k3.sh
+pkgname=thunar
+pkgver=4.20.9
+pkgrel=1
+pkgdesc='Explorador de archivos (Thunar, de Xfce)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later' 'LGPL-2.0-or-later')
+depends=('exo' 'libxfce4ui' 'xfconf' 'gtk3' 'hicolor-icon-theme' 'adwaita-icon-theme')
+makedepends=()
+source=('https://archive.xfce.org/src/xfce/thunar/4.20/thunar-4.20.9.tar.bz2')
+sha256sums=('eb09869ce93b12ed285678967f55f243c833f2baf2fb10c9844ac7648d9270cb')
+build() {
+  cd thunar-$pkgver
+  # sin libgudev ni libnotify (no los tenemos): sin montar USB desde Thunar ni avisos de Thunar
+  ./configure --prefix=/usr --sysconfdir=/etc --docdir=/usr/share/doc/thunar-$pkgver \
+    --disable-gudev --disable-notifications
+  make
+}
+package() { cd thunar-$pkgver; make DESTDIR="$pkgdir" install; }

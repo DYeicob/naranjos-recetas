@@ -1,0 +1,10 @@
+perl-xml-parser
+intltool
+libdbusmenu-gtk3
+libxfce4util
+xfconf
+libxfce4ui
+exo
+thunar
+waybar
+naranjos-escritorio

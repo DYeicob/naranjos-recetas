@@ -70,3 +70,6 @@ tooltip label { color: @texto; }
 #custom-noche          { color: @apagado; padding: 0 9px; }
 #custom-noche.calida   { color: @acento2; }
 #custom-noche.apagada  { color: @inactivo; }
+#tray { padding: 0 8px; }
+#tray > .passive { -gtk-icon-effect: dim; }
+#tray > .needs-attention { -gtk-icon-effect: highlight; background: @mal; border-radius: 6px; }

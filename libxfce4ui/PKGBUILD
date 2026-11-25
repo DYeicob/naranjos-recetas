@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6k3.sh
+pkgname=libxfce4ui
+pkgver=4.20.2
+pkgrel=1
+pkgdesc='Widgets comunes de Xfce'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.0-or-later')
+depends=('gtk3' 'xfconf' 'libxfce4util' 'libice' 'libsm')
+makedepends=()
+source=('https://archive.xfce.org/src/xfce/libxfce4ui/4.20/libxfce4ui-4.20.2.tar.bz2')
+sha256sums=('5d3d67b1244a10cee0e89b045766c05fe1035f7938f0410ac6a3d8222b5df907')
+build() {
+  cd libxfce4ui-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc --disable-introspection --disable-vala \
+    --disable-gladeui --disable-startup-notification
+  make
+}
+package() { cd libxfce4ui-$pkgver; make DESTDIR="$pkgdir" install; }

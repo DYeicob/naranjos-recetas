@@ -1,0 +1,22 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6k3.sh
+pkgname=perl-xml-parser
+pkgver=2.47
+pkgrel=1
+pkgdesc='Módulo XML::Parser de Perl (sobre expat)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Artistic-1.0-Perl OR GPL-1.0-or-later')
+depends=('perl' 'expat')
+makedepends=()
+source=('https://cpan.metacpan.org/authors/id/T/TO/TODDR/XML-Parser-2.47.tar.gz')
+sha256sums=('ad4aae643ec784f489b956abe952432871a622d4e2b5c619e8855accbfc4d1d8')
+build() {
+  cd XML-Parser-$pkgver
+  perl Makefile.PL INSTALLDIRS=vendor
+  make
+}
+package() {
+  cd XML-Parser-$pkgver
+  make DESTDIR="$pkgdir" install
+  find "$pkgdir" \( -name perllocal.pod -o -name .packlist \) -delete
+}

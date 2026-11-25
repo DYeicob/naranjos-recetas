@@ -1,0 +1,26 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6k3.sh
+pkgname=libdbusmenu-gtk3
+pkgver=16.04.0
+pkgrel=1
+pkgdesc='Menús por D-Bus para los iconos de la bandeja (glib + GTK 3)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-3.0-only OR LGPL-2.1-only')
+depends=('glib2' 'gtk3')
+provides=('libdbusmenu-glib')
+makedepends=('intltool')
+source=('https://launchpad.net/libdbusmenu/16.04/16.04.0/+download/libdbusmenu-16.04.0.tar.gz')
+sha256sums=('b9cc4a2acd74509435892823607d966d424bd9ad5d0b00938f27240a1bfa878a')
+build() {
+  cd libdbusmenu-$pkgver
+  # su Makefile compila con -Werror y GCC 16 avisa de cosas que en 2016 no existían
+  CFLAGS+=" -Wno-error -Wno-deprecated-declarations"
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static \
+    --disable-dumper --disable-tests --disable-gtk-doc --disable-introspection --disable-vala --with-gtk=3
+  make
+}
+package() {
+  cd libdbusmenu-$pkgver
+  make DESTDIR="$pkgdir" install
+  rm -rf "$pkgdir/usr/share/doc" "$pkgdir/usr/share/gtk-doc"
+}

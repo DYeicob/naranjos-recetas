@@ -1,0 +1,3 @@
+# NaranjOS · aplicaciones por defecto del sistema (cada usuario puede cambiarlas en ~/.config/mimeapps.list)
+[Default Applications]
+inode/directory=thunar.desktop

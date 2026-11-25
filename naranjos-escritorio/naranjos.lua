@@ -139,6 +139,7 @@ hl.bind(mainMod .. " + ALT + space",   hl.dsp.exec_cmd("fuzzel"))               
 hl.bind(mainMod .. " + CTRL + space",  hl.dsp.exec_cmd("naranjos-tema fondo siguiente"))  -- otro fondo
 hl.bind(mainMod .. " + CTRL + N",      hl.dsp.exec_cmd("naranjos-noche menu"))            -- luz nocturna
 hl.bind(mainMod .. " + B",             hl.dsp.exec_cmd("naranjos-navegador"))
+hl.bind(mainMod .. " + E",             hl.dsp.exec_cmd("thunar"))                          -- archivos
 hl.bind(mainMod .. " + K",             hl.dsp.exec_cmd("naranjos-atajos"))
 hl.bind(mainMod .. " + H",             hl.dsp.exec_cmd("naranjos-ayuda"))
 hl.bind(mainMod .. " + SHIFT + B",     hl.dsp.exec_cmd("pkill -SIGUSR1 waybar || waybar"))

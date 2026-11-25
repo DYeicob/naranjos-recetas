@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6k3.sh
+pkgname=xfconf
+pkgver=4.20.0
+pkgrel=1
+pkgdesc='Sistema de configuración de Xfce (lo usa Thunar)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('libxfce4util' 'glib2' 'dbus')
+makedepends=()
+source=('https://archive.xfce.org/src/xfce/xfconf/4.20/xfconf-4.20.0.tar.bz2')
+sha256sums=('8bc43c60f1716b13cf35fc899e2a36ea9c6cdc3478a8f051220eef0f53567efd')
+build()   { cd xfconf-$pkgver; ./configure --prefix=/usr --disable-introspection --disable-vala; make; }
+package() { cd xfconf-$pkgver; make DESTDIR="$pkgdir" install; }

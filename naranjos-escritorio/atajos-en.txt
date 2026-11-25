@@ -5,6 +5,7 @@ Super + Alt + Space       Applications only
 Super + Ctrl + Space      Next wallpaper
 Super + Ctrl + N          Night light
 Super + B                 Web browser (Firefox)
+Super + E                 Files (Thunar)
 Super + K                 This list of shortcuts
 Super + H                 NaranjOS manual
 Super + Shift + B         Show / hide the bar

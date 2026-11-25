@@ -1,0 +1,23 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6k3.sh
+pkgname=intltool
+pkgver=0.51.0
+pkgrel=1
+pkgdesc='Herramientas de traducción con intltool'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('perl' 'perl-xml-parser')
+makedepends=()
+source=('https://launchpad.net/intltool/trunk/0.51.0/+download/intltool-0.51.0.tar.gz')
+sha256sums=('67c74d94196b153b774ab9f89b2fa6c6ba79352407037c8c14d5aeb334e959cd')
+build() {
+  cd intltool-$pkgver
+  # aviso de Perl moderno (lo mismo que hace LFS)
+  sed -i 's:\\\${:\\\$\\{:' intltool-update.in
+  ./configure --prefix=/usr
+  make
+}
+package() {
+  cd intltool-$pkgver
+  make DESTDIR="$pkgdir" install
+}

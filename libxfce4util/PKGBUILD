@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6k3.sh
+pkgname=libxfce4util
+pkgver=4.20.1
+pkgrel=1
+pkgdesc='Biblioteca básica de Xfce (la usan Thunar y compañía)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.0-or-later')
+depends=('glib2')
+makedepends=()
+source=('https://archive.xfce.org/src/xfce/libxfce4util/4.20/libxfce4util-4.20.1.tar.bz2')
+sha256sums=('84bfc4daab9e466193540c3665eee42b2cf4d24e3f38fc3e8d1e0a2bebe3b8f1')
+build()   { cd libxfce4util-$pkgver; ./configure --prefix=/usr --disable-introspection --disable-vala; make; }
+package() { cd libxfce4util-$pkgver; make DESTDIR="$pkgdir" install; }

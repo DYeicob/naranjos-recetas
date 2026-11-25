@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6k3.sh
+pkgname=exo
+pkgver=4.20.0
+pkgrel=1
+pkgdesc='Biblioteca de aplicaciones de Xfce'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later' 'LGPL-2.0-or-later')
+depends=('gtk3' 'libxfce4ui' 'libxfce4util')
+makedepends=()
+source=('https://archive.xfce.org/src/xfce/exo/4.20/exo-4.20.0.tar.bz2')
+sha256sums=('4277f799245f1efde01cd917fd538ba6b12cf91c9f8a73fe2035fd5456ec078d')
+build()   { cd exo-$pkgver; ./configure --prefix=/usr --sysconfdir=/etc; make; }
+package() { cd exo-$pkgver; make DESTDIR="$pkgdir" install; }
