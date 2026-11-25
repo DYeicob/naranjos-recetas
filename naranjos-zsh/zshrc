@@ -46,14 +46,35 @@ alias ip='ip -color=auto'
 #   el ❯ se pone ROJO si el último comando falló
 autoload -Uz vcs_info add-zsh-hook
 zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git:*' formats       ' %F{244}(%f%F{215}%b%f%F{244})%f'
-zstyle ':vcs_info:git:*' actionformats ' %F{244}(%f%F{215}%b%f%F{244}|%a)%f'
+# colores del tema cítrico (naranjos-tema): se leen antes de cada prompt, así que al cambiar
+# de tema también cambian las terminales que ya estaban abiertas
+typeset -g _nj_tema='-' _nj_a=208 _nj_a2=215 _nj_tx=252 _nj_ap=244
+_naranjos_tema() {
+  local d=${HOME}/.config/naranjos/tema l
+  d=${d:A}
+  [[ $d == $_nj_tema ]] && return
+  _nj_tema=$d _nj_a=208 _nj_a2=215 _nj_tx=252 _nj_ap=244
+  if [[ -r $d/colores ]]; then
+    while IFS= read -r l; do
+      case $l in
+        COLOR_ACENTO=*)  _nj_a="#${l#*=}" ;;
+        COLOR_ACENTO2=*) _nj_a2="#${l#*=}" ;;
+        COLOR_TEXTO=*)   _nj_tx="#${l#*=}" ;;
+        COLOR_APAGADO=*) _nj_ap="#${l#*=}" ;;
+      esac
+    done < $d/colores
+  fi
+  zstyle ':vcs_info:git:*' formats       " %F{$_nj_ap}(%f%F{$_nj_a2}%b%f%F{$_nj_ap})%f"
+  zstyle ':vcs_info:git:*' actionformats " %F{$_nj_ap}(%f%F{$_nj_a2}%b%f%F{$_nj_ap}|%a)%f"
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=$_nj_ap"
+}
+add-zsh-hook precmd _naranjos_tema
 add-zsh-hook precmd vcs_info
 if [[ $TERM == linux ]]; then
   # consola de texto: solo 16 colores y sin símbolos especiales
   PROMPT='%F{yellow}%n@%m%f %~${vcs_info_msg_0_} %(?.%F{yellow}.%F{red})>%f '
 else
-  PROMPT='%F{208}%n@%m%f %F{252}%~%f${vcs_info_msg_0_} %(?.%F{208}.%F{196})❯%f '
+  PROMPT='%F{$_nj_a}%n@%m%f %F{$_nj_tx}%~%f${vcs_info_msg_0_} %(?.%F{$_nj_a}.%F{196})❯%f '
   # título de la ventana: carpeta actual
   _naranjos_titulo() { print -Pn '\e]0;%~\a' }
   add-zsh-hook precmd _naranjos_titulo
@@ -61,7 +82,7 @@ fi
 
 # --- Complementos (sugerencias en gris, colores al escribir) ------------
 if [[ -r /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=244'
+  : ${ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE:=fg=244}
   source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 # (este tiene que ir el último)

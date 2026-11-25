@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-5c1.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-6k1c.sh (NO editar a mano)
 pkgname=naranjos-zsh
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc='zsh por defecto en NaranjOS: configuración global y prompt naranja'
 arch=('any')
@@ -8,7 +8,7 @@ url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
 depends=('zsh' 'zsh-autosuggestions' 'zsh-syntax-highlighting')
 source=('skel-zshrc' 'zprofile' 'zshrc')
-sha256sums=('dfeb45114326537473599a25af09c35c962a2075ce74e9fcff2a8c5a0c386477' '1ff180d68e67af5e29e7ce5c1dbc309292686d0508140639824870d4edc72d95' 'e3f2fc4a0e164a5c253686dbae9a7b8b934feabd447ba71aee0beb2917596bd1')
+sha256sums=('dfeb45114326537473599a25af09c35c962a2075ce74e9fcff2a8c5a0c386477' '1ff180d68e67af5e29e7ce5c1dbc309292686d0508140639824870d4edc72d95' '211ff5bf04acdd9a557683426719afe9ac1bce7ca5481b93ea0b335be67c462c')
 install=naranjos-zsh.install
 backup=('etc/zsh/zshrc' 'etc/zsh/zprofile')
 package() {
