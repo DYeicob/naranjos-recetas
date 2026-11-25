@@ -10,5 +10,7 @@ depends=('hyprlang' 'hyprutils' 'wayland')
 makedepends=('cmake' 'ninja' 'hyprland-protocols' 'hyprwayland-scanner' 'wayland-protocols')
 source=('https://github.com/hyprwm/hyprsunset/archive/v0.4.0/hyprsunset-0.4.0.tar.gz')
 sha256sums=('5980e65ec650010e36c52e5f5acc0df9fd2d20051c63b89305bdc13276f237a6')
-build()   { cd hyprsunset-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
+# GIT_CEILING_DIRECTORIES: que su CMake no lea el git de naranjos-recetas (metía nuestro mensaje de commit,
+# con comillas y paréntesis, en un -D del compilador y rompía la compilación)
+build()   { export GIT_CEILING_DIRECTORIES="$srcdir"; cd hyprsunset-$pkgver; cmake -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_BUILD_TYPE=Release -W no-dev -G Ninja; ninja -C build; }
 package() { cd hyprsunset-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }
