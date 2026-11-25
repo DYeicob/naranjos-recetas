@@ -1,0 +1,13 @@
+/* NaranjOS · tema Naranja (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema) */
+@define-color fondo #121212;
+@define-color superficie #1e1e1e;
+@define-color texto #e6e6e6;
+@define-color apagado #8a8a8a;
+@define-color acento #ff8700;
+@define-color acento2 #ffaf5f;
+@define-color inactivo #2a2a2a;
+@define-color mal #ff5f5f;
+@define-color bien #87d787;
+@define-color aviso #ffd75f;
+@define-color fondo_barra rgba(18, 18, 18, 0.90);
+@define-color borde_barra rgba(255, 135, 0, 0.55);

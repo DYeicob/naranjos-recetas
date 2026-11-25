@@ -1,0 +1,12 @@
+# NaranjOS · tema Brisa (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema)
+NOMBRE="Brisa"
+CLARO=0
+FONDO=/usr/share/backgrounds/naranjos/temas/brisa/naranjos-01.jpg
+BLOQUEO=/usr/share/backgrounds/naranjos/temas/brisa/naranjos-bloqueo.jpg
+COLOR_FONDO=0b1016
+COLOR_SUP=131b25
+COLOR_TEXTO=dfe7ef
+COLOR_APAGADO=7a8796
+COLOR_ACENTO=3d9bff
+COLOR_ACENTO2=8cc4ff
+COLOR_INACTIVO=1f2a38

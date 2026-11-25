@@ -28,15 +28,25 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("command -v waybar >/dev/null && waybar")      -- barra (llega en la tanda 5c2)
 end)
 
----- Aspecto: oscuro con acento naranja ----------------------------------
+---- Aspecto: los colores del tema (naranjos-tema · Super + Ctrl + T) -----
+local tema = { fondo = "121212", acento = "ff8700", acento2 = "ffaf5f", inactivo = "2a2a2a", sombra = "ee0a0a0a" }
+do
+    local base = (os and os.getenv and os.getenv("HOME") or "") .. "/.config/naranjos/tema/hyprland"
+    local ok, t = pcall(dofile, base .. ".lua")
+    if not ok and package and package.loaded then   -- sin dofile: require (sin caché, por si cambió de tema)
+        package.loaded[base] = nil
+        ok, t = pcall(require, base)
+    end
+    if ok and type(t) == "table" then for c, v in pairs(t) do tema[c] = v end end
+end
 hl.config({
     general = {
         gaps_in  = 4,
         gaps_out = 10,
         border_size = 2,
         col = {
-            active_border   = { colors = {"rgba(ff8700ff)", "rgba(ffaf5fff)"}, angle = 45 },
-            inactive_border = "rgba(2a2a2aff)",
+            active_border   = { colors = {"rgba(" .. tema.acento .. "ff)", "rgba(" .. tema.acento2 .. "ff)"}, angle = 45 },
+            inactive_border = "rgba(" .. tema.inactivo .. "ff)",
         },
         resize_on_border = true,
         allow_tearing = false,
@@ -52,7 +62,7 @@ hl.config({
             enabled      = true,
             range        = 8,
             render_power = 3,
-            color        = 0xee0a0a0a,
+            color        = tonumber("0x" .. tema.sombra),
         },
         blur = {
             enabled  = true,
@@ -68,7 +78,7 @@ hl.config({
         force_default_wallpaper  = 0,       -- sin fondos de Hyprland
         disable_hyprland_logo    = true,
         disable_splash_rendering = true,
-        background_color         = 0xff121212,
+        background_color         = tonumber("0xff" .. tema.fondo),
     },
 
     ecosystem = {
@@ -134,6 +144,7 @@ hl.bind(mainMod .. " + CTRL + S",      hl.dsp.exec_cmd("naranjos-tui seguridad")
 hl.bind(mainMod .. " + CTRL + V",      hl.dsp.exec_cmd("naranjos-tui vpn"))
 hl.bind(mainMod .. " + CTRL + U",      hl.dsp.exec_cmd("naranjos-tui usb"))
 hl.bind(mainMod .. " + CTRL + I",      hl.dsp.exec_cmd("naranjos-idioma menu"))
+hl.bind(mainMod .. " + CTRL + T",      hl.dsp.exec_cmd("naranjos-tema menu"))
 -- Ventanas
 hl.bind(mainMod .. " + W",             hl.dsp.window.close())
 hl.bind(mainMod .. " + F",             hl.dsp.window.fullscreen())

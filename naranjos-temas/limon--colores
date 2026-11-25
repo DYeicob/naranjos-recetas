@@ -1,0 +1,12 @@
+# NaranjOS · tema Limón (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema)
+NOMBRE="Limón"
+CLARO=0
+FONDO=/usr/share/backgrounds/naranjos/temas/limon/naranjos-01.jpg
+BLOQUEO=/usr/share/backgrounds/naranjos/temas/limon/naranjos-bloqueo.jpg
+COLOR_FONDO=12110a
+COLOR_SUP=1d1b10
+COLOR_TEXTO=ecebd9
+COLOR_APAGADO=8a8770
+COLOR_ACENTO=f2d200
+COLOR_ACENTO2=fff07a
+COLOR_INACTIVO=2e2b18

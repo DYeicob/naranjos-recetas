@@ -1,0 +1,12 @@
+# NaranjOS · tema Lima (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema)
+NOMBRE="Lima"
+CLARO=0
+FONDO=/usr/share/backgrounds/naranjos/temas/lima/naranjos-01.jpg
+BLOQUEO=/usr/share/backgrounds/naranjos/temas/lima/naranjos-bloqueo.jpg
+COLOR_FONDO=0f130d
+COLOR_SUP=182014
+COLOR_TEXTO=e2eadb
+COLOR_APAGADO=808a78
+COLOR_ACENTO=9ccc2c
+COLOR_ACENTO2=c6e66b
+COLOR_INACTIVO=24301d

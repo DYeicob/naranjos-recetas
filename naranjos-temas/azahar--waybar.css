@@ -1,0 +1,13 @@
+/* NaranjOS · tema Azahar (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema) */
+@define-color fondo #faf6ef;
+@define-color superficie #ffffff;
+@define-color texto #2b2522;
+@define-color apagado #8a8076;
+@define-color acento #e07000;
+@define-color acento2 #f2a541;
+@define-color inactivo #e4dccf;
+@define-color mal #c8323a;
+@define-color bien #3f8f3a;
+@define-color aviso #b07d00;
+@define-color fondo_barra rgba(250, 246, 239, 0.90);
+@define-color borde_barra rgba(224, 112, 0, 0.55);

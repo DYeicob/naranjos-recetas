@@ -1,0 +1,12 @@
+# NaranjOS · tema Sanguina (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema)
+NOMBRE="Sanguina"
+CLARO=0
+FONDO=/usr/share/backgrounds/naranjos/temas/sanguina/naranjos-01.jpg
+BLOQUEO=/usr/share/backgrounds/naranjos/temas/sanguina/naranjos-bloqueo.jpg
+COLOR_FONDO=140c0c
+COLOR_SUP=1f1414
+COLOR_TEXTO=eadede
+COLOR_APAGADO=8f7f7f
+COLOR_ACENTO=e0393e
+COLOR_ACENTO2=ff7a6b
+COLOR_INACTIVO=2e1c1c

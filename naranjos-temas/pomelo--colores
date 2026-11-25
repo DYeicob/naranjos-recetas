@@ -1,0 +1,12 @@
+# NaranjOS · tema Pomelo (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema)
+NOMBRE="Pomelo"
+CLARO=0
+FONDO=/usr/share/backgrounds/naranjos/temas/pomelo/naranjos-01.jpg
+BLOQUEO=/usr/share/backgrounds/naranjos/temas/pomelo/naranjos-bloqueo.jpg
+COLOR_FONDO=151012
+COLOR_SUP=21181b
+COLOR_TEXTO=ecdfe3
+COLOR_APAGADO=8f8086
+COLOR_ACENTO=ff6f91
+COLOR_ACENTO2=ffa3b8
+COLOR_INACTIVO=32242a

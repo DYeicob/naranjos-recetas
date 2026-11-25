@@ -1,4 +1,6 @@
 /* NaranjOS · estilo de la barra (~/.config/waybar/style.css) */
+/* colores: los del tema (naranjos-tema) → @acento, @acento2, @fondo, @texto… */
+@import url("../naranjos/tema/waybar.css");
 * {
   font-family: "JetBrainsMono Nerd Font", monospace;
   font-size: 13px;
@@ -7,61 +9,61 @@
   border-radius: 0;
 }
 window#waybar {
-  background: rgba(18, 18, 18, 0.90);
-  color: #e6e6e6;
-  border: 2px solid rgba(255, 135, 0, 0.55);
+  background: @fondo_barra;
+  color: @texto;
+  border: 2px solid @borde_barra;
   border-radius: 10px;
 }
 tooltip {
-  background: #121212;
-  border: 1px solid #ff8700;
+  background: @fondo;
+  border: 1px solid @acento;
   border-radius: 8px;
 }
-tooltip label { color: #e6e6e6; }
+tooltip label { color: @texto; }
 
 #image.naranjos {
   padding: 0 0 0 14px;
 }
 #custom-naranjos {
-  color: #ff8700;
+  color: @acento;
   font-weight: bold;
   padding: 0 12px 0 6px;
 }
 #workspaces button {
   padding: 0 8px;
   margin: 4px 1px;
-  color: #8a8a8a;
+  color: @apagado;
   background: transparent;
   border-radius: 6px;
 }
 #workspaces button.active {
-  color: #121212;
-  background: #ff8700;
+  color: @fondo;
+  background: @acento;
 }
 #workspaces button.urgent {
-  color: #121212;
-  background: #ff5f5f;
+  color: @fondo;
+  background: @mal;
 }
 #workspaces button:hover {
-  color: #ffaf5f;
-  background: #2a2a2a;
+  color: @acento2;
+  background: @inactivo;
   box-shadow: none;
 }
-#window { color: #8a8a8a; padding: 0 10px; }
-#clock  { color: #ffaf5f; font-weight: bold; padding: 0 10px; }
+#window { color: @apagado; padding: 0 10px; }
+#clock  { color: @acento2; font-weight: bold; padding: 0 10px; }
 #network, #backlight, #battery, #cpu, #memory, #wireplumber, #bluetooth { padding: 0 9px; }
-#wireplumber.muted { color: #8a8a8a; }
-#bluetooth.connected { color: #ffaf5f; }
-#bluetooth.off { color: #8a8a8a; }
-#network.disconnected          { color: #ff5f5f; }
-#battery.charging              { color: #87d787; }
-#battery.warning:not(.charging){ color: #ffd75f; }
-#battery.critical:not(.charging){ color: #ff5f5f; }
-#custom-peel        { color: #ff8700; padding: 0 9px; }
-#custom-peel.aviso  { color: #ffd75f; }
-#custom-peel.mal    { color: #ff5f5f; }
-#custom-peel.vpn    { color: #ffaf5f; font-weight: bold; }
+#wireplumber.muted { color: @apagado; }
+#bluetooth.connected { color: @acento2; }
+#bluetooth.off { color: @apagado; }
+#network.disconnected          { color: @mal; }
+#battery.charging              { color: @bien; }
+#battery.warning:not(.charging){ color: @aviso; }
+#battery.critical:not(.charging){ color: @mal; }
+#custom-peel        { color: @acento; padding: 0 9px; }
+#custom-peel.aviso  { color: @aviso; }
+#custom-peel.mal    { color: @mal; }
+#custom-peel.vpn    { color: @acento2; font-weight: bold; }
 #custom-sistema {
-  color: #ff8700;
+  color: @acento;
   padding: 0 16px 0 10px;
 }

@@ -1,0 +1,13 @@
+/* NaranjOS · tema Limón (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema) */
+@define-color fondo #12110a;
+@define-color superficie #1d1b10;
+@define-color texto #ecebd9;
+@define-color apagado #8a8770;
+@define-color acento #f2d200;
+@define-color acento2 #fff07a;
+@define-color inactivo #2e2b18;
+@define-color mal #ff5f5f;
+@define-color bien #87d787;
+@define-color aviso #ffd75f;
+@define-color fondo_barra rgba(18, 17, 10, 0.90);
+@define-color borde_barra rgba(242, 210, 0, 0.55);

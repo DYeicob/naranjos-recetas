@@ -12,6 +12,7 @@ Super + Ctrl + S          Seguridad (naranjos-peel)
 Super + Ctrl + V          Conectar / desconectar la VPN
 Super + Ctrl + U          Permitir un USB bloqueado
 Super + Ctrl + I          Idioma
+Super + Ctrl + T          Cambiar de tema (cítricos)
 ── VENTANAS ─────────────────────────────────────────────
 Super + W                 Cerrar la ventana
 Super + F                 Pantalla completa

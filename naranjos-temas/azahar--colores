@@ -1,0 +1,12 @@
+# NaranjOS · tema Azahar (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema)
+NOMBRE="Azahar"
+CLARO=1
+FONDO=/usr/share/backgrounds/naranjos/temas/azahar/naranjos-01.jpg
+BLOQUEO=/usr/share/backgrounds/naranjos/temas/azahar/naranjos-bloqueo.jpg
+COLOR_FONDO=faf6ef
+COLOR_SUP=ffffff
+COLOR_TEXTO=2b2522
+COLOR_APAGADO=8a8076
+COLOR_ACENTO=e07000
+COLOR_ACENTO2=f2a541
+COLOR_INACTIVO=e4dccf

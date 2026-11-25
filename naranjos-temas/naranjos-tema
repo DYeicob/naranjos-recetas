@@ -1,0 +1,141 @@
+#!/bin/bash
+# naranjos-tema — los temas cítricos de NaranjOS (fase 6k1)
+#   naranjos-tema                 el tema puesto y la lista
+#   naranjos-tema lista           los temas que hay
+#   naranjos-tema pon <tema>      cambia de tema (bordes, barra, lanzador, avisos, terminal, bloqueo, GTK y fondo)
+#   naranjos-tema siguiente       pasa al siguiente
+#   naranjos-tema menu            elegirlo en un menú (Super + Ctrl + T)
+#   naranjos-tema revisa          qué ficheros tuyos de ~/.config no siguen el tema
+# El tema elegido es un enlace: ~/.config/naranjos/tema → /usr/share/naranjos/temas/<tema>
+set -uo pipefail
+if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; fi
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
+[ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
+TEMAS=${NARANJOS_TEMAS:-/usr/share/naranjos/temas}
+CONF=${XDG_CONFIG_HOME:-$HOME/.config}
+ENLACE=$CONF/naranjos/tema
+ORDEN=(naranja sanguina lima pomelo limon brisa azahar)
+die(){ printf '%snaranjos-tema:%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+
+[ "$(id -u)" != 0 ] || die "$(_ 'Cada usuario elige su tema: ejecútalo sin sudo.')"
+
+actual(){ local d; d=$(readlink "$ENLACE" 2>/dev/null) || { echo naranja; return; }; basename "$d"; }
+nombre(){ sed -n 's/^NOMBRE=//p' "$TEMAS/$1/colores" 2>/dev/null | tr -d '"'; }
+existe(){ [ -r "$TEMAS/$1/colores" ]; }
+
+lista(){
+  local t a; a=$(actual)
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'temas')" "$Z"
+  for t in "${ORDEN[@]}"; do
+    existe "$t" || continue
+    if [ "$t" = "$a" ]; then printf '  %s● %-10s%s %s\n' "$O" "$t" "$Z" "$(nombre "$t")"
+    else printf '  ○ %-10s %s%s%s\n' "$t" "$D" "$(nombre "$t")" "$Z"; fi
+  done
+}
+
+# ficheros de ~/.config que deberían seguir el tema, y la marca que lo demuestra
+SIGUEN=(
+  "hypr/hyprlock.conf|naranjos/tema/hyprlock.conf"
+  "mako/config|naranjos/tema/mako.conf"
+  "fuzzel/fuzzel.ini|naranjos/tema/fuzzel.ini"
+  "foot/foot.ini|naranjos/tema/foot.ini"
+  "waybar/style.css|naranjos/tema/waybar.css"
+  "gtk-3.0/gtk.css|naranjos/tema/gtk.css"
+)
+revisa(){
+  local e f m malos=0
+  for e in "${SIGUEN[@]}"; do
+    f=${e%%|*}; m=${e#*|}
+    if [ -f "$CONF/$f" ] && ! grep -q "$m" "$CONF/$f"; then
+      [ $malos = 0 ] && printf '%s!%s %s\n' "$A" "$Z" "$(_ 'Estos ficheros tuyos no siguen el tema (los cambiaste):')"
+      echo "    ~/.config/$f"; malos=$((malos + 1))
+    fi
+  done
+  if [ $malos -gt 0 ]; then
+    echo "  $(_ 'Para ponerlos como los de NaranjOS (se guarda copia .anterior):') naranjos-config-usuario --forzar"
+    return 1
+  fi
+  return 0
+}
+
+# el fondo: solo se cambia si el tuyo es uno de NaranjOS (si pusiste otra imagen, se respeta)
+pon_fondo(){
+  local fondo="$1" f="$CONF/hypr/hyprpaper.conf"
+  [ -f "$f" ] || return 0
+  grep -qE '^[[:space:]]*path[[:space:]]*=[[:space:]]*/usr/share/backgrounds/naranjos/' "$f" || return 0
+  sed -i -E "s|^([[:space:]]*path[[:space:]]*=[[:space:]]*)/usr/share/backgrounds/naranjos/[^[:space:]]*|\1$fondo|" "$f"
+  if pgrep -x hyprpaper >/dev/null; then
+    pkill -x hyprpaper; sleep 0.3
+    setsid -f hyprpaper >/dev/null 2>&1 || true
+  fi
+}
+
+# GTK 3: claro u oscuro según el tema
+pon_gtk(){
+  local claro="$1" f="$CONF/gtk-3.0/settings.ini" v=1
+  [ "$claro" = 1 ] && v=0
+  [ -f "$f" ] || return 0
+  if grep -q '^gtk-application-prefer-dark-theme=' "$f"; then
+    sed -i "s/^gtk-application-prefer-dark-theme=.*/gtk-application-prefer-dark-theme=$v/" "$f"
+  else
+    sed -i "/^\[Settings\]/a gtk-application-prefer-dark-theme=$v" "$f"
+  fi
+}
+
+recarga(){
+  [ -n "${WAYLAND_DISPLAY:-}" ] || return 0
+  hyprctl reload >/dev/null 2>&1 || true
+  pkill -SIGUSR2 -x waybar 2>/dev/null || true
+  makoctl reload >/dev/null 2>&1 || true
+}
+
+pon(){
+  local t="${1:-}" quieto="${2:-}"
+  [ -n "$t" ] || die "$(_ 'Dime qué tema:') naranjos-tema pon <tema>   ($(_ 'mira:') naranjos-tema lista)"
+  t=$(printf '%s' "$t" | tr '[:upper:]' '[:lower:]' | sed 's/ó/o/g; s/á/a/g')
+  existe "$t" || die "$(_ 'No existe el tema') «$t» ($(_ 'mira:') naranjos-tema lista)"
+  local FONDO="" CLARO=0
+  # shellcheck disable=SC1090
+  . "$TEMAS/$t/colores"
+  mkdir -p "$CONF/naranjos"
+  ln -sfn "$TEMAS/$t" "$ENLACE"
+  pon_gtk "$CLARO"
+  [ -n "$FONDO" ] && pon_fondo "$FONDO"
+  [ "$quieto" = --sin-recargar ] && return 0
+  recarga
+  command -v notify-send >/dev/null && [ -n "${WAYLAND_DISPLAY:-}" ] && \
+    notify-send -a NaranjOS -i naranjos "$(_ 'Tema'): $(nombre "$t")" "$(_ 'Las terminales nuevas ya salen con el tema.')" 2>/dev/null
+  printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Tema puesto:')" "$(nombre "$t")"
+  revisa >/dev/null || revisa || true
+}
+
+siguiente(){
+  local a i n=${#ORDEN[@]}; a=$(actual)
+  for i in "${!ORDEN[@]}"; do [ "${ORDEN[$i]}" = "$a" ] && { pon "${ORDEN[$(( (i + 1) % n ))]}"; return; }; done
+  pon naranja
+}
+
+menu(){
+  local a t l=() i sel
+  a=$(actual)
+  for t in "${ORDEN[@]}"; do
+    existe "$t" || continue
+    if [ "$t" = "$a" ]; then l+=("● $(nombre "$t")"); else l+=("   $(nombre "$t")"); fi
+  done
+  sel=$(printf '%s\n' "${l[@]}" | fuzzel --dmenu --index --prompt "$(_ 'Tema') ❯ " --lines "${#l[@]}" --width 30) || exit 0
+  i=0
+  for t in "${ORDEN[@]}"; do existe "$t" || continue; [ "$i" = "$sel" ] && { pon "$t"; return; }; i=$((i + 1)); done
+}
+
+case "${1:-}" in
+  ""|estado)       lista ;;
+  lista|list|ls)   lista ;;
+  pon|set|usa)     shift; pon "${1:-}" "${2:-}" ;;
+  siguiente|next)  siguiente ;;
+  menu)            menu ;;
+  actual|current)  actual ;;
+  revisa|check)    revisa && printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Todo sigue el tema.')" ;;
+  ayuda|help|-h|--help)
+    sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//' ;;
+  *) pon "$1" ;;
+esac

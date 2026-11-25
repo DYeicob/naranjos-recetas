@@ -1,0 +1,6 @@
+/* NaranjOS · tema Sanguina (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema) */
+@define-color accent_color #e0393e;
+@define-color accent_bg_color #e0393e;
+@define-color accent_fg_color #140c0c;
+@define-color theme_selected_bg_color #e0393e;
+@define-color theme_selected_fg_color #140c0c;
