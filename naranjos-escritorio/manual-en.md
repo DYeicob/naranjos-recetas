@@ -286,3 +286,25 @@ language too. Want to translate NaranjOS into yours? See `/usr/share/doc/naranjo
 - zumo in several languages.
 - The ISO installer.
 - NVIDIA driver for the dedicated graphics card.
+
+## 9g. What's new in phase 6q (everything from Omarchy 4.5)
+
+- **The single command:** `naranjos` opens the menu; `naranjos ayuda` lists every command (Tab completes them). Examples: `naranjos tema pon lima`, `naranjos red`, `naranjos reloj añade`, `naranjos actualiza`.
+- **Appearance** (Super + Alt + A): theme and wallpaper with preview, light or dark mode, font, text size, bar, opaque, transparent or glassy windows, corners, animations and the lock screen.
+- **Layouts** (Super + Ctrl + L): each workspace can be tiling, scrolling or floating. **Desktop mode** (menu → Appearance): everything floating with a dock, like a classic desktop.
+- **Dock** (Super + Alt + D): pinned and open apps plus the menu. Right-click an icon to pin it. **Super + M** minimizes; **Super + Shift + M** brings a minimized window back.
+- **Quick panels** (Super + Ctrl + 1…5): network, Bluetooth, sound, power and notifications.
+- **Network with NetworkManager:** `sudo naranjos-red usa networkmanager` (brings your saved Wi-Fi networks; if there is no connection within 40 s it goes back to iwd by itself). The network panel has nearby Wi-Fi, status, ping, speed test, live traffic, DNS (Cloudflare, Quad9, Google, Mullvad), Wi-Fi sharing by QR, 2.4/5 GHz band, enterprise Wi-Fi and captive portals (warning in the bar). To go back: `sudo naranjos-red usa iwd`.
+- **Notifications:** Super + , opens the last one; Ctrl for its actions; Alt dismisses it; Ctrl + Alt: do not disturb (also with the bell in the bar); Super + Shift + Alt + , shows the last ten.
+- **Bar:** music (click: pause; wheel: next/previous), microphone, keyboard language, NaranjOS updates, world clock (right-click to add cities), captive portal, remote sessions and the week number in the clock.
+- **Screenshots:** the notification has «Open» and «Edit» (arrows, text, blur). **QR:** Super + Ctrl + Q reads a QR code from the screen and copies it (without saving it in the history).
+- **Camera:** Super + Ctrl + M records the camera; Super + Ctrl + Alt + M puts it in a small window on top of everything for your screen recordings.
+- **Video and slides:** `naranjos-recorta video.mp4 1:20 3:05` trims without losing quality; `naranjos-diapos talk.md` turns a Markdown file (slides separated by `---`) into a presentation with the theme colours (Ctrl + P → PDF).
+- **World clock:** Super + Ctrl + Alt + E.
+- **Power:** a different profile on charger and on battery (Super + Ctrl + E); applied automatically when you plug in or unplug.
+- **System:** compressed memory (zram), systemd-oomd (a program that eats all the memory gets closed on its own), a warning when a program crashes with «See why», a low disk space warning before updating, disk and network speed tests, default kernel (`sudo naranjos-arranque kernel`), both Shift keys = Caps Lock, keyboard backlight with Ctrl + brightness, brightness of external monitors (DDC/CI) and screen mirroring (`naranjos-pantalla espejo`).
+- **SSH:** `sudo naranjos-ssh servidor activa` (keys only, never passwords) and `naranjos-ssh agente activa`. **Another computer:** `naranjos-remoto` opens its programs here over SSH (waypipe).
+- **tmux:** with Ctrl + a as prefix and the NaranjOS colours (cheat sheet: Super + Alt + K).
+- **Games:** `naranjos-apps juegos` (Steam, RetroArch, Lutris and Heroic). **Service web apps:** menu → Utilities (Microsoft 365, Slack, WhatsApp…; just the shortcut).
+- **Fingerprint** (if your computer has a reader): `naranjos-huella guarda` and `sudo naranjos-huella activa`.
+- **Local AI (optional):** `naranjos-ia instala` downloads Ollama into your user only; free, no accounts and nothing leaves your computer. NaranjOS doesn't ship it by default.

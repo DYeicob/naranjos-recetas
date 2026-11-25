@@ -1,0 +1,48 @@
+#!/bin/bash
+# naranjos-energia — perfil de energía de NaranjOS, distinto con cargador y con batería (se recuerda)
+#   naranjos-energia [menu]                  elegir (Super + Ctrl + E)
+#   naranjos-energia actual                  el perfil puesto y los que admite tu equipo
+#   sudo naranjos-energia cargador <perfil>  p. ej. performance · balanced · low-power / quiet
+#   sudo naranjos-energia bateria <perfil>
+#   naranjos-energia aplica                  pone el que toca (lo hace solo al enchufar y desenchufar)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+PP=/sys/firmware/acpi/platform_profile; CONF=/etc/naranjos/energia.conf
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; Z=; }
+opciones(){ cat "${PP}_choices" 2>/dev/null || echo "balanced"; }
+enchufado(){ local f; for f in /sys/class/power_supply/*/online; do [ "$(cat "$f" 2>/dev/null)" = 1 ] && return 0; done; return 1; }
+lee(){ sed -n "s/^$1=//p" "$CONF" 2>/dev/null | tail -n1; }
+epp(){ # el reparto de las CPU Intel/AMD, a juego con el perfil
+  local v=balance_performance f
+  case "$1" in performance) v=performance ;; low-power|quiet|cool) v=power ;; esac
+  for f in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do echo "$v" > "$f" 2>/dev/null; done
+}
+aplica(){
+  local p
+  if enchufado; then p=$(lee CARGADOR); p=${p:-performance}; else p=$(lee BATERIA); p=${p:-balanced}; fi
+  grep -qw "$p" <<< "$(opciones)" || p=balanced
+  [ -w "$PP" ] && echo "$p" > "$PP" 2>/dev/null
+  epp "$p"; true
+}
+pon(){ # pon <CARGADOR|BATERIA> <perfil>
+  [ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+  grep -qw "$2" <<< "$(opciones)" || { echo "$(_ 'Tu equipo admite:') $(opciones)"; exit 1; }
+  mkdir -p /etc/naranjos; touch "$CONF"; sed -i "/^$1=/d" "$CONF"; echo "$1=$2" >> "$CONF"; aplica
+  printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Guardado')"
+}
+case "${1:-menu}" in
+  actual)
+    printf '%s%s%s: %s (%s)\n' "$O" "$(_ 'Perfil')" "$Z" "$(cat "$PP" 2>/dev/null || echo ?)" "$(enchufado && _ 'con cargador' || _ 'con batería')"
+    printf '  %s %s\n  %s %s · %s %s\n' "$(_ 'Admite:')" "$(opciones)" "$(_ 'Cargador:')" "$(lee CARGADOR || true)" "$(_ 'Batería:')" "$(lee BATERIA || true)" ;;
+  cargador) pon CARGADOR "${2:?perfil}" ;;
+  bateria|batería) pon BATERIA "${2:?perfil}" ;;
+  aplica) aplica ;;
+  menu)
+    s=$(for p in $(opciones); do echo "󰚥  $(_ 'Con cargador'): $p"; done; for p in $(opciones); do echo "󰁹  $(_ 'Con batería'): $p"; done)
+    s=$(printf '%s\n' "$s" | fuzzel --dmenu -p "$(_ 'Energía') ($(cat "$PP" 2>/dev/null)) ❯ ") || exit 0
+    case "$s" in
+      *"$(_ 'Con cargador')"*) setsid -f foot --app-id=naranjos-tui -T "$(_ 'Energía')" sudo "$0" cargador "${s##*: }" ;;
+      *) setsid -f foot --app-id=naranjos-tui -T "$(_ 'Energía')" sudo "$0" bateria "${s##*: }" ;;
+    esac ;;
+  *) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

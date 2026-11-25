@@ -79,3 +79,10 @@ tooltip label { color: @texto; }
 #tray { padding: 0 8px; }
 #tray > .passive { -gtk-icon-effect: dim; }
 #tray > .needs-attention { -gtk-icon-effect: highlight; background: @mal; border-radius: 6px; }
+
+/* fase 6q: música, novedades, avisos, reloj mundial, portal cautivo, remoto */
+#mpris { padding: 0 8px; }
+#custom-actualizaciones.hay, #custom-portal.portal, #custom-remoto.activo { color: #ff8700; padding: 0 6px; }
+#custom-notificaciones.dnd { color: #ff5f5f; }
+#custom-reloj { opacity: 0.8; padding: 0 6px; }
+#wireplumber.micro.muted { color: #ff5f5f; }

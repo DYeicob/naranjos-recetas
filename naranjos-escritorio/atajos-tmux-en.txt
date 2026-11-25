@@ -1,0 +1,10 @@
+tmux  ·  prefix: Ctrl + a (press and release, then the key)
+Ctrl+a  |        split vertically (side by side)
+Ctrl+a  -        split horizontally (top and bottom)
+Ctrl+a  c        new window
+Ctrl+a  z        zoom / unzoom the pane
+Ctrl+a  d        detach, leaving everything open (tmux attach to come back)
+Ctrl+a  [        copy mode (v selects, y copies)
+Ctrl+a  r        reload the configuration
+Alt + arrows     move between panes
+Alt + Shift + ← →  previous / next window

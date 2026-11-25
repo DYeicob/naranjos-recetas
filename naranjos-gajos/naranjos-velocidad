@@ -1,0 +1,26 @@
+#!/bin/bash
+# naranjos-velocidad — test de velocidad
+#   naranjos-velocidad red     bajada, subida y latencia (servidores de Cloudflare, sin cuentas)
+#   naranjos-velocidad disco   lectura y escritura de tu disco (1 GB, en ~/.cache; se borra al acabar)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; Z=$'\e[0m'; [ -t 1 ] || { O=; Z=; }
+mbps(){ awk -v b="$1" -v t="$2" 'BEGIN { if (t > 0) printf "%.1f", b * 8 / t / 1000000; else print "?" }'; }
+case "${1:-red}" in
+  red)
+    printf '%s%s%s\n' "$O" "$(_ 'Velocidad de la red')" "$Z"
+    l=$(curl -s -o /dev/null -w '%{time_connect}' https://speed.cloudflare.com/__down?bytes=0)
+    printf '  %-10s %s ms\n' "$(_ 'Latencia')" "$(awk -v t="$l" 'BEGIN { printf "%.0f", t * 1000 }')"
+    r=$(curl -s -o /dev/null -w '%{size_download} %{time_total}' "https://speed.cloudflare.com/__down?bytes=50000000")
+    printf '  %-10s %s Mbit/s\n' "$(_ 'Bajada')" "$(mbps ${r% *} ${r#* })"
+    r=$(head -c 20000000 /dev/zero | curl -s -o /dev/null -w '%{size_upload} %{time_total}' --data-binary @- https://speed.cloudflare.com/__up)
+    printf '  %-10s %s Mbit/s\n' "$(_ 'Subida')" "$(mbps ${r% *} ${r#* })" ;;
+  disco)
+    f="${XDG_CACHE_HOME:-$HOME/.cache}/naranjos-velocidad.bin"; mkdir -p "${f%/*}"
+    printf '%s%s%s (%s)\n' "$O" "$(_ 'Velocidad del disco')" "$Z" "$(df -P "${f%/*}" | awk 'NR==2 {print $1}')"
+    printf '  %-10s ' "$(_ 'Escritura')"; dd if=/dev/zero of="$f" bs=4M count=256 oflag=direct conv=fsync 2>&1 | awk -F', ' '/copied|copiados/ {print $NF}'
+    sync; echo 3 | sudo -n tee /proc/sys/vm/drop_caches >/dev/null 2>&1
+    printf '  %-10s ' "$(_ 'Lectura')"; dd if="$f" of=/dev/null bs=4M iflag=direct 2>&1 | awk -F', ' '/copied|copiados/ {print $NF}'
+    rm -f "$f" ;;
+  *) sed -n '2,4p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

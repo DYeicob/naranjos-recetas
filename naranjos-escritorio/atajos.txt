@@ -57,3 +57,20 @@ Super + Shift + Escape    Salir de Hyprland al momento
 Super + Shift + R         Recargar el escritorio
 Fn + teclas de brillo     Subir / bajar el brillo
 Fn + teclas de volumen    Subir / bajar / silenciar el volumen
+Super + Alt + A           Apariencia (tema y fondo con vista previa, transparencia, esquinas…)
+Super + Ctrl + L          Disposición: mosaico → desplazable → flotante (Super + Alt + L: al revés)
+Super + M                 Minimizar la ventana · Super + Mayús + M: traer una minimizada
+Super + Alt + D           Dock: mostrar / ocultar
+Super + Ctrl + 1…5        Paneles: red · Bluetooth · sonido · energía · avisos
+Super + ,                 Último aviso · Ctrl: acciones · Alt: quitarlo · Ctrl + Alt: no molestar
+Super + Mayús + Alt + ,   Ver los últimos diez avisos
+Super + Ctrl + E          Energía (cargador / batería)
+Super + Ctrl + Alt + E    Reloj mundial
+Super + Ctrl + Q          Leer un QR de la pantalla
+Super + Ctrl + M          Grabar la cámara · Ctrl + Alt + M: la cámara encima de todo
+Super + Alt + Inicio      Guardar el tamaño de las ventanas · Super + Inicio: recuperarlo
+Super + Mayús + Ctrl + ←→ Llevar la ventana a otra pantalla
+Super + Alt + K           Atajos de tmux
+Las dos Mayús a la vez    Bloq Mayús
+Ctrl + teclas de brillo   Luz del teclado
+Terminal: naranjos        La orden única de NaranjOS (naranjos ayuda)

@@ -1,0 +1,8 @@
+/* NaranjOS · el dock (nwg-dock-hyprland): oscuro con acento naranja */
+window { background: rgba(18, 18, 18, 0.88); border: 2px solid #ff8700; border-radius: 16px; }
+#box { padding: 4px 8px; }
+button, image { background: none; border: none; box-shadow: none; }
+button { padding: 4px; margin: 2px; border-radius: 10px; }
+button:hover { background-color: rgba(255, 135, 0, 0.22); }
+button:focus { box-shadow: none; }
+#active { border-bottom: 3px solid #ff8700; }

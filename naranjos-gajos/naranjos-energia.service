@@ -1,0 +1,10 @@
+[Unit]
+Description=NaranjOS · perfil de energía según cargador o batería
+After=sysinit.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/naranjos-energia aplica
+
+[Install]
+WantedBy=multi-user.target

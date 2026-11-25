@@ -1,0 +1,27 @@
+#!/bin/bash
+# naranjos-recorta — recortar un vídeo sin complicaciones (con ffmpeg)
+#   naranjos-recorta video.mp4 [inicio] [fin]   p. ej.: naranjos-recorta clase.mp4 1:20 3:05
+#   Sin tiempos, los pregunta. Sin vídeo, deja elegir uno de tus grabaciones.
+#   Guarda «video-recorte.mp4» al lado; el original no se toca.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+pide(){ fuzzel --dmenu --lines 0 -p "$1 ❯ " < /dev/null; }
+f=${1:-}
+if [ -z "$f" ]; then
+  v=$(naranjos_carpeta VIDEOS 2>/dev/null || echo "$HOME/Vídeos")
+  f=$(find "$v" "$HOME" -maxdepth 3 -type f \( -iname '*.mp4' -o -iname '*.mkv' -o -iname '*.webm' -o -iname '*.mov' \) -printf '%T@\t%p\n' 2>/dev/null \
+      | sort -rn | cut -f2 | head -50 | fuzzel --dmenu -p "$(_ 'Vídeo') ❯ ") || exit 0
+fi
+[ -r "$f" ] || { echo "$(_ 'No encuentro el vídeo:') $f"; exit 1; }
+dur=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$f" 2>/dev/null | cut -d. -f1)
+ini=${2:-$(pide "$(_ 'Desde (0:00)')")}; ini=${ini:-0}
+fin=${3:-$(pide "$(_ 'Hasta (vacío = el final;') ${dur:-?}s)")}
+out="${f%.*}-$(_ 'recorte').${f##*.}"
+args=(-loglevel error -y -ss "$ini"); [ -n "$fin" ] && args+=(-to "$fin")
+# primero, sin recodificar (al instante); si falla, recodificando
+if ffmpeg "${args[@]}" -i "$f" -c copy -avoid_negative_ts make_zero "$out" </dev/null \
+   || ffmpeg "${args[@]}" -i "$f" -c:v libx264 -preset veryfast -crf 20 -c:a aac "$out" </dev/null; then
+  naranjos-notifica "$(_ 'Vídeo recortado')" "${out/#$HOME/\~}"; echo "✔ $out"
+else
+  naranjos-notifica --urgente "$(_ 'No pude recortar el vídeo')" "$f"; exit 1
+fi

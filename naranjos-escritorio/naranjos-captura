@@ -20,7 +20,9 @@ imagen(){
     pantalla) grim "$f" ;;
   esac
   wl-copy --type image/png < "$f"
-  naranjos-notifica "$(_ 'Captura guardada')" "${f/#$HOME/\~} · $(_ 'también está en el portapapeles')"
+  ( a=$(notify-send -a naranjos -A abre="$(_ 'Abrir')" -A edita="$(_ 'Editar')" "$(_ 'Captura guardada')" \
+        "${f/#$HOME/\~} · $(_ 'también está en el portapapeles')" --wait 2>/dev/null)
+    case "$a" in abre) xdg-open "$f" ;; edita) swappy -f "$f" -o "$f" ;; esac ) >/dev/null 2>&1 &
 }
 
 video(){

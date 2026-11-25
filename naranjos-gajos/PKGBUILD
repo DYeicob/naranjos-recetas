@@ -1,0 +1,24 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=naranjos-gajos
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Gajos de NaranjOS: zram, energía por cargador/batería, oomd, SSH, test de velocidad y huella'
+install=naranjos-gajos.install
+optdepends=('fprintd: entrar con la huella dactilar')
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('util-linux' 'systemd' 'openssh' 'curl' 'python')
+makedepends=()
+source=('naranjos-zram' 'naranjos-zram.service' 'naranjos-energia' 'naranjos-energia.service' '99-naranjos-energia.rules' 'naranjos-oomd.conf' 'ssh-agent.service' 'naranjos-ssh-agent.conf' 'naranjos-lanza' 'naranjos-ssh' 'naranjos-velocidad' 'naranjos-huella' )
+sha256sums=('1a174e7f8f9142b775216fd1c0d68fc79b7dbd18b4839c3694615e96b3b03f8f' 'd5469cf2fee1d59943b44c99a4f4090f3387ec2af5166b0e39db1b7520240a11' '8978a8231f2aa9d3451ee9cf21699c0ea489d02df8825013968b3c7df647a88a' 'c4d364ae322a7f6e8e7b5bfe35b05dfe8ebea0cf72651e7b6d35ac161d179726' '8aaaabb79d00ab15b137913e7341e061ac1cc0c73a15b6a7489be5a941005f5b' 'a4f1024af7a7f985a69427bb57cfa20da9cf4c25e1bf13f0cee589ce0dd07ac6' '92a8fefcda2bf2e7b76bf90712e589316c20a39f7752fc3c4caab24178a7f9ac' '3f982fef9db9cc99bc91998fa47a1a7a01d163111c119f43df2fc1e04e8dfd5f' 'b9a939821b40e7d6cdefef9ecda943e25b19b22d71f772a961f6493b54584279' 'f3cf0e4ed192c9853c6f35ca72905cdf0393f715452fc40071e92f1ba73bdde5' '41c2c2f33abd096c52a7437f884c8116a9dba34f869173217afc57485246f7ea' 'fc6c14160f415d79c7a206e53634cb652ec08a54ac6eae98a48ed0acda853fc3')
+package() {
+  local s
+  for s in naranjos-zram naranjos-energia naranjos-lanza naranjos-ssh naranjos-velocidad naranjos-huella; do install -Dm755 "$s" "$pkgdir/usr/bin/$s"; done
+  install -Dm644 naranjos-zram.service     "$pkgdir/usr/lib/systemd/system/naranjos-zram.service"
+  install -Dm644 naranjos-energia.service  "$pkgdir/usr/lib/systemd/system/naranjos-energia.service"
+  install -Dm644 99-naranjos-energia.rules "$pkgdir/usr/lib/udev/rules.d/99-naranjos-energia.rules"
+  install -Dm644 naranjos-oomd.conf        "$pkgdir/usr/lib/systemd/system/user@.service.d/naranjos-oomd.conf"
+  install -Dm644 ssh-agent.service         "$pkgdir/usr/lib/systemd/user/ssh-agent.service"
+  install -Dm644 naranjos-ssh-agent.conf   "$pkgdir/usr/lib/environment.d/60-naranjos-ssh-agent.conf"
+}

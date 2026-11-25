@@ -1,0 +1,55 @@
+#!/bin/bash
+# naranjos-ssh — SSH en NaranjOS
+#   naranjos-ssh                         cómo está
+#   sudo naranjos-ssh servidor activa     dejar entrar a este equipo por SSH (SOLO con clave, nunca con contraseña)
+#   sudo naranjos-ssh servidor apaga
+#   naranjos-ssh agente activa|apaga      el agente de claves (escribes la frase de la clave una vez por sesión)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; Z=; }
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+ok(){ printf '%s✔%s %s\n' "$G" "$Z" "$1"; }
+DROP=/etc/systemd/system/sshd.service.d/naranjos.conf
+
+estado(){
+  printf '%sSSH%s\n' "$O" "$Z"
+  printf '  %-12s %s\n' "$(_ 'Servidor')" "$(systemctl is-active sshd 2>/dev/null)"
+  printf '  %-12s %s\n' "$(_ 'Agente')" "$(systemctl --user is-active ssh-agent 2>/dev/null)"
+  ls "$HOME"/.ssh/id_*.pub >/dev/null 2>&1 && printf '  %-12s %s\n' "$(_ 'Tus claves')" "$(ls "$HOME"/.ssh/id_*.pub | xargs -n1 basename | tr '\n' ' ')" \
+    || printf '  %s %sssh-keygen -t ed25519%s\n' "$(_ 'No tienes clave. Crea una con:')" "$O" "$Z"
+}
+
+servidor(){
+  [ "$(id -u)" = 0 ] || die "$(_ 'Hace falta sudo:') sudo naranjos-ssh servidor ${1:-}"
+  case "${1:-}" in
+    activa)
+      u=${SUDO_USER:-}; [ -n "$u" ] || die "$(_ 'Lánzalo con sudo desde tu usuario')"
+      [ -s "$(getent passwd "$u" | cut -d: -f6)/.ssh/authorized_keys" ] \
+        || die "$(_ 'Primero añade la clave pública del otro equipo a ~/.ssh/authorized_keys (ssh-copy-id desde allí no funciona sin contraseña: cópiala a mano o con un USB).')"
+      mkdir -p "${DROP%/*}"
+      printf '[Service]\nExecStart=\nExecStart=/usr/sbin/sshd -D -o PasswordAuthentication=no -o KbdInteractiveAuthentication=no -o PermitRootLogin=no -o AllowUsers=%s\n' "$u" > "$DROP"
+      systemctl daemon-reload; systemctl enable --now sshd
+      command -v naranjos-peel >/dev/null && naranjos-peel cortafuegos abre 22 >/dev/null 2>&1
+      ok "$(_ 'Servidor SSH activo: solo con clave, solo para') $u" ;;
+    apaga)
+      systemctl disable --now sshd; rm -f "$DROP"; systemctl daemon-reload
+      command -v naranjos-peel >/dev/null && naranjos-peel cortafuegos cierra 22 >/dev/null 2>&1
+      ok "$(_ 'Servidor SSH apagado')" ;;
+    *) die "activa|apaga" ;;
+  esac
+}
+
+agente(){
+  case "${1:-}" in
+    activa) systemctl --user enable --now ssh-agent.service && ok "$(_ 'Agente SSH activo (desde la próxima sesión, en todas las terminales)')" ;;
+    apaga)  systemctl --user disable --now ssh-agent.service && ok "$(_ 'Agente SSH apagado')" ;;
+    *) die "activa|apaga" ;;
+  esac
+}
+
+case "${1:-}" in
+  "") estado ;;
+  servidor) servidor "${2:-}" ;;
+  agente) agente "${2:-}" ;;
+  *) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

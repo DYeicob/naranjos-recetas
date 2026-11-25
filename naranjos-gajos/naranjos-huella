@@ -1,0 +1,33 @@
+#!/bin/bash
+# naranjos-huella — entrar con la huella dactilar (en equipos con lector)
+#   naranjos-huella                   ¿hay lector? ¿huellas guardadas?
+#   naranjos-huella guarda            registrar un dedo
+#   sudo naranjos-huella activa       usar la huella para desbloquear, sudo y permisos (la contraseña sigue valiendo)
+#   sudo naranjos-huella apaga        dejar de usarla (y borra tus huellas guardadas)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { G=; R=; Z=; }
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+PAMS=(/etc/pam.d/sudo /etc/pam.d/hyprlock /etc/pam.d/polkit-1)
+LINEA="auth      sufficient  pam_fprintd.so   # naranjos-huella"
+lector(){ fprintd-list "${SUDO_USER:-$USER}" 2>&1 | grep -qv "No devices available"; }
+case "${1:-}" in
+  "")
+    command -v fprintd-list >/dev/null || die "$(_ 'Falta fprintd')"
+    if lector; then fprintd-list "$USER"; else echo "$(_ 'Este equipo no tiene lector de huellas.')"; fi ;;
+  guarda) lector || die "$(_ 'Este equipo no tiene lector de huellas.')"; fprintd-enroll ;;
+  activa)
+    [ "$(id -u)" = 0 ] || die "$(_ 'Hace falta sudo:') sudo naranjos-huella activa"
+    lector || die "$(_ 'Este equipo no tiene lector de huellas.')"
+    for f in "${PAMS[@]}"; do
+      [ -f "$f" ] || continue; grep -q "naranjos-huella" "$f" && continue
+      cp -a "$f" "$f.antes-huella"; sed -i "0,/^auth/s//$LINEA\nauth/" "$f"
+    done
+    printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Huella activa (desbloqueo, sudo y permisos). La contraseña sigue funcionando.')" ;;
+  apaga)
+    [ "$(id -u)" = 0 ] || die "$(_ 'Hace falta sudo:') sudo naranjos-huella apaga"
+    for f in "${PAMS[@]}"; do [ -f "$f" ] && sed -i '/naranjos-huella/d' "$f"; done
+    fprintd-delete "${SUDO_USER:-root}" >/dev/null 2>&1
+    printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Huella desactivada y huellas borradas')" ;;
+  *) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

@@ -104,6 +104,7 @@ hl.config({
 
     input = {
         kb_layout  = "es",
+        kb_options = "shift:both_capslock",   -- las dos Mayús a la vez: Bloq Mayús
         follow_mouse = 1,
         numlock_by_default = true,
         sensitivity = 0,
@@ -194,7 +195,7 @@ hl.bind(mainMod .. " + mouse:273",     hl.dsp.window.resize(), { mouse = true })
 -- Escritorios 1-10 (la tecla 0 es el 10)
 for i = 1, 10 do
     local key = i % 10
-    hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
+    hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i, on_current_monitor = true }))
     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 hl.bind(mainMod .. " + mouse_down",    hl.dsp.focus({ workspace = "e+1" }))
@@ -241,6 +242,116 @@ hl.window_rule({
     match = { class = "^$", title = "^$", xwayland = true, float = true, fullscreen = false, pin = false },
     no_focus = true,
 })
+
+
+---- Fase 6q: lo que trae Omarchy 4.5, a la manera de NaranjOS ----------
+-- Disposición de cada escritorio: mosaico → desplazable → flotante (Super + Ctrl + L; Super + Alt + L al revés)
+local disposiciones = { "dwindle", "scrolling", "flotante" }
+local disp_de, flotantes = {}, {}
+local escritorio = false
+do
+    local f = (os and os.getenv and os.getenv("HOME") or "") .. "/.config/naranjos/disposicion.lua"
+    local ok, t = pcall(dofile, f)
+    if ok and type(t) == "table" and t.escritorio then escritorio = true end
+end
+local function flota(w, si)
+    if w and w.address then
+        pcall(hl.dispatch, hl.dsp.window.float({ action = si and "enable" or "disable", window = "address:" .. w.address }))
+    end
+end
+local function pon_disposicion(ws, i)
+    local n = disposiciones[i]
+    disp_de[ws.name] = i
+    if n == "flotante" then
+        flotantes[ws.name] = true
+        for _, w in ipairs(hl.get_workspace_windows(ws) or {}) do flota(w, true) end
+    else
+        if flotantes[ws.name] then
+            flotantes[ws.name] = nil
+            for _, w in ipairs(hl.get_workspace_windows(ws) or {}) do flota(w, false) end
+        end
+        hl.workspace_rule({ workspace = tostring(ws.name), layout = n })
+    end
+    hl.exec_cmd("naranjos-disposicion avisa " .. n)
+end
+local function cambia(paso)
+    return function()
+        local ok, ws = pcall(hl.get_active_workspace)
+        if not ok or not ws then return end
+        local i = ((disp_de[ws.name] or 1) - 1 + paso) % #disposiciones + 1
+        pcall(pon_disposicion, ws, i)
+    end
+end
+hl.bind(mainMod .. " + CTRL + L", cambia(1))
+hl.bind(mainMod .. " + ALT + L",  cambia(-1))
+hl.on("window.open", function(w)
+    local ok, ws = pcall(hl.get_active_workspace)
+    if escritorio or (ok and ws and flotantes[ws.name]) then flota(w, true) end
+end)
+
+-- Minimizar al dock (Super + M) y traer de vuelta (Super + Shift + M)
+hl.bind(mainMod .. " + M", function()
+    local w = hl.get_active_window()
+    if w and w.address then
+        hl.dispatch(hl.dsp.window.move({ workspace = "special:minimizadas", window = "address:" .. w.address, follow = false }))
+    end
+end)
+hl.bind(mainMod .. " + SHIFT + M",  hl.dsp.exec_cmd("naranjos-dock minimizadas"))
+hl.bind(mainMod .. " + ALT + D",    hl.dsp.exec_cmd("naranjos-dock alterna"))
+hl.bind(mainMod .. " + ALT + A",    hl.dsp.exec_cmd("naranjos-apariencia menu"))
+
+-- Mover la ventana a otra pantalla
+hl.bind(mainMod .. " + SHIFT + CTRL + left",  hl.dsp.window.move({ monitor = "l" }))
+hl.bind(mainMod .. " + SHIFT + CTRL + right", hl.dsp.window.move({ monitor = "r" }))
+hl.bind(mainMod .. " + SHIFT + CTRL + up",    hl.dsp.window.move({ monitor = "u" }))
+hl.bind(mainMod .. " + SHIFT + CTRL + down",  hl.dsp.window.move({ monitor = "d" }))
+
+-- Notificaciones
+hl.bind(mainMod .. " + comma",                 hl.dsp.exec_cmd("naranjos-notificaciones ultima"))
+hl.bind(mainMod .. " + CTRL + comma",          hl.dsp.exec_cmd("naranjos-notificaciones menu"))
+hl.bind(mainMod .. " + ALT + comma",           hl.dsp.exec_cmd("naranjos-notificaciones descarta"))
+hl.bind(mainMod .. " + CTRL + ALT + comma",    hl.dsp.exec_cmd("naranjos-notificaciones nomolestar"))
+hl.bind(mainMod .. " + SHIFT + ALT + comma",   hl.dsp.exec_cmd("naranjos-notificaciones historial"))
+
+-- Paneles rápidos (Super + Ctrl + 1…5) y más
+hl.bind(mainMod .. " + CTRL + 1", hl.dsp.exec_cmd("naranjos-red-panel"))
+hl.bind(mainMod .. " + CTRL + 2", hl.dsp.exec_cmd("naranjos-tui bluetooth"))
+hl.bind(mainMod .. " + CTRL + 3", hl.dsp.exec_cmd("naranjos-tui sonido"))
+hl.bind(mainMod .. " + CTRL + 4", hl.dsp.exec_cmd("naranjos-energia menu"))
+hl.bind(mainMod .. " + CTRL + 5", hl.dsp.exec_cmd("naranjos-notificaciones menu"))
+hl.bind(mainMod .. " + CTRL + E", hl.dsp.exec_cmd("naranjos-energia menu"))
+hl.bind(mainMod .. " + CTRL + ALT + E", hl.dsp.exec_cmd("naranjos-reloj ver"))
+hl.bind(mainMod .. " + CTRL + Q", hl.dsp.exec_cmd("naranjos-qr lee"))
+hl.bind(mainMod .. " + CTRL + M", hl.dsp.exec_cmd("naranjos-camara graba"))
+hl.bind(mainMod .. " + CTRL + ALT + M", hl.dsp.exec_cmd("naranjos-camara encima"))
+hl.bind(mainMod .. " + ALT + K", hl.dsp.exec_cmd("naranjos-atajos tmux"))
+hl.bind(mainMod .. " + ALT + Home", hl.dsp.exec_cmd("naranjos-anchos guarda"))
+hl.bind(mainMod .. " + Home",       hl.dsp.exec_cmd("naranjos-anchos restaura"))
+
+-- Música (MPRIS) — también para teclados que solo tienen «play»
+hl.bind("XF86AudioPlay",          hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+hl.bind("XF86AudioPause",         hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+hl.bind("XF86AudioNext",          hl.dsp.exec_cmd("playerctl next"),       { locked = true })
+hl.bind("XF86AudioPrev",          hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
+hl.bind("SHIFT + XF86AudioPlay",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
+hl.bind("CTRL + XF86AudioPlay",   hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
+-- Luz del teclado: Ctrl + teclas de brillo
+hl.bind("CTRL + XF86MonBrightnessUp",   hl.dsp.exec_cmd("naranjos-osd teclado +"), { locked = true })
+hl.bind("CTRL + XF86MonBrightnessDown", hl.dsp.exec_cmd("naranjos-osd teclado -"), { locked = true })
+
+-- Al entrar: el dock (si lo activaste), los avisos de programas colgados y el aviso de atajos la primera vez
+hl.on("hyprland.start", function()
+    hl.exec_cmd("naranjos-dock arranca")
+    hl.exec_cmd("naranjos-cuelgues vigila")
+    hl.exec_cmd("naranjos-notificaciones bienvenida")
+end)
+naranjos_carga("apariencia")     -- naranjos-apariencia (transparencia, esquinas, animaciones)
+hl.window_rule({
+    name  = "camara-encima",
+    match = { class = "^org.gnome.Snapshot$" },
+    float = true, pin = true, size = "360 270", move = "100%-380 100%-300", no_initial_focus = true,
+})
+naranjos_carga("espejo")         -- naranjos-pantalla espejo
 
 ---- Lo tuyo hecho con las órdenes de NaranjOS -------------------------
 naranjos_carga("ventanas")       -- naranjos-ventanas

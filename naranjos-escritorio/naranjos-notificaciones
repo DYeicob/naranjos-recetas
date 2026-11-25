@@ -1,0 +1,32 @@
+#!/bin/bash
+# naranjos-notificaciones — los avisos de NaranjOS (mako)
+#   ultima        abrir / usar el último aviso (Super + ,)
+#   menu          elegir la acción de un aviso con el teclado (Super + Ctrl + ,)
+#   descarta      quitar el último (Super + Alt + ,)
+#   nomolestar    no molestar: sí / no (Super + Ctrl + Alt + ,) · también con la campana de la barra
+#   historial     volver a ver los últimos diez, también los silenciados (Super + Mayús + Alt + ,)
+#   barra         estado para la barra (campana)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+senal(){ pkill -RTMIN+16 -x waybar 2>/dev/null; true; }
+dnd(){ makoctl mode 2>/dev/null | grep -qx no-molestar; }
+case "${1:-menu}" in
+  ultima)     makoctl invoke 2>/dev/null || makoctl restore ;;
+  menu)       makoctl menu fuzzel --dmenu -p "$(_ 'Acción') ❯ " 2>/dev/null || naranjos-notifica "$(_ 'Avisos')" "$(_ 'Ningún aviso tiene acciones ahora')" ;;
+  descarta)   makoctl dismiss ;;
+  nomolestar)
+    makoctl mode -t no-molestar >/dev/null
+    if dnd; then notify-send -a naranjos-osd "󰂛  $(_ 'No molestar')"; else notify-send -a naranjos-osd "󰂚  $(_ 'Avisos activados')"; fi
+    senal ;;
+  historial)  for _ in 1 2 3 4 5 6 7 8 9 10; do makoctl restore 2>/dev/null || break; done ;;
+  barra)
+    if dnd; then printf '{"text":"󰂛","tooltip":"%s","class":"dnd"}\n' "$(_ 'No molestar (clic para quitarlo)')"
+    else printf '{"text":"󰂚","tooltip":"%s"}\n' "$(_ 'Avisos (clic: no molestar · clic derecho: historial)')"; fi ;;
+  bienvenida)
+    M="${XDG_STATE_HOME:-$HOME/.local/state}/naranjos/bienvenida-6q"
+    [ -e "$M" ] && exit 0; mkdir -p "${M%/*}"; touch "$M"
+    sleep 3
+    a=$(notify-send -A abre="$(_ 'Ver atajos')" "NaranjOS" "$(_ 'Novedades: dock, modo escritorio, paneles rápidos y la orden «naranjos». Pulsa para ver los atajos (Super + K).')" --wait 2>/dev/null)
+    [ "$a" = abre ] && naranjos-atajos ;;
+  *) sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

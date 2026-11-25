@@ -1,0 +1,25 @@
+#compdef naranjos
+# NaranjOS · autocompletado de «naranjos» para zsh
+local -a ordenes
+ordenes=(${(f)"$(naranjos --lista 2>/dev/null)"})
+if (( CURRENT == 2 )); then
+  _describe 'orden' ordenes
+  return
+fi
+case ${words[2]} in
+  tema)        _values 'opción' pon modo crea borra menu actual lista vscode ;;
+  apariencia)  _values 'opción' menu tema fondo transparencia esquinas animaciones ;;
+  disposicion) _values 'opción' siguiente mosaico desplazable flotante ;;
+  dock)        _values 'opción' activa apaga alterna minimizadas ;;
+  energia)     _values 'opción' menu actual cargador bateria aplica ;;
+  notificaciones) _values 'opción' menu ultima descarta historial nomolestar ;;
+  reloj)       _values 'opción' ver añade quita ;;
+  qr)          _values 'opción' lee wifi ;;
+  camara)      _values 'opción' graba encima ;;
+  velocidad)   _values 'opción' red disco ;;
+  ssh)         _values 'opción' estado servidor agente ;;
+  ia)          _values 'opción' instala modelo chat quita estado ;;
+  plugin)      _values 'opción' instala quita actualiza ;;
+  remoto|recorta|diapos) _files ;;
+  *) _files ;;
+esac

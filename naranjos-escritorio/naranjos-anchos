@@ -1,0 +1,32 @@
+#!/bin/bash
+# naranjos-anchos — recordar el tamaño de las ventanas flotantes de cada programa y escritorio
+#   naranjos-anchos guarda     guarda los tamaños de ahora (Super + Alt + Inicio)
+#   naranjos-anchos restaura   los vuelve a poner (Super + Inicio)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+F="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos/anchos.json"; mkdir -p "${F%/*}"
+case "${1:-}" in
+  guarda)
+    hyprctl clients -j | python3 -c '
+import json, sys, os
+f = sys.argv[1]
+try: d = json.load(open(f))
+except Exception: d = {}
+n = 0
+for c in json.load(sys.stdin):
+    if c.get("floating") and c.get("class"):
+        d["%s@%s" % (c["class"], c["workspace"]["id"])] = c["size"]; n += 1
+json.dump(d, open(f, "w")); print(n)' "$F" | { read -r n; naranjos-notifica "$(_ 'Tamaños guardados')" "$n $(_ 'ventanas flotantes')"; } ;;
+  restaura)
+    hyprctl clients -j | python3 -c '
+import json, sys
+try: d = json.load(open(sys.argv[1]))
+except Exception: d = {}
+for c in json.load(sys.stdin):
+    k = "%s@%s" % (c.get("class"), c["workspace"]["id"])
+    if c.get("floating") and k in d:
+        w, h = d[k]
+        print("hl.dsp.window.resize({ x = %d, y = %d, window = \"address:%s\" })" % (w, h, c["address"]))' "$F" \
+    | while read -r o; do hyprctl dispatch "$o" >/dev/null 2>&1; done ;;
+  *) sed -n '2,4p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

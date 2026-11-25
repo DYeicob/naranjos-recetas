@@ -1,0 +1,21 @@
+#!/bin/bash
+# naranjos-qr — códigos QR
+#   naranjos-qr lee     elige una zona de la pantalla con un QR: su contenido va al portapapeles (Super + Ctrl + Q)
+#                       (no se guarda en el disco ni en el historial del portapapeles)
+#   naranjos-qr wifi    enseña un QR para conectarse a tu WiFi desde el móvil
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+case "${1:-lee}" in
+  lee)
+    g=$(slurp -b 12121288 -c ff8700ff -w 2) || exit 0
+    img="${XDG_RUNTIME_DIR:-/tmp}/naranjos-qr.png"; grim -g "$g" "$img" || exit 1
+    t=$(ZXingReader "$img" 2>/dev/null | sed -n 's/^Text: *//p' | head -n1); rm -f "$img"
+    t=${t#\"}; t=${t%\"}
+    if [ -z "$t" ]; then naranjos-notifica "QR" "$(_ 'No encuentro ningún QR en esa zona')"; exit 1; fi
+    printf '%s' "$t" | wl-copy --sensitive 2>/dev/null || printf '%s' "$t" | wl-copy
+    naranjos-notifica "QR" "$(_ 'Copiado al portapapeles:') ${t:0:80}" ;;
+  wifi)
+    exec foot --app-id=naranjos-tui -T "$(_ 'WiFi por QR')" bash -c 'nmcli device wifi show-password 2>/dev/null || echo "$1"; echo; read -rsn1 -p "$2"' _ \
+      "$(_ 'Hace falta NetworkManager (sudo naranjos-red usa networkmanager)')" "$(_ 'Pulsa una tecla para cerrar…')" ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

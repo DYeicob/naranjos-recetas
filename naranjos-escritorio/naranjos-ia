@@ -1,0 +1,54 @@
+#!/bin/bash
+# naranjos-ia — asistente de IA LOCAL y opcional (Ollama): gratis, sin cuentas, nada sale de tu equipo
+#   naranjos-ia instala          descargarlo (solo en tu usuario; NaranjOS no lo trae de serie)
+#   naranjos-ia modelo [nombre]  bajar un modelo (p. ej. qwen3:8b, llama3.2:3b, gemma3:4b)
+#   naranjos-ia chat [modelo]    hablar con él en la terminal
+#   naranjos-ia estado | quita
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; Z=; }
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+D="${XDG_DATA_HOME:-$HOME/.local/share}/naranjos/ia"; BIN="$D/bin/ollama"
+U="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/naranjos-ia.service"
+URL=https://github.com/ollama/ollama/releases/latest/download
+
+instala(){
+  [ -x "$BIN" ] && { printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Ya está instalado')"; return; }
+  printf '%s\n' "$(_ 'Se descargará Ollama (unos 1-2 GB, con soporte para tu gráfica NVIDIA) en:') $D"
+  read -rp "$(_ 'Escribe SI para seguir:') " r; [ "$r" = SI ] || exit 0
+  mkdir -p "$D"; local t=$D/descarga f
+  for f in ollama-linux-amd64.tar.zst ollama-linux-amd64.tgz; do
+    if curl -fL --progress-bar -o "$t" "$URL/$f"; then
+      curl -fsL "$URL/sha256sum.txt" | awk -v f="$f" '$2 ~ f"$" {print $1"  '"$t"'"}' | sha256sum -c --quiet - || die "$(_ 'La descarga no coincide con su suma: no se instala')"
+      case "$f" in *.zst) tar --zstd -xf "$t" -C "$D" ;; *) tar -xzf "$t" -C "$D" ;; esac
+      rm -f "$t"; break
+    fi
+  done
+  [ -x "$BIN" ] || die "$(_ 'No pude descargarlo')"
+  mkdir -p "${U%/*}"
+  printf '[Unit]\nDescription=NaranjOS · IA local (Ollama)\n\n[Service]\nExecStart=%s serve\nEnvironment=OLLAMA_HOST=127.0.0.1:11434\nRestart=on-failure\n\n[Install]\nWantedBy=default.target\n' "$BIN" > "$U"
+  systemctl --user daemon-reload; systemctl --user enable --now naranjos-ia.service
+  printf '%s✔%s %s %snaranjos-ia modelo%s\n' "$G" "$Z" "$(_ 'Instalado. Ahora baja un modelo:')" "$O" "$Z"
+}
+modelo(){
+  [ -x "$BIN" ] || die "$(_ 'Primero: naranjos-ia instala')"
+  local m=${1:-}
+  [ -n "$m" ] || m=$(printf '%s\n' "qwen3:8b  · $(_ 'equilibrado (8 GB de gráfica)')" "llama3.2:3b  · $(_ 'rápido y ligero')" "gemma3:4b  · $(_ 'bueno con imágenes')" "qwen2.5-coder:7b  · $(_ 'programar')" | fuzzel --dmenu -p "$(_ 'Modelo') ❯ " | cut -d' ' -f1)
+  [ -n "$m" ] && "$BIN" pull "$m"
+}
+case "${1:-estado}" in
+  instala) instala ;;
+  modelo) modelo "${2:-}" ;;
+  chat)
+    [ -x "$BIN" ] || die "$(_ 'Primero: naranjos-ia instala')"
+    m=${2:-$("$BIN" list 2>/dev/null | awk 'NR==2 {print $1}')}; [ -n "$m" ] || die "$(_ 'Baja antes un modelo: naranjos-ia modelo')"
+    exec "$BIN" run "$m" ;;
+  estado)
+    if [ -x "$BIN" ]; then printf '%s✔%s %s · %s\n' "$G" "$Z" "$(_ 'IA local instalada')" "$(systemctl --user is-active naranjos-ia.service)"; "$BIN" list 2>/dev/null
+    else echo "$(_ 'No está instalada (es opcional): naranjos-ia instala')"; fi ;;
+  quita)
+    read -rp "$(_ 'Se borrarán Ollama y tus modelos. Escribe SI:') " r; [ "$r" = SI ] || exit 0
+    systemctl --user disable --now naranjos-ia.service 2>/dev/null; rm -f "$U"; rm -rf "$D" "$HOME/.ollama"
+    printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'IA local quitada')" ;;
+  *) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

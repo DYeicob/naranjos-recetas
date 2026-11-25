@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=jansson
+pkgver=2.15.1
+pkgrel=1
+pkgdesc='Biblioteca de JSON en C (la usa ddcutil)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=()
+makedepends=()
+source=('https://github.com/akheron/jansson/releases/download/v2.15.1/jansson-2.15.1.tar.gz')
+sha256sums=('0c7114dc0b2d22a670724a1f95922029d7077c19dbf79a584cb8084d2f267f2f')
+build() { cd jansson-$pkgver; ./configure --prefix=/usr --disable-static; make; }
+package() { cd jansson-$pkgver; make DESTDIR="$pkgdir" install; install -Dm644 LICENSE "$pkgdir/usr/share/licenses/jansson/LICENSE"; }

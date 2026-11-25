@@ -1,0 +1,24 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=nwg-dock-hyprland
+pkgver=0.4.11
+pkgrel=1
+pkgdesc='Dock para Hyprland (apps fijadas, abiertas y todas)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=('gtk3' 'gtk-layer-shell')
+makedepends=('go')
+source=('https://github.com/nwg-piotr/nwg-dock-hyprland/archive/v0.4.11/nwg-dock-hyprland-0.4.11.tar.gz')
+sha256sums=('ee88452f1afb612fdb43c66eb62752f255d23c51eb35ce9657b35cff79eede8e')
+build() {
+  cd nwg-dock-hyprland-$pkgver
+  export GOTOOLCHAIN=local GOFLAGS="-trimpath -mod=mod" GOPATH="$srcdir/gopath" GOCACHE="$srcdir/gocache"
+  go build -ldflags "-s -w" -o bin/nwg-dock-hyprland .
+}
+package() {
+  cd nwg-dock-hyprland-$pkgver
+  install -Dm755 bin/nwg-dock-hyprland "$pkgdir/usr/bin/nwg-dock-hyprland"
+  install -d "$pkgdir/usr/share/nwg-dock-hyprland"; cp -r images "$pkgdir/usr/share/nwg-dock-hyprland/"
+  cp config/* "$pkgdir/usr/share/nwg-dock-hyprland/"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/nwg-dock-hyprland/LICENSE"
+}

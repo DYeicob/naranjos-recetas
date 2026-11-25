@@ -55,7 +55,16 @@ menu(){
   [[ "$u" =~ ^https?:// ]] || u="https://$u"
   setsid -f foot --app-id=naranjos-tui -T "$(_ 'Web apps')" bash -c 'naranjos-webapp crea "$1" "$2"; sleep 3' _ "$n" "$u"
 }
+servicios(){
+  local s n u
+  s=$(printf '%s\n' "Outlook|https://outlook.office.com/mail/" "Word|https://www.office.com/launch/word" "Excel|https://www.office.com/launch/excel" \
+      "PowerPoint|https://www.office.com/launch/powerpoint" "Teams|https://teams.microsoft.com" "OneDrive|https://onedrive.live.com" \
+      "Slack|https://app.slack.com/client" "WhatsApp|https://web.whatsapp.com" "Gmail|https://mail.google.com" "Google Calendar|https://calendar.google.com" \
+      | fuzzel --dmenu --with-nth=1 -p "$(_ 'Servicio') ❯ ") || exit 0
+  n=${s%%|*}; u=${s#*|}; crea "$n" "$u"
+}
+
 case "${1:-lista}" in
-  crea|new) shift; crea "$@" ;; lista|list) lista ;; quita|remove) shift; quita "$@" ;; menu) menu ;;
+  crea|new) shift; crea "$@" ;; servicios|services) servicios ;; lista|list) lista ;; quita|remove) shift; quita "$@" ;; menu) menu ;;
   *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac

@@ -1,0 +1,2 @@
+# NaranjOS · al enchufar o desenchufar, el perfil de energía que elegiste para cada caso
+SUBSYSTEM=="power_supply", ACTION=="change", RUN+="/usr/bin/naranjos-energia aplica"

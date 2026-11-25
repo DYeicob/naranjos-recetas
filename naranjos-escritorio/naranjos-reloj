@@ -1,0 +1,45 @@
+#!/bin/bash
+# naranjos-reloj — reloj mundial de NaranjOS (junto al reloj de la barra)
+#   naranjos-reloj ver             todas tus ciudades (Super + Ctrl + Alt + E)
+#   naranjos-reloj añade [zona]    añadir una ciudad (p. ej. America/New_York), con nombre y contactos
+#   naranjos-reloj quita           quitar una
+#   naranjos-reloj barra           para la barra
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+F="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos/relojes"   # zona|nombre|contactos
+O=$'\e[1;38;5;208m'; Z=$'\e[0m'; [ -t 1 ] || { O=; Z=; }
+mkdir -p "${F%/*}"; touch "$F"
+hora(){ TZ="$1" date +%H:%M; }
+dif(){ local a b; a=$(TZ="$1" date +%z); b=$(date +%z); python3 -c "
+a,b='$a','$b'; m=lambda z:(1 if z[0]=='+' else -1)*(int(z[1:3])*60+int(z[3:5])); d=(m(a)-m(b))/60
+print(('+' if d>=0 else '')+('%g'%d)+'h')"; }
+
+case "${1:-ver}" in
+  ver)
+    exec foot --app-id=naranjos-tui -T "$(_ 'Reloj mundial')" bash -c '
+      F="$1"; O=$'"'"'\e[1;38;5;208m'"'"'; Z=$'"'"'\e[0m'"'"'
+      while :; do clear; printf "%s  %s%s\n\n" "$O" "$(date +"%H:%M  %A %d")" "$Z"
+        while IFS="|" read -r z n c; do [ -n "$z" ] || continue
+          printf "  %s%-6s%s %-22s %s\n" "$O" "$(TZ="$z" date +%H:%M)" "$Z" "${n:-$z}" "$c"; done < "$F"
+        [ -s "$F" ] || echo "  naranjos-reloj añade"
+        read -rsn1 -t 30 && break; done' _ "$F" ;;
+  añade|anade|add)
+    z=${2:-}
+    if [ -z "$z" ]; then
+      z=$(awk -F'\t' '!/^#/ {print $3}' /usr/share/zoneinfo/zone1970.tab 2>/dev/null | sort | fuzzel --dmenu -p "$(_ 'Zona') ❯ ") || exit 0
+    fi
+    [ -e "/usr/share/zoneinfo/$z" ] || { echo "$(_ 'No conozco esa zona:') $z"; exit 1; }
+    n=$(fuzzel --dmenu --lines 0 -p "$(_ 'Nombre (p. ej. Nueva York)') ❯ " < /dev/null); n=${n:-${z##*/}}
+    c=$(fuzzel --dmenu --lines 0 -p "$(_ 'Contactos allí (opcional)') ❯ " < /dev/null)
+    printf '%s|%s|%s\n' "$z" "${n//|/ }" "${c//|/ }" >> "$F"
+    pkill -RTMIN+17 -x waybar 2>/dev/null; true ;;
+  quita|remove)
+    s=$(cut -d'|' -f2,1 "$F" | fuzzel --dmenu -p "$(_ 'Quitar') ❯ ") || exit 0
+    z=${s%%|*}; grep -vF "$z|" "$F" > "$F.n"; mv "$F.n" "$F"; pkill -RTMIN+17 -x waybar 2>/dev/null; true ;;
+  barra)
+    [ -s "$F" ] || { echo '{"text":""}'; exit 0; }
+    IFS='|' read -r z n _ < "$F"
+    tip=$(while IFS='|' read -r z2 n2 c2; do [ -n "$z2" ] && printf '%s  %s (%s)%s\\n' "$(hora "$z2")" "${n2:-$z2}" "$(dif "$z2")" "${c2:+ · $c2}"; done < "$F")
+    printf '{"text":"󰥔 %s %s","tooltip":"%s"}\n' "$(hora "$z")" "${n:0:3}" "${tip%\\n}" ;;
+  *) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

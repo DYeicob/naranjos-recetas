@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=playerctl
+pkgver=2.4.1
+pkgrel=1
+pkgdesc='Controlar la música y los vídeos (MPRIS) desde el teclado y la barra'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-3.0-or-later')
+depends=('glib2')
+makedepends=('meson' 'ninja')
+source=('https://github.com/altdesktop/playerctl/archive/v2.4.1/playerctl-2.4.1.tar.gz')
+sha256sums=('75957ad5071956f563542c7557af16a57e40b4a7f66bc9b6373d022ec5eef548')
+build() {
+  cd playerctl-$pkgver
+  meson setup build --prefix=/usr --buildtype=release -D gtk-doc=false -D introspection=false -D bash-completions=true -D zsh-completions=true
+  meson compile -C build
+}
+package() { cd playerctl-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

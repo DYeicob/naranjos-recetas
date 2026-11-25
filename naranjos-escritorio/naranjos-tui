@@ -2,7 +2,7 @@
 # naranjos-tui <wifi|bluetooth|sonido|seguridad|vpn|usb|idioma> — abre el menú en una ventana flotante
 . /usr/lib/naranjos/naranjos-i18n.sh
 case "${1:-}" in
-  wifi)      exec foot --app-id=naranjos-tui -T "WiFi"             impala ;;
+  wifi)      exec naranjos-red-panel ;;
   bluetooth) exec foot --app-id=naranjos-tui -T "Bluetooth"        bluetui ;;
   sonido)    exec foot --app-id=naranjos-tui -T "$(_ 'Sonido')"    wiremix ;;
   seguridad) exec foot --app-id=naranjos-tui -T "$(_ 'Seguridad')" bash -c 'naranjos-peel; echo; read -rsn1 -p "$1"' _ "$(_ 'Pulsa una tecla para cerrar…')" ;;

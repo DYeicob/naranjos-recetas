@@ -99,9 +99,23 @@ menu(){
   esac >/dev/null
 }
 
+espejo(){ # espejo [si|no]: lo mismo en el monitor externo que en el del portátil
+  local f="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos/espejo.lua" int ext
+  if [ "${1:-si}" = no ]; then rm -f "$f"; hyprctl reload >/dev/null 2>&1; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Pantallas separadas')"; return; fi
+  read -r int ext < <(hyprctl monitors all -j | python3 -c '
+import json, sys
+m = [x["name"] for x in json.load(sys.stdin)]
+i = [x for x in m if x.startswith(("eDP", "LVDS", "DSI"))]; e = [x for x in m if x not in i]
+print(i[0] if i else "", e[0] if e else "")')
+  [ -n "$int" ] && [ -n "$ext" ] || die "$(_ 'Hace falta la pantalla del portátil y un monitor externo conectado')"
+  printf -- '-- NaranjOS · naranjos-pantalla espejo (no lo edites)\nhl.monitor({ output = "%s", mode = "preferred", position = "auto", scale = "auto", mirror = "%s" })\n' "$ext" "$int" > "$f"
+  hyprctl reload >/dev/null 2>&1; printf '%s✔%s %s %s → %s\n' "$G" "$Z" "$(_ 'Duplicando')" "$int" "$ext"
+}
+
 case "${1:-}" in
   "") estado ;;
   texto|text) shift; texto "$@" ;;
+  espejo|mirror) shift; espejo "$@" ;;
   escala|scale) shift; escala "$@" ;;
   barra|bar) shift; barra "$@" ;;
   menu) menu ;;

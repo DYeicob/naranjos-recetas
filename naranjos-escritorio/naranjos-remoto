@@ -1,0 +1,27 @@
+#!/bin/bash
+# naranjos-remoto — abrir programas de otro equipo como si fueran tuyos, por SSH (waypipe)
+#   naranjos-remoto                     elegir equipo (de ~/.ssh/config) y programa
+#   naranjos-remoto <equipo> [programa]  p. ej.: naranjos-remoto portatil foot
+#   naranjos-remoto barra               para la barra (indica las sesiones remotas abiertas)
+# El otro equipo también necesita waypipe. Nada pasa por internet sin cifrar: va dentro de SSH.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+D="${XDG_RUNTIME_DIR:-/tmp}/naranjos-remoto"; mkdir -p "$D"
+case "${1:-}" in
+  barra)
+    n=$(find "$D" -name '*.pid' 2>/dev/null | while read -r p; do kill -0 "$(cat "$p")" 2>/dev/null && echo x || rm -f "$p"; done | wc -l)
+    if [ "$n" -gt 0 ]; then printf '{"text":"󰢹 %s","tooltip":"%s","class":"activo"}\n' "$n" "$(_ 'Sesiones remotas abiertas')"; else echo '{"text":""}'; fi
+    exit 0 ;;
+  -h|--help) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+esac
+h=${1:-}
+if [ -z "$h" ]; then
+  h=$(awk 'tolower($1)=="host" {for (i=2;i<=NF;i++) if ($i !~ /[*?]/) print $i}' "$HOME/.ssh/config" 2>/dev/null | sort -u \
+      | fuzzel --dmenu -p "$(_ 'Equipo (usuario@equipo)') ❯ ") || exit 0
+fi
+[ -n "$h" ] || exit 0
+p=${2:-$(printf '%s\n' foot thunar "nvim" | fuzzel --dmenu -p "$(_ 'Programa') ❯ ")} || exit 0
+[ -n "$p" ] || exit 0
+if [ "$p" = nvim ]; then p="foot nvim"; fi
+( waypipe ssh "$h" $p & echo $! > "$D/$$.pid"; pkill -RTMIN+18 -x waybar; wait; rm -f "$D/$$.pid"; pkill -RTMIN+18 -x waybar ) >/dev/null 2>&1 &
+disown

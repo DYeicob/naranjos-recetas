@@ -1,0 +1,112 @@
+#!/bin/bash
+# naranjos-apariencia — todo el aspecto de NaranjOS en un sitio (Super + Alt + A)
+#   naranjos-apariencia [menu]                     el menú «Apariencia»
+#   naranjos-apariencia tema | fondo               elegir con vista previa
+#   naranjos-apariencia transparencia opaca|transparente|cristal
+#   naranjos-apariencia esquinas tema|rectas|redondas
+#   naranjos-apariencia animaciones si|no
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+C="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos"; F="$C/apariencia.conf"; LUA="$C/apariencia.lua"
+MIN="${XDG_CACHE_HOME:-$HOME/.cache}/naranjos/miniaturas"
+GALERIA=/usr/share/naranjos/fuzzel-galeria.ini
+die(){ naranjos-notifica "$(_ 'Apariencia')" "$1"; exit 1; }
+mkdir -p "$C"
+
+lee(){ sed -n "s/^$1=//p" "$F" 2>/dev/null | tail -n1; }
+guarda(){ local k="$1" v="$2"; touch "$F"; sed -i "/^$k=/d" "$F"; echo "$k=$v" >> "$F"; }
+
+rehaz(){ # apariencia.lua para Hyprland, a partir de apariencia.conf
+  local tr es an a i r b="false"
+  tr=$(lee transparencia); es=$(lee esquinas); an=$(lee animaciones)
+  case "$tr" in transparente) a=0.94; i=0.88 ;; cristal) a=0.86; i=0.78; b="true" ;; *) a=1.0; i=1.0 ;; esac
+  case "$es" in rectas) r=0 ;; redondas) r=14 ;; *) r="" ;; esac
+  {
+    echo "-- NaranjOS · naranjos-apariencia (no lo edites)"
+    echo "hl.config({ decoration = { active_opacity = $a, inactive_opacity = $i, blur = { enabled = $b, size = 6, passes = 2 } } })"
+    [ -n "$r" ] && echo "hl.config({ decoration = { rounding = $r } })"
+    [ "$an" = no ] && echo "hl.config({ animations = { enabled = false } })"
+    # las terminales, siempre algo transparentes (como en Omarchy)
+    [ "$tr" = opaca ] || [ -z "$tr" ] && echo 'hl.window_rule({ name = "terminal-transparente", match = { class = "^foot$" }, opacity = "0.95" })'
+  } > "$LUA"
+  [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && hyprctl reload >/dev/null 2>&1
+  true
+}
+
+miniatura(){ # miniatura <imagen> → ruta de la miniatura
+  local o; o="$MIN/$(printf '%s' "$1" | md5sum | cut -c1-16).png"
+  [ -s "$o" ] || { mkdir -p "$MIN"; ffmpeg -loglevel error -y -i "$1" -vf "scale=192:-1" -frames:v 1 "$o" </dev/null; }
+  printf '%s' "$o"
+}
+
+galeria(){ # galeria <título> : lee «etiqueta|imagen» de la entrada; devuelve el número de la elegida (0, 1…)
+  local e im cfg=()
+  [ -r "$GALERIA" ] && cfg=(--config "$GALERIA")
+  while IFS='|' read -r e im; do
+    printf '%s\0icon\x1f%s\n' "$e" "$( [ -r "$im" ] && miniatura "$im")"
+  done | fuzzel "${cfg[@]}" --dmenu --index -p "$1 ❯ "
+}
+
+tema(){
+  local d n f i ac=() lista=""
+  for d in /usr/share/naranjos/temas/*/ "${XDG_DATA_HOME:-$HOME/.local/share}"/naranjos/temas/*/; do
+    [ -r "$d/colores" ] || continue
+    n=$(sed -n 's/^NOMBRE=//p' "$d/colores" | tr -d '"'); f=$(sed -n 's/^FONDO=//p' "$d/colores" | tr -d '"')
+    d=${d%/}; ac+=("${d##*/}"); lista+="${n:-${d##*/}}|$f"$'\n'
+  done
+  i=$(printf '%s' "$lista" | galeria "$(_ 'Tema')") || exit 0
+  [ -n "$i" ] && naranjos-tema pon "${ac[$i]}"
+}
+
+fondo(){
+  local f i lista="" ac=()
+  while IFS= read -r f; do ac+=("$f"); lista+="$(basename "${f%.*}")|$f"$'\n'
+  done < <(find /usr/share/backgrounds/naranjos "${XDG_DATA_HOME:-$HOME/.local/share}/naranjos/fondos" -type f \( -name '*.jpg' -o -name '*.png' \) 2>/dev/null | sort)
+  [ ${#ac[@]} -gt 0 ] || die "$(_ 'No encuentro fondos')"
+  i=$(printf '%s' "$lista" | galeria "$(_ 'Fondo')") || exit 0
+  [ -n "$i" ] && naranjos-tema fondo pon "${ac[$i]}"
+}
+
+menu(){
+  local s
+  s=$(printf '%s\n' \
+    "󰏘  $(_ 'Tema (con vista previa)')" "󰸉  $(_ 'Fondo (con vista previa)')" "󰔎  $(_ 'Modo claro / oscuro')" \
+    "󰛖  $(_ 'Fuente')" "󰍹  $(_ 'Tamaño del texto y pantallas')" "󰍜  $(_ 'Barra: posición y transparencia')" \
+    "󱡔  $(_ 'Ventanas: opacas')" "󱡔  $(_ 'Ventanas: transparentes')" "󱡔  $(_ 'Ventanas: cristal')" \
+    "󰢡  $(_ 'Esquinas: las del tema')" "󰢡  $(_ 'Esquinas: rectas')" "󰢡  $(_ 'Esquinas: redondas')" \
+    "󰐊  $(_ 'Animaciones: sí')" "󰏤  $(_ 'Animaciones: no')" \
+    "󱂬  $(_ 'Dock: mostrar / ocultar')" "󰕴  $(_ 'Modo escritorio (flotante + dock)')" "󰕴  $(_ 'Modo mosaico')" \
+    "󰌾  $(_ 'Pantalla de bloqueo')" "󰏘  $(_ 'Crear mi tema…')" \
+    | fuzzel --dmenu -p "$(_ 'Apariencia') ❯ " --lines 19) || exit 0
+  case "$s" in
+    *"$(_ 'Tema (con vista previa)')"*) tema ;;
+    *"$(_ 'Fondo (con vista previa)')"*) fondo ;;
+    *"$(_ 'Modo claro / oscuro')"*) naranjos-tema modo ;;
+    *"$(_ 'Fuente')"*) naranjos-pantalla fuente ;;
+    *"$(_ 'Tamaño del texto y pantallas')"*|*"$(_ 'Barra: posición y transparencia')"*) naranjos-pantalla menu ;;
+    *"$(_ 'Ventanas: opacas')"*) "$0" transparencia opaca ;;
+    *"$(_ 'Ventanas: transparentes')"*) "$0" transparencia transparente ;;
+    *"$(_ 'Ventanas: cristal')"*) "$0" transparencia cristal ;;
+    *"$(_ 'Esquinas: las del tema')"*) "$0" esquinas tema ;;
+    *"$(_ 'Esquinas: rectas')"*) "$0" esquinas rectas ;;
+    *"$(_ 'Esquinas: redondas')"*) "$0" esquinas redondas ;;
+    *"$(_ 'Animaciones: sí')"*) "$0" animaciones si ;;
+    *"$(_ 'Animaciones: no')"*) "$0" animaciones no ;;
+    *"$(_ 'Dock: mostrar / ocultar')"*) naranjos-dock alterna ;;
+    *"$(_ 'Modo escritorio (flotante + dock)')"*) naranjos-disposicion escritorio activa ;;
+    *"$(_ 'Modo mosaico')"*) naranjos-disposicion escritorio apaga ;;
+    *"$(_ 'Pantalla de bloqueo')"*) setsid -f foot --app-id=naranjos-tui -e "${EDITOR:-nvim}" "$HOME/.config/hypr/hyprlock.conf" ;;
+    *"$(_ 'Crear mi tema…')"*) naranjos-tema-nuevo 2>/dev/null || naranjos-tema crea ;;
+  esac
+}
+
+case "${1:-menu}" in
+  menu) menu ;;
+  tema) tema ;;
+  fondo) fondo ;;
+  transparencia) case "${2:-}" in opaca|transparente|cristal) guarda transparencia "$2"; rehaz ;; *) die "opaca|transparente|cristal" ;; esac ;;
+  esquinas) case "${2:-}" in tema|rectas|redondas) guarda esquinas "$2"; rehaz ;; *) die "tema|rectas|redondas" ;; esac ;;
+  animaciones) case "${2:-}" in si|no) guarda animaciones "$2"; rehaz ;; *) die "si|no" ;; esac ;;
+  rehaz) rehaz ;;
+  *) sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

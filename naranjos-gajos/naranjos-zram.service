@@ -1,0 +1,14 @@
+[Unit]
+Description=NaranjOS · memoria comprimida (zram)
+DefaultDependencies=no
+Before=swap.target
+After=systemd-modules-load.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/naranjos-zram activa
+ExecStop=/usr/bin/naranjos-zram apaga
+
+[Install]
+WantedBy=swap.target

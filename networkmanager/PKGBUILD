@@ -1,0 +1,32 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=networkmanager
+pkgver=1.58.1
+pkgrel=1
+pkgdesc='Gestor de red (WiFi con iwd, cable, VPN, portal cautivo, WiFi de empresa)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later' 'LGPL-2.1-or-later')
+depends=('iwd' 'libndp' 'curl' 'libpsl' 'readline' 'polkit' 'systemd' 'dbus')
+makedepends=('meson' 'ninja' 'python')
+source=('naranjos.conf' 'https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/releases/1.58.1/downloads/NetworkManager-1.58.1.tar.xz')
+sha256sums=('SKIP' '262864cfd198123d3e5dbe91937441b97ee9059d6d712e1a5bfbb1c54668d14d')
+backup=('etc/NetworkManager/NetworkManager.conf')
+build() {
+  cd NetworkManager-$pkgver
+  meson setup build --prefix=/usr --sysconfdir=/etc --localstatedir=/var --buildtype=release \
+    -D systemdsystemunitdir=/usr/lib/systemd/system -D session_tracking=systemd -D systemd_journal=true \
+    -D iwd=true -D config_wifi_backend_default=iwd -D crypto=null -D libaudit=no -D selinux=false \
+    -D ppp=false -D modem_manager=false -D ovs=false -D nmtui=false -D nm_cloud_setup=false -D nbft=false \
+    -D introspection=false -D vapi=false -D docs=false -D man=false -D tests=no -D qt=false \
+    -D firewalld_zone=false -D ebpf=false -D ifupdown=false -D bluez5_dun=false -D teamdctl=false \
+    -D config_dns_rc_manager_default=symlink -D libpsl=true -D concheck=true -D readline=libreadline -D more_logging=false -D clat=false
+  meson compile -C build
+}
+package() {
+  cd NetworkManager-$pkgver
+  DESTDIR="$pkgdir" meson install -C build
+  install -Dm644 ../naranjos.conf "$pkgdir/usr/lib/NetworkManager/conf.d/20-naranjos.conf"
+  install -dm700 "$pkgdir/etc/NetworkManager/system-connections"
+  [ -e "$pkgdir/etc/NetworkManager/NetworkManager.conf" ] || printf '# Tus ajustes de NetworkManager (los de NaranjOS van en /usr/lib/NetworkManager/conf.d)\n' > "$pkgdir/etc/NetworkManager/NetworkManager.conf"
+  rm -rf "$pkgdir/var/run" "$pkgdir/run"
+}

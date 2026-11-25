@@ -1,0 +1,122 @@
+#!/bin/bash
+# naranjos-red-panel — el panel de red de NaranjOS (NetworkManager)
+#   naranjos-red-panel            el panel (WiFi cercanas, estado, ping, velocidad, DNS, QR…)
+#   naranjos-red-panel barra      estado para la barra (portal cautivo)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+elige(){ fuzzel --dmenu -p "$1 ❯ " ${2:+--lines "$2"}; }
+term(){ setsid -f foot --app-id=naranjos-tui -T "$1" bash -c "$2"'; echo; read -rsn1 -p "$0"' "$(_ 'Pulsa una tecla para cerrar…')" >/dev/null 2>&1; }
+hay_nm(){ systemctl is-active --quiet NetworkManager 2>/dev/null; }
+
+if ! hay_nm; then
+  [ "${1:-}" = barra ] && { echo '{"text":""}'; exit 0; }
+  exec foot --app-id=naranjos-tui -T "WiFi" impala
+fi
+
+conexion(){ nmcli -t -f NAME,TYPE,DEVICE connection show --active | awk -F: '$2 ~ /wireless|ethernet/ {print $1; exit}'; }
+
+barra(){
+  local c; c=$(nmcli -t -f CONNECTIVITY general 2>/dev/null)
+  if [ "$c" = portal ]; then
+    printf '{"text":"󰖪 %s","tooltip":"%s","class":"portal"}\n' "$(_ 'Portal')" "$(_ 'Esta red pide iniciar sesión: pulsa para abrir la página')"
+  else echo '{"text":""}'; fi
+}
+
+wifi_cercanas(){
+  local l sel ssid seg
+  nmcli device wifi rescan >/dev/null 2>&1
+  l=$(nmcli -t -f IN-USE,SIGNAL,SECURITY,SSID device wifi list 2>/dev/null | awk -F: '$4 != "" && !v[$4]++ {
+        b = ($2 >= 75) ? "󰤨" : ($2 >= 50) ? "󰤥" : ($2 >= 25) ? "󰤢" : "󰤟"
+        printf "%s %s  %s%s\n", ($1 == "*" ? "●" : " "), b, $4, ($3 != "" && $3 != "--") ? "  󰌾" : "" }')
+  sel=$(printf '%s\n' "$l" | elige "WiFi" 14) || return
+  ssid=$(sed -E 's/^. +[^ ]+  //; s/  󰌾$//' <<< "$sel")
+  [ -n "$ssid" ] || return
+  if nmcli -t -f NAME connection show | grep -qxF "$ssid"; then
+    nmcli connection up id "$ssid" >/dev/null 2>&1 && naranjos-notifica "WiFi" "$(_ 'Conectado a') $ssid" && return
+  fi
+  seg=$(nmcli -t -f SSID,SECURITY device wifi list | awk -F: -v s="$ssid" '$1 == s {print $2; exit}')
+  if [[ "$seg" == *802.1X* ]]; then
+    term "WiFi" "nmcli --ask device wifi connect $(printf %q "$ssid")"
+  elif [ -n "$seg" ] && [ "$seg" != "--" ]; then
+    local pw; pw=$(fuzzel --dmenu --password -p "$(_ 'Contraseña de') $ssid ❯ " --lines 0) || return
+    nmcli device wifi connect "$ssid" password "$pw" >/dev/null 2>&1 \
+      && naranjos-notifica "WiFi" "$(_ 'Conectado a') $ssid" || naranjos-notifica --urgente "WiFi" "$(_ 'No pude conectar a') $ssid"
+  else
+    nmcli device wifi connect "$ssid" >/dev/null 2>&1 && naranjos-notifica "WiFi" "$(_ 'Conectado a') $ssid"
+  fi
+}
+
+dns(){
+  local c sel s
+  c=$(conexion); [ -n "$c" ] || { naranjos-notifica "$(_ 'Red')" "$(_ 'No hay ninguna conexión activa')"; return; }
+  sel=$(printf '%s\n' "$(_ 'Automático (el de la red)')" "Cloudflare (1.1.1.1)" "Quad9 (9.9.9.9)" "Google (8.8.8.8)" "Mullvad (194.242.2.2)" | elige "DNS") || return
+  case "$sel" in
+    Cloudflare*) s="1.1.1.1 1.0.0.1" ;; Quad9*) s="9.9.9.9 149.112.112.112" ;;
+    Google*) s="8.8.8.8 8.8.4.4" ;; Mullvad*) s="194.242.2.2" ;; *) s="" ;;
+  esac
+  if [ -n "$s" ]; then nmcli connection modify "$c" ipv4.dns "$s" ipv4.ignore-auto-dns yes
+  else nmcli connection modify "$c" ipv4.dns "" ipv4.ignore-auto-dns no; fi
+  nmcli connection up "$c" >/dev/null 2>&1
+  naranjos-notifica "DNS" "$sel"
+}
+
+banda(){
+  local c sel b
+  c=$(conexion); [ -n "$c" ] || return
+  sel=$(printf '%s\n' "$(_ 'Automática')" "2,4 GHz" "5 GHz" | elige "$(_ 'Banda WiFi')") || return
+  case "$sel" in 2,4*) b=bg ;; 5*) b=a ;; *) b="" ;; esac
+  nmcli connection modify "$c" 802-11-wireless.band "$b" && nmcli connection up "$c" >/dev/null 2>&1
+  naranjos-notifica "WiFi" "$(_ 'Banda'): $sel"
+}
+
+estado(){
+  term "$(_ 'Red')" '
+    nmcli -p general; echo; nmcli -p device status; echo
+    printf "%s\n" "IP:"; ip -brief address | grep -v "^lo"
+    echo; printf "%s " "DNS:"; resolvectl dns 2>/dev/null | awk -F": " "NF>1 && \$2 != \"\" {print \$2}" | sort -u | tr "\n" " "; echo'
+}
+trafico(){ term "$(_ 'Tráfico de red')" 'i=$(ip route show default | awk "{print \$5; exit}"); [ -n "$i" ] || { echo "Sin red"; exit; }
+  r1=$(cat /sys/class/net/$i/statistics/rx_bytes); t1=$(cat /sys/class/net/$i/statistics/tx_bytes)
+  echo "$i · Ctrl+C para salir"; while sleep 1; do r2=$(cat /sys/class/net/$i/statistics/rx_bytes); t2=$(cat /sys/class/net/$i/statistics/tx_bytes)
+  printf "\r↓ %8.1f KB/s   ↑ %8.1f KB/s " "$(echo "($r2-$r1)/1024" | bc -l)" "$(echo "($t2-$t1)/1024" | bc -l)"; r1=$r2; t1=$t2; done'; }
+portal(){ xdg-open "http://neverssl.com" >/dev/null 2>&1 & }
+
+panel(){
+  local c sel
+  c=$(conexion)
+  sel=$(printf '%s\n' \
+    "󰖩  $(_ 'Redes WiFi cercanas')" \
+    "󰈀  $(_ 'Estado'): ${c:-$(_ 'sin conexión')}" \
+    "󰓅  $(_ 'Test de velocidad')" \
+    "󰖟  $(_ 'Ping (Cloudflare)')" \
+    "󱂇  $(_ 'Tráfico en directo')" \
+    "󰇖  $(_ 'Servidor DNS')…" \
+    "󰐲  $(_ 'Compartir esta WiFi por QR')" \
+    "󰤢  $(_ 'Banda WiFi (2,4 / 5 GHz)')…" \
+    "󰖪  $(_ 'Abrir el portal de inicio de sesión')" \
+    "󰀂  $(_ 'Activar / desactivar la WiFi')" \
+    "󰆴  $(_ 'Olvidar una red')…" | elige "$(_ 'Red')" 11) || exit 0
+  case "$sel" in
+    *"$(_ 'Redes WiFi cercanas')"*) wifi_cercanas ;;
+    *"$(_ 'Estado')"*) estado ;;
+    *"$(_ 'Test de velocidad')"*) term "$(_ 'Velocidad')" 'naranjos-velocidad red' ;;
+    *"Ping"*) term "Ping" 'ping -c 10 1.1.1.1' ;;
+    *"$(_ 'Tráfico en directo')"*) trafico ;;
+    *DNS*) dns ;;
+    *QR*) naranjos-qr wifi ;;
+    *"$(_ 'Banda WiFi (2,4 / 5 GHz)')"*) banda ;;
+    *portal*|*"$(_ 'Abrir el portal de inicio de sesión')"*) portal ;;
+    *"$(_ 'Activar / desactivar la WiFi')"*)
+      if [ "$(nmcli radio wifi)" = enabled ]; then nmcli radio wifi off; else nmcli radio wifi on; fi ;;
+    *"$(_ 'Olvidar una red')"*)
+      c=$(nmcli -t -f NAME,TYPE connection show | awk -F: '$2 ~ /wireless/ {print $1}' | elige "$(_ 'Olvidar')") || exit 0
+      nmcli connection delete id "$c" >/dev/null && naranjos-notifica "WiFi" "$(_ 'Olvidada'): $c" ;;
+  esac
+}
+
+case "${1:-}" in
+  barra) barra ;;
+  portal) portal ;;
+  wifi) wifi_cercanas ;;
+  *) panel ;;
+esac

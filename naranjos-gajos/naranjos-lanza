@@ -1,0 +1,8 @@
+#!/bin/bash
+# naranjos-lanza <programa> [args…] — abre un programa en su propio «scope» de systemd: si se come la memoria,
+# systemd-oomd lo cierra a él solo, sin tirar la sesión. Si no hay systemd de usuario, lo abre tal cual.
+[ $# -gt 0 ] || exit 1
+if [ -S "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/systemd/private" ] && command -v systemd-run >/dev/null; then
+  exec systemd-run --user --scope --quiet --collect --slice=app.slice -- "$@"
+fi
+exec "$@"

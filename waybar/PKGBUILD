@@ -1,19 +1,19 @@
 # Receta de NaranjOS — generada por naranjos-tanda-5c2.sh
 pkgname=waybar
 pkgver=0.16.0
-pkgrel=3
+pkgrel=4
 pkgdesc='Barra superior del escritorio NaranjOS'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('MIT')
-depends=('libdbusmenu-gtk3' 'wireplumber' 'pipewire' 'gtkmm3' 'gtk-layer-shell' 'jsoncpp' 'libsigcpp2' 'fmt' 'spdlog' 'libnl' 'libinput' 'libevdev' 'libxkbcommon' 'wayland')
+depends=('libdbusmenu-gtk3' 'wireplumber' 'pipewire' 'gtkmm3' 'gtk-layer-shell' 'jsoncpp' 'libsigcpp2' 'fmt' 'spdlog' 'libnl' 'libinput' 'libevdev' 'libxkbcommon' 'wayland' 'playerctl')
 makedepends=('scdoc' 'wayland-protocols')
 source=('https://github.com/Alexays/Waybar/archive/0.16.0/Waybar-0.16.0.tar.gz')
 sha256sums=('ce74962053002c35e80f569298baebd6887088c80454d0ce9a2c9ca5e21e97c7')
 build() { cd Waybar-$pkgver
   meson setup build --prefix=/usr --buildtype=plain --wrap-mode=nofallback \
     -D tests=disabled -D cava=disabled -D mpd=disabled -D sndio=disabled -D jack=disabled \
-    -D gps=disabled -D wwan=disabled -D mpris=disabled -D upower_glib=disabled \
+    -D gps=disabled -D wwan=disabled -D mpris=enabled -D upower_glib=disabled \
     -D pulseaudio=disabled -D pipewire=enabled -D wireplumber=enabled -D dbusmenu-gtk=enabled \
     -D libnl=enabled -D libinput=enabled -D libudev=enabled -D libevdev=enabled \
     -D systemd=enabled -D logind=enabled -D rfkill=enabled -D man-pages=enabled

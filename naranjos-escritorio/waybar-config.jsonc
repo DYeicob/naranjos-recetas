@@ -10,8 +10,30 @@
   "spacing": 4,
 
   "modules-left":   ["image#naranjos", "custom/naranjos", "hyprland/workspaces", "hyprland/window"],
-  "modules-center": ["clock"],
-  "modules-right":  ["custom/grabando", "custom/dictado", "custom/despierto", "custom/tailscale", "custom/tiempo", "custom/peel", "custom/noche", "bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "tray", "custom/sistema"],
+  "modules-center": ["clock", "custom/reloj"],
+  "modules-right":  ["mpris", "custom/actualizaciones", "custom/remoto", "custom/portal", "custom/grabando", "custom/dictado", "custom/despierto", "custom/tailscale", "custom/tiempo", "custom/peel", "custom/noche", "bluetooth", "wireplumber", "wireplumber#micro", "hyprland/language", "network", "backlight", "battery", "cpu", "memory", "tray", "custom/notificaciones", "custom/sistema"],
+
+  "mpris": {
+    "format": "{player_icon} {title}",
+    "format-paused": "{status_icon} <i>{title}</i>",
+    "player-icons": { "default": "󰐊" },
+    "status-icons": { "paused": "󰏤" },
+    "max-length": 32,
+    "on-click": "playerctl play-pause", "on-scroll-up": "playerctl next", "on-scroll-down": "playerctl previous"
+  },
+  "wireplumber#micro": {
+    "node-type": "Audio/Source",
+    "format": "󰍬",
+    "format-muted": "󰍭",
+    "tooltip-format": "{node_name} · {volume}%",
+    "on-click": "naranjos-osd micro"
+  },
+  "hyprland/language": { "format": "{short}", "on-click": "hyprctl switchxkblayout all next" },
+  "custom/actualizaciones": { "exec": "naranjos-actualizaciones", "return-type": "json", "interval": 3600, "signal": 15, "on-click": "foot --app-id=naranjos-tui -e bash -c 'naranjos actualiza; read -rsn1'" },
+  "custom/notificaciones": { "exec": "naranjos-notificaciones barra", "return-type": "json", "interval": 60, "signal": 16, "on-click": "naranjos-notificaciones nomolestar", "on-click-right": "naranjos-notificaciones historial" },
+  "custom/reloj": { "exec": "naranjos-reloj barra", "return-type": "json", "interval": 30, "signal": 17, "on-click": "naranjos-reloj ver", "on-click-right": "naranjos-reloj añade" },
+  "custom/remoto": { "exec": "naranjos-remoto barra", "return-type": "json", "interval": 30, "signal": 18 },
+  "custom/portal": { "exec": "naranjos-red-panel barra", "return-type": "json", "interval": 30, "on-click": "naranjos-red-panel portal" },
 
   "image#naranjos": {
     "path": "/usr/share/naranjos/logo/naranjos-logo-plano-48.png",
@@ -35,7 +57,7 @@
   },
   "clock": {
     "format": "{:%H:%M}",
-    "format-alt": "{:%A %d %B · %H:%M}",
+    "format-alt": "{:%A %d %B · %H:%M · semana %V}",
     "tooltip-format": "<tt>{calendar}</tt>",
     "calendar": {
       "mode": "month",

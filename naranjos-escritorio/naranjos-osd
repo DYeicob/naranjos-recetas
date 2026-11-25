@@ -49,8 +49,26 @@ micro(){
   else muestra "󰍬  $(_ 'Micrófono activo')"; fi
 }
 
+externo(){ # ¿la ventana activa está en un monitor externo? → su número de bus I2C para ddcutil
+  local m; m=$(hyprctl activeworkspace -j 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin).get("monitor",""))' 2>/dev/null)
+  case "$m" in ""|eDP*|LVDS*|DSI*) return 1 ;; esac
+  command -v ddcutil >/dev/null || return 1
+  ddcutil detect --brief 2>/dev/null | awk -v m="$m" '/I2C bus/ {b=$3} /DRM connector/ && index($3, m) {sub("/dev/i2c-", "", b); print b; exit}'
+}
+teclado(){
+  local d pct; d=$(brightnessctl -l -m 2>/dev/null | awk -F, '/kbd_backlight/ {print $1; exit}')
+  [ -n "$d" ] || return 0
+  brightnessctl -q -d "$d" set "1${1:-+}" >/dev/null
+  pct=$(brightnessctl -d "$d" -m | awk -F, '{gsub("%","",$4); print $4}')
+  muestra "󰌌  $pct%" "$pct"
+}
 brillo(){
-  local pct
+  local pct bus
+  if bus=$(externo) && [ -n "$bus" ]; then
+    case "${1:-}" in +*) ddcutil --bus "$bus" setvcp 10 + "${1#+}" ;; -*) ddcutil --bus "$bus" setvcp 10 - "${1#-}" ;; esac >/dev/null 2>&1
+    pct=$(ddcutil --bus "$bus" getvcp 10 --brief 2>/dev/null | awk '{print $4}')
+    [[ "$pct" =~ ^[0-9]+$ ]] && muestra "󰍹  $pct%" "$pct"; return 0
+  fi
   case "${1:-}" in
     +*) brightnessctl -q -e4 -n2 set "${1#+}%+" ;;
     -*) brightnessctl -q -e4 -n2 set "${1#-}%-" ;;
@@ -64,5 +82,6 @@ case "${1:-}" in
   volumen|volume) volumen "${2:-}" ;;
   micro|mic)      micro ;;
   brillo|brightness) brillo "${2:-}" ;;
+  teclado|keyboard) teclado "${2:-+}" ;;
   *) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac

@@ -1,0 +1,36 @@
+#!/bin/bash
+# naranjos-camara — la cámara en NaranjOS
+#   naranjos-camara graba     grabar la cámara con el micrófono; otra vez para parar (Super + Ctrl + M)
+#   naranjos-camara encima    la cámara en una ventanita fija encima de todo, para salir en tus grabaciones
+#                             de pantalla (Super + Ctrl + Alt + M; otra vez la quita)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+P="${XDG_RUNTIME_DIR:-/tmp}/naranjos-camara"
+dispositivo(){ local d; for d in /sys/class/video4linux/video*; do [ "$(cat "$d/index" 2>/dev/null)" = 0 ] && { echo "/dev/${d##*/}"; return; }; done; echo /dev/video0; }
+sonido(){ # la mejor entrada de sonido que tenga este ffmpeg
+  if ffmpeg -hide_banner -devices 2>/dev/null | grep -qw pulse; then echo "-f pulse -i default"
+  elif ffmpeg -hide_banner -devices 2>/dev/null | grep -qw alsa; then echo "-f alsa -i default"; fi
+}
+case "${1:-graba}" in
+  graba)
+    if [ -e "$P.pid" ] && kill -0 "$(cat "$P.pid")" 2>/dev/null; then
+      kill -INT "$(cat "$P.pid")"; rm -f "$P.pid"; pkill -RTMIN+10 -x waybar
+      naranjos-notifica "$(_ 'Cámara')" "$(_ 'Grabación guardada en') $(cat "$P.fichero" 2>/dev/null | sed "s|^$HOME|~|")"; exit 0
+    fi
+    v=$(naranjos_carpeta VIDEOS 2>/dev/null || echo "$HOME/Vídeos"); mkdir -p "$v/$(_ 'Cámara')"
+    f="$v/$(_ 'Cámara')/$(_ 'camara')-$(date +%Y%m%d-%H%M%S).mp4"; echo "$f" > "$P.fichero"
+    # shellcheck disable=SC2046
+    ffmpeg -loglevel error -f v4l2 -framerate 30 -video_size 1280x720 -i "$(dispositivo)" $(sonido) \
+      -c:v libx264 -preset veryfast -crf 23 -c:a aac "$f" </dev/null >/dev/null 2>&1 &
+    echo $! > "$P.pid"; pkill -RTMIN+10 -x waybar
+    naranjos-notifica "$(_ 'Cámara')" "$(_ 'Grabando… (Super + Ctrl + M para parar)')" ;;
+  encima)
+    if pgrep -f 'app-id=naranjos-camara' >/dev/null || pgrep -f 'org.gnome.Snapshot' >/dev/null; then
+      pkill -f 'org.gnome.Snapshot'; exit 0
+    fi
+    if flatpak info org.gnome.Snapshot >/dev/null 2>&1; then setsid -f flatpak run org.gnome.Snapshot >/dev/null 2>&1
+    else
+      naranjos-notifica "$(_ 'Cámara')" "$(_ 'Para la ventanita de la cámara instala «Cámara» desde las apps recomendadas (Super + Mayús + A).')"
+    fi ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

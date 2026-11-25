@@ -1,0 +1,80 @@
+#!/bin/bash
+# naranjos-red — qué gestiona la red en NaranjOS
+#   naranjos-red                     qué se usa ahora
+#   sudo naranjos-red usa networkmanager   pasar a NetworkManager (como Omarchy 4): trae tus WiFi guardadas de iwd
+#   sudo naranjos-red usa iwd              volver a iwd + systemd-networkd (lo de antes)
+# Si con NetworkManager no hay conexión en 40 s, vuelve solo a iwd.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; Z=; }
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+ok(){ printf '%s✔%s %s\n' "$G" "$Z" "$1"; }
+MASCARA=/etc/systemd/network/25-naranjos-wifi.network
+RESP=/var/lib/naranjos/red
+
+actual(){ if systemctl is-enabled --quiet NetworkManager 2>/dev/null; then echo networkmanager; else echo iwd; fi; }
+raiz(){ [ "$(id -u)" = 0 ] || die "$(_ 'Hace falta sudo:') sudo naranjos-red $*"; }
+
+migra(){ # las redes guardadas de iwd → perfiles de NetworkManager (no se borra nada de iwd)
+  python3 - << 'PY'
+import glob, os, re, uuid, binascii
+dest = "/etc/NetworkManager/system-connections"
+os.makedirs(dest, mode=0o700, exist_ok=True)
+hechas = 0
+for f in glob.glob("/var/lib/iwd/*.psk") + glob.glob("/var/lib/iwd/*.open"):
+    base, ext = os.path.splitext(os.path.basename(f))
+    ssid = bytes.fromhex(base[1:]).decode("utf-8", "replace") if base.startswith("=") else base
+    sec = {}
+    for l in open(f, errors="replace"):
+        if "=" in l and not l.startswith("["):
+            k, v = l.strip().split("=", 1); sec[k] = v
+    psk = sec.get("Passphrase") or sec.get("PreSharedKey")
+    nombre = re.sub(r"[^\w.-]", "_", ssid) or "wifi"
+    ruta = os.path.join(dest, "iwd-" + nombre + ".nmconnection")
+    if os.path.exists(ruta): continue
+    esc = ssid.replace("\\", "\\\\").replace(";", "\\;")
+    t = ["[connection]", "id=" + esc, "uuid=" + str(uuid.uuid4()), "type=wifi", "",
+         "[wifi]", "mode=infrastructure", "ssid=" + esc, ""]
+    if ext == ".psk" and psk:
+        t += ["[wifi-security]", "key-mgmt=wpa-psk", "psk=" + psk, ""]
+    elif ext == ".psk":
+        continue
+    t += ["[ipv4]", "method=auto", "", "[ipv6]", "method=auto", ""]
+    with open(os.open(ruta, os.O_WRONLY | os.O_CREAT, 0o600), "w") as o: o.write("\n".join(t))
+    hechas += 1
+print(hechas)
+PY
+}
+
+a_nm(){
+  raiz usa networkmanager
+  command -v NetworkManager >/dev/null || [ -x /usr/sbin/NetworkManager ] || die "$(_ 'NetworkManager no está instalado')"
+  mkdir -p "$RESP"; cp -a /etc/systemd/network "$RESP/network.antes" 2>/dev/null
+  local n; n=$(migra); ok "$(_ 'WiFi guardadas traídas de iwd:') $n"
+  ls /var/lib/iwd/*.8021x >/dev/null 2>&1 && printf '  %s\n' "$(_ 'Las WiFi de empresa (802.1X) hay que volver a añadirlas desde el panel de red.')"
+  ln -sf /dev/null "$MASCARA"                       # systemd-networkd deja de llevar la WiFi
+  systemctl restart systemd-networkd
+  systemctl disable --now NetworkManager-wait-online.service >/dev/null 2>&1
+  systemctl enable --now NetworkManager.service || die "$(_ 'NetworkManager no arranca')"
+  printf '%s' "$(_ 'Comprobando la conexión')"
+  for _ in $(seq 40); do
+    if [ "$(nmcli -t -f STATE general 2>/dev/null)" = connected ]; then echo; ok "$(_ 'Red con NetworkManager: conectada')"; return 0; fi
+    printf '.'; sleep 1
+  done
+  echo; printf '%s! %s%s\n' "$R" "$(_ 'Sin conexión en 40 s: vuelvo a iwd.')" "$Z"
+  a_iwd; exit 1
+}
+
+a_iwd(){
+  raiz usa iwd
+  systemctl disable --now NetworkManager.service >/dev/null 2>&1
+  rm -f "$MASCARA"
+  systemctl restart systemd-networkd iwd
+  ok "$(_ 'Red con iwd + systemd-networkd')"
+}
+
+case "${1:-}" in
+  usa) case "${2:-}" in networkmanager|nm) a_nm ;; iwd) a_iwd ;; *) die "$(_ 'Uso:') sudo naranjos-red usa networkmanager|iwd" ;; esac ;;
+  "") printf '%s %s%s%s\n' "$(_ 'La red la lleva:')" "$O" "$(actual)" "$Z" ;;
+  *) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

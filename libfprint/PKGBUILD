@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=libfprint
+pkgver=1.94.100
+pkgrel=1
+pkgdesc='Lectores de huellas dactilares'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('libgusb' 'glib2' 'pixman' 'openssl' 'libgudev')
+makedepends=('meson' 'ninja')
+source=('https://gitlab.freedesktop.org/libfprint/libfprint/-/archive/v1.94.100/libfprint-v1.94.100.tar.gz')
+sha256sums=('edc90e02f330a7595ceaf37f2c6ec32ed43541347fe936d3273b0bb2524fd19c')
+build() {
+  cd libfprint-v$pkgver
+  # sin los lectores que piden NSS (uru4000) ni la documentación
+  meson setup build --prefix=/usr --buildtype=release -D doc=false -D introspection=false -D gtk-examples=false \
+    -D udev_rules=enabled -D udev_hwdb=enabled -D drivers=default 2>/dev/null \
+  || meson setup build --prefix=/usr --buildtype=release -D doc=false -D introspection=false -D gtk-examples=false
+  meson compile -C build
+}
+package() { cd libfprint-v$pkgver; DESTDIR="$pkgdir" meson install -C build; }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NaranjOS 0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DYeicob/naranjos-recetas/issues\n"
-"POT-Creation-Date: 2026-11-25 18:31+0100\n"
+"POT-Creation-Date: 2026-11-26 00:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,210 +40,232 @@ msgstr ""
 msgid "No sé identificar la partición de NaranjOS"
 msgstr ""
 
-#: arranque/naranjos-arranque:127
+#: arranque/naranjos-arranque:131
 msgid "Fotos de NaranjOS (volver atras)"
 msgstr ""
 
-#: arranque/naranjos-arranque:131 fotos/fotos:115 fotos/fotos:184
+#: arranque/naranjos-arranque:135 fotos/fotos:115 fotos/fotos:184
 msgid "Foto"
 msgstr ""
 
-#: arranque/naranjos-arranque:133
+#: arranque/naranjos-arranque:137
 msgid "Cargando la foto"
 msgstr ""
 
-#: arranque/naranjos-arranque:176
+#: arranque/naranjos-arranque:182
 msgid "respaldo"
 msgstr ""
 
-#: arranque/naranjos-arranque:180
+#: arranque/naranjos-arranque:186
 msgid "Cargando NaranjOS..."
 msgstr ""
 
-#: arranque/naranjos-arranque:186
+#: arranque/naranjos-arranque:192
 msgid "modo texto"
 msgstr ""
 
-#: arranque/naranjos-arranque:204
+#: arranque/naranjos-arranque:220
 msgid "Ajustes del firmware (UEFI)"
 msgstr ""
 
-#: arranque/naranjos-arranque:205 esc/naranjos-menu:110 esc/naranjos-sistema:5
+#: arranque/naranjos-arranque:221 esc/naranjos-menu:135 esc/naranjos-sistema:5
 msgid "Reiniciar"
 msgstr ""
 
-#: arranque/naranjos-arranque:206 esc/naranjos-menu:111 esc/naranjos-noche:86
+#: arranque/naranjos-arranque:222 esc/naranjos-menu:136 esc/naranjos-noche:86
 #: esc/naranjos-sistema:5
 msgid "Apagar"
 msgstr ""
 
-#: arranque/naranjos-arranque:208 initramfs/naranjos-initramfs:284
+#: arranque/naranjos-arranque:224 arranque/naranjos-arranque:365
+#: initramfs/naranjos-initramfs:284
 msgid "No hay ningún kernel en /boot"
 msgstr ""
 
-#: arranque/naranjos-arranque:209
+#: arranque/naranjos-arranque:225
 msgid "El menú generado tiene un error"
 msgstr ""
 
-#: arranque/naranjos-arranque:215
+#: arranque/naranjos-arranque:231
 msgid "No hay /boot en"
 msgstr ""
 
-#: arranque/naranjos-arranque:230
+#: arranque/naranjos-arranque:246
 msgid "Menú de arranque al día:"
 msgstr ""
 
-#: arranque/naranjos-arranque:238
+#: arranque/naranjos-arranque:254
 msgid "GRUB no tiene el módulo"
 msgstr ""
 
-#: arranque/naranjos-arranque:249
+#: arranque/naranjos-arranque:271
 msgid "grub-mkimage falló"
 msgstr ""
 
-#: arranque/naranjos-arranque:250
+#: arranque/naranjos-arranque:272
 msgid "La imagen GRUB no lleva SBAT: el shim la rechazaría"
 msgstr ""
 
-#: arranque/naranjos-arranque:251
+#: arranque/naranjos-arranque:273
 msgid "Falta la clave MOK en"
 msgstr ""
 
-#: arranque/naranjos-arranque:253
+#: arranque/naranjos-arranque:275
 msgid "No se pudo firmar GRUB"
 msgstr ""
 
-#: arranque/naranjos-arranque:254
+#: arranque/naranjos-arranque:276
 msgid "La firma de GRUB no se verifica"
 msgstr ""
 
-#: arranque/naranjos-arranque:262
+#: arranque/naranjos-arranque:284
 msgid "Este equipo no ha arrancado en modo UEFI"
 msgstr ""
 
-#: arranque/naranjos-arranque:264
+#: arranque/naranjos-arranque:286
 msgid "Falta el shim:"
 msgstr ""
 
-#: arranque/naranjos-arranque:272
+#: arranque/naranjos-arranque:294
 msgid "arranque propio"
 msgstr ""
 
-#: arranque/naranjos-arranque:273
+#: arranque/naranjos-arranque:295
 msgid "Partición EFI:"
 msgstr ""
 
-#: arranque/naranjos-arranque:273
+#: arranque/naranjos-arranque:295
 msgid "solo se escribe en"
 msgstr ""
 
-#: arranque/naranjos-arranque:274
+#: arranque/naranjos-arranque:296
 msgid "Antes se guarda una copia de la EFI entera en"
 msgstr ""
 
-#: arranque/naranjos-arranque:275 esc/naranjos-utiles:45 fotos/fotos:187
+#: arranque/naranjos-arranque:297 esc/naranjos-utiles:45 fotos/fotos:187
 #: peel/naranjos-peel:709
 msgid "Escribe SI para continuar:"
 msgstr ""
 
-#: arranque/naranjos-arranque:276 esc/naranjos-complementos:47
+#: arranque/naranjos-arranque:298 esc/naranjos-complementos:47
 #: esc/naranjos-utiles:45 fotos/fotos:188 peel/naranjos-peel:710
 msgid "Cancelado."
 msgstr ""
 
-#: arranque/naranjos-arranque:281
+#: arranque/naranjos-arranque:303
 msgid "No pude hacer la copia de la EFI"
 msgstr ""
 
-#: arranque/naranjos-arranque:282
+#: arranque/naranjos-arranque:304
 msgid "Copia de la EFI en"
 msgstr ""
 
-#: arranque/naranjos-arranque:287
+#: arranque/naranjos-arranque:309
 msgid "No hay sitio en la partición EFI"
 msgstr ""
 
-#: arranque/naranjos-arranque:289
+#: arranque/naranjos-arranque:311
 msgid "Destino no permitido:"
 msgstr ""
 
-#: arranque/naranjos-arranque:298
+#: arranque/naranjos-arranque:320
 msgid "Lo copiado a la EFI no coincide"
 msgstr ""
 
-#: arranque/naranjos-arranque:302
+#: arranque/naranjos-arranque:324
 msgid "Arranque de NaranjOS en"
 msgstr ""
 
-#: arranque/naranjos-arranque:302 arranque/naranjos-arranque:329
+#: arranque/naranjos-arranque:324 arranque/naranjos-arranque:351
 #: initramfs/naranjos-kernel:97
 msgid "firmado"
 msgstr ""
 
-#: arranque/naranjos-arranque:302
+#: arranque/naranjos-arranque:324
 msgid "menú"
 msgstr ""
 
-#: arranque/naranjos-arranque:304
+#: arranque/naranjos-arranque:326
 msgid ""
 "Siguiente paso: crear la entrada en el firmware y probarla una vez (desde "
 "Ubuntu, o con efibootmgr)."
 msgstr ""
 
-#: arranque/naranjos-arranque:317
+#: arranque/naranjos-arranque:339
 msgid "arranque"
 msgstr ""
 
-#: arranque/naranjos-arranque:319 peel/naranjos-peel:107
+#: arranque/naranjos-arranque:341 peel/naranjos-peel:107
 msgid "activo"
 msgstr ""
 
-#: arranque/naranjos-arranque:319 peel/naranjos-peel:169
+#: arranque/naranjos-arranque:341 peel/naranjos-peel:169
 msgid "apagado"
 msgstr ""
 
-#: arranque/naranjos-arranque:320
+#: arranque/naranjos-arranque:342
 msgid "Modo BIOS (sin UEFI)"
 msgstr ""
 
-#: arranque/naranjos-arranque:321
+#: arranque/naranjos-arranque:343
 msgid "Menú:"
 msgstr ""
 
-#: arranque/naranjos-arranque:321
+#: arranque/naranjos-arranque:343
 msgid "sin generar"
 msgstr ""
 
-#: arranque/naranjos-arranque:322
+#: arranque/naranjos-arranque:344
 msgid "Kernels:"
 msgstr ""
 
-#: arranque/naranjos-arranque:323
+#: arranque/naranjos-arranque:345
 msgid "Raíz:"
 msgstr ""
 
-#: arranque/naranjos-arranque:324 fotos/fotos:229
+#: arranque/naranjos-arranque:346 fotos/fotos:229
 msgid "Arrancado en la foto"
 msgstr ""
 
-#: arranque/naranjos-arranque:328 initramfs/naranjos-kernel:98
+#: arranque/naranjos-arranque:350 initramfs/naranjos-kernel:98
 msgid "firma sin comprobar"
 msgstr ""
 
-#: arranque/naranjos-arranque:329 initramfs/naranjos-kernel:97
+#: arranque/naranjos-arranque:351 initramfs/naranjos-kernel:97
 msgid "SIN firmar"
 msgstr ""
 
-#: arranque/naranjos-arranque:331
+#: arranque/naranjos-arranque:353
 msgid "sin instalar"
 msgstr ""
 
-#: arranque/naranjos-arranque:333
+#: arranque/naranjos-arranque:355
 msgid "con sudo se ve también la partición EFI"
 msgstr ""
 
-#: arranque/naranjos-arranque:335
+#: arranque/naranjos-arranque:357
 msgid "Sin entrada NaranjOS en el firmware"
+msgstr ""
+
+#: arranque/naranjos-arranque:362 gajos/naranjos-huella:20
+#: gajos/naranjos-huella:28 gajos/naranjos-ssh:23 red/naranjos-red:16
+msgid "Hace falta sudo:"
+msgstr ""
+
+#: arranque/naranjos-arranque:367
+msgid "ahora"
+msgstr ""
+
+#: arranque/naranjos-arranque:368
+msgid "Número del kernel por defecto:"
+msgstr ""
+
+#: arranque/naranjos-arranque:372
+msgid "No existe ese kernel:"
+msgstr ""
+
+#: arranque/naranjos-arranque:376
+msgid "Arrancará por defecto:"
 msgstr ""
 
 #: arranque/naranjos-arranque.install:4
@@ -294,6 +316,300 @@ msgstr ""
 
 #: ciber/naranjos-ciber:19
 msgid "Úsalo solo en sistemas tuyos o con autorización por escrito."
+msgstr ""
+
+#: esc/naranjos:12
+msgid "el menú de NaranjOS"
+msgstr ""
+
+#: esc/naranjos:13
+msgid "tema, fondo, fuente, transparencia, esquinas, animaciones"
+msgstr ""
+
+#: esc/naranjos:14
+msgid "temas de color (pon, modo, crea…)"
+msgstr ""
+
+#: esc/naranjos:15
+msgid "elegir fondo con vista previa"
+msgstr ""
+
+#: esc/naranjos:16
+msgid "cambiar la fuente"
+msgstr ""
+
+#: esc/naranjos:17
+msgid "pantallas, escala, texto, barra, duplicar"
+msgstr ""
+
+#: esc/naranjos:18
+msgid "mosaico, desplazable o escritorio flotante"
+msgstr ""
+
+#: esc/naranjos:19
+msgid "el dock y las ventanas minimizadas"
+msgstr ""
+
+#: esc/naranjos:20
+msgid "WiFi, ping, velocidad, DNS, compartir por QR"
+msgstr ""
+
+#: esc/naranjos:21
+msgid "dispositivos Bluetooth"
+msgstr ""
+
+#: esc/naranjos:22
+msgid "salidas y entradas de sonido"
+msgstr ""
+
+#: esc/naranjos:23
+msgid "perfil de energía con cargador y con batería"
+msgstr ""
+
+#: esc/naranjos:24
+msgid "historial, no molestar, acciones"
+msgstr ""
+
+#: esc/naranjos:25
+msgid "capturas, grabaciones y texto de la pantalla"
+msgstr ""
+
+#: esc/naranjos:26
+msgid "grabar la cámara o ponerla encima de una grabación"
+msgstr ""
+
+#: esc/naranjos:27
+msgid "leer un QR de la pantalla o compartir la WiFi"
+msgstr ""
+
+#: esc/naranjos:28
+msgid "recortar un vídeo"
+msgstr ""
+
+#: esc/naranjos:29
+msgid "presentaciones desde un Markdown"
+msgstr ""
+
+#: esc/naranjos:30
+msgid "dictar texto"
+msgstr ""
+
+#: esc/naranjos:31 esc/naranjos-recuerda:57
+msgid "recordatorios"
+msgstr ""
+
+#: esc/naranjos:32
+msgid "reloj mundial"
+msgstr ""
+
+#: esc/naranjos:33
+msgid "el tiempo"
+msgstr ""
+
+#: esc/naranjos:34
+msgid "aplicaciones recomendadas y juegos"
+msgstr ""
+
+#: esc/naranjos:35
+msgid "webs como aplicaciones"
+msgstr ""
+
+#: esc/naranjos:36
+msgid "asistente de IA local (opcional, sin cuentas)"
+msgstr ""
+
+#: esc/naranjos:37
+msgid "abrir programas de otro equipo por SSH"
+msgstr ""
+
+#: esc/naranjos:38
+msgid "servidor SSH y agente de claves"
+msgstr ""
+
+#: esc/naranjos:39
+msgid "complementos (git)"
+msgstr ""
+
+#: esc/naranjos:40
+msgid "guardar y recuperar el tamaño de las ventanas"
+msgstr ""
+
+#: esc/naranjos:41
+msgid "test de velocidad de la red o del disco"
+msgstr ""
+
+#: esc/naranjos:42
+msgid "qué ocupa el disco"
+msgstr ""
+
+#: esc/naranjos:43
+msgid "fotos del sistema para volver atrás"
+msgstr ""
+
+#: esc/naranjos:44
+msgid "cortafuegos, AppArmor, antivirus, VPN, USB"
+msgstr ""
+
+#: esc/naranjos:45
+msgid "huella dactilar (si hay lector)"
+msgstr ""
+
+#: esc/naranjos:46
+msgid "kernel que arranca por defecto"
+msgstr ""
+
+#: esc/naranjos:47
+msgid "traer lo último de NaranjOS"
+msgstr ""
+
+#: esc/naranjos:48
+msgid "los atajos de teclado"
+msgstr ""
+
+#: esc/naranjos:49
+msgid "el manual"
+msgstr ""
+
+#: esc/naranjos:50
+msgid "versión de NaranjOS y del sistema"
+msgstr ""
+
+#: esc/naranjos:54
+msgid "la orden única"
+msgstr ""
+
+#: esc/naranjos:57
+msgid "Con <Tab> se completan las órdenes y sus opciones."
+msgstr ""
+
+#: esc/naranjos:72
+msgid "Queda poco espacio en el disco:"
+msgstr ""
+
+#: esc/naranjos:73
+msgid "Libera espacio antes de actualizar (naranjos disco)."
+msgstr ""
+
+#: esc/naranjos:76
+msgid "No encuentro ~/naranjos-recetas"
+msgstr ""
+
+#: esc/naranjos:80
+msgid "Recetas al día."
+msgstr ""
+
+#: esc/naranjos:81
+msgid "Para instalar lo último:"
+msgstr ""
+
+#: esc/naranjos:98
+msgid "No conozco la orden"
+msgstr ""
+
+#: esc/naranjos-actualizaciones:14
+msgid "Hay novedades de NaranjOS: clic para traerlas"
+msgstr ""
+
+#: esc/naranjos-anchos:19
+msgid "Tamaños guardados"
+msgstr ""
+
+#: esc/naranjos-anchos:19
+msgid "ventanas flotantes"
+msgstr ""
+
+#: esc/naranjos-apariencia:13 esc/naranjos-apariencia:80
+msgid "Apariencia"
+msgstr ""
+
+#: esc/naranjos-apariencia:57 esc/naranjos-menu:46 esc/naranjos-menu:47
+#: temas/naranjos-tema:168 temas/naranjos-tema:243
+msgid "Tema"
+msgstr ""
+
+#: esc/naranjos-apariencia:65
+msgid "No encuentro fondos"
+msgstr ""
+
+#: esc/naranjos-apariencia:66
+msgid "Fondo"
+msgstr ""
+
+#: esc/naranjos-apariencia:73 esc/naranjos-apariencia:82
+msgid "Tema (con vista previa)"
+msgstr ""
+
+#: esc/naranjos-apariencia:73 esc/naranjos-apariencia:83
+msgid "Fondo (con vista previa)"
+msgstr ""
+
+#: esc/naranjos-apariencia:73 esc/naranjos-apariencia:84 esc/naranjos-menu:49
+msgid "Modo claro / oscuro"
+msgstr ""
+
+#: esc/naranjos-apariencia:74 esc/naranjos-apariencia:85
+#: esc/naranjos-pantalla:98
+msgid "Fuente"
+msgstr ""
+
+#: esc/naranjos-apariencia:74 esc/naranjos-apariencia:86
+msgid "Tamaño del texto y pantallas"
+msgstr ""
+
+#: esc/naranjos-apariencia:74 esc/naranjos-apariencia:86
+msgid "Barra: posición y transparencia"
+msgstr ""
+
+#: esc/naranjos-apariencia:75 esc/naranjos-apariencia:87
+msgid "Ventanas: opacas"
+msgstr ""
+
+#: esc/naranjos-apariencia:75 esc/naranjos-apariencia:88
+msgid "Ventanas: transparentes"
+msgstr ""
+
+#: esc/naranjos-apariencia:75 esc/naranjos-apariencia:89
+msgid "Ventanas: cristal"
+msgstr ""
+
+#: esc/naranjos-apariencia:76 esc/naranjos-apariencia:90
+msgid "Esquinas: las del tema"
+msgstr ""
+
+#: esc/naranjos-apariencia:76 esc/naranjos-apariencia:91
+msgid "Esquinas: rectas"
+msgstr ""
+
+#: esc/naranjos-apariencia:76 esc/naranjos-apariencia:92
+msgid "Esquinas: redondas"
+msgstr ""
+
+#: esc/naranjos-apariencia:77 esc/naranjos-apariencia:93
+msgid "Animaciones: sí"
+msgstr ""
+
+#: esc/naranjos-apariencia:77 esc/naranjos-apariencia:94
+msgid "Animaciones: no"
+msgstr ""
+
+#: esc/naranjos-apariencia:78 esc/naranjos-apariencia:95 esc/naranjos-menu:53
+msgid "Dock: mostrar / ocultar"
+msgstr ""
+
+#: esc/naranjos-apariencia:78 esc/naranjos-apariencia:96 esc/naranjos-menu:54
+msgid "Modo escritorio (flotante + dock)"
+msgstr ""
+
+#: esc/naranjos-apariencia:78 esc/naranjos-apariencia:97 esc/naranjos-menu:55
+msgid "Modo mosaico"
+msgstr ""
+
+#: esc/naranjos-apariencia:79 esc/naranjos-apariencia:98
+msgid "Pantalla de bloqueo"
+msgstr ""
+
+#: esc/naranjos-apariencia:79 esc/naranjos-apariencia:99 esc/naranjos-menu:51
+msgid "Crear mi tema…"
 msgstr ""
 
 #: esc/naranjos-apps:9
@@ -357,68 +673,128 @@ msgid "mensajería cifrada"
 msgstr ""
 
 #: esc/naranjos-apps:23
-msgid "mensajería"
+msgid "escribir en Markdown sin distracciones"
 msgstr ""
 
 #: esc/naranjos-apps:24
-msgid "chat y voz"
+msgid "Uso del disco"
+msgstr ""
+
+#: esc/naranjos-apps:24
+msgid "mapa de qué ocupa el disco"
+msgstr ""
+
+#: esc/naranjos-apps:25 esc/naranjos-camara:18 esc/naranjos-camara:20
+#: esc/naranjos-camara:21 esc/naranjos-camara:26 esc/naranjos-camara:33
+msgid "Cámara"
 msgstr ""
 
 #: esc/naranjos-apps:25
-msgid "música"
+msgid "fotos y vídeos con la cámara"
 msgstr ""
 
 #: esc/naranjos-apps:26
-msgid "juegos"
+msgid "escritorio remoto (RDP, VNC, SSH)"
 msgstr ""
 
 #: esc/naranjos-apps:27
-msgid "máquinas virtuales (también Windows)"
+msgid "jugar en streaming desde otro PC (Sunshine)"
 msgstr ""
 
 #: esc/naranjos-apps:28
-msgid "editor de código"
+msgid "consolas clásicas"
 msgstr ""
 
 #: esc/naranjos-apps:29
-msgid "editor de código libre"
+msgid "juegos de Battle.net y otros"
 msgstr ""
 
 #: esc/naranjos-apps:30
-msgid "analizar el tráfico de red"
+msgid "juegos de Epic y GOG"
 msgstr ""
 
 #: esc/naranjos-apps:31
+msgid "mensajería"
+msgstr ""
+
+#: esc/naranjos-apps:32
+msgid "chat y voz"
+msgstr ""
+
+#: esc/naranjos-apps:33
+msgid "música"
+msgstr ""
+
+#: esc/naranjos-apps:34
+msgid "juegos"
+msgstr ""
+
+#: esc/naranjos-apps:35
+msgid "máquinas virtuales (también Windows)"
+msgstr ""
+
+#: esc/naranjos-apps:36
+msgid "editor de código"
+msgstr ""
+
+#: esc/naranjos-apps:37
+msgid "editor de código libre"
+msgstr ""
+
+#: esc/naranjos-apps:38
+msgid "analizar el tráfico de red"
+msgstr ""
+
+#: esc/naranjos-apps:39
 msgid "navegador (lo usan las web apps)"
 msgstr ""
 
-#: esc/naranjos-apps:45 esc/naranjos-menu:89
+#: esc/naranjos-apps:53 esc/naranjos-menu:106
 msgid "Apps recomendadas"
 msgstr ""
 
-#: esc/naranjos-apps:49 esc/naranjos-apps:51 esc/naranjos-menu:14
-#: esc/naranjos-tui:8 esc/naranjos-tui:9 esc/naranjos-tui:10
-#: idiomas/naranjos-idioma:124 idiomas/naranjos-idioma:132
+#: esc/naranjos-apps:57 esc/naranjos-apps:59 esc/naranjos-menu:14
+#: esc/naranjos-qr:19 esc/naranjos-red-panel:8 esc/naranjos-tui:8
+#: esc/naranjos-tui:9 esc/naranjos-tui:10 idiomas/naranjos-idioma:124
+#: idiomas/naranjos-idioma:132
 msgid "Pulsa una tecla para cerrar…"
 msgstr ""
 
-#: esc/naranjos-apps:51
+#: esc/naranjos-apps:59
 msgid "Instalada:"
 msgstr ""
 
-#: esc/naranjos-atajos:4
+#: esc/naranjos-atajos:5
 msgid "Atajos"
 msgstr ""
 
-#: esc/naranjos-ayuda:5 esc/naranjos-menu:104
+#: esc/naranjos-ayuda:5 esc/naranjos-menu:129
 msgid "Manual de NaranjOS"
+msgstr ""
+
+#: esc/naranjos-camara:18
+msgid "Grabación guardada en"
+msgstr ""
+
+#: esc/naranjos-camara:21
+msgid "camara"
+msgstr ""
+
+#: esc/naranjos-camara:26
+msgid "Grabando… (Super + Ctrl + M para parar)"
+msgstr ""
+
+#: esc/naranjos-camara:33
+msgid ""
+"Para la ventanita de la cámara instala «Cámara» desde las apps recomendadas "
+"(Super + Mayús + A)."
 msgstr ""
 
 #: esc/naranjos-captura:15 esc/naranjos-carpetas:11
 msgid "Imágenes"
 msgstr ""
 
-#: esc/naranjos-captura:16 esc/naranjos-menu:119
+#: esc/naranjos-captura:16 esc/naranjos-menu:144
 msgid "Capturas"
 msgstr ""
 
@@ -427,69 +803,77 @@ msgid "captura"
 msgstr ""
 
 #: esc/naranjos-captura:23
-msgid "Captura guardada"
+msgid "Abrir"
 msgstr ""
 
 #: esc/naranjos-captura:23
+msgid "Editar"
+msgstr ""
+
+#: esc/naranjos-captura:23
+msgid "Captura guardada"
+msgstr ""
+
+#: esc/naranjos-captura:24
 msgid "también está en el portapapeles"
 msgstr ""
 
-#: esc/naranjos-captura:31
+#: esc/naranjos-captura:33
 msgid "Grabación guardada"
 msgstr ""
 
-#: esc/naranjos-captura:34
+#: esc/naranjos-captura:36
 msgid "Falta wf-recorder"
 msgstr ""
 
-#: esc/naranjos-captura:35 esc/naranjos-carpetas:12
+#: esc/naranjos-captura:37 esc/naranjos-carpetas:12
 msgid "Vídeos"
 msgstr ""
 
-#: esc/naranjos-captura:36
+#: esc/naranjos-captura:38
 msgid "Grabaciones"
 msgstr ""
 
-#: esc/naranjos-captura:37
+#: esc/naranjos-captura:39
 msgid "grabacion"
 msgstr ""
 
-#: esc/naranjos-captura:42
+#: esc/naranjos-captura:44
 msgid "Grabando la pantalla"
 msgstr ""
 
-#: esc/naranjos-captura:42
+#: esc/naranjos-captura:44
 msgid "Para parar: la misma tecla otra vez (o el punto rojo de la barra)"
 msgstr ""
 
-#: esc/naranjos-captura:49
+#: esc/naranjos-captura:51
 msgid "Falta tesseract"
 msgstr ""
 
-#: esc/naranjos-captura:56
+#: esc/naranjos-captura:58
 msgid "Texto copiado"
 msgstr ""
 
-#: esc/naranjos-captura:58
+#: esc/naranjos-captura:60
 msgid "No he encontrado texto en esa zona"
 msgstr ""
 
-#: esc/naranjos-captura:64
+#: esc/naranjos-captura:66
 msgid "Grabando la pantalla: clic para parar"
 msgstr ""
 
-#: esc/naranjos-captura:73 esc/naranjos-noche:111 esc/naranjos-pantalla:76
-#: esc/naranjos-portapapeles:54 esc/naranjos-recuerda:87 esc/naranjos-tui:12
-#: esc/naranjos-utiles:18 esc/naranjos-utiles:25 esc/naranjos-utiles:30
-#: esc/naranjos-utiles:34 esc/naranjos-utiles:50 esc/naranjos-utiles:55
-#: esc/naranjos-webapp:22 idiomas/naranjos-idioma:100 peel/naranjos-peel:185
-#: peel/naranjos-peel:194 peel/naranjos-peel:234 peel/naranjos-peel:276
-#: peel/naranjos-peel:325 peel/naranjos-peel:499 peel/naranjos-peel:519
-#: peel/naranjos-peel:544 peel/naranjos-peel:676 peel/naranjos-peel:692
-#: peel/naranjos-peel:728 peel/naranjos-peel:869 peel/naranjos-peel:912
-#: peel/naranjos-peel:933 peel/naranjos-peel:962 peel/naranjos-peel:1016
-#: peel/naranjos-peel:1042 peel/naranjos-peel:1082 temas/naranjos-tema:213
-#: zumo:24
+#: esc/naranjos-captura:75 esc/naranjos-disposicion:19 esc/naranjos-noche:111
+#: esc/naranjos-pantalla:76 esc/naranjos-portapapeles:54
+#: esc/naranjos-recuerda:87 esc/naranjos-tui:12 esc/naranjos-utiles:18
+#: esc/naranjos-utiles:25 esc/naranjos-utiles:30 esc/naranjos-utiles:34
+#: esc/naranjos-utiles:50 esc/naranjos-utiles:55 esc/naranjos-webapp:22
+#: idiomas/naranjos-idioma:100 peel/naranjos-peel:185 peel/naranjos-peel:194
+#: peel/naranjos-peel:234 peel/naranjos-peel:276 peel/naranjos-peel:325
+#: peel/naranjos-peel:499 peel/naranjos-peel:519 peel/naranjos-peel:544
+#: peel/naranjos-peel:676 peel/naranjos-peel:692 peel/naranjos-peel:728
+#: peel/naranjos-peel:869 peel/naranjos-peel:912 peel/naranjos-peel:933
+#: peel/naranjos-peel:962 peel/naranjos-peel:1016 peel/naranjos-peel:1042
+#: peel/naranjos-peel:1082 red/naranjos-red:77 temas/naranjos-tema:213 zumo:24
 msgid "Uso:"
 msgstr ""
 
@@ -545,6 +929,22 @@ msgstr ""
 msgid "Complemento quitado:"
 msgstr ""
 
+#: esc/naranjos-cuelgues:21
+msgid "Ver por qué"
+msgstr ""
+
+#: esc/naranjos-cuelgues:21
+msgid "No avisar más de este"
+msgstr ""
+
+#: esc/naranjos-cuelgues:22
+msgid "Se ha cerrado de golpe"
+msgstr ""
+
+#: esc/naranjos-cuelgues:22
+msgid "El programa ha fallado. NaranjOS ha guardado el informe."
+msgstr ""
+
 #: esc/naranjos-despierto:11
 msgid ""
 "Despierto: no se bloquea ni se apaga la pantalla (clic para volver a lo "
@@ -595,6 +995,43 @@ msgstr ""
 msgid "Habla y pulsa Super + Ctrl + D otra vez para terminar"
 msgstr ""
 
+#: esc/naranjos-disposicion:9
+msgid "Mosaico"
+msgstr ""
+
+#: esc/naranjos-disposicion:9
+msgid "Desplazable"
+msgstr ""
+
+#: esc/naranjos-disposicion:9
+msgid "Flotante"
+msgstr ""
+
+#: esc/naranjos-disposicion:11
+msgid "Disposición"
+msgstr ""
+
+#: esc/naranjos-disposicion:16 esc/naranjos-disposicion:18
+msgid "Modo escritorio"
+msgstr ""
+
+#: esc/naranjos-disposicion:16
+msgid ""
+"Ventanas flotantes y dock. Para volver: naranjos disposicion escritorio apaga"
+msgstr ""
+
+#: esc/naranjos-disposicion:18
+msgid "Desactivado: vuelve el mosaico"
+msgstr ""
+
+#: esc/naranjos-dock:25 esc/naranjos-dock:26
+msgid "Minimizadas"
+msgstr ""
+
+#: esc/naranjos-dock:26
+msgid "No hay ventanas minimizadas"
+msgstr ""
+
 #: esc/naranjos-emoji:8
 msgid "Faltan los datos de emojis"
 msgstr ""
@@ -621,6 +1058,75 @@ msgstr ""
 msgid ""
 "NaranjOS: no pude recargar el escritorio de %s; hazlo tú con Super + Shift + "
 "R"
+msgstr ""
+
+#: esc/naranjos-ia:16
+msgid "Ya está instalado"
+msgstr ""
+
+#: esc/naranjos-ia:17
+msgid ""
+"Se descargará Ollama (unos 1-2 GB, con soporte para tu gráfica NVIDIA) en:"
+msgstr ""
+
+#: esc/naranjos-ia:18
+msgid "Escribe SI para seguir:"
+msgstr ""
+
+#: esc/naranjos-ia:22
+msgid "La descarga no coincide con su suma: no se instala"
+msgstr ""
+
+#: esc/naranjos-ia:27
+msgid "No pude descargarlo"
+msgstr ""
+
+#: esc/naranjos-ia:31
+msgid "Instalado. Ahora baja un modelo:"
+msgstr ""
+
+#: esc/naranjos-ia:34 esc/naranjos-ia:43
+msgid "Primero: naranjos-ia instala"
+msgstr ""
+
+#: esc/naranjos-ia:36
+msgid "equilibrado (8 GB de gráfica)"
+msgstr ""
+
+#: esc/naranjos-ia:36
+msgid "rápido y ligero"
+msgstr ""
+
+#: esc/naranjos-ia:36
+msgid "bueno con imágenes"
+msgstr ""
+
+#: esc/naranjos-ia:36
+msgid "programar"
+msgstr ""
+
+#: esc/naranjos-ia:36
+msgid "Modelo"
+msgstr ""
+
+#: esc/naranjos-ia:44
+msgid "Baja antes un modelo: naranjos-ia modelo"
+msgstr ""
+
+#: esc/naranjos-ia:47
+msgid "IA local instalada"
+msgstr ""
+
+#: esc/naranjos-ia:48
+msgid "No está instalada (es opcional): naranjos-ia instala"
+msgstr ""
+
+#: esc/naranjos-ia:50
+msgid "Se borrarán Ollama y tus modelos. Escribe SI:"
+msgstr ""
+
+#: esc/naranjos-ia:52
+msgid "IA local quitada"
 msgstr ""
 
 #: esc/naranjos-inicio:24
@@ -687,282 +1193,382 @@ msgstr ""
 msgid "sin activar"
 msgstr ""
 
-#: esc/naranjos-menu:46 esc/naranjos-menu:47 temas/naranjos-tema:168
-#: temas/naranjos-tema:243
-msgid "Tema"
-msgstr ""
-
-#: esc/naranjos-menu:49
-msgid "Modo claro / oscuro"
-msgstr ""
-
 #: esc/naranjos-menu:50
 msgid "Siguiente fondo"
 msgstr ""
 
-#: esc/naranjos-menu:51
-msgid "Crear mi tema…"
+#: esc/naranjos-menu:52
+msgid "Apariencia (todo)"
 msgstr ""
 
-#: esc/naranjos-menu:52 esc/naranjos-noche:82 esc/naranjos-noche:88
+#: esc/naranjos-menu:56 esc/naranjos-noche:82 esc/naranjos-noche:88
 msgid "Luz nocturna"
 msgstr ""
 
-#: esc/naranjos-menu:53
+#: esc/naranjos-menu:57
 msgid "Mostrar / ocultar la barra"
 msgstr ""
 
-#: esc/naranjos-menu:54
+#: esc/naranjos-menu:58
 msgid "Pantalla, texto y barra"
 msgstr ""
 
-#: esc/naranjos-menu:55
+#: esc/naranjos-menu:59
 msgid "Temas en VS Code"
 msgstr ""
 
-#: esc/naranjos-menu:56
+#: esc/naranjos-menu:60
 msgid "Restablecer una configuración"
 msgstr ""
 
-#: esc/naranjos-menu:61 esc/naranjos-tui:7
+#: esc/naranjos-menu:65 esc/naranjos-tui:7
 msgid "Sonido"
 msgstr ""
 
-#: esc/naranjos-menu:62 esc/naranjos-tui:11 idiomas/naranjos-idioma:117
+#: esc/naranjos-menu:66
+msgid "Energía (cargador / batería)"
+msgstr ""
+
+#: esc/naranjos-menu:67
+msgid "Avisos: no molestar, historial"
+msgstr ""
+
+#: esc/naranjos-menu:68 esc/naranjos-reloj:19
+msgid "Reloj mundial"
+msgstr ""
+
+#: esc/naranjos-menu:69
+msgid "Huella dactilar"
+msgstr ""
+
+#: esc/naranjos-menu:69
+msgid "Huella"
+msgstr ""
+
+#: esc/naranjos-menu:70 esc/naranjos-tui:11 idiomas/naranjos-idioma:117
 #: idiomas/naranjos-idioma:124
 msgid "Idioma"
 msgstr ""
 
-#: esc/naranjos-menu:63
+#: esc/naranjos-menu:71
 msgid "El tiempo: elegir ciudad"
 msgstr ""
 
-#: esc/naranjos-menu:64
+#: esc/naranjos-menu:72
 msgid "Llave de seguridad (FIDO2)"
 msgstr ""
 
-#: esc/naranjos-menu:64
+#: esc/naranjos-menu:72
 msgid "Llave"
 msgstr ""
 
-#: esc/naranjos-menu:65
+#: esc/naranjos-menu:73
 msgid "Mi configuración de Hyprland (avanzado)"
 msgstr ""
 
-#: esc/naranjos-menu:68
+#: esc/naranjos-menu:76
 msgid "Estado de la seguridad"
 msgstr ""
 
-#: esc/naranjos-menu:69
+#: esc/naranjos-menu:77
 msgid "VPN: conectar / desconectar"
 msgstr ""
 
-#: esc/naranjos-menu:70
+#: esc/naranjos-menu:78
 msgid "Permitir un USB bloqueado"
 msgstr ""
 
-#: esc/naranjos-menu:71
+#: esc/naranjos-menu:79
 msgid "Vaciar la cuarentena del antivirus"
 msgstr ""
 
-#: esc/naranjos-menu:71
+#: esc/naranjos-menu:79
 msgid "Cuarentena"
 msgstr ""
 
-#: esc/naranjos-menu:74
+#: esc/naranjos-menu:82
 msgid "Tailscale (red entre tus equipos)"
 msgstr ""
 
-#: esc/naranjos-menu:75
+#: esc/naranjos-menu:83
 msgid "Inicio: bonito (bloqueado) / clásico"
 msgstr ""
 
-#: esc/naranjos-menu:75
+#: esc/naranjos-menu:83
 msgid "Inicio"
 msgstr ""
 
-#: esc/naranjos-menu:76
+#: esc/naranjos-menu:84
 msgid "Actualizar NaranjOS"
 msgstr ""
 
-#: esc/naranjos-menu:76
+#: esc/naranjos-menu:84 esc/naranjos-menu:88
 msgid "Actualizar"
 msgstr ""
 
-#: esc/naranjos-menu:77
+#: esc/naranjos-menu:85
 msgid "Fotos del sistema"
 msgstr ""
 
-#: esc/naranjos-menu:77 esc/naranjos-menu:78
+#: esc/naranjos-menu:85 esc/naranjos-menu:86
 msgid "Fotos"
 msgstr ""
 
-#: esc/naranjos-menu:78
+#: esc/naranjos-menu:86
 msgid "Hacer una foto del sistema ahora"
 msgstr ""
 
-#: esc/naranjos-menu:78
+#: esc/naranjos-menu:86
 msgid "desde el menú"
 msgstr ""
 
-#: esc/naranjos-menu:79
+#: esc/naranjos-menu:87
 msgid "Limpiar paquetes que sobran"
 msgstr ""
 
-#: esc/naranjos-menu:79
+#: esc/naranjos-menu:87
 msgid "Limpiar"
 msgstr ""
 
-#: esc/naranjos-menu:82 esc/naranjos-portapapeles:43
+#: esc/naranjos-menu:88
+msgid "Traer lo último de NaranjOS"
+msgstr ""
+
+#: esc/naranjos-menu:89
+msgid "Qué ocupa el disco"
+msgstr ""
+
+#: esc/naranjos-menu:89
+msgid "Disco"
+msgstr ""
+
+#: esc/naranjos-menu:90 gajos/naranjos-velocidad:20
+msgid "Velocidad del disco"
+msgstr ""
+
+#: esc/naranjos-menu:90 esc/naranjos-menu:91 esc/naranjos-red-panel:102
+msgid "Velocidad"
+msgstr ""
+
+#: esc/naranjos-menu:91 gajos/naranjos-velocidad:11
+msgid "Velocidad de la red"
+msgstr ""
+
+#: esc/naranjos-menu:92
+msgid "Servidor SSH (solo con clave)"
+msgstr ""
+
+#: esc/naranjos-menu:93
+msgid "Agente de claves SSH"
+msgstr ""
+
+#: esc/naranjos-menu:94
+msgid "Programas de otro equipo (SSH)"
+msgstr ""
+
+#: esc/naranjos-menu:95
+msgid "Kernel por defecto"
+msgstr ""
+
+#: esc/naranjos-menu:96
+msgid "IA local (opcional, sin cuentas)"
+msgstr ""
+
+#: esc/naranjos-menu:96
+msgid "IA local"
+msgstr ""
+
+#: esc/naranjos-menu:99 esc/naranjos-portapapeles:43
 #: esc/naranjos-portapapeles:44
 msgid "Portapapeles"
 msgstr ""
 
-#: esc/naranjos-menu:83
+#: esc/naranjos-menu:100
 msgid "Emojis"
 msgstr ""
 
-#: esc/naranjos-menu:84
+#: esc/naranjos-menu:101
 msgid "Dictar (voz a texto)"
 msgstr ""
 
-#: esc/naranjos-menu:85
+#: esc/naranjos-menu:102
 msgid "Nuevo recordatorio"
 msgstr ""
 
-#: esc/naranjos-menu:86
+#: esc/naranjos-menu:103
 msgid "Mis recordatorios"
 msgstr ""
 
-#: esc/naranjos-menu:86
+#: esc/naranjos-menu:103
 msgid "Recordatorios"
 msgstr ""
 
-#: esc/naranjos-menu:87
+#: esc/naranjos-menu:104
 msgid "Nueva web app"
 msgstr ""
 
-#: esc/naranjos-menu:88
+#: esc/naranjos-menu:105
 msgid "Complementos"
 msgstr ""
 
-#: esc/naranjos-menu:90
+#: esc/naranjos-menu:107
+msgid "Juegos: Steam, RetroArch, Lutris, Heroic"
+msgstr ""
+
+#: esc/naranjos-menu:107
+msgid "Juegos"
+msgstr ""
+
+#: esc/naranjos-menu:108
+msgid "Webs de servicios (Microsoft 365, Slack…)"
+msgstr ""
+
+#: esc/naranjos-menu:109
+msgid "Presentación desde un Markdown"
+msgstr ""
+
+#: esc/naranjos-menu:109
+msgid "Presentación"
+msgstr ""
+
+#: esc/naranjos-menu:109
+msgid "Fichero .md:"
+msgstr ""
+
+#: esc/naranjos-menu:110
+msgid "Recortar un vídeo"
+msgstr ""
+
+#: esc/naranjos-menu:112
 msgid "Mantener despierto (sí / no)"
 msgstr ""
 
-#: esc/naranjos-menu:91
+#: esc/naranjos-menu:113
 msgid "Salvapantallas"
 msgstr ""
 
-#: esc/naranjos-menu:92
+#: esc/naranjos-menu:114
 msgid "Contenedores (lazydocker)"
 msgstr ""
 
-#: esc/naranjos-menu:93
+#: esc/naranjos-menu:115
 msgid "Git (lazygit)"
 msgstr ""
 
-#: esc/naranjos-menu:96
+#: esc/naranjos-menu:118
 msgid "Captura de una zona"
 msgstr ""
 
-#: esc/naranjos-menu:97
+#: esc/naranjos-menu:119
 msgid "Captura de la pantalla"
 msgstr ""
 
-#: esc/naranjos-menu:98
+#: esc/naranjos-menu:120
 msgid "Grabar una zona (otra vez: parar)"
 msgstr ""
 
-#: esc/naranjos-menu:99
+#: esc/naranjos-menu:121
 msgid "Grabar la pantalla (otra vez: parar)"
 msgstr ""
 
-#: esc/naranjos-menu:100
+#: esc/naranjos-menu:122
 msgid "Copiar el texto de una zona"
 msgstr ""
 
-#: esc/naranjos-menu:103
-msgid "Atajos de teclado"
+#: esc/naranjos-menu:123
+msgid "Leer un QR de la pantalla"
 msgstr ""
 
-#: esc/naranjos-menu:107 esc/naranjos-sistema:5
-msgid "Bloquear"
+#: esc/naranjos-menu:124
+msgid "Grabar la cámara (otra vez: parar)"
 msgstr ""
 
-#: esc/naranjos-menu:108 esc/naranjos-sistema:5
-msgid "Cerrar sesión"
-msgstr ""
-
-#: esc/naranjos-menu:109 esc/naranjos-sistema:5
-msgid "Suspender"
-msgstr ""
-
-#: esc/naranjos-menu:117
-msgid "Aplicaciones"
-msgstr ""
-
-#: esc/naranjos-menu:117
-msgid "Utilidades"
-msgstr ""
-
-#: esc/naranjos-menu:117
-msgid "Aspecto"
-msgstr ""
-
-#: esc/naranjos-menu:118
-msgid "Ajustes"
-msgstr ""
-
-#: esc/naranjos-menu:118 esc/naranjos-tui:8
-msgid "Seguridad"
-msgstr ""
-
-#: esc/naranjos-menu:119
-msgid "Sistema"
-msgstr ""
-
-#: esc/naranjos-menu:120
-msgid "Ayuda"
-msgstr ""
-
-#: esc/naranjos-menu:120
-msgid "Energía"
-msgstr ""
-
-#: esc/naranjos-menu:126
-msgid "Nombre del tema"
-msgstr ""
-
-#: esc/naranjos-menu:127
-msgid "naranja"
-msgstr ""
-
-#: esc/naranjos-menu:127
-msgid "violeta"
-msgstr ""
-
-#: esc/naranjos-menu:127
-msgid "turquesa"
-msgstr ""
-
-#: esc/naranjos-menu:127
-msgid "frambuesa"
-msgstr ""
-
-#: esc/naranjos-menu:127
-msgid "pizarra"
+#: esc/naranjos-menu:125
+msgid "La cámara encima de todo"
 msgstr ""
 
 #: esc/naranjos-menu:128
-msgid "Color (o escribe uno, p. ej. 3d9bff)"
+msgid "Atajos de teclado"
 msgstr ""
 
-#: esc/naranjos-menu:129 temas/naranjos-tema:217
-msgid "No pude crear el tema"
+#: esc/naranjos-menu:132 esc/naranjos-sistema:5
+msgid "Bloquear"
+msgstr ""
+
+#: esc/naranjos-menu:133 esc/naranjos-sistema:5
+msgid "Cerrar sesión"
+msgstr ""
+
+#: esc/naranjos-menu:134 esc/naranjos-sistema:5
+msgid "Suspender"
+msgstr ""
+
+#: esc/naranjos-menu:142
+msgid "Aplicaciones"
+msgstr ""
+
+#: esc/naranjos-menu:142
+msgid "Utilidades"
+msgstr ""
+
+#: esc/naranjos-menu:142
+msgid "Aspecto"
+msgstr ""
+
+#: esc/naranjos-menu:143
+msgid "Ajustes"
+msgstr ""
+
+#: esc/naranjos-menu:143 esc/naranjos-tui:8
+msgid "Seguridad"
 msgstr ""
 
 #: esc/naranjos-menu:144
+msgid "Sistema"
+msgstr ""
+
+#: esc/naranjos-menu:145
+msgid "Ayuda"
+msgstr ""
+
+#: esc/naranjos-menu:145 gajos/naranjos-energia:42 gajos/naranjos-energia:44
+#: gajos/naranjos-energia:45
+msgid "Energía"
+msgstr ""
+
+#: esc/naranjos-menu:151
+msgid "Nombre del tema"
+msgstr ""
+
+#: esc/naranjos-menu:152
+msgid "naranja"
+msgstr ""
+
+#: esc/naranjos-menu:152
+msgid "violeta"
+msgstr ""
+
+#: esc/naranjos-menu:152
+msgid "turquesa"
+msgstr ""
+
+#: esc/naranjos-menu:152
+msgid "frambuesa"
+msgstr ""
+
+#: esc/naranjos-menu:152
+msgid "pizarra"
+msgstr ""
+
+#: esc/naranjos-menu:153
+msgid "Color (o escribe uno, p. ej. 3d9bff)"
+msgstr ""
+
+#: esc/naranjos-menu:154 temas/naranjos-tema:217
+msgid "No pude crear el tema"
+msgstr ""
+
+#: esc/naranjos-menu:169
 msgid "Volver"
 msgstr ""
 
@@ -1002,7 +1608,7 @@ msgstr ""
 msgid "Ahora: luz normal"
 msgstr ""
 
-#: esc/naranjos-noche:86
+#: esc/naranjos-noche:86 esc/naranjos-red-panel:66
 msgid "Automática"
 msgstr ""
 
@@ -1028,6 +1634,44 @@ msgstr ""
 
 #: esc/naranjos-noche:120
 msgid "Orden desconocida. Mira:"
+msgstr ""
+
+#: esc/naranjos-notificaciones:15
+msgid "Acción"
+msgstr ""
+
+#: esc/naranjos-notificaciones:15
+msgid "Avisos"
+msgstr ""
+
+#: esc/naranjos-notificaciones:15
+msgid "Ningún aviso tiene acciones ahora"
+msgstr ""
+
+#: esc/naranjos-notificaciones:19
+msgid "No molestar"
+msgstr ""
+
+#: esc/naranjos-notificaciones:19
+msgid "Avisos activados"
+msgstr ""
+
+#: esc/naranjos-notificaciones:23
+msgid "No molestar (clic para quitarlo)"
+msgstr ""
+
+#: esc/naranjos-notificaciones:24
+msgid "Avisos (clic: no molestar · clic derecho: historial)"
+msgstr ""
+
+#: esc/naranjos-notificaciones:29
+msgid "Ver atajos"
+msgstr ""
+
+#: esc/naranjos-notificaciones:29
+msgid ""
+"Novedades: dock, modo escritorio, paneles rápidos y la orden «naranjos». "
+"Pulsa para ver los atajos (Super + K)."
 msgstr ""
 
 #: esc/naranjos-osd:38
@@ -1167,8 +1811,16 @@ msgstr ""
 msgid "Escala"
 msgstr ""
 
-#: esc/naranjos-pantalla:98
-msgid "Fuente"
+#: esc/naranjos-pantalla:104
+msgid "Pantallas separadas"
+msgstr ""
+
+#: esc/naranjos-pantalla:110
+msgid "Hace falta la pantalla del portátil y un monitor externo conectado"
+msgstr ""
+
+#: esc/naranjos-pantalla:112
+msgid "Duplicando"
 msgstr ""
 
 #: esc/naranjos-portapapeles:38
@@ -1181,6 +1833,50 @@ msgstr ""
 
 #: esc/naranjos-portapapeles:50
 msgid "Historial del portapapeles vaciado"
+msgstr ""
+
+#: esc/naranjos-qr:14
+msgid "No encuentro ningún QR en esa zona"
+msgstr ""
+
+#: esc/naranjos-qr:16
+msgid "Copiado al portapapeles:"
+msgstr ""
+
+#: esc/naranjos-qr:18
+msgid "WiFi por QR"
+msgstr ""
+
+#: esc/naranjos-qr:19
+msgid "Hace falta NetworkManager (sudo naranjos-red usa networkmanager)"
+msgstr ""
+
+#: esc/naranjos-recorta:13
+msgid "Vídeo"
+msgstr ""
+
+#: esc/naranjos-recorta:15
+msgid "No encuentro el vídeo:"
+msgstr ""
+
+#: esc/naranjos-recorta:17
+msgid "Desde (0:00)"
+msgstr ""
+
+#: esc/naranjos-recorta:18
+msgid "Hasta (vacío = el final;"
+msgstr ""
+
+#: esc/naranjos-recorta:19
+msgid "recorte"
+msgstr ""
+
+#: esc/naranjos-recorta:24
+msgid "Vídeo recortado"
+msgstr ""
+
+#: esc/naranjos-recorta:26
+msgid "No pude recortar el vídeo"
 msgstr ""
 
 #: esc/naranjos-recuerda:11 esc/naranjos-recuerda:37 esc/naranjos-recuerda:47
@@ -1197,10 +1893,6 @@ msgstr ""
 
 #: esc/naranjos-recuerda:41
 msgid "Recordatorio creado"
-msgstr ""
-
-#: esc/naranjos-recuerda:57
-msgid "recordatorios"
 msgstr ""
 
 #: esc/naranjos-recuerda:62
@@ -1237,6 +1929,140 @@ msgstr ""
 
 #: esc/naranjos-recuerda:87
 msgid "texto"
+msgstr ""
+
+#: esc/naranjos-red-panel:21
+msgid "Portal"
+msgstr ""
+
+#: esc/naranjos-red-panel:21
+msgid "Esta red pide iniciar sesión: pulsa para abrir la página"
+msgstr ""
+
+#: esc/naranjos-red-panel:35 esc/naranjos-red-panel:43
+#: esc/naranjos-red-panel:45
+msgid "Conectado a"
+msgstr ""
+
+#: esc/naranjos-red-panel:41
+msgid "Contraseña de"
+msgstr ""
+
+#: esc/naranjos-red-panel:43
+msgid "No pude conectar a"
+msgstr ""
+
+#: esc/naranjos-red-panel:51 esc/naranjos-red-panel:73
+#: esc/naranjos-red-panel:98
+msgid "Red"
+msgstr ""
+
+#: esc/naranjos-red-panel:51
+msgid "No hay ninguna conexión activa"
+msgstr ""
+
+#: esc/naranjos-red-panel:52
+msgid "Automático (el de la red)"
+msgstr ""
+
+#: esc/naranjos-red-panel:66
+msgid "Banda WiFi"
+msgstr ""
+
+#: esc/naranjos-red-panel:69
+msgid "Banda"
+msgstr ""
+
+#: esc/naranjos-red-panel:78
+msgid "Tráfico de red"
+msgstr ""
+
+#: esc/naranjos-red-panel:88 esc/naranjos-red-panel:100
+msgid "Redes WiFi cercanas"
+msgstr ""
+
+#: esc/naranjos-red-panel:89 esc/naranjos-red-panel:101
+msgid "Estado"
+msgstr ""
+
+#: esc/naranjos-red-panel:89
+msgid "sin conexión"
+msgstr ""
+
+#: esc/naranjos-red-panel:90 esc/naranjos-red-panel:102
+msgid "Test de velocidad"
+msgstr ""
+
+#: esc/naranjos-red-panel:91
+msgid "Ping (Cloudflare)"
+msgstr ""
+
+#: esc/naranjos-red-panel:92 esc/naranjos-red-panel:104
+msgid "Tráfico en directo"
+msgstr ""
+
+#: esc/naranjos-red-panel:93
+msgid "Servidor DNS"
+msgstr ""
+
+#: esc/naranjos-red-panel:94
+msgid "Compartir esta WiFi por QR"
+msgstr ""
+
+#: esc/naranjos-red-panel:95 esc/naranjos-red-panel:107
+msgid "Banda WiFi (2,4 / 5 GHz)"
+msgstr ""
+
+#: esc/naranjos-red-panel:96 esc/naranjos-red-panel:108
+msgid "Abrir el portal de inicio de sesión"
+msgstr ""
+
+#: esc/naranjos-red-panel:97 esc/naranjos-red-panel:109
+msgid "Activar / desactivar la WiFi"
+msgstr ""
+
+#: esc/naranjos-red-panel:98 esc/naranjos-red-panel:111
+msgid "Olvidar una red"
+msgstr ""
+
+#: esc/naranjos-red-panel:112
+msgid "Olvidar"
+msgstr ""
+
+#: esc/naranjos-red-panel:113
+msgid "Olvidada"
+msgstr ""
+
+#: esc/naranjos-reloj:29
+msgid "Zona"
+msgstr ""
+
+#: esc/naranjos-reloj:31
+msgid "No conozco esa zona:"
+msgstr ""
+
+#: esc/naranjos-reloj:32
+msgid "Nombre (p. ej. Nueva York)"
+msgstr ""
+
+#: esc/naranjos-reloj:33
+msgid "Contactos allí (opcional)"
+msgstr ""
+
+#: esc/naranjos-reloj:37
+msgid "Quitar"
+msgstr ""
+
+#: esc/naranjos-remoto:13
+msgid "Sesiones remotas abiertas"
+msgstr ""
+
+#: esc/naranjos-remoto:20
+msgid "Equipo (usuario@equipo)"
+msgstr ""
+
+#: esc/naranjos-remoto:23
+msgid "Programa"
 msgstr ""
 
 #: esc/naranjos-restablece:24
@@ -1425,6 +2251,10 @@ msgstr ""
 
 #: esc/naranjos-webapp:54
 msgid "Dirección (https://…)"
+msgstr ""
+
+#: esc/naranjos-webapp:63
+msgid "Servicio"
 msgstr ""
 
 #: fotos/fotos:47
@@ -1622,6 +2452,125 @@ msgstr ""
 msgid ""
 "en «Fotos de NaranjOS»: se arranca sin tocar nada, y si te convence, «fotos "
 "vuelve»."
+msgstr ""
+
+#: gajos/naranjos-energia:29
+msgid "Tu equipo admite:"
+msgstr ""
+
+#: gajos/naranjos-energia:31
+msgid "Guardado"
+msgstr ""
+
+#: gajos/naranjos-energia:35
+msgid "Perfil"
+msgstr ""
+
+#: gajos/naranjos-energia:35
+msgid "con cargador"
+msgstr ""
+
+#: gajos/naranjos-energia:35
+msgid "con batería"
+msgstr ""
+
+#: gajos/naranjos-energia:36
+msgid "Admite:"
+msgstr ""
+
+#: gajos/naranjos-energia:36
+msgid "Cargador:"
+msgstr ""
+
+#: gajos/naranjos-energia:36
+msgid "Batería:"
+msgstr ""
+
+#: gajos/naranjos-energia:41 gajos/naranjos-energia:44
+msgid "Con cargador"
+msgstr ""
+
+#: gajos/naranjos-energia:41
+msgid "Con batería"
+msgstr ""
+
+#: gajos/naranjos-huella:16
+msgid "Falta fprintd"
+msgstr ""
+
+#: gajos/naranjos-huella:17 gajos/naranjos-huella:18 gajos/naranjos-huella:21
+msgid "Este equipo no tiene lector de huellas."
+msgstr ""
+
+#: gajos/naranjos-huella:26
+msgid ""
+"Huella activa (desbloqueo, sudo y permisos). La contraseña sigue funcionando."
+msgstr ""
+
+#: gajos/naranjos-huella:31
+msgid "Huella desactivada y huellas borradas"
+msgstr ""
+
+#: gajos/naranjos-ssh:16
+msgid "Servidor"
+msgstr ""
+
+#: gajos/naranjos-ssh:17
+msgid "Agente"
+msgstr ""
+
+#: gajos/naranjos-ssh:18
+msgid "Tus claves"
+msgstr ""
+
+#: gajos/naranjos-ssh:19
+msgid "No tienes clave. Crea una con:"
+msgstr ""
+
+#: gajos/naranjos-ssh:26
+msgid "Lánzalo con sudo desde tu usuario"
+msgstr ""
+
+#: gajos/naranjos-ssh:28
+msgid ""
+"Primero añade la clave pública del otro equipo a ~/.ssh/authorized_keys (ssh-"
+"copy-id desde allí no funciona sin contraseña: cópiala a mano o con un USB)."
+msgstr ""
+
+#: gajos/naranjos-ssh:33
+msgid "Servidor SSH activo: solo con clave, solo para"
+msgstr ""
+
+#: gajos/naranjos-ssh:37
+msgid "Servidor SSH apagado"
+msgstr ""
+
+#: gajos/naranjos-ssh:44
+msgid "Agente SSH activo (desde la próxima sesión, en todas las terminales)"
+msgstr ""
+
+#: gajos/naranjos-ssh:45
+msgid "Agente SSH apagado"
+msgstr ""
+
+#: gajos/naranjos-velocidad:13
+msgid "Latencia"
+msgstr ""
+
+#: gajos/naranjos-velocidad:15
+msgid "Bajada"
+msgstr ""
+
+#: gajos/naranjos-velocidad:17
+msgid "Subida"
+msgstr ""
+
+#: gajos/naranjos-velocidad:21
+msgid "Escritura"
+msgstr ""
+
+#: gajos/naranjos-velocidad:23
+msgid "Lectura"
 msgstr ""
 
 #: idiomas/naranjos-idioma:45
@@ -2782,6 +3731,44 @@ msgstr ""
 
 #: peel/naranjos-usb:24
 msgid "si lo has enchufado tú, permítelo con Super + Ctrl + U"
+msgstr ""
+
+#: red/naranjos-red:51
+msgid "NetworkManager no está instalado"
+msgstr ""
+
+#: red/naranjos-red:53
+msgid "WiFi guardadas traídas de iwd:"
+msgstr ""
+
+#: red/naranjos-red:54
+msgid ""
+"Las WiFi de empresa (802.1X) hay que volver a añadirlas desde el panel de "
+"red."
+msgstr ""
+
+#: red/naranjos-red:58
+msgid "NetworkManager no arranca"
+msgstr ""
+
+#: red/naranjos-red:59
+msgid "Comprobando la conexión"
+msgstr ""
+
+#: red/naranjos-red:61
+msgid "Red con NetworkManager: conectada"
+msgstr ""
+
+#: red/naranjos-red:64
+msgid "Sin conexión en 40 s: vuelvo a iwd."
+msgstr ""
+
+#: red/naranjos-red:73
+msgid "Red con iwd + systemd-networkd"
+msgstr ""
+
+#: red/naranjos-red:78
+msgid "La red la lleva:"
 msgstr ""
 
 #: temas/naranjos-tema:28

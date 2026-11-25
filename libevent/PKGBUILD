@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=libevent
+pkgver=2.1.13
+pkgrel=1
+pkgdesc='Bucle de eventos en C (lo usa tmux)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=('openssl')
+makedepends=()
+source=('https://github.com/libevent/libevent/releases/download/release-2.1.13-stable/libevent-2.1.13-stable.tar.gz')
+sha256sums=('f7e9383b8c0baa81b687e5b5eecc01beefaf1b19b64151d95ed61647fe7a315c')
+build() { cd libevent-$pkgver-stable; ./configure --prefix=/usr --disable-static; make; }
+package() { cd libevent-$pkgver-stable; make DESTDIR="$pkgdir" install; rm -f "$pkgdir/usr/bin/event_rpcgen.py"; install -Dm644 LICENSE "$pkgdir/usr/share/licenses/libevent/LICENSE"; }

@@ -1,0 +1,40 @@
+#!/bin/bash
+# naranjos-dock — el dock de NaranjOS (apps fijadas, abiertas y todas) y las ventanas minimizadas
+#   naranjos-dock activa | apaga | alterna    mostrarlo siempre (se recuerda) o quitarlo
+#   naranjos-dock arranca                     al entrar en la sesión (si está activado)
+#   naranjos-dock minimizadas                 volver a traer una ventana minimizada (Super + M la minimiza)
+# Clic derecho en un icono: fijarlo o quitarlo. El último botón abre el menú de NaranjOS.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+C="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos"; MARCA="$C/dock-activo"
+CSS="$C/tema/dock.css"; [ -r "$CSS" ] || CSS=/usr/share/naranjos/dock.css
+
+lanza(){
+  pgrep -x nwg-dock-hyprla >/dev/null && return 0
+  setsid -f nwg-dock-hyprland -d -i 40 -mb 8 -p bottom -c naranjos-menu -s "$CSS" -nolauncher=false >/dev/null 2>&1
+}
+para(){ pkill -x nwg-dock-hyprla 2>/dev/null; pkill -f '^nwg-dock-hyprland' 2>/dev/null; true; }
+
+minimizadas(){
+  local sel addr ws
+  sel=$(hyprctl clients -j | python3 -c '
+import json, sys
+for c in json.load(sys.stdin):
+    if c.get("workspace", {}).get("name") == "special:minimizadas":
+        print("%s\t%s  ·  %s" % (c["address"], c.get("class") or "?", (c.get("title") or "")[:60]))
+' | fuzzel --dmenu --with-nth=2 --accept-nth=1 -p "$(_ 'Minimizadas') ❯ ") || exit 0
+  [ -n "$sel" ] || { naranjos-notifica "$(_ 'Minimizadas')" "$(_ 'No hay ventanas minimizadas')"; exit 0; }
+  addr=${sel%%$'\t'*}
+  ws=$(hyprctl activeworkspace -j | python3 -c 'import json,sys; print(json.load(sys.stdin)["id"])')
+  hyprctl dispatch "hl.dsp.window.move({ workspace = \"$ws\", window = \"address:$addr\" })" >/dev/null
+  hyprctl dispatch "hl.dsp.focus({ window = \"address:$addr\" })" >/dev/null
+}
+
+case "${1:-alterna}" in
+  activa)  mkdir -p "$C"; touch "$MARCA"; lanza ;;
+  apaga)   rm -f "$MARCA"; para ;;
+  alterna) if [ -e "$MARCA" ]; then rm -f "$MARCA"; para; else mkdir -p "$C"; touch "$MARCA"; lanza; fi ;;
+  arranca) [ -e "$MARCA" ] && lanza; true ;;
+  minimizadas) minimizadas ;;
+  *) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

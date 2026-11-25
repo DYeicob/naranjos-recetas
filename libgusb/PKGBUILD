@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=libgusb
+pkgver=0.4.9
+pkgrel=1
+pkgdesc='GLib para USB (lo usa libfprint)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('libusb' 'glib2' 'json-glib')
+makedepends=('meson' 'ninja')
+source=('https://github.com/hughsie/libgusb/releases/download/0.4.9/libgusb-0.4.9.tar.xz')
+sha256sums=('9df5ef301d6a4b361002aa52cce1165a87a89744055879bdbab31e7e86f1e846')
+build() { cd libgusb-$pkgver; meson setup build --prefix=/usr --buildtype=release -D introspection=false -D vapi=false -D docs=false -D tests=false -D umockdev=disabled 2>/dev/null || meson setup build --prefix=/usr --buildtype=release -D introspection=false -D vapi=false -D docs=false -D tests=false; meson compile -C build; }
+package() { cd libgusb-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

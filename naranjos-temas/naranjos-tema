@@ -256,7 +256,7 @@ case "${1:-}" in
   borra|delete)    shift; borra_mio "$@" ;;
   vscode|code)     vscode ;;
   actual|current)  actual ;;
-  fondo|wallpaper) fondo ;;
+  fondo|wallpaper) if [ "${2:-}" = pon ] && [ -r "${3:-}" ]; then pon_fondo "$3" --siempre; else fondo; fi ;;
   revisa|check)    revisa && printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Todo sigue el tema.')" ;;
   ayuda|help|-h|--help)
     sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//' ;;

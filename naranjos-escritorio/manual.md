@@ -282,3 +282,25 @@ cambian de idioma. ¿Quieres traducir NaranjOS al tuyo? Mira `/usr/share/doc/nar
 - zumo en varios idiomas.
 - Instalador de la ISO.
 - Driver de NVIDIA para la gráfica dedicada.
+
+## 9g. Novedades de la fase 6q (todo lo de Omarchy 4.5)
+
+- **La orden única:** `naranjos` abre el menú; `naranjos ayuda` enseña todas las órdenes (con Tab se completan). Ejemplos: `naranjos tema pon lima`, `naranjos red`, `naranjos reloj añade`, `naranjos actualiza`.
+- **Apariencia** (Super + Alt + A): tema y fondo con vista previa, modo claro u oscuro, fuente, tamaño del texto, barra, ventanas opacas, transparentes o de cristal, esquinas, animaciones y la pantalla de bloqueo.
+- **Disposiciones** (Super + Ctrl + L): cada escritorio puede ir en mosaico, desplazable o flotante. **Modo escritorio** (menú → Aspecto): todo flotante y con dock, como un escritorio clásico.
+- **Dock** (Super + Alt + D): apps fijadas, abiertas y el menú. Clic derecho en un icono para fijarlo. **Super + M** minimiza; **Super + Mayús + M** trae una ventana minimizada.
+- **Paneles rápidos** (Super + Ctrl + 1…5): red, Bluetooth, sonido, energía y avisos.
+- **Red con NetworkManager:** `sudo naranjos-red usa networkmanager` (trae tus WiFi guardadas; si no hay conexión en 40 s, vuelve sola a iwd). El panel de red tiene WiFi cercanas, estado, ping, test de velocidad, tráfico en directo, DNS (Cloudflare, Quad9, Google, Mullvad), compartir la WiFi por QR, banda 2,4/5 GHz, WiFi de empresa y portal cautivo (aviso en la barra). Para volver: `sudo naranjos-red usa iwd`.
+- **Avisos:** Super + , abre el último; Ctrl para sus acciones; Alt lo quita; Ctrl + Alt: no molestar (también con la campana de la barra); Super + Mayús + Alt + , enseña los últimos diez.
+- **Barra:** música (clic: pausa; rueda: siguiente/anterior), micrófono, idioma del teclado, novedades de NaranjOS, reloj mundial (clic derecho para añadir ciudades), portal cautivo, sesiones remotas y semana del año en el reloj.
+- **Capturas:** al hacer una, el aviso tiene «Abrir» y «Editar» (flechas, texto, difuminar). **QR:** Super + Ctrl + Q lee un QR de la pantalla y lo copia (sin guardarlo en el historial).
+- **Cámara:** Super + Ctrl + M graba la cámara; Super + Ctrl + Alt + M la pone en una ventanita encima de todo para tus grabaciones de pantalla.
+- **Vídeo y presentaciones:** `naranjos-recorta video.mp4 1:20 3:05` recorta sin perder calidad; `naranjos-diapos charla.md` convierte un Markdown (diapositivas separadas por `---`) en una presentación con los colores del tema (Ctrl + P → PDF).
+- **Reloj mundial:** Super + Ctrl + Alt + E.
+- **Energía:** perfil distinto con cargador y con batería (Super + Ctrl + E); se aplica solo al enchufar y desenchufar.
+- **Sistema:** memoria comprimida (zram), systemd-oomd (si un programa se come la memoria, se cierra él solo), aviso cuando un programa se cuelga con «Ver por qué», aviso de poco espacio antes de actualizar, test de velocidad del disco y de la red, kernel por defecto (`sudo naranjos-arranque kernel`), las dos Mayús = Bloq Mayús, luz del teclado con Ctrl + brillo, brillo de monitores externos (DDC/CI) y duplicar la pantalla (`naranjos-pantalla espejo`).
+- **SSH:** `sudo naranjos-ssh servidor activa` (solo con clave, nunca con contraseña) y `naranjos-ssh agente activa`. **Otro equipo:** `naranjos-remoto` abre sus programas aquí por SSH (waypipe).
+- **tmux:** con prefijo Ctrl + a y los colores de NaranjOS (chuleta: Super + Alt + K).
+- **Juegos:** `naranjos-apps juegos` (Steam, RetroArch, Lutris y Heroic). **Webs de servicios:** menú → Utilidades (Microsoft 365, Slack, WhatsApp…; solo el acceso directo).
+- **Huella dactilar** (si tu equipo tiene lector): `naranjos-huella guarda` y `sudo naranjos-huella activa`.
+- **IA local (opcional):** `naranjos-ia instala` descarga Ollama solo en tu usuario; gratis, sin cuentas y sin que nada salga de tu equipo. NaranjOS no la trae de serie.

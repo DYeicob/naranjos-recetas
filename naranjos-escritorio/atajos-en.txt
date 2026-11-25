@@ -57,3 +57,20 @@ Super + Shift + Escape    Quit Hyprland immediately
 Super + Shift + R         Reload the desktop
 Fn + brightness keys      Brightness up / down
 Fn + volume keys          Volume up / down / mute
+Super + Alt + A           Appearance (theme and wallpaper with preview, transparency, corners…)
+Super + Ctrl + L          Layout: tiling → scrolling → floating (Super + Alt + L: backwards)
+Super + M                 Minimize the window · Super + Shift + M: bring one back
+Super + Alt + D           Dock: show / hide
+Super + Ctrl + 1…5        Panels: network · Bluetooth · sound · power · notifications
+Super + ,                 Last notification · Ctrl: actions · Alt: dismiss · Ctrl + Alt: do not disturb
+Super + Shift + Alt + ,   Show the last ten notifications
+Super + Ctrl + E          Power (charger / battery)
+Super + Ctrl + Alt + E    World clock
+Super + Ctrl + Q          Read a QR code from the screen
+Super + Ctrl + M          Record the camera · Ctrl + Alt + M: camera on top of everything
+Super + Alt + Home        Save window sizes · Super + Home: restore them
+Super + Shift + Ctrl + ←→ Move the window to another screen
+Super + Alt + K           tmux shortcuts
+Both Shift keys           Caps Lock
+Ctrl + brightness keys    Keyboard backlight
+Terminal: naranjos        NaranjOS' single command (naranjos ayuda)

@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=fprintd
+pkgver=1.94.5
+pkgrel=1
+pkgdesc='Entrar con la huella dactilar (naranjos-huella)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('libfprint' 'polkit' 'dbus' 'linux-pam' 'systemd')
+makedepends=('meson' 'ninja')
+source=('https://gitlab.freedesktop.org/libfprint/fprintd/-/archive/v1.94.5/fprintd-v1.94.5.tar.gz')
+sha256sums=('a026ef34c31b25975275cc29a5e4eba2b54524769672095a5228098a08acd82c')
+build() {
+  cd fprintd-v$pkgver
+  meson setup build --prefix=/usr --sysconfdir=/etc --buildtype=release -D pam=true -D man=false -D gtk_doc=false \
+    -D systemd_system_unit_dir=/usr/lib/systemd/system -D pam_modules_dir=/usr/lib/security
+  meson compile -C build
+}
+package() { cd fprintd-v$pkgver; DESTDIR="$pkgdir" meson install -C build; }

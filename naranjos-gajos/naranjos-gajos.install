@@ -1,0 +1,12 @@
+# NaranjOS · naranjos-gajos: zram, energía, oomd
+post_install() {
+  systemctl daemon-reload >/dev/null 2>&1
+  systemctl enable --now naranjos-zram.service >/dev/null 2>&1 || true
+  systemctl enable naranjos-energia.service >/dev/null 2>&1 || true
+  /usr/bin/naranjos-energia aplica >/dev/null 2>&1 || true
+  [ -x /usr/lib/systemd/systemd-oomd ] && systemctl enable --now systemd-oomd.service >/dev/null 2>&1
+  udevadm control --reload >/dev/null 2>&1
+  return 0
+}
+post_upgrade() { post_install; }
+pre_remove() { systemctl disable --now naranjos-zram.service naranjos-energia.service >/dev/null 2>&1; return 0; }

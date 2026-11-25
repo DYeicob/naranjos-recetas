@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=dua-cli
+pkgver=3.0.3
+pkgrel=1
+pkgdesc='Qué ocupa el disco, rápido y en la terminal (dua i)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=()
+makedepends=('rust')
+source=('https://github.com/Byron/dua-cli/archive/v3.0.3/dua-cli-3.0.3.tar.gz')
+sha256sums=('e1918a15a39ec1f25a2f16f8395512b21025221ff9b0a5ba9bb8eb6b17a4178a')
+prepare() { cd dua-cli-$pkgver; export CARGO_HOME="$srcdir/cargo"; cargo fetch --locked; }
+build() { cd dua-cli-$pkgver; export CARGO_HOME="$srcdir/cargo"; cargo build --release --frozen; }
+package() { cd dua-cli-$pkgver; install -Dm755 target/release/dua "$pkgdir/usr/bin/dua"; install -Dm644 LICENSE "$pkgdir/usr/share/licenses/dua-cli/LICENSE"; }

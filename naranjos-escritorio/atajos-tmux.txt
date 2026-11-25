@@ -1,0 +1,10 @@
+tmux  ·  prefijo: Ctrl + a (pulsa y suelta, luego la tecla)
+Ctrl+a  |        dividir en vertical (lado a lado)
+Ctrl+a  -        dividir en horizontal (arriba y abajo)
+Ctrl+a  c        ventana nueva
+Ctrl+a  z        ampliar / reducir el panel
+Ctrl+a  d        salir dejando todo abierto (tmux attach para volver)
+Ctrl+a  [        modo copiar (v selecciona, y copia)
+Ctrl+a  r        recargar la configuración
+Alt + flechas    moverse entre paneles
+Alt + Mayús + ← →  ventana anterior / siguiente

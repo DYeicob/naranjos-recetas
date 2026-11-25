@@ -1,0 +1,99 @@
+#!/bin/bash
+# naranjos — la orden única de NaranjOS: todo el sistema desde un sitio (con autocompletado)
+#   naranjos                      el menú (como Super + Espacio)
+#   naranjos ayuda                todas las órdenes
+#   naranjos <tema> [opciones]    p. ej.: naranjos tema pon lima · naranjos red · naranjos reloj añade
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; Z=; }
+
+# orden | lo que hace | a qué llama
+ORDENES=(
+  "menu|$(_ 'el menú de NaranjOS')|naranjos-menu"
+  "apariencia|$(_ 'tema, fondo, fuente, transparencia, esquinas, animaciones')|naranjos-apariencia"
+  "tema|$(_ 'temas de color (pon, modo, crea…)')|naranjos-tema"
+  "fondo|$(_ 'elegir fondo con vista previa')|naranjos-apariencia fondo"
+  "fuente|$(_ 'cambiar la fuente')|naranjos-pantalla fuente"
+  "pantalla|$(_ 'pantallas, escala, texto, barra, duplicar')|naranjos-pantalla"
+  "disposicion|$(_ 'mosaico, desplazable o escritorio flotante')|naranjos-disposicion"
+  "dock|$(_ 'el dock y las ventanas minimizadas')|naranjos-dock"
+  "red|$(_ 'WiFi, ping, velocidad, DNS, compartir por QR')|naranjos-red-panel"
+  "bluetooth|$(_ 'dispositivos Bluetooth')|naranjos-tui bluetooth"
+  "sonido|$(_ 'salidas y entradas de sonido')|naranjos-tui sonido"
+  "energia|$(_ 'perfil de energía con cargador y con batería')|naranjos-energia"
+  "notificaciones|$(_ 'historial, no molestar, acciones')|naranjos-notificaciones"
+  "captura|$(_ 'capturas, grabaciones y texto de la pantalla')|naranjos-captura"
+  "camara|$(_ 'grabar la cámara o ponerla encima de una grabación')|naranjos-camara"
+  "qr|$(_ 'leer un QR de la pantalla o compartir la WiFi')|naranjos-qr"
+  "recorta|$(_ 'recortar un vídeo')|naranjos-recorta"
+  "diapos|$(_ 'presentaciones desde un Markdown')|naranjos-diapos"
+  "dictado|$(_ 'dictar texto')|naranjos-dictado"
+  "recordatorio|$(_ 'recordatorios')|naranjos-recuerda"
+  "reloj|$(_ 'reloj mundial')|naranjos-reloj"
+  "tiempo|$(_ 'el tiempo')|naranjos-tiempo"
+  "apps|$(_ 'aplicaciones recomendadas y juegos')|naranjos-apps"
+  "webapp|$(_ 'webs como aplicaciones')|naranjos-webapp"
+  "ia|$(_ 'asistente de IA local (opcional, sin cuentas)')|naranjos-ia"
+  "remoto|$(_ 'abrir programas de otro equipo por SSH')|naranjos-remoto"
+  "ssh|$(_ 'servidor SSH y agente de claves')|naranjos-ssh"
+  "plugin|$(_ 'complementos (git)')|naranjos-complementos"
+  "anchos|$(_ 'guardar y recuperar el tamaño de las ventanas')|naranjos-anchos"
+  "velocidad|$(_ 'test de velocidad de la red o del disco')|naranjos-velocidad"
+  "disco|$(_ 'qué ocupa el disco')|dua i"
+  "fotos|$(_ 'fotos del sistema para volver atrás')|naranjos-fotos"
+  "seguridad|$(_ 'cortafuegos, AppArmor, antivirus, VPN, USB')|naranjos-peel"
+  "huella|$(_ 'huella dactilar (si hay lector)')|naranjos-huella"
+  "kernel|$(_ 'kernel que arranca por defecto')|naranjos-arranque kernel"
+  "actualiza|$(_ 'traer lo último de NaranjOS')|_actualiza"
+  "atajos|$(_ 'los atajos de teclado')|naranjos-atajos"
+  "ayuda|$(_ 'el manual')|naranjos-ayuda"
+  "version|$(_ 'versión de NaranjOS y del sistema')|_version"
+)
+
+uso(){
+  printf '%sNaranjOS%s · %s\n\n' "$O" "$Z" "$(_ 'la orden única')"
+  local l n d
+  for l in "${ORDENES[@]}"; do IFS='|' read -r n d _ <<< "$l"; printf '  %s%-15s%s %s\n' "$O" "$n" "$Z" "$d"; done
+  printf '\n  %s\n' "$(_ 'Con <Tab> se completan las órdenes y sus opciones.')"
+}
+
+_version(){
+  local v k
+  v=$(sed -n 's/^VERSION=//p' /etc/os-release 2>/dev/null | tr -d '"')
+  k=$(uname -r)
+  printf '%sNaranjOS%s %s · kernel %s\n' "$O" "$Z" "${v:-?}" "$k"
+  pacman -Q naranjos-escritorio naranjos-temas zumo 2>/dev/null | sed 's/^/  /'
+}
+
+_actualiza(){
+  local r="$HOME/naranjos-recetas" libre ult
+  libre=$(df -Pm / | awk 'NR==2 {print $4}')
+  if [ "${libre:-0}" -lt 5120 ]; then
+    printf '%s! %s%s %s\n' "$R" "$(_ 'Queda poco espacio en el disco:')" "$Z" "$((libre / 1024)) GB"
+    printf '  %s\n' "$(_ 'Libera espacio antes de actualizar (naranjos disco).')"
+    exit 1
+  fi
+  [ -d "$r/.git" ] || { printf '%s✘%s %s\n' "$R" "$Z" "$(_ 'No encuentro ~/naranjos-recetas')"; exit 1; }
+  git -C "$r" pull --ff-only || exit 1
+  ult=$(git -C "$r" log -1 --name-only --format= -- 'herramientas/tanda-*.txt' | head -n1)
+  ult=${ult##*/tanda-}; ult=${ult%.txt}
+  printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Recetas al día.')"
+  [ -n "$ult" ] && printf '  %s %sbash ~/naranjos-recetas/herramientas/tanda.sh %s%s\n' "$(_ 'Para instalar lo último:')" "$O" "$ult" "$Z"
+  pkill -RTMIN+15 -x waybar 2>/dev/null; true
+}
+
+[ $# -gt 0 ] || exec naranjos-menu
+case "$1" in
+  -h|--help|help|ayuda-ordenes) uso; exit 0 ;;
+  --lista) for l in "${ORDENES[@]}"; do printf '%s\n' "${l%%|*}"; done; exit 0 ;;
+esac
+o="$1"; shift
+for l in "${ORDENES[@]}"; do
+  IFS='|' read -r n _ c <<< "$l"
+  [ "$n" = "$o" ] || continue
+  case "$c" in _*) "$c" "$@"; exit $? ;; esac
+  # shellcheck disable=SC2086
+  exec $c "$@"
+done
+printf '%s✘%s %s «%s»\n\n' "$R" "$Z" "$(_ 'No conozco la orden')" "$o" >&2
+uso >&2; exit 1

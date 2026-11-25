@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=ddcutil
+pkgver=3.0.2
+pkgrel=1
+pkgdesc='Brillo y ajustes de monitores externos por DDC/CI'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('glib2' 'jansson' 'libdrm' 'systemd' 'kmod')
+makedepends=('autoconf' 'automake' 'libtool')
+source=('https://github.com/rockowitz/ddcutil/archive/v3.0.2/ddcutil-3.0.2.tar.gz')
+sha256sums=('d6b2a42378233aaff6188a0a5ff9fa0e959cb95742367e2cdfa2c6a023c7fe26')
+build() {
+  cd ddcutil-$pkgver
+  NOCONFIGURE=1 ./autogen.sh 2>/dev/null || autoreconf -fi
+  ./configure --prefix=/usr --sysconfdir=/etc --disable-static --disable-usb --disable-x11 --enable-drm --enable-udev --disable-doxygen
+  make
+}
+package() { cd ddcutil-$pkgver; make DESTDIR="$pkgdir" install; }

@@ -1,0 +1,31 @@
+#!/bin/bash
+# naranjos-cuelgues — avisa cuando un programa se cierra de golpe (y deja ver por qué)
+#   naranjos-cuelgues vigila         (se lanza solo al entrar en la sesión)
+#   naranjos-cuelgues lista          los últimos
+#   naranjos-cuelgues silencia <prog> no volver a avisar de ese programa
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+S="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos/cuelgues-silenciados"
+case "${1:-}" in
+  vigila)
+    pgrep -f "naranjos-cuelgues vigila" | grep -vqx "$$" && exit 0
+    journalctl -f -n0 -o json MESSAGE_ID=fc2e22bc6ee647b6b90729ab34a250b1 2>/dev/null | python3 -u -c '
+import json, sys
+for l in sys.stdin:
+    try: e = json.loads(l)
+    except ValueError: continue
+    exe = e.get("COREDUMP_EXE") or e.get("COREDUMP_COMM") or "?"
+    print("%s\t%s" % (e.get("COREDUMP_PID", "?"), exe), flush=True)
+' | while IFS=$'\t' read -r pid exe; do
+      n=${exe##*/}; grep -qxF "$n" "$S" 2>/dev/null && continue
+      a=$(notify-send -u critical -A ver="$(_ 'Ver por qué')" -A calla="$(_ 'No avisar más de este')" \
+            "$(_ 'Se ha cerrado de golpe'): $n" "$(_ 'El programa ha fallado. NaranjOS ha guardado el informe.')" --wait 2>/dev/null)
+      case "$a" in
+        ver)   setsid -f foot --app-id=naranjos-tui -T "$n" bash -c "coredumpctl info $pid 2>&1 | less -R" ;;
+        calla) mkdir -p "${S%/*}"; echo "$n" >> "$S" ;;
+      esac &
+    done ;;
+  lista) coredumpctl list --no-pager 2>/dev/null | tail -n 20 ;;
+  silencia) mkdir -p "${S%/*}"; echo "${2:?programa}" >> "$S" ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

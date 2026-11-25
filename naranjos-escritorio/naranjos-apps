@@ -20,6 +20,14 @@ APPS=(
   "org.gnome.Calculator|$(_ 'Calculadora')|$(_ 'calculadora')"
   "org.localsend.localsend_app|LocalSend|$(_ 'pasar ficheros al móvil sin cables')"
   "org.signal.Signal|Signal|$(_ 'mensajería cifrada')"
+  "org.gnome.gitlab.somas.Apostrophe|Apostrophe|$(_ 'escribir en Markdown sin distracciones')"
+  "org.gnome.baobab|$(_ 'Uso del disco')|$(_ 'mapa de qué ocupa el disco')"
+  "org.gnome.Snapshot|$(_ 'Cámara')|$(_ 'fotos y vídeos con la cámara')"
+  "org.remmina.Remmina|Remmina|$(_ 'escritorio remoto (RDP, VNC, SSH)')"
+  "com.moonlight_stream.Moonlight|Moonlight|$(_ 'jugar en streaming desde otro PC (Sunshine)')"
+  "org.libretro.RetroArch|RetroArch|$(_ 'consolas clásicas')"
+  "net.lutris.Lutris|Lutris|$(_ 'juegos de Battle.net y otros')"
+  "com.heroicgameslauncher.hgl|Heroic|$(_ 'juegos de Epic y GOG')"
   "org.telegram.desktop|Telegram|$(_ 'mensajería')"
   "com.discordapp.Discord|Discord|$(_ 'chat y voz')"
   "com.spotify.Client|Spotify|$(_ 'música')"
@@ -51,4 +59,12 @@ menu(){
     setsid -f foot --app-id=naranjos-tui -T "$n" bash -c "flatpak install -y --user flathub \"$id\" && naranjos-notifica '$(_ 'Instalada:') $n'; echo; read -rsn1 -p '$(_ 'Pulsa una tecla para cerrar…')'"
   fi
 }
-case "${1:-menu}" in lista|list) lista ;; *) menu ;; esac
+juegos(){ # el pack de juegos de una vez
+  local a
+  for a in com.valvesoftware.Steam org.libretro.RetroArch net.lutris.Lutris com.heroicgameslauncher.hgl; do
+    flatpak info "$a" >/dev/null 2>&1 && { echo "✔ $a"; continue; }
+    flatpak install -y --user flathub "$a" || flatpak install -y flathub "$a"
+  done
+}
+
+case "${1:-menu}" in lista|list) lista ;; juegos|games) juegos ;; *) menu ;; esac

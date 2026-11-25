@@ -1,0 +1,17 @@
+#!/bin/bash
+# naranjos-actualizaciones — ¿hay novedades de NaranjOS? (para la barra; mira GitHub como mucho cada 6 h)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+R="$HOME/naranjos-recetas"; C="${XDG_CACHE_HOME:-$HOME/.cache}/naranjos/actualizaciones"
+[ -d "$R/.git" ] || { echo '{"text":""}'; exit 0; }
+mkdir -p "${C%/*}"
+if [ ! -e "$C" ] || [ -n "$(find "$C" -mmin +360 2>/dev/null)" ]; then
+  remoto=$(timeout 15 git -C "$R" ls-remote origin HEAD 2>/dev/null | cut -f1)
+  [ -n "$remoto" ] && echo "$remoto" > "$C"
+fi
+remoto=$(cat "$C" 2>/dev/null); local_=$(git -C "$R" rev-parse HEAD 2>/dev/null)
+if [ -n "$remoto" ] && [ "$remoto" != "$local_" ] && ! git -C "$R" merge-base --is-ancestor "$remoto" HEAD 2>/dev/null; then
+  printf '{"text":"󰚰","tooltip":"%s","class":"hay"}\n' "$(_ 'Hay novedades de NaranjOS: clic para traerlas')"
+else
+  echo '{"text":""}'
+fi

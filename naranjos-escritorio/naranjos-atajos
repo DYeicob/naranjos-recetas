@@ -1,5 +1,6 @@
 #!/bin/bash
 # naranjos-atajos — chuleta de atajos en pantalla (Super + K), en tu idioma
 . /usr/lib/naranjos/naranjos-i18n.sh
-fuzzel --dmenu --prompt "$(_ 'Atajos') ❯ " --width 64 --lines 22 \
-  < "$(naranjos_traducido /usr/share/naranjos atajos.txt)" >/dev/null || true
+f=atajos.txt; [ "${1:-}" = tmux ] && f=atajos-tmux.txt
+fuzzel --dmenu --prompt "$(_ 'Atajos') ❯ " --width 70 --lines 22 \
+  < "$(naranjos_traducido /usr/share/naranjos $f)" >/dev/null || true

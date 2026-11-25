@@ -1,0 +1,23 @@
+#!/bin/bash
+# naranjos-disposicion — cómo se colocan las ventanas
+#   Super + Ctrl + L      este escritorio: mosaico → desplazable → flotante (Super + Alt + L: al revés)
+#   naranjos-disposicion escritorio activa|apaga   «modo escritorio»: todo flotante y con dock, como un escritorio clásico
+#   naranjos-disposicion avisa <nombre>             (lo usa Hyprland para enseñar el cambio)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+F="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos/disposicion.lua"
+nombre(){ case "$1" in dwindle) _ 'Mosaico' ;; scrolling) _ 'Desplazable' ;; flotante) _ 'Flotante' ;; *) echo "$1" ;; esac; }
+case "${1:-}" in
+  avisa) naranjos-notifica "$(_ 'Disposición')" "$(nombre "${2:-}")" ;;
+  escritorio)
+    mkdir -p "${F%/*}"
+    case "${2:-}" in
+      activa) printf -- '-- NaranjOS · naranjos-disposicion (no lo edites)\nreturn { escritorio = true }\n' > "$F"; naranjos-dock activa
+              naranjos-notifica "$(_ 'Modo escritorio')" "$(_ 'Ventanas flotantes y dock. Para volver: naranjos disposicion escritorio apaga')" ;;
+      apaga)  printf -- '-- NaranjOS · naranjos-disposicion (no lo edites)\nreturn { escritorio = false }\n' > "$F"
+              naranjos-notifica "$(_ 'Modo escritorio')" "$(_ 'Desactivado: vuelve el mosaico')" ;;
+      *) echo "$(_ 'Uso:') naranjos-disposicion escritorio activa|apaga"; exit 1 ;;
+    esac
+    hyprctl reload >/dev/null 2>&1 ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//' ;;
+esac

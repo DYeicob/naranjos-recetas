@@ -1,0 +1,21 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=waypipe
+pkgver=0.11.3
+pkgrel=1
+pkgdesc='Abrir programas de otro equipo como si fueran tuyos, por SSH'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('openssh' 'lz4' 'zstd' 'mesa' 'libdrm')
+makedepends=('meson' 'ninja' 'rust' 'scdoc')
+source=('https://gitlab.freedesktop.org/mstoeckl/waypipe/-/archive/v0.11.3/waypipe-v0.11.3.tar.gz')
+sha256sums=('92482a459eb86bef2dae025ea2eb37f5560aea3d3744a097bed9d284b863a5a6')
+prepare() { cd waypipe-v$pkgver; export CARGO_HOME="$srcdir/cargo"; [ -f Cargo.lock ] && cargo fetch --locked || true; }
+build() {
+  cd waypipe-v$pkgver; export CARGO_HOME="$srcdir/cargo"
+  meson setup build --prefix=/usr --buildtype=release -D with_video=disabled -D with_vaapi=disabled -D with_dmabuf=enabled \
+    -D with_lz4=enabled -D with_zstd=enabled 2>/dev/null \
+  || meson setup build --prefix=/usr --buildtype=release
+  meson compile -C build
+}
+package() { cd waypipe-v$pkgver; DESTDIR="$pkgdir" meson install -C build; }

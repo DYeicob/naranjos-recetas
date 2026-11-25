@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q.sh
+pkgname=zxing-cpp
+pkgver=3.2.0
+pkgrel=1
+pkgdesc='Leer y crear códigos QR y de barras (ZXingReader, ZXingWriter)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Apache-2.0')
+depends=()
+makedepends=('cmake')
+source=('https://github.com/zxing-cpp/zxing-cpp/releases/download/v3.2.0/zxing-cpp-3.2.0.tar.gz')
+sha256sums=('eacc2495f452be751d9dd453f4d6cccd0e9a40131e002bcf54d2580ce5c19ad8')
+build() {
+  cd zxing-cpp-$pkgver
+  cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DBUILD_SHARED_LIBS=ON \
+    -DZXING_EXAMPLES=ON -DZXING_UNIT_TESTS=OFF -DZXING_BLACKBOX_TESTS=OFF -DZXING_PYTHON_MODULE=OFF
+  cmake --build build
+}
+package() { cd zxing-cpp-$pkgver; DESTDIR="$pkgdir" cmake --install build; install -Dm644 LICENSE "$pkgdir/usr/share/licenses/zxing-cpp/LICENSE"; }
