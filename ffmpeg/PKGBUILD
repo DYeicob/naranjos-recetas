@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=ffmpeg
+pkgver=9.0.1
+pkgrel=1
+pkgdesc='FFmpeg: audio y vídeo (lo usa la grabación de pantalla)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('x264' 'freetype2' 'libdrm' 'libva' 'openssl' 'zlib')
+makedepends=('nasm')
+source=('https://ffmpeg.org/releases/ffmpeg-9.0.1.tar.xz')
+sha256sums=('cf38e0e28c7e5605942c4a77755349b0145804a397af37eb1fb4c77cb237f635')
+build() {
+  cd ffmpeg-$pkgver
+  ./configure --prefix=/usr --enable-gpl --enable-version3 --disable-static --enable-shared --disable-debug \
+    --disable-doc --enable-libx264 --enable-libfreetype --enable-libdrm --enable-vaapi --enable-openssl
+  make
+}
+package() { cd ffmpeg-$pkgver; make DESTDIR="$pkgdir" install; }

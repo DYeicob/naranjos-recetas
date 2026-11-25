@@ -17,6 +17,15 @@ Super + Ctrl + V          Conectar / desconectar la VPN
 Super + Ctrl + U          Permitir un USB bloqueado
 Super + Ctrl + I          Idioma
 Super + Ctrl + T          Cambiar de tema (cítricos)
+Super + Ctrl + Mayús + T  Modo claro / oscuro
+Super + V                 Historial del portapapeles
+Super + .                 Emojis
+Super + Ctrl + O          Copiar el texto de una zona de la pantalla
+Super + Ctrl + D          Dictar (otra vez: escribe lo dicho)
+Super + Ctrl + R          Nuevo recordatorio
+Super + Ctrl + P          Pantalla, tamaño del texto y barra
+Alt + Impr                Grabar una zona (otra vez: parar)
+Alt + Mayús + Impr        Grabar la pantalla (otra vez: parar)
 ── VENTANAS ─────────────────────────────────────────────
 Super + W                 Cerrar la ventana
 Super + F                 Pantalla completa

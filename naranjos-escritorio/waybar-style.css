@@ -1,9 +1,10 @@
 /* NaranjOS · estilo de la barra (~/.config/waybar/style.css) */
 /* colores: los del tema (naranjos-tema) → @acento, @acento2, @fondo, @texto… */
 @import url("../naranjos/tema/waybar.css");
+/* tamaño del texto y transparencia: naranjos-pantalla (~/.config/naranjos/pantalla/waybar.css) */
+@import url("../naranjos/pantalla/waybar.css");
 * {
   font-family: "JetBrainsMono Nerd Font", monospace;
-  font-size: 13px;
   min-height: 0;
   border: none;
   border-radius: 0;
@@ -70,6 +71,9 @@ tooltip label { color: @texto; }
 #custom-noche          { color: @apagado; padding: 0 9px; }
 #custom-noche.calida   { color: @acento2; }
 #custom-noche.apagada  { color: @inactivo; }
+#custom-grabando        { color: @mal; padding: 0 9px; font-weight: bold; }
+#custom-dictado         { color: @acento; padding: 0 9px; }
+#custom-tiempo          { color: @texto; padding: 0 9px; }
 #tray { padding: 0 8px; }
 #tray > .passive { -gtk-icon-effect: dim; }
 #tray > .needs-attention { -gtk-icon-effect: highlight; background: @mal; border-radius: 6px; }

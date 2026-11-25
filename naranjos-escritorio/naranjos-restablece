@@ -1,0 +1,51 @@
+#!/bin/bash
+# naranjos-restablece — vuelve a poner la configuración de NaranjOS de una aplicación (o de todo)
+#   naranjos-restablece                  qué se puede restablecer
+#   naranjos-restablece barra            solo la barra (también: hyprland, terminal, lanzador, avisos,
+#                                        bloqueo, reposo, fondo, gtk, zsh, editor, monitor, todo)
+#   naranjos-restablece menu             elegir en un menú
+# Lo tuyo no se pierde: se guarda como copia «.antes-AAAAMMDD-HHMM» al lado.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; Z=; }
+S=/etc/skel
+declare -A F=(
+  [hyprland]=".config/hypr/hyprland.lua" [fondo]=".config/hypr/hyprpaper.conf" [bloqueo]=".config/hypr/hyprlock.conf"
+  [reposo]=".config/hypr/hypridle.conf" [avisos]=".config/mako/config" [lanzador]=".config/fuzzel/fuzzel.ini"
+  [terminal]=".config/foot/foot.ini" [barra]=".config/waybar/config.jsonc .config/waybar/style.css"
+  [gtk]=".config/gtk-3.0/settings.ini .config/gtk-3.0/gtk.css" [zsh]=".zshrc" [editor]=".config/nvim/init.lua"
+  [monitor]=".config/btop/btop.conf"
+)
+ORDEN=(hyprland barra terminal lanzador avisos bloqueo reposo fondo gtk zsh editor monitor)
+sello=$(date +%Y%m%d-%H%M)
+
+uno(){
+  local n="$1" f d
+  [ -n "${F[$n]:-}" ] || { printf '%s✘%s %s %s\n' "$R" "$Z" "$(_ 'No conozco:')" "$n" >&2; return 1; }
+  for f in ${F[$n]}; do
+    [ -f "$S/$f" ] || continue
+    d="$HOME/$f"
+    if [ -f "$d" ] && cmp -s "$d" "$S/$f"; then continue; fi
+    [ -f "$d" ] && cp -p "$d" "$d.antes-$sello"
+    mkdir -p "$(dirname "$d")"; cp "$S/$f" "$d"
+  done
+  printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Restablecido:')" "$n"
+}
+recarga(){
+  [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] || return 0
+  hyprctl reload >/dev/null 2>&1; pkill -x waybar && { sleep 0.3; setsid -f waybar >/dev/null 2>&1; }
+  makoctl reload >/dev/null 2>&1; return 0
+}
+lista(){
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'restablecer configuración')" "$Z"
+  local n; for n in "${ORDEN[@]}"; do printf '  %-10s %s\n' "$n" "${F[$n]}"; done
+  printf '  %-10s %s\n' todo "$(_ 'todo lo anterior')"
+}
+case "${1:-}" in
+  "") lista ;;
+  todo|all) for n in "${ORDEN[@]}"; do uno "$n"; done; naranjos-tema pon "$(naranjos-tema actual 2>/dev/null || echo naranja)" >/dev/null 2>&1; recarga ;;
+  menu)
+    i=$(printf '%s\n' "${ORDEN[@]}" "todo" | fuzzel --dmenu --prompt "$(_ 'Restablecer') ❯ " --lines 13 --width 36) || exit 0
+    "$0" "$i" >/dev/null && naranjos-notifica "$(_ 'Restablecido:') $i" "$(_ 'Tu versión queda como copia .antes-…')" ;;
+  *) for n in "$@"; do uno "$n" || exit 1; done; recarga ;;
+esac

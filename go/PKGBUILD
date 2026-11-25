@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=go
+pkgver=1.27.4
+pkgrel=1
+pkgdesc='Lenguaje Go (compilador oficial; para compilar lazygit y lazydocker)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=()
+makedepends=()
+source=('https://go.dev/dl/go1.27.4.linux-amd64.tar.gz')
+sha256sums=('7226736c2339719cda28fbf3a54d71aa63bcefe376e98cef00034268dab24840')
+options=('!strip' '!debug')
+package() {
+  install -d "$pkgdir/usr/lib" "$pkgdir/usr/bin"
+  cp -a go "$pkgdir/usr/lib/go"
+  ln -s /usr/lib/go/bin/go "$pkgdir/usr/bin/go"; ln -s /usr/lib/go/bin/gofmt "$pkgdir/usr/bin/gofmt"
+  install -Dm644 go/LICENSE "$pkgdir/usr/share/licenses/go/LICENSE"
+}

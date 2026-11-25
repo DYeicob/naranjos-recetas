@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=x264
+pkgver=20250815
+pkgrel=1
+pkgdesc='Codificador de vídeo H.264'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=()
+makedepends=('nasm')
+source=('https://anduin.linuxfromscratch.org/BLFS/x264/x264-20250815.tar.xz')
+sha256sums=('eb9c8febcf4889d01a4fd97f67a9bec74981a67c89d04e492b74e81edd720031')
+build() { cd x264-$pkgver; ./configure --prefix=/usr --enable-shared --disable-cli; make; }
+package() { cd x264-$pkgver; make DESTDIR="$pkgdir" install; }

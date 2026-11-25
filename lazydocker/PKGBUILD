@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=lazydocker
+pkgver=0.25.2
+pkgrel=1
+pkgdesc='Docker y Podman en la terminal (lazydocker)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=()
+makedepends=('go')
+source=('https://github.com/jesseduffield/lazydocker/archive/v0.25.2/lazydocker-0.25.2.tar.gz')
+sha256sums=('405071220e5be9aa061c65d290e0347143b73ae0a3cc01df164f0105de2b53c4')
+build() {
+  cd $pkgname-$pkgver
+  export CGO_ENABLED=0 GOTOOLCHAIN=local GOFLAGS="-mod=vendor -trimpath" GOPATH="$srcdir/gopath" GOCACHE="$srcdir/gocache"
+  go build -ldflags "-s -w -X main.version=$pkgver -X main.buildSource=naranjos" -o $pkgname .
+}
+package() { cd $pkgname-$pkgver; install -Dm755 $pkgname "$pkgdir/usr/bin/$pkgname"; install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"; }

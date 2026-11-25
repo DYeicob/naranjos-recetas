@@ -1,0 +1,16 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=naranjos-ocr-datos
+pkgver=4.1.0
+pkgrel=1
+pkgdesc='Datos de Tesseract para leer español, gallego e inglés (tessdata_fast)'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Apache-2.0')
+depends=('tesseract')
+makedepends=()
+source=('https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/4.1.0/spa.traineddata' 'https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/4.1.0/glg.traineddata' 'https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/4.1.0/eng.traineddata' 'https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/4.1.0/osd.traineddata')
+sha256sums=('6f2e04d02774a18f01bed44b1111f2cd7f3ba7ac9dc4373cd3f898a40ea6b464' '7947619c5544d86849f563bd737ad90dbea9f5319fbd838c4747a7a1cd40b260' '7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2' '9cf5d576fcc47564f11265841e5ca839001e7e6f38ff7f7aacf46d15a96b00ff')
+options=('!strip' '!debug')
+package() {
+  local f; for f in spa glg eng osd; do install -Dm644 "$f.traineddata" "$pkgdir/usr/share/tessdata/$f.traineddata"; done
+}

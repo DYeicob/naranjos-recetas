@@ -25,6 +25,13 @@ end
 
 ---- Pantallas ---------------------------------------------------------
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
+-- los ficheros de ~/.config/naranjos que escriben las órdenes de NaranjOS (monitores, ventanas, complementos)
+local function naranjos_carga(n)
+    local f = (os and os.getenv and os.getenv("HOME") or "") .. "/.config/naranjos/" .. n
+    local ok = pcall(dofile, f .. ".lua")
+    if not ok and package and package.loaded then package.loaded[f] = nil; pcall(require, f) end
+end
+naranjos_carga("monitores")      -- naranjos-pantalla escala …
 
 ---- Entorno -----------------------------------------------------------
 hl.env("XCURSOR_THEME", tema.cursor)
@@ -39,7 +46,9 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hypridle")                                    -- bloqueo por inactividad
     hl.exec_cmd("naranjos-noche arranca")                      -- luz nocturna (hyprsunset)
     hl.exec_cmd("thunar --daemon")                             -- archivos al instante y USB al enchufarlos
-    hl.exec_cmd("command -v waybar >/dev/null && waybar")      -- barra (llega en la tanda 5c2)
+    hl.exec_cmd("naranjos-pantalla prepara; command -v waybar >/dev/null && waybar")   -- barra
+    hl.exec_cmd("naranjos-portapapeles vigila")               -- historial del portapapeles (Super + V)
+    hl.exec_cmd("naranjos-ventanas vigila")                   -- cada aplicación vuelve a su escritorio
 end)
 
 hl.config({
@@ -152,6 +161,15 @@ hl.bind(mainMod .. " + CTRL + V",      hl.dsp.exec_cmd("naranjos-tui vpn"))
 hl.bind(mainMod .. " + CTRL + U",      hl.dsp.exec_cmd("naranjos-tui usb"))
 hl.bind(mainMod .. " + CTRL + I",      hl.dsp.exec_cmd("naranjos-idioma menu"))
 hl.bind(mainMod .. " + CTRL + T",      hl.dsp.exec_cmd("naranjos-tema menu"))
+hl.bind(mainMod .. " + CTRL + SHIFT + T", hl.dsp.exec_cmd("naranjos-tema modo"))           -- claro / oscuro
+hl.bind(mainMod .. " + V",             hl.dsp.exec_cmd("naranjos-portapapeles menu"))   -- portapapeles
+hl.bind(mainMod .. " + period",        hl.dsp.exec_cmd("naranjos-emoji"))               -- emojis
+hl.bind(mainMod .. " + CTRL + O",      hl.dsp.exec_cmd("naranjos-captura texto"))       -- copiar texto de la pantalla
+hl.bind(mainMod .. " + CTRL + D",      hl.dsp.exec_cmd("naranjos-dictado"))             -- dictar
+hl.bind(mainMod .. " + CTRL + R",      hl.dsp.exec_cmd("naranjos-recuerda menu"))       -- recordatorio
+hl.bind(mainMod .. " + CTRL + P",      hl.dsp.exec_cmd("naranjos-pantalla menu"))       -- pantalla y barra
+hl.bind("ALT + Print",                 hl.dsp.exec_cmd("naranjos-captura video region"))   -- grabar una zona
+hl.bind("ALT + SHIFT + Print",         hl.dsp.exec_cmd("naranjos-captura video pantalla")) -- grabar la pantalla
 -- Ventanas
 hl.bind(mainMod .. " + W",             hl.dsp.window.close())
 hl.bind(mainMod .. " + F",             hl.dsp.window.fullscreen())
@@ -214,3 +232,7 @@ hl.window_rule({
     match = { class = "^$", title = "^$", xwayland = true, float = true, fullscreen = false, pin = false },
     no_focus = true,
 })
+
+---- Lo tuyo hecho con las órdenes de NaranjOS -------------------------
+naranjos_carga("ventanas")       -- naranjos-ventanas
+naranjos_carga("complementos")   -- naranjos-complementos

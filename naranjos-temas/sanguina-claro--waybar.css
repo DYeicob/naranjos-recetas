@@ -1,0 +1,13 @@
+/* NaranjOS · tema Sanguina clara (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema) */
+@define-color fondo #fbf4f4;
+@define-color superficie #ffffff;
+@define-color texto #2a2122;
+@define-color apagado #8a7878;
+@define-color acento #c62a30;
+@define-color acento2 #e8676b;
+@define-color inactivo #ecdcdc;
+@define-color mal #c8323a;
+@define-color bien #3f8f3a;
+@define-color aviso #b07d00;
+@define-color fondo_barra rgba(251, 244, 244, 0.90);
+@define-color borde_barra rgba(198, 42, 48, 0.55);

@@ -6,7 +6,7 @@
 set -euo pipefail
 ORIGEN=$1; DEST=$2
 # tema → color de Papirus y tema base
-TEMAS="naranja:orange:Papirus-Dark sanguina:red:Papirus-Dark lima:green:Papirus-Dark pomelo:pink:Papirus-Dark limon:yellow:Papirus-Dark brisa:blue:Papirus-Dark azahar:deeporange:Papirus"
+TEMAS="naranja:orange:Papirus-Dark sanguina:red:Papirus-Dark lima:green:Papirus-Dark pomelo:pink:Papirus-Dark limon:yellow:Papirus-Dark brisa:blue:Papirus-Dark azahar:deeporange:Papirus sanguina-claro:red:Papirus lima-claro:green:Papirus pomelo-claro:pink:Papirus limon-claro:yellow:Papirus brisa-claro:blue:Papirus"
 P="$ORIGEN/Papirus"
 [ -d "$P" ] || { echo "No encuentro $P"; exit 1; }
 for e in $TEMAS; do

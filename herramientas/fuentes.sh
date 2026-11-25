@@ -18,12 +18,19 @@ LIC=$FU/licencias
 command -v bsdtar >/dev/null || { echo "${R}Falta bsdtar (libarchive)${Z}"; exit 1; }
 if [ ! -d "$FU" ]; then sudo install -d -o "$(id -un)" -g "$(id -gn)" -m 755 "$FU" || exit 1; fi
 mkdir -p "$LIC" || exit 1
+CACHE_SRCINFO=${XDG_CACHE_HOME:-$HOME/.cache}/naranjos/srcinfo; mkdir -p "$CACHE_SRCINFO"
 
 fallos=(); hechas=0; saltadas=0; total=0; inicio=$SECONDS
 mapfile -t todas < <(ls -d */ | tr -d / | while read -r r; do [ -f "$r/PKGBUILD" ] && echo "$r"; done)
 : > "$LIC/.indice.nuevo"
 for r in "${todas[@]}"; do
-  info=$(cd "$r" && makepkg --printsrcinfo 2>/dev/null) || { fallos+=("$r (receta)"); continue; }
+  # makepkg --printsrcinfo es lento: se guarda por receta y solo se repite si cambia su PKGBUILD
+  hs=$(sha256sum < "$r/PKGBUILD" | cut -c1-24); cs="$CACHE_SRCINFO/$r-$hs"
+  if [ -s "$cs" ]; then info=$(cat "$cs")
+  else
+    info=$(cd "$r" && makepkg --printsrcinfo 2>/dev/null) || { fallos+=("$r (receta)"); continue; }
+    rm -f "$CACHE_SRCINFO/$r-"*; printf '%s\n' "$info" > "$cs"
+  fi
   base=$(awk '/^pkgbase = /{print $3; exit}' <<< "$info")
   ver=$(awk '/^\tepoch = /{e=$3":"} /^\tpkgver = /{v=$3} /^\tpkgrel = /{r=$3} END{print e v "-" r}' <<< "$info")
   lic=$(awk '/^\tlicense = /{printf "%s ", $3}' <<< "$info")

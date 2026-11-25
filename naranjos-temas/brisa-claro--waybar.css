@@ -1,0 +1,13 @@
+/* NaranjOS · tema Brisa clara (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema) */
+@define-color fondo #f2f6fb;
+@define-color superficie #ffffff;
+@define-color texto #1f2630;
+@define-color apagado #727f8f;
+@define-color acento #1f6fd1;
+@define-color acento2 #5c9ae6;
+@define-color inactivo #d9e3ef;
+@define-color mal #c8323a;
+@define-color bien #3f8f3a;
+@define-color aviso #b07d00;
+@define-color fondo_barra rgba(242, 246, 251, 0.90);
+@define-color borde_barra rgba(31, 111, 209, 0.55);

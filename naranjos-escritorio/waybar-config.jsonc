@@ -2,7 +2,7 @@
 // Tras editar: Super + Shift + B dos veces, o cierra sesión y vuelve a entrar.
 {
   "layer": "top",
-  "position": "top",
+  "include": ["~/.config/naranjos/pantalla/waybar.jsonc"],   // posición: naranjos-pantalla barra …
   "height": 32,
   "margin-top": 8,
   "margin-left": 10,
@@ -11,7 +11,7 @@
 
   "modules-left":   ["image#naranjos", "custom/naranjos", "hyprland/workspaces", "hyprland/window"],
   "modules-center": ["clock"],
-  "modules-right":  ["custom/peel", "custom/noche", "bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "tray", "custom/sistema"],
+  "modules-right":  ["custom/grabando", "custom/dictado", "custom/tiempo", "custom/peel", "custom/noche", "bluetooth", "wireplumber", "network", "backlight", "battery", "cpu", "memory", "tray", "custom/sistema"],
 
   "image#naranjos": {
     "path": "/usr/share/naranjos/logo/naranjos-logo-plano-48.png",
@@ -107,6 +107,28 @@
     "signal": 9,
     "on-click": "naranjos-noche alterna",
     "on-click-right": "naranjos-noche menu"
+  },
+  "custom/grabando": {
+    "exec": "naranjos-captura barra",
+    "return-type": "json",
+    "interval": "once",
+    "signal": 10,
+    "on-click": "naranjos-captura video"
+  },
+  "custom/dictado": {
+    "exec": "naranjos-dictado barra",
+    "return-type": "json",
+    "interval": "once",
+    "signal": 11,
+    "on-click": "naranjos-dictado"
+  },
+  "custom/tiempo": {
+    "exec": "naranjos-tiempo barra",
+    "return-type": "json",
+    "interval": 1800,
+    "signal": 12,
+    "on-click": "foot --app-id=naranjos-tui -T NaranjOS sh -c 'naranjos-tiempo; read -r _'",
+    "on-click-right": "naranjos-tiempo menu"
   },
   "tray": {
     "icon-size": 16,

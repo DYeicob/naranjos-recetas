@@ -1,0 +1,67 @@
+#!/bin/bash
+# naranjos-complementos — complementos de NaranjOS (repositorios git que añaden cosas al escritorio)
+#   naranjos-complementos                         los instalados
+#   naranjos-complementos instala <url-git>       añadir uno (te enseña lo que trae antes de activarlo)
+#   naranjos-complementos quita <nombre>          quitarlo
+#   naranjos-complementos actualiza               traer la última versión de todos
+# Un complemento puede traer: hypr.lua (atajos, reglas…), bin/ (órdenes) e instala.sh / quita.sh.
+# Solo se instala en tu usuario y nunca usa sudo por su cuenta.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; A=; Z=; }
+D="${XDG_DATA_HOME:-$HOME/.local/share}/naranjos/complementos"
+LUA="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos/complementos.lua"; BIN="$HOME/.local/bin"
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+mkdir -p "$D" "${LUA%/*}"
+
+rehaz(){ # complementos.lua y los enlaces de bin/
+  local c f
+  { echo "-- NaranjOS · complementos activos (naranjos-complementos; no lo edites)"
+    for c in "$D"/*/; do [ -r "$c/hypr.lua" ] && printf 'pcall(dofile, "%shypr.lua")\n' "$c"; done; } > "$LUA"
+  mkdir -p "$BIN"
+  find "$BIN" -maxdepth 1 -type l -lname "$D/*" -delete 2>/dev/null
+  for f in "$D"/*/bin/*; do [ -x "$f" ] && ln -sf "$f" "$BIN/${f##*/}"; done
+  [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && hyprctl reload >/dev/null 2>&1
+  return 0
+}
+
+lista(){
+  local c n=0
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'complementos')" "$Z"
+  for c in "$D"/*/; do
+    [ -d "$c/.git" ] || continue; n=$((n + 1))
+    printf '  %s●%s %-20s %s\n' "$G" "$Z" "$(basename "$c")" "$(git -C "$c" config --get remote.origin.url)"
+  done
+  [ "$n" -gt 0 ] || printf '  %s\n' "$(_ 'Ninguno. Añade uno con: naranjos-complementos instala <url-git>')"
+}
+
+instala(){
+  local url="${1:-}" n r
+  [ -n "$url" ] || die "$(_ 'Dime la dirección git del complemento')"
+  n=$(basename "${url%.git}"); n=${n#naranjos-}
+  [ -e "$D/$n" ] && die "$(printf "$(_ 'Ya tienes «%s»')" "$n")"
+  git clone -q --depth 1 "$url" "$D/$n" || die "$(_ 'No pude bajarlo')"
+  printf '%s%s%s\n' "$A" "$(_ 'Esto es lo que trae (revísalo: se ejecutará con tu usuario):')" "$Z"
+  (cd "$D/$n" && find . -path ./.git -prune -o -type f -print | sed 's/^/  /')
+  read -rp "$(_ 'Escribe SI para activarlo:') " r
+  [ "$r" = SI ] || { rm -rf "${D:?}/$n"; echo "$(_ 'Cancelado.')"; return 1; }
+  [ -x "$D/$n/instala.sh" ] && (cd "$D/$n" && ./instala.sh)
+  rehaz; printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Complemento activo:')" "$n"
+}
+
+quita(){
+  local n="${1:-}"; [ -n "$n" ] && [ -d "$D/$n" ] || die "$(_ 'No tienes ese complemento')"
+  [ -x "$D/$n/quita.sh" ] && (cd "$D/$n" && ./quita.sh)
+  rm -rf "${D:?}/$n"; rehaz; printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Complemento quitado:')" "$n"
+}
+
+actualiza(){
+  local c; for c in "$D"/*/; do [ -d "$c/.git" ] && { printf '%s… ' "$(basename "$c")"; git -C "$c" pull -q --ff-only && echo "✔" || echo "✘"; }; done
+  rehaz
+}
+
+case "${1:-}" in
+  "") lista ;; instala|install) shift; instala "$@" ;; quita|remove) shift; quita "$@" ;;
+  actualiza|update) actualiza ;; rehaz) rehaz ;;
+  *) sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

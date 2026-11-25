@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=pam-u2f
+pkgver=1.4.0
+pkgrel=1
+pkgdesc='Entrar con una llave FIDO2 (PAM)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-2-Clause')
+depends=('libfido2' 'linux-pam' 'openssl')
+makedepends=('autoconf' 'automake' 'libtool')
+source=('https://github.com/Yubico/pam-u2f/archive/pam_u2f-1.4.0/pam-u2f-1.4.0.tar.gz')
+sha256sums=('243de4db11512514e6ac7fde54a0369b13e9b2423b43ceb89f108867888783a0')
+build() {
+  cd pam-u2f-pam_u2f-$pkgver
+  autoreconf -fi
+  ./configure --prefix=/usr --with-pam-dir=/usr/lib/security --disable-man
+  make
+}
+package() { cd pam-u2f-pam_u2f-$pkgver; make DESTDIR="$pkgdir" install; }

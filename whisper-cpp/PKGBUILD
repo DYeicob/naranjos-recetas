@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=whisper-cpp
+pkgver=1.9.6
+pkgrel=1
+pkgdesc='Voz a texto en tu equipo, sin internet (whisper.cpp)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=()
+makedepends=('cmake')
+source=('https://github.com/ggml-org/whisper.cpp/archive/v1.9.6/whisper.cpp-1.9.6.tar.gz')
+sha256sums=('7ab15dc88022d2425ad94dcffd8abbf1b6d7018089b4e48d6b40780738e0b445')
+build() {
+  # x86-64-v3 (AVX2: casi cualquier PC desde 2013), sin depender de la CPU de quien compila
+  cmake -S whisper.cpp-$pkgver -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_INSTALL_LIBDIR=lib -D CMAKE_BUILD_TYPE=Release \
+    -D GGML_NATIVE=OFF -D GGML_AVX=ON -D GGML_AVX2=ON -D GGML_FMA=ON -D GGML_F16C=ON -D GGML_BMI2=ON \
+    -D WHISPER_BUILD_TESTS=OFF -D WHISPER_BUILD_EXAMPLES=ON -D WHISPER_SDL2=OFF -D WHISPER_CURL=OFF
+  cmake --build build
+}
+package() { DESTDIR="$pkgdir" cmake --install build; }

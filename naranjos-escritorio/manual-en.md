@@ -231,6 +231,24 @@ NaranjOS can be used in several languages. Press **Super + Ctrl + I** and pick y
 You will see the change after logging out and in again. Programs (Firefox, GTK apps…) change
 language too. Want to translate NaranjOS into yours? See `/usr/share/doc/naranjos/traducir.md`.
 
+## 9e. Everyday tools
+
+- **Clipboard** (Super + V): what you copied recently, text and images. Only on your computer; `naranjos-portapapeles borra` empties it.
+- **Emojis** (Super + .): search in Spanish or English; it is typed where you are.
+- **Text on screen** (Super + Ctrl + O): select an area and its text goes to the clipboard (offline).
+- **Dictation** (Super + Ctrl + D): speak and press again; the text is typed for you. All on your computer (whisper.cpp).
+- **Screen recording** (Alt + Print an area, Alt + Shift + Print everything): saved in `Videos/Grabaciones`; the red dot in the bar stops it.
+- **Reminders** (Super + Ctrl + R): `naranjos-recuerda "call Ana" at 18:30`, `… in 20m`, `… tomorrow 9:00`.
+- **Weather**: `naranjos-tiempo ciudad London` and it shows in the bar (Open-Meteo, free, no account).
+- **Screen** (Super + Ctrl + P): text size, each monitor's scale and the bar's position or transparency.
+- **Light / dark mode** (Super + Ctrl + Shift + T): every citrus has a light version.
+- **Web apps**: `naranjos-webapp crea "WhatsApp" https://web.whatsapp.com` (own window, in the menu).
+- **Reset**: `naranjos-restablece barra` (or `todo`) goes back to NaranjOS's settings and keeps yours as a copy.
+- **Security key**: `naranjos-llave registra` and `sudo naranjos-llave activa` to use a FIDO2 key for sudo and the lock screen.
+- **Windows**: each app opens again on the workspace where you left it (`naranjos-ventanas olvida` to start over).
+- **Add-ons**: `naranjos-complementos instala <git-url>` adds other people's shortcuts or commands (it shows you what it brings first).
+- **Coding**: `nvim` (Neovim with the theme's colours), `lazygit`, `lazydocker`, `btop` and `mise` (language versions).
+
 ## 10. Common problems
 
 - **Nothing opens when I press a shortcut:** open a terminal with Super + Enter and check that

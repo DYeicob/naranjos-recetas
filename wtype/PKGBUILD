@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=wtype
+pkgver=0.5
+pkgrel=1
+pkgdesc='Escribe texto en la ventana activa (Wayland)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=('wayland' 'libxkbcommon')
+makedepends=('meson' 'ninja' 'wayland-protocols')
+source=('https://github.com/atx/wtype/archive/v0.5/wtype-0.5.tar.gz')
+sha256sums=('684308ac8b47c510dddf4abac3aef86b4f7b8c0e165389a40608679a7a5b77ed')
+build() { cd wtype-$pkgver; meson setup build --prefix=/usr --buildtype=release; ninja -C build; }
+package() { cd wtype-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

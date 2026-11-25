@@ -1,15 +1,74 @@
 #!/bin/bash
-# naranjos-captura [region|pantalla] — guarda en la carpeta de imágenes y copia al portapapeles
+# naranjos-captura — capturas y grabaciones de pantalla de NaranjOS
+#   naranjos-captura [region|pantalla]          imagen: a la carpeta de imágenes y al portapapeles
+#   naranjos-captura video [region|pantalla]     empieza a grabar (con el sonido del equipo); otra vez: para
+#   naranjos-captura texto                       copia el texto de una zona de la pantalla (OCR, sin internet)
+#   naranjos-captura barra                       estado para la barra (● grabando)
 set -u
 . /usr/lib/naranjos/naranjos-i18n.sh
-img=$(naranjos_carpeta PICTURES)
-[ "$img" != "$HOME" ] || img="$HOME/$(_ 'Imágenes')"
-dir="$img/$(_ 'Capturas')"; mkdir -p "$dir"
-f="$dir/$(_ 'captura')-$(date +%Y%m%d-%H%M%S).png"
+color(){ local c; c=$(sed -n 's/^COLOR_ACENTO=//p' "$HOME/.config/naranjos/tema/colores" 2>/dev/null); echo "${c:-ff8700}"; }
+zona(){ slurp -b 12121288 -c "$(color)ff" -w 2; }
+avisa_barra(){ pkill -RTMIN+10 -x waybar 2>/dev/null; }
+
+imagen(){
+  local img dir f g
+  img=$(naranjos_carpeta PICTURES); [ "$img" != "$HOME" ] || img="$HOME/$(_ 'Imágenes')"
+  dir="$img/$(_ 'Capturas')"; mkdir -p "$dir"
+  f="$dir/$(_ 'captura')-$(date +%Y%m%d-%H%M%S).png"
+  case "$1" in
+    region)   g=$(zona) || exit 0; grim -g "$g" "$f" ;;
+    pantalla) grim "$f" ;;
+  esac
+  wl-copy --type image/png < "$f"
+  naranjos-notifica "$(_ 'Captura guardada')" "${f/#$HOME/\~} · $(_ 'también está en el portapapeles')"
+}
+
+video(){
+  local vid dir f g args=()
+  if pgrep -x wf-recorder >/dev/null; then
+    pkill -INT -x wf-recorder; sleep 0.5; avisa_barra
+    f=$(cat "${XDG_RUNTIME_DIR:-/tmp}/naranjos-grabacion" 2>/dev/null)
+    naranjos-notifica "$(_ 'Grabación guardada')" "${f/#$HOME/\~}"
+    return 0
+  fi
+  command -v wf-recorder >/dev/null || { naranjos-notifica "$(_ 'Falta wf-recorder')"; exit 1; }
+  vid=$(naranjos_carpeta VIDEOS); [ "$vid" != "$HOME" ] || vid="$HOME/$(_ 'Vídeos')"
+  dir="$vid/$(_ 'Grabaciones')"; mkdir -p "$dir"
+  f="$dir/$(_ 'grabacion')-$(date +%Y%m%d-%H%M%S).mp4"
+  if [ "${1:-region}" = region ]; then g=$(zona) || exit 0; args+=(-g "$g"); fi
+  # sonido: lo que suena en el equipo (el «monitor» de la salida por defecto)
+  args+=(--audio --audio-backend=pipewire)
+  echo "$f" > "${XDG_RUNTIME_DIR:-/tmp}/naranjos-grabacion"
+  naranjos-notifica "$(_ 'Grabando la pantalla')" "$(_ 'Para parar: la misma tecla otra vez (o el punto rojo de la barra)')"
+  setsid -f wf-recorder "${args[@]}" -c libx264 -p preset=veryfast -p crf=23 -f "$f" >/dev/null 2>&1
+  sleep 0.3; avisa_barra
+}
+
+texto(){
+  local g t img
+  command -v tesseract >/dev/null || { naranjos-notifica "$(_ 'Falta tesseract')"; exit 1; }
+  g=$(zona) || exit 0
+  img=$(mktemp --suffix=.png); trap 'rm -f "$img"' EXIT
+  grim -g "$g" -s 2 "$img" || exit 1
+  t=$(tesseract "$img" - -l spa+eng --psm 6 2>/dev/null | sed -e 's/[[:space:]]*$//' -e '/^$/N;/^\n$/D')
+  if [ -n "${t//[[:space:]]/}" ]; then
+    printf '%s' "$t" | wl-copy
+    naranjos-notifica "$(_ 'Texto copiado')" "$(printf '%s' "$t" | head -c 120)"
+  else
+    naranjos-notifica "$(_ 'No he encontrado texto en esa zona')"
+  fi
+}
+
+barra(){
+  if pgrep -x wf-recorder >/dev/null; then
+    printf '{"text":"● REC","tooltip":"%s","class":"grabando"}\n' "$(_ 'Grabando la pantalla: clic para parar')"
+  else echo '{"text":""}'; fi
+}
+
 case "${1:-region}" in
-  region)   g=$(slurp -b 12121288 -c ff8700ff -w 2) || exit 0; grim -g "$g" "$f" ;;
-  pantalla) grim "$f" ;;
-  *) echo "$(_ 'Uso:') naranjos-captura [region|pantalla]"; exit 1 ;;
+  region|pantalla) imagen "$1" ;;
+  video) video "${2:-region}" ;;
+  texto|ocr) texto ;;
+  barra) barra ;;
+  *) echo "$(_ 'Uso:') naranjos-captura [region|pantalla|video [region|pantalla]|texto]"; exit 1 ;;
 esac
-wl-copy --type image/png < "$f"
-naranjos-notifica "$(_ 'Captura guardada')" "${f/#$HOME/\~} · $(_ 'también está en el portapapeles')"

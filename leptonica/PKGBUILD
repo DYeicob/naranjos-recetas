@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=leptonica
+pkgver=1.87.0
+pkgrel=1
+pkgdesc='Tratamiento de imágenes (para Tesseract)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-2-Clause')
+depends=('libpng' 'libjpeg-turbo' 'giflib' 'libwebp' 'zlib')
+makedepends=('cmake')
+source=('https://github.com/DanBloomberg/leptonica/archive/1.87.0/leptonica-1.87.0.tar.gz')
+sha256sums=('fa2b40c5caea96d1bb93a97486262aed8731b69ce25a84a6bf5d25323e33f631')
+build() {
+  cmake -S leptonica-$pkgver -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_INSTALL_LIBDIR=lib -D CMAKE_BUILD_TYPE=Release \
+    -D BUILD_SHARED_LIBS=ON -D SW_BUILD=OFF -D ENABLE_TIFF=OFF -D ENABLE_OPENJPEG=OFF
+  cmake --build build
+}
+package() { DESTDIR="$pkgdir" cmake --install build; }

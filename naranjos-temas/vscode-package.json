@@ -1,0 +1,78 @@
+{
+ "name": "naranjos-temas",
+ "displayName": "NaranjOS",
+ "publisher": "naranjos",
+ "version": "1.0.0",
+ "description": "Temas cítricos de NaranjOS",
+ "license": "GPL-3.0-or-later",
+ "engines": {
+  "vscode": "^1.60.0"
+ },
+ "categories": [
+  "Themes"
+ ],
+ "contributes": {
+  "themes": [
+   {
+    "label": "NaranjOS Naranja",
+    "uiTheme": "vs-dark",
+    "path": "./themes/naranja.json"
+   },
+   {
+    "label": "NaranjOS Sanguina",
+    "uiTheme": "vs-dark",
+    "path": "./themes/sanguina.json"
+   },
+   {
+    "label": "NaranjOS Lima",
+    "uiTheme": "vs-dark",
+    "path": "./themes/lima.json"
+   },
+   {
+    "label": "NaranjOS Pomelo",
+    "uiTheme": "vs-dark",
+    "path": "./themes/pomelo.json"
+   },
+   {
+    "label": "NaranjOS Limón",
+    "uiTheme": "vs-dark",
+    "path": "./themes/limon.json"
+   },
+   {
+    "label": "NaranjOS Brisa",
+    "uiTheme": "vs-dark",
+    "path": "./themes/brisa.json"
+   },
+   {
+    "label": "NaranjOS Azahar",
+    "uiTheme": "vs",
+    "path": "./themes/azahar.json"
+   },
+   {
+    "label": "NaranjOS Sanguina clara",
+    "uiTheme": "vs",
+    "path": "./themes/sanguina-claro.json"
+   },
+   {
+    "label": "NaranjOS Lima clara",
+    "uiTheme": "vs",
+    "path": "./themes/lima-claro.json"
+   },
+   {
+    "label": "NaranjOS Pomelo claro",
+    "uiTheme": "vs",
+    "path": "./themes/pomelo-claro.json"
+   },
+   {
+    "label": "NaranjOS Limón claro",
+    "uiTheme": "vs",
+    "path": "./themes/limon-claro.json"
+   },
+   {
+    "label": "NaranjOS Brisa clara",
+    "uiTheme": "vs",
+    "path": "./themes/brisa-claro.json"
+   }
+  ]
+ }
+}

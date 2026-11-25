@@ -40,21 +40,27 @@ aplicaciones(){
 seccion_aspecto(){
   local t n a
   a=$(naranjos-tema actual 2>/dev/null || echo naranja)
-  for t in naranja sanguina lima pomelo limon brisa azahar; do
+  for t in naranja sanguina lima pomelo limon brisa; do
     n=$(sed -n 's/^NOMBRE=//p' "/usr/share/naranjos/temas/$t/colores" 2>/dev/null | tr -d '"')
     [ -n "$n" ] || continue
     if [ "$t" = "$a" ]; then mete "●  $(_ 'Tema'): $n" "naranjos-tema pon $t"
     else mete "󰏘  $(_ 'Tema'): $n" "naranjos-tema pon $t"; fi
   done
+  mete "󰔎  $(_ 'Modo claro / oscuro')"            "naranjos-tema modo"
   mete "󰸉  $(_ 'Siguiente fondo')"                 "naranjos-tema fondo siguiente"
   mete "󰖔  $(_ 'Luz nocturna')…"                  "naranjos-noche menu"
   mete "󰍜  $(_ 'Mostrar / ocultar la barra')"     "pkill -SIGUSR1 -x waybar || setsid -f waybar"
+  mete "󰍹  $(_ 'Pantalla, texto y barra')…"       "naranjos-pantalla menu"
+  mete "󰨮  $(_ 'Temas en VS Code')"               "terminal \"VS Code\" 'naranjos-tema vscode'"
+  mete "󰦛  $(_ 'Restablecer una configuración')…" "naranjos-restablece menu"
 }
 seccion_ajustes(){
   mete "󰖩  WiFi"                                   "naranjos-tui wifi"
   mete "󰂯  Bluetooth"                              "naranjos-tui bluetooth"
   mete "󰕾  $(_ 'Sonido')"                          "naranjos-tui sonido"
   mete "󰗊  $(_ 'Idioma')"                          "naranjos-idioma menu"
+  mete "󰖐  $(_ 'El tiempo: elegir ciudad')"       "naranjos-tiempo menu"
+  mete "󰌆  $(_ 'Llave de seguridad (FIDO2)')"     "terminal \"$(_ 'Llave')\" 'naranjos-llave; echo; naranjos-llave registra && sudo naranjos-llave activa'"
   mete "  $(_ 'Mi configuración de Hyprland (avanzado)')" "setsid -f foot --app-id=naranjos-tui -T Hyprland vim \"\$HOME/.config/hypr/hyprland.lua\""
 }
 seccion_seguridad(){
@@ -69,9 +75,21 @@ seccion_sistema(){
   mete "󰄄  $(_ 'Hacer una foto del sistema ahora')" "terminal \"$(_ 'Fotos')\" 'sudo fotos crea \"$(_ 'desde el menú')\"'"
   mete "󰃢  $(_ 'Limpiar paquetes que sobran')"     "terminal \"$(_ 'Limpiar')\" 'zumo limpia'"
 }
+seccion_utilidades(){
+  mete "󰅌  $(_ 'Portapapeles')"                    "naranjos-portapapeles menu"
+  mete "󰞅  $(_ 'Emojis')"                          "naranjos-emoji"
+  mete "󰍬  $(_ 'Dictar (voz a texto)')"            "naranjos-dictado"
+  mete "󰀠  $(_ 'Nuevo recordatorio')"              "naranjos-recuerda menu"
+  mete "󰃰  $(_ 'Mis recordatorios')"               "terminal \"$(_ 'Recordatorios')\" 'naranjos-recuerda lista'"
+  mete "󰖟  $(_ 'Nueva web app')"                   "naranjos-webapp menu"
+  mete "󰏗  $(_ 'Complementos')"                    "terminal \"$(_ 'Complementos')\" 'naranjos-complementos'"
+}
 seccion_capturas(){
   mete "󰩭  $(_ 'Captura de una zona')"             "naranjos-captura region"
   mete "󰹑  $(_ 'Captura de la pantalla')"          "naranjos-captura pantalla"
+  mete "󰕧  $(_ 'Grabar una zona (otra vez: parar)')" "naranjos-captura video region"
+  mete "󰕧  $(_ 'Grabar la pantalla (otra vez: parar)')" "naranjos-captura video pantalla"
+  mete "󰊄  $(_ 'Copiar el texto de una zona')"     "naranjos-captura texto"
 }
 seccion_ayuda(){
   mete "󰌌  $(_ 'Atajos de teclado')"              "naranjos-atajos"
@@ -85,10 +103,10 @@ seccion_energia(){
   mete "  $(_ 'Apagar')"                         "energia poweroff"
 }
 
-SECCIONES=(aplicaciones aspecto ajustes seguridad sistema capturas ayuda energia)
+SECCIONES=(aplicaciones utilidades aspecto ajustes seguridad sistema capturas ayuda energia)
 titulo(){
   case "$1" in
-    aplicaciones) echo "󰀻  $(_ 'Aplicaciones')" ;; aspecto) echo "󰏘  $(_ 'Aspecto')" ;;
+    aplicaciones) echo "󰀻  $(_ 'Aplicaciones')" ;; utilidades) echo "󰠱  $(_ 'Utilidades')" ;; aspecto) echo "󰏘  $(_ 'Aspecto')" ;;
     ajustes) echo "  $(_ 'Ajustes')" ;; seguridad) echo "󰒃  $(_ 'Seguridad')" ;;
     sistema) echo "  $(_ 'Sistema')" ;; capturas) echo "󰄀  $(_ 'Capturas')" ;;
     ayuda) echo "󰋖  $(_ 'Ayuda')" ;; energia) echo "  $(_ 'Energía')" ;;
@@ -121,7 +139,7 @@ principal(){
   local s n a pref
   for s in "${SECCIONES[@]}"; do mete "$(titulo "$s")  ›" "menu_seccion $s"; done
   # todo lo demás, para encontrarlo escribiendo
-  for s in aspecto ajustes seguridad sistema capturas ayuda energia; do
+  for s in utilidades aspecto ajustes seguridad sistema capturas ayuda energia; do
     pref=$(titulo "$s" | sed 's/^[^ ]* *//')
     local antes=${#ETIQ[@]}
     "seccion_$s"
@@ -133,7 +151,7 @@ principal(){
 
 case "${1:-}" in
   "")  principal ;;
-  aplicaciones|aspecto|ajustes|seguridad|sistema|capturas|ayuda|energia) menu_seccion "$1" ;;
+  aplicaciones|utilidades|aspecto|ajustes|seguridad|sistema|capturas|ayuda|energia) menu_seccion "$1" ;;
   lista) principal() { :; }; for s in "${SECCIONES[@]}"; do [ "$s" = aplicaciones ] || "seccion_$s"; done; printf '%s\n' "${ETIQ[@]}"; aplicaciones | cut -f1 ;;
   *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac

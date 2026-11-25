@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=mise
+pkgver=2026.11.14
+pkgrel=1
+pkgdesc='Versiones de lenguajes y herramientas por proyecto (mise)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=('openssl')
+makedepends=('rust')
+source=('https://github.com/jdx/mise/archive/v2026.11.14/mise-2026.11.14.tar.gz')
+sha256sums=('02de295b741c6869f9e1e23c3cd58756706070a4f549467c8a83d5e16cf9d28e')
+prepare() { cd mise-$pkgver; export CARGO_HOME="$srcdir/cargo"; cargo fetch --locked; }
+build() { cd mise-$pkgver; export CARGO_HOME="$srcdir/cargo"; cargo build --release --frozen; }
+package() { cd mise-$pkgver; install -Dm755 target/release/mise "$pkgdir/usr/bin/mise"; install -Dm644 LICENSE "$pkgdir/usr/share/licenses/mise/LICENSE"; }

@@ -1,0 +1,19 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=libfido2
+pkgver=1.17.0
+pkgrel=1
+pkgdesc='Llaves de seguridad FIDO2 (YubiKey, SoloKey, Nitrokey…)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-2-Clause')
+depends=('libcbor' 'openssl' 'zlib' 'systemd')
+makedepends=('cmake')
+source=('https://github.com/Yubico/libfido2/archive/1.17.0/libfido2-1.17.0.tar.gz')
+sha256sums=('ace062d14a482ff9325410ff63d06c8b5fe87e79ebc18dda07add2bc0188c77f')
+build() {
+  cmake -S libfido2-$pkgver -B build -D CMAKE_INSTALL_PREFIX=/usr -D CMAKE_INSTALL_LIBDIR=lib -D CMAKE_BUILD_TYPE=Release \
+    -D BUILD_EXAMPLES=OFF -D BUILD_MANPAGES=OFF -D BUILD_TESTS=OFF -D BUILD_STATIC_LIBS=OFF -D BUILD_TOOLS=ON \
+    -D NFC_LINUX=OFF -D USE_PCSC=OFF -D UDEV_RULES_DIR=/usr/lib/udev/rules.d
+  cmake --build build
+}
+package() { DESTDIR="$pkgdir" cmake --install build; }

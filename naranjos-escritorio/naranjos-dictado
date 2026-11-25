@@ -1,0 +1,37 @@
+#!/bin/bash
+# naranjos-dictado — dictado por voz de NaranjOS, sin internet (whisper.cpp en tu equipo)
+#   naranjos-dictado          empieza a escuchar; otra vez: para, lo pasa a texto y lo escribe donde estés
+#   naranjos-dictado barra    estado para la barra (🎙 mientras escucha)
+# El audio no sale de tu equipo y se borra al terminar.
+set -u
+. /usr/lib/naranjos/naranjos-i18n.sh
+R="${XDG_RUNTIME_DIR:-/tmp}/naranjos-dictado"; mkdir -p "$R"; chmod 700 "$R"
+MODELO=${NARANJOS_DICTADO_MODELO:-/usr/share/whisper/ggml-base.bin}
+avisa_barra(){ pkill -RTMIN+11 -x waybar 2>/dev/null; }
+
+if [ "${1:-}" = barra ]; then
+  if [ -e "$R/pid" ] && kill -0 "$(cat "$R/pid")" 2>/dev/null; then
+    printf '{"text":"󰍬","tooltip":"%s","class":"escuchando"}\n' "$(_ 'Escuchando: pulsa Super + Ctrl + D para terminar')"
+  else echo '{"text":""}'; fi
+  exit 0
+fi
+
+if [ -e "$R/pid" ] && kill -0 "$(cat "$R/pid")" 2>/dev/null; then
+  kill -INT "$(cat "$R/pid")"; rm -f "$R/pid"; sleep 0.3; avisa_barra
+  [ -s "$R/voz.wav" ] || { naranjos-notifica "$(_ 'No se ha grabado nada')"; exit 0; }
+  naranjos-notifica "$(_ 'Pasando la voz a texto…')"
+  l=$(naranjos_lengua); case "$l" in es|en|gl|ca|eu|pt|fr|de|it) ;; *) l=auto ;; esac
+  t=$(whisper-cli -m "$MODELO" -l "$l" -nt -np -t "$(nproc)" -f "$R/voz.wav" 2>/dev/null | tr '\n' ' ' | sed -e 's/^ *//' -e 's/ *$//' -e 's/  */ /g')
+  rm -f "$R/voz.wav"
+  [ -n "$t" ] || { naranjos-notifica "$(_ 'No he entendido nada')"; exit 0; }
+  printf '%s' "$t" | wl-copy
+  command -v wtype >/dev/null && wtype -- "$t"
+  exit 0
+fi
+
+command -v whisper-cli >/dev/null && [ -r "$MODELO" ] || { naranjos-notifica "$(_ 'Falta el dictado (whisper.cpp)')"; exit 1; }
+rm -f "$R/voz.wav"
+setsid pw-record --rate 16000 --channels 1 --format s16 "$R/voz.wav" >/dev/null 2>&1 &
+echo $! > "$R/pid"
+avisa_barra
+naranjos-notifica "$(_ 'Te escucho…')" "$(_ 'Habla y pulsa Super + Ctrl + D otra vez para terminar')"

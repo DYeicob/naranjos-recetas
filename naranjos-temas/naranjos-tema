@@ -7,6 +7,8 @@
 #   naranjos-tema menu            elegirlo en un menú (Super + Ctrl + T)
 #   naranjos-tema revisa          qué ficheros tuyos de ~/.config no siguen el tema
 #   naranjos-tema fondo [siguiente] otro fondo del tema (Super + Ctrl + Espacio)
+#   naranjos-tema modo [claro|oscuro]  el mismo cítrico en claro u oscuro (Super + Ctrl + Mayús + T)
+#   naranjos-tema vscode          los temas de NaranjOS en VS Code / VSCodium
 # El tema elegido es un enlace: ~/.config/naranjos/tema → /usr/share/naranjos/temas/<tema>
 set -uo pipefail
 if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; fi
@@ -16,6 +18,10 @@ TEMAS=${NARANJOS_TEMAS:-/usr/share/naranjos/temas}
 CONF=${XDG_CONFIG_HOME:-$HOME/.config}
 ENLACE=$CONF/naranjos/tema
 ORDEN=(naranja sanguina lima pomelo limon brisa azahar)
+CLAROS=(azahar sanguina-claro lima-claro pomelo-claro limon-claro brisa-claro)   # (6o) versiones claras
+pareja(){ # el mismo cítrico en el otro modo
+  case "$1" in naranja) echo azahar ;; azahar) echo naranja ;; *-claro) echo "${1%-claro}" ;; *) echo "$1-claro" ;; esac
+}
 die(){ printf '%snaranjos-tema:%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
 
 [ "$(id -u)" != 0 ] || die "$(_ 'Cada usuario elige su tema: ejecútalo sin sudo.')"
@@ -27,10 +33,10 @@ existe(){ [ -r "$TEMAS/$1/colores" ]; }
 lista(){
   local t a; a=$(actual)
   printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'temas')" "$Z"
-  for t in "${ORDEN[@]}"; do
+  for t in "${ORDEN[@]}" "${CLAROS[@]:1}"; do
     existe "$t" || continue
-    if [ "$t" = "$a" ]; then printf '  %s● %-10s%s %s\n' "$O" "$t" "$Z" "$(nombre "$t")"
-    else printf '  ○ %-10s %s%s%s\n' "$t" "$D" "$(nombre "$t")" "$Z"; fi
+    if [ "$t" = "$a" ]; then printf '  %s● %-15s%s %s\n' "$O" "$t" "$Z" "$(nombre "$t")"
+    else printf '  ○ %-15s %s%s%s\n' "$t" "$D" "$(nombre "$t")" "$Z"; fi
   done
 }
 
@@ -144,6 +150,8 @@ pon(){
   ln -sfn "$TEMAS/$t" "$ENLACE"
   pon_gtk "$CLARO"
   pon_iconos "$ICONOS"
+  # (6o) btop sigue el tema: su tema «naranjos» apunta siempre al tema puesto
+  mkdir -p "$CONF/btop/themes"; ln -sfn "$ENLACE/btop.theme" "$CONF/btop/themes/naranjos.theme"
   [ "$quieto" = --sin-recargar ] && return 0
   recarga
   pon_cursor "$CURSOR"
@@ -166,6 +174,29 @@ fondo(){
   for i in "${!l[@]}"; do [ "${l[$i]}" = "$act" ] && sig=${l[$(( (i + 1) % ${#l[@]} ))]}; done
   pon_fondo "$sig" --siempre
   printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Fondo:')" "$(basename "$sig")"
+}
+
+# claro / oscuro sin cambiar de cítrico
+modo(){
+  local a o; a=$(actual); o=$(pareja "$a")
+  case "${1:-alterna}" in
+    claro|light)  grep -qx 'CLARO=1' "$TEMAS/$a/colores" 2>/dev/null && return 0 ;;
+    oscuro|dark)  grep -qx 'CLARO=1' "$TEMAS/$a/colores" 2>/dev/null || return 0 ;;
+  esac
+  existe "$o" || die "$(_ 'No existe el tema') «$o»"
+  pon "$o"
+}
+
+# los temas de NaranjOS en VS Code / VSCodium (si los tienes)
+vscode(){
+  local s=/usr/share/naranjos/vscode/naranjos-temas d hay=0
+  for d in "$HOME/.vscode/extensions" "$HOME/.vscode-oss/extensions" \
+           "$HOME/.var/app/com.vscodium.codium/data/codium/extensions" "$HOME/.var/app/com.visualstudio.code/data/vscode/extensions"; do
+    [ -d "${d%/extensions}" ] || continue
+    mkdir -p "$d"; rm -rf "$d/naranjos.naranjos-temas-"*; cp -r "$s" "$d/naranjos.naranjos-temas-1.0.0"; hay=1
+    printf '%s✔%s %s\n' "$G" "$Z" "${d/#$HOME/\~}"
+  done
+  [ "$hay" = 1 ] || printf '%s\n' "$(_ 'No encuentro VS Code ni VSCodium en tu usuario')"
 }
 
 siguiente(){
@@ -192,10 +223,12 @@ case "${1:-}" in
   pon|set|usa)     shift; pon "${1:-}" "${2:-}" ;;
   siguiente|next)  siguiente ;;
   menu)            menu ;;
+  modo|mode)       shift; modo "${1:-alterna}" ;;
+  vscode|code)     vscode ;;
   actual|current)  actual ;;
   fondo|wallpaper) fondo ;;
   revisa|check)    revisa && printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Todo sigue el tema.')" ;;
   ayuda|help|-h|--help)
-    sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//' ;;
+    sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//' ;;
   *) pon "$1" ;;
 esac

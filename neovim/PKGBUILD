@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=neovim
+pkgver=0.12.6
+pkgrel=1
+pkgdesc='Neovim: editor de texto (con los colores del tema de NaranjOS)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('Apache-2.0' 'Vim')
+depends=()
+makedepends=('cmake' 'ninja' 'gettext' 'curl')
+source=('https://github.com/neovim/neovim/archive/v0.12.6/neovim-0.12.6.tar.gz')
+sha256sums=('8629fdc5eb951daf89a76f68cad12f2f1e03fab0d539150ba3fe6d177d254b7f')
+build() {
+  cd neovim-$pkgver
+  # las bibliotecas que necesita (LuaJIT, libuv, tree-sitter…) se bajan y se meten dentro (lista en cmake.deps/deps.txt)
+  make CMAKE_BUILD_TYPE=Release CMAKE_INSTALL_PREFIX=/usr
+}
+package() { cd neovim-$pkgver; make CMAKE_INSTALL_PREFIX=/usr DESTDIR="$pkgdir" install; }

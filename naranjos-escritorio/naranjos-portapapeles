@@ -1,0 +1,55 @@
+#!/bin/bash
+# naranjos-portapapeles — historial del portapapeles de NaranjOS (6o)
+#   naranjos-portapapeles vigila     se queda escuchando (lo arranca Hyprland al entrar)
+#   naranjos-portapapeles menu       elegir algo copiado antes (Super + V) → vuelve al portapapeles
+#   naranjos-portapapeles borra      vacía el historial
+# Guarda los últimos 100 textos e imágenes en ~/.local/share/naranjos/portapapeles (solo en tu equipo).
+# Lo que copian los gestores de contraseñas (marcado como secreto) no se guarda.
+set -uo pipefail
+if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; fi
+D="${XDG_DATA_HOME:-$HOME/.local/share}/naranjos/portapapeles"; MAX=100
+mkdir -p "$D"; chmod 700 "$D"
+
+guarda(){ # lee del portapapeles (lo llama wl-paste --watch)
+  [ "${CLIPBOARD_STATE:-data}" = sensitive ] && return 0
+  local t f h ext=txt
+  t=$(wl-paste --list-types 2>/dev/null) || return 0
+  grep -qx 'x-kde-passwordManagerHint' <<< "$t" && return 0
+  if grep -q '^image/png' <<< "$t"; then ext=png; f="$D/.nuevo.png"; wl-paste --type image/png > "$f" 2>/dev/null
+  elif grep -qE '^(text/plain|UTF8_STRING|TEXT|STRING)' <<< "$t"; then f="$D/.nuevo.txt"; wl-paste --no-newline > "$f" 2>/dev/null
+  else return 0; fi
+  [ -s "$f" ] || { rm -f "$f"; return 0; }
+  h=$(sha256sum < "$f" | cut -c1-16)
+  rm -f "$D"/*-"$h".* 2>/dev/null                       # si ya estaba, sube arriba
+  mv -f "$f" "$D/$(date +%s%N)-$h.$ext"
+  ls -1t "$D" | tail -n +$((MAX + 1)) | while read -r v; do rm -f "$D/$v"; done
+}
+
+vigila(){
+  pkill -f 'wl-paste --watch naranjos-portapapeles' 2>/dev/null
+  wl-paste --watch naranjos-portapapeles guarda &
+  wait
+}
+
+menu(){
+  local l=() f i linea s
+  for f in $(ls -1t "$D" 2>/dev/null); do
+    case "$f" in
+      *.png) s=${f%%-*}; linea="󰋩  $(_ 'Imagen') · $(date -d "@${s:0:10}" '+%H:%M' 2>/dev/null)" ;;
+      *) linea=$(head -c 300 "$D/$f" | tr '\n\t' '  ' | cut -c1-90) ;;
+    esac
+    l+=("$f"); printf '%s\n' "$linea"
+  done > "$D/.lista"
+  [ ${#l[@]} -gt 0 ] || { naranjos-notifica "$(_ 'Portapapeles')" "$(_ 'Aún no has copiado nada')"; return 0; }
+  i=$(fuzzel --dmenu --index --prompt "$(_ 'Portapapeles') ❯ " --width 60 --lines 14 < "$D/.lista") || return 0
+  [[ "$i" =~ ^[0-9]+$ ]] || return 0
+  f="$D/${l[$i]}"
+  case "$f" in *.png) wl-copy --type image/png < "$f" ;; *) wl-copy < "$f" ;; esac
+}
+
+borra(){ rm -f "$D"/* "$D"/.lista; printf '%s\n' "$(_ 'Historial del portapapeles vaciado')"; }
+
+case "${1:-menu}" in
+  vigila) vigila ;; guarda) guarda ;; menu) menu ;; borra|vacia) borra ;;
+  *) echo "$(_ 'Uso:') naranjos-portapapeles [menu|borra|vigila]"; exit 1 ;;
+esac

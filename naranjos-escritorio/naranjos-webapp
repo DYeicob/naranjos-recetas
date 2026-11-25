@@ -1,0 +1,61 @@
+#!/bin/bash
+# naranjos-webapp — webs como aplicaciones (ventana propia, sin barras, en el menú de aplicaciones)
+#   naranjos-webapp crea "WhatsApp" https://web.whatsapp.com
+#   naranjos-webapp lista | quita "WhatsApp" | menu
+# Usa Chromium (Flatpak); se instala solo la primera vez, con tu permiso.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; Z=; }
+APPS="${XDG_DATA_HOME:-$HOME/.local/share}/applications"; ICON="${XDG_DATA_HOME:-$HOME/.local/share}/naranjos/webapps"
+NAV=org.chromium.Chromium
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; naranjos-notifica "$(_ 'Web apps')" "$1" 2>/dev/null; exit 1; }
+id_de(){ printf 'naranjos-webapp-%s' "$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-//;s/-$//')"; }
+
+navegador(){
+  flatpak info "$NAV" >/dev/null 2>&1 && return 0
+  printf '%s\n' "$(_ 'Las web apps usan Chromium (Flatpak). Se instala ahora (unos 300 MB).')"
+  flatpak install -y --user flathub "$NAV" || die "$(_ 'No pude instalar Chromium')"
+}
+
+crea(){
+  local n="${1:-}" url="${2:-}" id dom
+  [ -n "$n" ] && [[ "$url" =~ ^https?:// ]] || die "$(_ 'Uso:') naranjos-webapp crea \"$(_ 'Nombre')\" https://…"
+  navegador
+  id=$(id_de "$n"); dom=$(printf '%s' "$url" | sed -E 's|^https?://([^/]+).*|\1|')
+  mkdir -p "$APPS" "$ICON"
+  curl -fsSL --max-time 15 -o "$ICON/$id.png" "https://icons.duckduckgo.com/ip3/$dom.ico" 2>/dev/null || rm -f "$ICON/$id.png"
+  cat > "$APPS/$id.desktop" << EOD
+[Desktop Entry]
+Type=Application
+Name=$n
+Comment=$(_ 'Web app de NaranjOS') · $url
+Exec=flatpak run $NAV --app=$url --class=$id --user-data-dir=$HOME/.var/app/$NAV/naranjos-webapps/$id
+Icon=$( [ -s "$ICON/$id.png" ] && echo "$ICON/$id.png" || echo applications-internet )
+StartupWMClass=$id
+Categories=Network;
+X-NaranjOS-Webapp=$url
+EOD
+  update-desktop-database -q "$APPS" 2>/dev/null
+  printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Web app creada:')" "$n"
+}
+
+lista(){
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'web apps')" "$Z"
+  grep -l '^X-NaranjOS-Webapp=' "$APPS"/naranjos-webapp-*.desktop 2>/dev/null | while read -r f; do
+    printf '  %-20s %s\n' "$(sed -n 's/^Name=//p' "$f")" "$(sed -n 's/^X-NaranjOS-Webapp=//p' "$f")"; done
+}
+quita(){
+  local f; f="$APPS/$(id_de "${1:-}").desktop"; [ -e "$f" ] || die "$(_ 'No existe esa web app')"
+  rm -f "$f" "$ICON/$(id_de "$1").png"; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Web app quitada')"
+}
+menu(){
+  local n u
+  n=$(fuzzel --dmenu --prompt "$(_ 'Nombre de la web app') ❯ " --lines 0 --width 44 < /dev/null) || exit 0
+  u=$(fuzzel --dmenu --prompt "$(_ 'Dirección (https://…)') ❯ " --lines 0 --width 60 < /dev/null) || exit 0
+  [[ "$u" =~ ^https?:// ]] || u="https://$u"
+  setsid -f foot --app-id=naranjos-tui -T "$(_ 'Web apps')" bash -c 'naranjos-webapp crea "$1" "$2"; sleep 3' _ "$n" "$u"
+}
+case "${1:-lista}" in
+  crea|new) shift; crea "$@" ;; lista|list) lista ;; quita|remove) shift; quita "$@" ;; menu) menu ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

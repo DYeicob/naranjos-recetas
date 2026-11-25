@@ -1,0 +1,50 @@
+#!/bin/bash
+# naranjos-llave — entrar con una llave de seguridad USB (FIDO2: YubiKey, SoloKey, Nitrokey…)
+#   naranjos-llave                    cómo está
+#   naranjos-llave registra           añade tu llave (tócala cuando parpadee)
+#   sudo naranjos-llave activa        la llave sirve en vez de la contraseña (sudo y pantalla de bloqueo)
+#   sudo naranjos-llave desactiva     vuelve a pedir solo la contraseña
+# La contraseña sigue funcionando siempre: la llave es una forma más de entrar, no la única.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; A=; Z=; }
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+LINEA='auth sufficient pam_u2f.so cue origin=pam://naranjos appid=pam://naranjos'
+SERV=(sudo hyprlock)
+registra(){
+  [ "$(id -u)" != 0 ] || die "$(_ 'Hazlo con tu usuario, sin sudo')"
+  command -v pamu2fcfg >/dev/null || die "$(_ 'Falta pam-u2f')"
+  local f="$HOME/.config/Yubico/u2f_keys" n
+  mkdir -p "${f%/*}"
+  printf '%s\n' "$(_ 'Toca la llave cuando parpadee…')"
+  if [ -s "$f" ]; then n=$(pamu2fcfg -n -o pam://naranjos -i pam://naranjos) || die "$(_ 'No pude leer la llave')"; printf '%s' "$n" >> "$f"
+  else pamu2fcfg -u "$(id -un)" -o pam://naranjos -i pam://naranjos > "$f" || die "$(_ 'No pude leer la llave')"; fi
+  chmod 600 "$f"; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Llave registrada. Para usarla: sudo naranjos-llave activa')"
+}
+activa(){
+  [ "$(id -u)" = 0 ] || exec sudo "$0" activa
+  local s f
+  for s in "${SERV[@]}"; do
+    f=/etc/pam.d/$s; [ -f "$f" ] || continue
+    grep -q pam_u2f "$f" && continue
+    cp -p "$f" "$f.antes-llave"
+    sed -i "0,/^auth/s|^auth|$LINEA\n&|" "$f"
+  done
+  printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'La llave ya sirve para sudo y para desbloquear la pantalla')"
+}
+desactiva(){
+  [ "$(id -u)" = 0 ] || exec sudo "$0" desactiva
+  local s; for s in "${SERV[@]}"; do [ -f "/etc/pam.d/$s" ] && sed -i '/pam_u2f\.so/d' "/etc/pam.d/$s"; done
+  printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Vuelve a pedirse solo la contraseña')"
+}
+estado(){
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'llave de seguridad')" "$Z"
+  local u="${SUDO_USER:-$(id -un)}" f
+  f=$(getent passwd "$u" | cut -d: -f6)/.config/Yubico/u2f_keys
+  [ -s "$f" ] && printf '  %s✔%s %s\n' "$G" "$Z" "$(_ 'llave registrada')" || printf '  %s○%s %s\n' "$A" "$Z" "$(_ 'sin llave (naranjos-llave registra)')"
+  grep -qs pam_u2f /etc/pam.d/sudo && printf '  %s✔%s %s\n' "$G" "$Z" "$(_ 'activa en sudo y bloqueo')" || printf '  %s○%s %s\n' "$A" "$Z" "$(_ 'sin activar')"
+}
+case "${1:-}" in
+  "") estado ;; registra|register) registra ;; activa|enable) activa ;; desactiva|disable) desactiva ;;
+  *) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

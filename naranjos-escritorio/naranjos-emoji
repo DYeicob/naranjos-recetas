@@ -1,0 +1,20 @@
+#!/bin/bash
+# naranjos-emoji — selector de emojis de NaranjOS (Super + .): busca en español o en inglés,
+# lo escribe donde estés y lo deja en el portapapeles. Los usados hace poco salen primero.
+set -uo pipefail
+if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; naranjos_lengua(){ echo es; }; fi
+DATOS=/usr/share/naranjos/emojis.tsv       # emoji <TAB> nombre en inglés <TAB> nombre y palabras en español
+REC="${XDG_STATE_HOME:-$HOME/.local/state}/naranjos/emojis-recientes"
+[ -r "$DATOS" ] || { echo "$(_ 'Faltan los datos de emojis')" >&2; exit 1; }
+mkdir -p "${REC%/*}"; touch "$REC"
+lista(){
+  local es=0; [ "$(naranjos_lengua)" = es ] && es=1
+  { cat "$REC"; cut -f1 "$DATOS"; } | awk -F'\t' -v es=$es 'NR==FNR{d[$1]=(es && $3!="" ? $3" · "$2 : $2); next}
+    ($1 in d) && !v[$1]++ {print $1"  "d[$1]}' "$DATOS" -
+}
+e=$(lista | fuzzel --dmenu --prompt "$(_ 'Emoji') ❯ " --width 56 --lines 14) || exit 0
+e=${e%%  *}; [ -n "$e" ] || exit 0
+{ echo "$e"; grep -vxF "$e" "$REC" | head -n 29; } > "$REC.nuevo" && mv -f "$REC.nuevo" "$REC"
+printf '%s' "$e" | wl-copy
+command -v wtype >/dev/null && { sleep 0.15; wtype "$e"; }
+exit 0

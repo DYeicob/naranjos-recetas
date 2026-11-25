@@ -227,6 +227,24 @@ NaranjOS se puede usar en varios idiomas. Pulsa **Super + Ctrl + I** y elige el 
 El cambio se ve al cerrar sesión y volver a entrar. Los programas (Firefox, las apps GTK…) también
 cambian de idioma. ¿Quieres traducir NaranjOS al tuyo? Mira `/usr/share/doc/naranjos/traducir.md`.
 
+## 9e. Herramientas del día a día
+
+- **Portapapeles** (Super + V): lo último que copiaste, textos e imágenes. Solo en tu equipo; `naranjos-portapapeles borra` lo vacía.
+- **Emojis** (Super + .): busca en español o en inglés; se escribe donde estés.
+- **Texto de la pantalla** (Super + Ctrl + O): señala una zona y su texto queda en el portapapeles (sin internet).
+- **Dictado** (Super + Ctrl + D): habla y vuelve a pulsar; el texto se escribe solo. Todo en tu equipo (whisper.cpp).
+- **Grabar la pantalla** (Alt + Impr una zona, Alt + Mayús + Impr todo): se guarda en `Vídeos/Grabaciones`; el punto rojo de la barra la para.
+- **Recordatorios** (Super + Ctrl + R): `naranjos-recuerda "llamar a Ana" a las 18:30`, `… en 20m`, `… mañana 9:00`.
+- **El tiempo**: `naranjos-tiempo ciudad Ourense` y sale en la barra (Open-Meteo, gratis y sin cuenta).
+- **Pantalla** (Super + Ctrl + P): tamaño del texto, escala de cada monitor y posición o transparencia de la barra.
+- **Modo claro / oscuro** (Super + Ctrl + Mayús + T): cada cítrico tiene su versión clara.
+- **Web apps**: `naranjos-webapp crea "WhatsApp" https://web.whatsapp.com` (ventana propia, en el menú).
+- **Restablecer**: `naranjos-restablece barra` (o `todo`) vuelve a la configuración de NaranjOS y guarda la tuya como copia.
+- **Llave de seguridad**: `naranjos-llave registra` y `sudo naranjos-llave activa` para usar una llave FIDO2 en sudo y el bloqueo.
+- **Ventanas**: cada aplicación se vuelve a abrir en el escritorio donde la dejaste (`naranjos-ventanas olvida` para empezar de cero).
+- **Complementos**: `naranjos-complementos instala <url-git>` añade atajos u órdenes de otros (te enseña lo que trae antes).
+- **Programar**: `nvim` (Neovim con los colores del tema), `lazygit`, `lazydocker`, `btop` y `mise` (versiones de lenguajes).
+
 ## 10. Problemas frecuentes
 
 - **No se abre nada al pulsar un atajo:** abre una terminal con Super + Enter y mira si

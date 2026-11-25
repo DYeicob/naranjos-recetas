@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NaranjOS 0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DYeicob/naranjos-recetas/issues\n"
-"POT-Creation-Date: 2026-11-25 16:12+0100\n"
+"POT-Creation-Date: 2026-11-25 16:56+0100\n"
 "PO-Revision-Date: 2026-11-25 16:30+0100\n"
 "Last-Translator: NaranjOS\n"
 "Language-Team: English\n"
@@ -62,11 +62,11 @@ msgstr "Loading NaranjOS..."
 msgid "Ajustes del firmware (UEFI)"
 msgstr "Firmware settings (UEFI)"
 
-#: arranque/naranjos-arranque:181 esc/naranjos-menu:84 esc/naranjos-sistema:5
+#: arranque/naranjos-arranque:181 esc/naranjos-menu:102 esc/naranjos-sistema:5
 msgid "Reiniciar"
 msgstr "Reboot"
 
-#: arranque/naranjos-arranque:182 esc/naranjos-menu:85 esc/naranjos-noche:86
+#: arranque/naranjos-arranque:182 esc/naranjos-menu:103 esc/naranjos-noche:86
 #: esc/naranjos-sistema:5
 msgid "Apagar"
 msgstr "Power off"
@@ -139,7 +139,8 @@ msgstr "First, a copy of the whole EFI partition is saved in"
 msgid "Escribe SI para continuar:"
 msgstr "Type SI to continue:"
 
-#: arranque/naranjos-arranque:252 fotos/fotos:188 peel/naranjos-peel:710
+#: arranque/naranjos-arranque:252 esc/naranjos-complementos:47 fotos/fotos:188
+#: peel/naranjos-peel:710
 msgid "Cancelado."
 msgstr "Cancelled."
 
@@ -252,40 +253,85 @@ msgstr ""
 msgid "Atajos"
 msgstr "Shortcuts"
 
-#: esc/naranjos-ayuda:5 esc/naranjos-menu:78
+#: esc/naranjos-ayuda:5 esc/naranjos-menu:96
 msgid "Manual de NaranjOS"
 msgstr "NaranjOS manual"
 
-#: esc/naranjos-captura:6 esc/naranjos-carpetas:11
+#: esc/naranjos-captura:15 esc/naranjos-carpetas:11
 msgid "Imágenes"
 msgstr "Pictures"
 
-#: esc/naranjos-captura:7 esc/naranjos-menu:93
+#: esc/naranjos-captura:16 esc/naranjos-menu:111
 msgid "Capturas"
 msgstr "Screenshots"
 
-#: esc/naranjos-captura:8
+#: esc/naranjos-captura:17
 msgid "captura"
 msgstr "screenshot"
 
-#: esc/naranjos-captura:12 esc/naranjos-noche:111 esc/naranjos-tui:12
-#: idiomas/naranjos-idioma:100 peel/naranjos-peel:185 peel/naranjos-peel:194
-#: peel/naranjos-peel:234 peel/naranjos-peel:276 peel/naranjos-peel:325
-#: peel/naranjos-peel:499 peel/naranjos-peel:519 peel/naranjos-peel:544
-#: peel/naranjos-peel:676 peel/naranjos-peel:692 peel/naranjos-peel:728
-#: peel/naranjos-peel:869 peel/naranjos-peel:912 peel/naranjos-peel:933
-#: peel/naranjos-peel:962 peel/naranjos-peel:1016 peel/naranjos-peel:1042
-#: peel/naranjos-peel:1082 zumo:24
-msgid "Uso:"
-msgstr "Usage:"
-
-#: esc/naranjos-captura:15
+#: esc/naranjos-captura:23
 msgid "Captura guardada"
 msgstr "Screenshot saved"
 
-#: esc/naranjos-captura:15
+#: esc/naranjos-captura:23
 msgid "también está en el portapapeles"
 msgstr "also copied to the clipboard"
+
+#: esc/naranjos-captura:31
+msgid "Grabación guardada"
+msgstr "Recording saved"
+
+#: esc/naranjos-captura:34
+msgid "Falta wf-recorder"
+msgstr "wf-recorder is missing"
+
+#: esc/naranjos-captura:35 esc/naranjos-carpetas:12
+msgid "Vídeos"
+msgstr "Videos"
+
+#: esc/naranjos-captura:36
+msgid "Grabaciones"
+msgstr "Recordings"
+
+#: esc/naranjos-captura:37
+msgid "grabacion"
+msgstr "recording"
+
+#: esc/naranjos-captura:42
+msgid "Grabando la pantalla"
+msgstr "Recording the screen"
+
+#: esc/naranjos-captura:42
+msgid "Para parar: la misma tecla otra vez (o el punto rojo de la barra)"
+msgstr "To stop: the same key again (or the red dot in the bar)"
+
+#: esc/naranjos-captura:49
+msgid "Falta tesseract"
+msgstr "tesseract is missing"
+
+#: esc/naranjos-captura:56
+msgid "Texto copiado"
+msgstr "Text copied"
+
+#: esc/naranjos-captura:58
+msgid "No he encontrado texto en esa zona"
+msgstr "I found no text in that area"
+
+#: esc/naranjos-captura:64
+msgid "Grabando la pantalla: clic para parar"
+msgstr "Recording the screen: click to stop"
+
+#: esc/naranjos-captura:73 esc/naranjos-noche:111 esc/naranjos-pantalla:65
+#: esc/naranjos-portapapeles:54 esc/naranjos-recuerda:87 esc/naranjos-tui:12
+#: esc/naranjos-webapp:22 idiomas/naranjos-idioma:100 peel/naranjos-peel:185
+#: peel/naranjos-peel:194 peel/naranjos-peel:234 peel/naranjos-peel:276
+#: peel/naranjos-peel:325 peel/naranjos-peel:499 peel/naranjos-peel:519
+#: peel/naranjos-peel:544 peel/naranjos-peel:676 peel/naranjos-peel:692
+#: peel/naranjos-peel:728 peel/naranjos-peel:869 peel/naranjos-peel:912
+#: peel/naranjos-peel:933 peel/naranjos-peel:962 peel/naranjos-peel:1016
+#: peel/naranjos-peel:1042 peel/naranjos-peel:1082 zumo:24
+msgid "Uso:"
+msgstr "Usage:"
 
 #: esc/naranjos-carpetas:11
 msgid "Descargas"
@@ -299,9 +345,81 @@ msgstr "Documents"
 msgid "Música"
 msgstr "Music"
 
-#: esc/naranjos-carpetas:12
-msgid "Vídeos"
-msgstr "Videos"
+#: esc/naranjos-complementos:30
+msgid "complementos"
+msgstr "add-ons"
+
+#: esc/naranjos-complementos:35
+msgid "Ninguno. Añade uno con: naranjos-complementos instala <url-git>"
+msgstr "None. Add one with: naranjos-complementos instala <git-url>"
+
+#: esc/naranjos-complementos:40
+msgid "Dime la dirección git del complemento"
+msgstr "Tell me the add-on's git address"
+
+#: esc/naranjos-complementos:42
+msgid "Ya tienes «%s»"
+msgstr "You already have «%s»"
+
+#: esc/naranjos-complementos:43
+msgid "No pude bajarlo"
+msgstr "Couldn't download it"
+
+#: esc/naranjos-complementos:44
+msgid "Esto es lo que trae (revísalo: se ejecutará con tu usuario):"
+msgstr "This is what it brings (check it: it will run as your user):"
+
+#: esc/naranjos-complementos:46
+msgid "Escribe SI para activarlo:"
+msgstr "Type SI to enable it:"
+
+#: esc/naranjos-complementos:49
+msgid "Complemento activo:"
+msgstr "Add-on enabled:"
+
+#: esc/naranjos-complementos:53
+msgid "No tienes ese complemento"
+msgstr "You don't have that add-on"
+
+#: esc/naranjos-complementos:55
+msgid "Complemento quitado:"
+msgstr "Add-on removed:"
+
+#: esc/naranjos-dictado:14
+msgid "Escuchando: pulsa Super + Ctrl + D para terminar"
+msgstr "Listening: press Super + Ctrl + D to finish"
+
+#: esc/naranjos-dictado:21
+msgid "No se ha grabado nada"
+msgstr "Nothing was recorded"
+
+#: esc/naranjos-dictado:22
+msgid "Pasando la voz a texto…"
+msgstr "Turning your voice into text…"
+
+#: esc/naranjos-dictado:26
+msgid "No he entendido nada"
+msgstr "I didn't understand anything"
+
+#: esc/naranjos-dictado:32
+msgid "Falta el dictado (whisper.cpp)"
+msgstr "Dictation is missing (whisper.cpp)"
+
+#: esc/naranjos-dictado:37
+msgid "Te escucho…"
+msgstr "I'm listening…"
+
+#: esc/naranjos-dictado:37
+msgid "Habla y pulsa Super + Ctrl + D otra vez para terminar"
+msgstr "Speak and press Super + Ctrl + D again to finish"
+
+#: esc/naranjos-emoji:8
+msgid "Faltan los datos de emojis"
+msgstr "The emoji data is missing"
+
+#: esc/naranjos-emoji:15
+msgid "Emoji"
+msgstr "Emoji"
 
 #: esc/naranjos-escritorio.install:4
 msgid ""
@@ -326,146 +444,271 @@ msgstr ""
 "NaranjOS: couldn't reload %s's desktop; do it yourself with Super + Shift + "
 "R"
 
+#: esc/naranjos-llave:15
+msgid "Hazlo con tu usuario, sin sudo"
+msgstr "Do it as your user, without sudo"
+
+#: esc/naranjos-llave:16
+msgid "Falta pam-u2f"
+msgstr "pam-u2f is missing"
+
+#: esc/naranjos-llave:19
+msgid "Toca la llave cuando parpadee…"
+msgstr "Touch the key when it blinks…"
+
+#: esc/naranjos-llave:20 esc/naranjos-llave:21
+msgid "No pude leer la llave"
+msgstr "Couldn't read the key"
+
+#: esc/naranjos-llave:22
+msgid "Llave registrada. Para usarla: sudo naranjos-llave activa"
+msgstr "Key registered. To use it: sudo naranjos-llave activa"
+
+#: esc/naranjos-llave:33
+msgid "La llave ya sirve para sudo y para desbloquear la pantalla"
+msgstr "The key now works for sudo and for unlocking the screen"
+
+#: esc/naranjos-llave:38
+msgid "Vuelve a pedirse solo la contraseña"
+msgstr "Only the password is asked again"
+
+#: esc/naranjos-llave:41
+msgid "llave de seguridad"
+msgstr "security key"
+
+#: esc/naranjos-llave:44
+msgid "llave registrada"
+msgstr "key registered"
+
+#: esc/naranjos-llave:44
+msgid "sin llave (naranjos-llave registra)"
+msgstr "no key (naranjos-llave registra)"
+
+#: esc/naranjos-llave:45
+msgid "activa en sudo y bloqueo"
+msgstr "enabled for sudo and lock screen"
+
+#: esc/naranjos-llave:45
+msgid "sin activar"
+msgstr "not enabled"
+
 #: esc/naranjos-menu:14 esc/naranjos-tui:8 esc/naranjos-tui:9
 #: esc/naranjos-tui:10 idiomas/naranjos-idioma:124 idiomas/naranjos-idioma:132
 msgid "Pulsa una tecla para cerrar…"
 msgstr "Press any key to close…"
 
-#: esc/naranjos-menu:46 esc/naranjos-menu:47 temas/naranjos-tema:152
-#: temas/naranjos-tema:184
+#: esc/naranjos-menu:46 esc/naranjos-menu:47 temas/naranjos-tema:160
+#: temas/naranjos-tema:215
 msgid "Tema"
 msgstr "Theme"
 
 #: esc/naranjos-menu:49
+msgid "Modo claro / oscuro"
+msgstr "Light / dark mode"
+
+#: esc/naranjos-menu:50
 msgid "Siguiente fondo"
 msgstr "Next wallpaper"
 
-#: esc/naranjos-menu:50 esc/naranjos-noche:82 esc/naranjos-noche:88
+#: esc/naranjos-menu:51 esc/naranjos-noche:82 esc/naranjos-noche:88
 msgid "Luz nocturna"
 msgstr "Night light"
 
-#: esc/naranjos-menu:51
+#: esc/naranjos-menu:52
 msgid "Mostrar / ocultar la barra"
 msgstr "Show / hide the bar"
 
-#: esc/naranjos-menu:56 esc/naranjos-tui:7
+#: esc/naranjos-menu:53
+msgid "Pantalla, texto y barra"
+msgstr "Screen, text and bar"
+
+#: esc/naranjos-menu:54
+msgid "Temas en VS Code"
+msgstr "Themes in VS Code"
+
+#: esc/naranjos-menu:55
+msgid "Restablecer una configuración"
+msgstr "Reset a configuration"
+
+#: esc/naranjos-menu:60 esc/naranjos-tui:7
 msgid "Sonido"
 msgstr "Sound"
 
-#: esc/naranjos-menu:57 esc/naranjos-tui:11 idiomas/naranjos-idioma:117
+#: esc/naranjos-menu:61 esc/naranjos-tui:11 idiomas/naranjos-idioma:117
 #: idiomas/naranjos-idioma:124
 msgid "Idioma"
 msgstr "Language"
 
-#: esc/naranjos-menu:58
+#: esc/naranjos-menu:62
+msgid "El tiempo: elegir ciudad"
+msgstr "Weather: choose city"
+
+#: esc/naranjos-menu:63
+msgid "Llave de seguridad (FIDO2)"
+msgstr "Security key (FIDO2)"
+
+#: esc/naranjos-menu:63
+msgid "Llave"
+msgstr "Key"
+
+#: esc/naranjos-menu:64
 msgid "Mi configuración de Hyprland (avanzado)"
 msgstr "My Hyprland settings (advanced)"
 
-#: esc/naranjos-menu:61
+#: esc/naranjos-menu:67
 msgid "Estado de la seguridad"
 msgstr "Security status"
 
-#: esc/naranjos-menu:62
+#: esc/naranjos-menu:68
 msgid "VPN: conectar / desconectar"
 msgstr "VPN: connect / disconnect"
 
-#: esc/naranjos-menu:63
+#: esc/naranjos-menu:69
 msgid "Permitir un USB bloqueado"
 msgstr "Allow a blocked USB device"
 
-#: esc/naranjos-menu:64
+#: esc/naranjos-menu:70
 msgid "Vaciar la cuarentena del antivirus"
 msgstr "Empty the antivirus quarantine"
 
-#: esc/naranjos-menu:64
+#: esc/naranjos-menu:70
 msgid "Cuarentena"
 msgstr "Quarantine"
 
-#: esc/naranjos-menu:67
+#: esc/naranjos-menu:73
 msgid "Actualizar NaranjOS"
 msgstr "Update NaranjOS"
 
-#: esc/naranjos-menu:67
+#: esc/naranjos-menu:73
 msgid "Actualizar"
 msgstr "Update"
 
-#: esc/naranjos-menu:68
+#: esc/naranjos-menu:74
 msgid "Fotos del sistema"
 msgstr "System snapshots"
 
-#: esc/naranjos-menu:68 esc/naranjos-menu:69
+#: esc/naranjos-menu:74 esc/naranjos-menu:75
 msgid "Fotos"
 msgstr "Snapshots"
 
-#: esc/naranjos-menu:69
+#: esc/naranjos-menu:75
 msgid "Hacer una foto del sistema ahora"
 msgstr "Take a system snapshot now"
 
-#: esc/naranjos-menu:69
+#: esc/naranjos-menu:75
 msgid "desde el menú"
 msgstr "from the menu"
 
-#: esc/naranjos-menu:70
+#: esc/naranjos-menu:76
 msgid "Limpiar paquetes que sobran"
 msgstr "Remove unneeded packages"
 
-#: esc/naranjos-menu:70
+#: esc/naranjos-menu:76
 msgid "Limpiar"
 msgstr "Clean up"
 
-#: esc/naranjos-menu:73
+#: esc/naranjos-menu:79 esc/naranjos-portapapeles:43
+#: esc/naranjos-portapapeles:44
+msgid "Portapapeles"
+msgstr "Clipboard"
+
+#: esc/naranjos-menu:80
+msgid "Emojis"
+msgstr "Emojis"
+
+#: esc/naranjos-menu:81
+msgid "Dictar (voz a texto)"
+msgstr "Dictate (voice to text)"
+
+#: esc/naranjos-menu:82
+msgid "Nuevo recordatorio"
+msgstr "New reminder"
+
+#: esc/naranjos-menu:83
+msgid "Mis recordatorios"
+msgstr "My reminders"
+
+#: esc/naranjos-menu:83
+msgid "Recordatorios"
+msgstr "Reminders"
+
+#: esc/naranjos-menu:84
+msgid "Nueva web app"
+msgstr "New web app"
+
+#: esc/naranjos-menu:85
+msgid "Complementos"
+msgstr "Add-ons"
+
+#: esc/naranjos-menu:88
 msgid "Captura de una zona"
 msgstr "Capture an area"
 
-#: esc/naranjos-menu:74
+#: esc/naranjos-menu:89
 msgid "Captura de la pantalla"
 msgstr "Capture the screen"
 
-#: esc/naranjos-menu:77
+#: esc/naranjos-menu:90
+msgid "Grabar una zona (otra vez: parar)"
+msgstr "Record an area (again: stop)"
+
+#: esc/naranjos-menu:91
+msgid "Grabar la pantalla (otra vez: parar)"
+msgstr "Record the screen (again: stop)"
+
+#: esc/naranjos-menu:92
+msgid "Copiar el texto de una zona"
+msgstr "Copy the text in an area"
+
+#: esc/naranjos-menu:95
 msgid "Atajos de teclado"
 msgstr "Keyboard shortcuts"
 
-#: esc/naranjos-menu:81 esc/naranjos-sistema:5
+#: esc/naranjos-menu:99 esc/naranjos-sistema:5
 msgid "Bloquear"
 msgstr "Lock"
 
-#: esc/naranjos-menu:82 esc/naranjos-sistema:5
+#: esc/naranjos-menu:100 esc/naranjos-sistema:5
 msgid "Cerrar sesión"
 msgstr "Log out"
 
-#: esc/naranjos-menu:83 esc/naranjos-sistema:5
+#: esc/naranjos-menu:101 esc/naranjos-sistema:5
 msgid "Suspender"
 msgstr "Suspend"
 
-#: esc/naranjos-menu:91
+#: esc/naranjos-menu:109
 msgid "Aplicaciones"
 msgstr "Applications"
 
-#: esc/naranjos-menu:91
+#: esc/naranjos-menu:109
+msgid "Utilidades"
+msgstr "Tools"
+
+#: esc/naranjos-menu:109
 msgid "Aspecto"
 msgstr "Appearance"
 
-#: esc/naranjos-menu:92
+#: esc/naranjos-menu:110
 msgid "Ajustes"
 msgstr "Settings"
 
-#: esc/naranjos-menu:92 esc/naranjos-tui:8
+#: esc/naranjos-menu:110 esc/naranjos-tui:8
 msgid "Seguridad"
 msgstr "Security"
 
-#: esc/naranjos-menu:93
+#: esc/naranjos-menu:111
 msgid "Sistema"
 msgstr "System"
 
-#: esc/naranjos-menu:94
+#: esc/naranjos-menu:112
 msgid "Ayuda"
 msgstr "Help"
 
-#: esc/naranjos-menu:94
+#: esc/naranjos-menu:112
 msgid "Energía"
 msgstr "Power"
 
-#: esc/naranjos-menu:111
+#: esc/naranjos-menu:129
 msgid "Volver"
 msgstr "Back"
 
@@ -548,6 +791,323 @@ msgstr "Microphone muted"
 #: esc/naranjos-osd:49
 msgid "Micrófono activo"
 msgstr "Microphone on"
+
+#: esc/naranjos-pantalla:38
+msgid "Dime un número, p. ej.:"
+msgstr "Tell me a number, e.g.:"
+
+#: esc/naranjos-pantalla:40
+msgid "Entre 0.8 y 2"
+msgstr "Between 0.8 and 2"
+
+#: esc/naranjos-pantalla:41
+msgid "Tamaño del texto:"
+msgstr "Text size:"
+
+#: esc/naranjos-pantalla:42
+msgid "Las terminales y programas que abras a partir de ahora ya salen así."
+msgstr "Terminals and programs you open from now on will look like this."
+
+#: esc/naranjos-pantalla:48
+msgid "Dime la escala, p. ej.:"
+msgstr "Tell me the scale, e.g.:"
+
+#: esc/naranjos-pantalla:57
+msgid "Escala de"
+msgstr "Scale of"
+
+#: esc/naranjos-pantalla:64
+msgid "De 0 (opaca) a 90"
+msgstr "From 0 (opaque) to 90"
+
+#: esc/naranjos-pantalla:67
+msgid "Barra cambiada"
+msgstr "Bar changed"
+
+#: esc/naranjos-pantalla:71
+msgid "pantalla"
+msgstr "screen"
+
+#: esc/naranjos-pantalla:72
+msgid "Texto:"
+msgstr "Text:"
+
+#: esc/naranjos-pantalla:72
+msgid "Barra:"
+msgstr "Bar:"
+
+#: esc/naranjos-pantalla:72
+msgid "transparencia"
+msgstr "transparency"
+
+#: esc/naranjos-pantalla:79
+msgid "Texto normal"
+msgstr "Normal text"
+
+#: esc/naranjos-pantalla:79
+msgid "Texto grande"
+msgstr "Large text"
+
+#: esc/naranjos-pantalla:79
+msgid "Texto muy grande"
+msgstr "Very large text"
+
+#: esc/naranjos-pantalla:79
+msgid "Texto pequeño"
+msgstr "Small text"
+
+#: esc/naranjos-pantalla:80
+msgid "Escala de la pantalla"
+msgstr "Screen scale"
+
+#: esc/naranjos-pantalla:80
+msgid "Barra arriba"
+msgstr "Bar at the top"
+
+#: esc/naranjos-pantalla:80
+msgid "Barra abajo"
+msgstr "Bar at the bottom"
+
+#: esc/naranjos-pantalla:80
+msgid "Barra a la izquierda"
+msgstr "Bar on the left"
+
+#: esc/naranjos-pantalla:80
+msgid "Barra a la derecha"
+msgstr "Bar on the right"
+
+#: esc/naranjos-pantalla:81
+msgid "Barra opaca"
+msgstr "Opaque bar"
+
+#: esc/naranjos-pantalla:81
+msgid "Barra transparente"
+msgstr "Transparent bar"
+
+#: esc/naranjos-pantalla:81
+msgid "Pantalla"
+msgstr "Screen"
+
+#: esc/naranjos-pantalla:84
+msgid "Escala"
+msgstr "Scale"
+
+#: esc/naranjos-portapapeles:38
+msgid "Imagen"
+msgstr "Image"
+
+#: esc/naranjos-portapapeles:43
+msgid "Aún no has copiado nada"
+msgstr "You haven't copied anything yet"
+
+#: esc/naranjos-portapapeles:50
+msgid "Historial del portapapeles vaciado"
+msgstr "Clipboard history emptied"
+
+#: esc/naranjos-recuerda:11 esc/naranjos-recuerda:37 esc/naranjos-recuerda:47
+msgid "Recordatorio"
+msgstr "Reminder"
+
+#: esc/naranjos-recuerda:34
+msgid "No entiendo cuándo. Ejemplos: «en 20m», «a las 18:30», «mañana 9:00»"
+msgstr ""
+"I don't understand when. Examples: «in 20m», «at 18:30», «tomorrow 9:00»"
+
+#: esc/naranjos-recuerda:39
+msgid "No pude crear el recordatorio"
+msgstr "Couldn't create the reminder"
+
+#: esc/naranjos-recuerda:41
+msgid "Recordatorio creado"
+msgstr "Reminder created"
+
+#: esc/naranjos-recuerda:57
+msgid "recordatorios"
+msgstr "reminders"
+
+#: esc/naranjos-recuerda:62
+msgid "No tienes recordatorios pendientes"
+msgstr "You have no pending reminders"
+
+#: esc/naranjos-recuerda:67
+msgid "Dime el número (míralo con: naranjos-recuerda lista)"
+msgstr "Tell me the number (see it with: naranjos-recuerda lista)"
+
+#: esc/naranjos-recuerda:69
+msgid "Recordatorio quitado"
+msgstr "Reminder removed"
+
+#: esc/naranjos-recuerda:74
+msgid "Recordarme"
+msgstr "Remind me"
+
+#: esc/naranjos-recuerda:76 esc/naranjos-recuerda:87
+msgid "en"
+msgstr "in"
+
+#: esc/naranjos-recuerda:76
+msgid "a las"
+msgstr "at"
+
+#: esc/naranjos-recuerda:76
+msgid "mañana"
+msgstr "tomorrow"
+
+#: esc/naranjos-recuerda:77
+msgid "Cuándo"
+msgstr "When"
+
+#: esc/naranjos-recuerda:87
+msgid "texto"
+msgstr "text"
+
+#: esc/naranjos-restablece:24
+msgid "No conozco:"
+msgstr "I don't know:"
+
+#: esc/naranjos-restablece:32 esc/naranjos-restablece:49
+msgid "Restablecido:"
+msgstr "Reset:"
+
+#: esc/naranjos-restablece:40
+msgid "restablecer configuración"
+msgstr "reset configuration"
+
+#: esc/naranjos-restablece:42
+msgid "todo lo anterior"
+msgstr "all of the above"
+
+#: esc/naranjos-restablece:48
+msgid "Restablecer"
+msgstr "Reset"
+
+#: esc/naranjos-restablece:49
+msgid "Tu versión queda como copia .antes-…"
+msgstr "Your version is kept as a .antes-… copy"
+
+#: esc/naranjos-tiempo:20
+msgid "Dime la ciudad, p. ej.:"
+msgstr "Tell me the city, e.g.:"
+
+#: esc/naranjos-tiempo:22 esc/naranjos-tiempo:87
+msgid "Sin conexión con Open-Meteo"
+msgstr "No connection with Open-Meteo"
+
+#: esc/naranjos-tiempo:23 esc/naranjos-tiempo:85
+msgid "No encuentro esa ciudad"
+msgstr "I can't find that city"
+
+#: esc/naranjos-tiempo:47
+msgid "Despejado"
+msgstr "Clear sky"
+
+#: esc/naranjos-tiempo:47
+msgid "Algunas nubes"
+msgstr "Some clouds"
+
+#: esc/naranjos-tiempo:47
+msgid "Nublado"
+msgstr "Cloudy"
+
+#: esc/naranjos-tiempo:47
+msgid "Niebla"
+msgstr "Fog"
+
+#: esc/naranjos-tiempo:47
+msgid "Llovizna"
+msgstr "Drizzle"
+
+#: esc/naranjos-tiempo:47
+msgid "Lluvia"
+msgstr "Rain"
+
+#: esc/naranjos-tiempo:48
+msgid "Nieve"
+msgstr "Snow"
+
+#: esc/naranjos-tiempo:48
+msgid "Chubascos"
+msgstr "Showers"
+
+#: esc/naranjos-tiempo:48
+msgid "Tormenta"
+msgstr "Thunderstorm"
+
+#: esc/naranjos-tiempo:48
+msgid "Sensación"
+msgstr "Feels like"
+
+#: esc/naranjos-tiempo:48
+msgid "Viento"
+msgstr "Wind"
+
+#: esc/naranjos-tiempo:48
+msgid "Humedad"
+msgstr "Humidity"
+
+#: esc/naranjos-tiempo:48
+msgid "lluvia"
+msgstr "rain"
+
+#: esc/naranjos-tiempo:80 esc/naranjos-tiempo:85
+msgid "Ciudad del tiempo:"
+msgstr "Weather city:"
+
+#: esc/naranjos-tiempo:81
+msgid "El tiempo ya no sale en la barra"
+msgstr "The weather no longer shows in the bar"
+
+#: esc/naranjos-tiempo:84
+msgid "Ciudad del tiempo"
+msgstr "Weather city"
+
+#: esc/naranjos-tiempo:86
+msgid "Primero elige ciudad:"
+msgstr "First choose a city:"
+
+#: esc/naranjos-webapp:11 esc/naranjos-webapp:56
+msgid "Web apps"
+msgstr "Web apps"
+
+#: esc/naranjos-webapp:16
+msgid "Las web apps usan Chromium (Flatpak). Se instala ahora (unos 300 MB)."
+msgstr "Web apps use Chromium (Flatpak). Installing it now (about 300 MB)."
+
+#: esc/naranjos-webapp:17
+msgid "No pude instalar Chromium"
+msgstr "Couldn't install Chromium"
+
+#: esc/naranjos-webapp:22
+msgid "Nombre"
+msgstr "Name"
+
+#: esc/naranjos-webapp:31
+msgid "Web app de NaranjOS"
+msgstr "NaranjOS web app"
+
+#: esc/naranjos-webapp:39
+msgid "Web app creada:"
+msgstr "Web app created:"
+
+#: esc/naranjos-webapp:43
+msgid "web apps"
+msgstr "web apps"
+
+#: esc/naranjos-webapp:48
+msgid "No existe esa web app"
+msgstr "That web app doesn't exist"
+
+#: esc/naranjos-webapp:49
+msgid "Web app quitada"
+msgstr "Web app removed"
+
+#: esc/naranjos-webapp:53
+msgid "Nombre de la web app"
+msgstr "Web app name"
+
+#: esc/naranjos-webapp:54
+msgid "Dirección (https://…)"
+msgstr "Address (https://…)"
 
 #: fotos/fotos:47
 msgid ""
@@ -636,7 +1196,7 @@ msgstr "You can't delete the snapshot you booted from"
 msgid "Borrada la foto"
 msgstr "Deleted snapshot"
 
-#: fotos/fotos:181 temas/naranjos-tema:137 temas/naranjos-tema:139
+#: fotos/fotos:181 temas/naranjos-tema:143 temas/naranjos-tema:145
 msgid "mira:"
 msgstr "see:"
 
@@ -1975,47 +2535,51 @@ msgstr "NaranjOS peel: USB blocked"
 msgid "si lo has enchufado tú, permítelo con Super + Ctrl + U"
 msgstr "if you plugged it in yourself, allow it with Super + Ctrl + U"
 
-#: temas/naranjos-tema:21
+#: temas/naranjos-tema:27
 msgid "Cada usuario elige su tema: ejecútalo sin sudo."
 msgstr "Each user chooses their own theme: run it without sudo."
 
-#: temas/naranjos-tema:29
+#: temas/naranjos-tema:35
 msgid "temas"
 msgstr "themes"
 
-#: temas/naranjos-tema:51
+#: temas/naranjos-tema:57
 msgid "Estos ficheros tuyos no siguen el tema (los cambiaste):"
 msgstr "These files of yours don't follow the theme (you changed them):"
 
-#: temas/naranjos-tema:56
+#: temas/naranjos-tema:62
 msgid "Para ponerlos como los de NaranjOS (se guarda copia .anterior):"
 msgstr "To make them like NaranjOS's (a .anterior copy is kept):"
 
-#: temas/naranjos-tema:137
+#: temas/naranjos-tema:143
 msgid "Dime qué tema:"
 msgstr "Tell me which theme:"
 
-#: temas/naranjos-tema:139
+#: temas/naranjos-tema:145 temas/naranjos-tema:186
 msgid "No existe el tema"
 msgstr "That theme doesn't exist"
 
-#: temas/naranjos-tema:152
+#: temas/naranjos-tema:160
 msgid "Las terminales nuevas ya salen con el tema."
 msgstr "New terminals already open with the theme."
 
-#: temas/naranjos-tema:153
+#: temas/naranjos-tema:161
 msgid "Tema puesto:"
 msgstr "Theme set:"
 
-#: temas/naranjos-tema:163
+#: temas/naranjos-tema:171
 msgid "No encuentro fondos en"
 msgstr "Can't find wallpapers in"
 
-#: temas/naranjos-tema:168
+#: temas/naranjos-tema:176
 msgid "Fondo:"
 msgstr "Wallpaper:"
 
-#: temas/naranjos-tema:197
+#: temas/naranjos-tema:199
+msgid "No encuentro VS Code ni VSCodium en tu usuario"
+msgstr "I can't find VS Code or VSCodium for your user"
+
+#: temas/naranjos-tema:230
 msgid "Todo sigue el tema."
 msgstr "Everything follows the theme."
 
@@ -2136,27 +2700,27 @@ msgstr "'exprime' is used with your normal user, not as root."
 msgid "no encuentro la clave de firma de NaranjOS (gpg)"
 msgstr "cannot find the NaranjOS signing key (gpg)"
 
-#: zumo:80
+#: zumo:82
 msgid "dime qué receta(s) exprimir. Ejemplo: zumo exprime wayland"
 msgstr "tell me which recipe(s) to build. Example: zumo exprime wayland"
 
-#: zumo:82
+#: zumo:84
 msgid "Refrescando la lista de paquetes…"
 msgstr "Refreshing the package list…"
 
-#: zumo:83
+#: zumo:85
 msgid "pacman -Sy falló"
 msgstr "pacman -Sy failed"
 
-#: zumo:91
+#: zumo:93
 msgid "makepkg no dijo qué paquetes generó"
 msgstr "makepkg did not say which packages it built"
 
-#: zumo:115
+#: zumo:117
 msgid "Listo. Para publicarlo en GitHub: naranjos-github.sh (desde Ubuntu)"
 msgstr "Done. To publish it on GitHub: naranjos-github.sh (from Ubuntu)"
 
-#: zumo:125
+#: zumo:127
 msgid ""
 "Estás arrancado en una foto: lo que actualices se perdería al apagar. "
 "Primero: sudo fotos vuelve"
@@ -2164,7 +2728,7 @@ msgstr ""
 "You booted into a snapshot: whatever you update would be lost on shutdown. "
 "First: sudo fotos vuelve"
 
-#: zumo:126
+#: zumo:128
 msgid ""
 "Has vuelto a una foto: reinicia antes de actualizar (lo que actualices ahora"
 " se perdería)"
@@ -2172,37 +2736,37 @@ msgstr ""
 "You went back to a snapshot: reboot before updating (whatever you update now"
 " would be lost)"
 
-#: zumo:128
+#: zumo:130
 msgid "Actualizando NaranjOS…"
 msgstr "Updating NaranjOS…"
 
-#: zumo:129
+#: zumo:131
 msgid "No pude leer los repositorios"
 msgstr "Couldn't read the repositories"
 
-#: zumo:130
+#: zumo:132
 msgid "Todo al día."
 msgstr "Everything is up to date."
 
-#: zumo:132
+#: zumo:134
 msgid "Haciendo una foto del sistema antes de actualizar…"
 msgstr "Taking a system snapshot before updating…"
 
-#: zumo:134
+#: zumo:136
 msgid ""
 "No se pudo hacer la foto. Para actualizar sin ella: zumo actualiza --sin-"
 "foto"
 msgstr ""
 "Couldn't take the snapshot. To update without it: zumo actualiza --sin-foto"
 
-#: zumo:202 zumo:204
+#: zumo:204 zumo:206
 msgid "No hay huérfanos."
 msgstr "There are no orphans."
 
-#: zumo:204
+#: zumo:206
 msgid "Quitando huérfanos…"
 msgstr "Removing orphans…"
 
-#: zumo:205
+#: zumo:207
 msgid "Vaciando la caché de versiones antiguas…"
 msgstr "Emptying the cache of old versions…"

@@ -1,0 +1,88 @@
+#!/bin/bash
+# naranjos-recuerda — recordatorios de NaranjOS (avisos a una hora, sin cuentas ni internet)
+#   naranjos-recuerda "sacar la ropa" en 20m        (también 45s, 2h, 1d)
+#   naranjos-recuerda "llamar a Ana" a las 18:30    (hoy, o mañana si ya pasó)
+#   naranjos-recuerda "dentista" mañana 9:00        (o una fecha: 2026-12-03 10:00)
+#   naranjos-recuerda lista | quita <n> | menu
+# Usa temporizadores de systemd de tu usuario: siguen aunque cierres la sesión y reinicies (si eran «a las»).
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; Z=; }
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; naranjos-notifica "$(_ 'Recordatorio')" "$1" 2>/dev/null; exit 1; }
+D="${XDG_DATA_HOME:-$HOME/.local/share}/naranjos/recordatorios"; mkdir -p "$D"
+
+cuando(){ # convierte lo escrito en «--on-active=…» o «--on-calendar=…»
+  local s="$*" f
+  s=${s,,}; s=${s//ñ/n}
+  case "$s" in
+    "en "*|"in "*) s=${s#* }; s=${s// /}
+      [[ "$s" =~ ^[0-9]+(s|m|min|h|d)$ ]] || return 1
+      s=${s/min/m}; echo "--on-active=$s"; return 0 ;;
+    "a las "*|"at "*) s=${s#a las }; s=${s#at }
+      f=$(date -d "today $s" +%s 2>/dev/null) || return 1
+      [ "$f" -gt "$(date +%s)" ] || f=$(date -d "tomorrow $s" +%s) ;;
+    "manana "*|"tomorrow "*) s=${s#* }; f=$(date -d "tomorrow $s" +%s 2>/dev/null) || return 1 ;;
+    *) f=$(date -d "$s" +%s 2>/dev/null) || return 1 ;;
+  esac
+  [ "$f" -gt "$(date +%s)" ] || return 1
+  echo "--on-calendar=$(date -d "@$f" '+%Y-%m-%d %H:%M:%S')"
+}
+
+nuevo(){
+  local texto="$1"; shift
+  local c id
+  c=$(cuando "$@") || die "$(_ 'No entiendo cuándo. Ejemplos: «en 20m», «a las 18:30», «mañana 9:00»')"
+  id="naranjos-recuerda-$(date +%s%N | cut -c1-13)"
+  printf '%s\n' "$texto" > "$D/$id"
+  systemd-run --user --quiet --unit="$id" --description="$(_ 'Recordatorio'): $texto" "$c" \
+    $( [[ "$c" == --on-calendar* ]] && echo --timer-property=Persistent=true ) \
+    /usr/bin/naranjos-recuerda avisa "$id" || die "$(_ 'No pude crear el recordatorio')"
+  printf '%s✔%s %s · %s\n' "$G" "$Z" "$texto" "$(systemctl --user show "$id.timer" -p NextElapseUSecRealtime --value 2>/dev/null)"
+  naranjos-notifica "$(_ 'Recordatorio creado')" "$texto" 2>/dev/null
+}
+
+avisa(){
+  local id="$1" t
+  t=$(cat "$D/$id" 2>/dev/null); rm -f "$D/$id"
+  naranjos-notifica --urgente "󰀠  $(_ 'Recordatorio')" "${t:-$id}"
+  command -v pw-play >/dev/null && [ -r /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga ] && \
+    pw-play /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga >/dev/null 2>&1 &
+  return 0
+}
+
+ids(){ systemctl --user list-timers --all --no-legend 'naranjos-recuerda-*' 2>/dev/null | grep -o 'naranjos-recuerda-[0-9]*' | sort -u; }
+
+lista(){
+  local i=0 id
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'recordatorios')" "$Z"
+  for id in $(ids); do
+    i=$((i + 1))
+    printf '  %2d  %s  %s\n' "$i" "$(systemctl --user show "$id.timer" -p NextElapseUSecRealtime --value 2>/dev/null)" "$(cat "$D/$id" 2>/dev/null)"
+  done
+  [ "$i" -gt 0 ] || printf '  %s\n' "$(_ 'No tienes recordatorios pendientes')"
+}
+
+quita(){
+  local n="${1:-}" id
+  id=$(ids | sed -n "${n}p"); [ -n "$id" ] || die "$(_ 'Dime el número (míralo con: naranjos-recuerda lista)')"
+  systemctl --user stop "$id.timer" >/dev/null 2>&1; rm -f "$D/$id"
+  printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Recordatorio quitado')"
+}
+
+menu(){
+  local t c
+  t=$(fuzzel --dmenu --prompt "$(_ 'Recordarme') ❯ " --lines 0 --width 50 < /dev/null) || exit 0
+  [ -n "$t" ] || exit 0
+  c=$(printf '%s\n' "$(_ 'en') 10m" "$(_ 'en') 30m" "$(_ 'en') 1h" "$(_ 'a las') 18:00" "$(_ 'mañana') 9:00" |
+      fuzzel --dmenu --prompt "$(_ 'Cuándo') ❯ " --lines 5 --width 50) || exit 0
+  nuevo "$t" $c
+}
+
+case "${1:-lista}" in
+  lista|list) lista ;;
+  quita|remove) shift; quita "$@" ;;
+  menu) menu ;;
+  avisa) shift; avisa "$@" ;;
+  ayuda|help|-h|--help) sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//' ;;
+  *) [ $# -ge 2 ] || die "$(_ 'Uso:') naranjos-recuerda \"$(_ 'texto')\" $(_ 'en') 20m"; t="$1"; shift; nuevo "$t" "$@" ;;
+esac

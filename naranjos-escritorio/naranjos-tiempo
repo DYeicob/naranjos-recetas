@@ -1,0 +1,89 @@
+#!/bin/bash
+# naranjos-tiempo — el tiempo en la barra de NaranjOS (Open-Meteo: gratis, sin cuenta ni clave)
+#   naranjos-tiempo ciudad Ourense     elegir la ciudad (la busca y guarda sus coordenadas)
+#   naranjos-tiempo                    el tiempo ahora y los próximos días
+#   naranjos-tiempo quita              no mostrar el tiempo
+#   naranjos-tiempo barra | menu       para la barra
+# Solo se envían las coordenadas de la ciudad elegida, cada 30 minutos. Sin ciudad, no se conecta a nada.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; Z=; }
+CONF="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos/tiempo.conf"
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/naranjos/tiempo.json"
+CIUDAD=""; LAT=""; LON=""
+[ -r "$CONF" ] && . "$CONF"
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+avisa_barra(){ pkill -RTMIN+12 -x waybar 2>/dev/null; }
+
+ciudad(){
+  local q="$*" r
+  [ -n "$q" ] || die "$(_ 'Dime la ciudad, p. ej.:') naranjos-tiempo ciudad Ourense"
+  r=$(curl -fsS --max-time 15 -G https://geocoding-api.open-meteo.com/v1/search \
+        --data-urlencode "name=$q" -d count=1 -d "language=$(naranjos_lengua)") || die "$(_ 'Sin conexión con Open-Meteo')"
+  RESPUESTA="$r" python3 -I - "$CONF" << "PY" || die "$(_ 'No encuentro esa ciudad')"
+import json, sys, os
+d = json.loads(os.environ["RESPUESTA"])["results"][0]
+n = d["name"] + (", " + d["admin1"] if d.get("admin1") else "")
+open(sys.argv[1], "w").write('CIUDAD="%s"\nLAT=%s\nLON=%s\n' % (n.replace('"', ''), d["latitude"], d["longitude"]))
+print(n)
+PY
+  rm -f "$CACHE"; avisa_barra
+}
+
+datos(){ # descarga (si hace falta) y deja el JSON en la caché
+  [ -n "$LAT" ] || return 1
+  if [ ! -s "$CACHE" ] || [ $(( $(date +%s) - $(stat -c %Y "$CACHE") )) -gt 1800 ]; then
+    mkdir -p "${CACHE%/*}"
+    curl -fsS --max-time 15 -G https://api.open-meteo.com/v1/forecast -d "latitude=$LAT" -d "longitude=$LON" \
+      -d current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m \
+      -d daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max \
+      -d timezone=auto -d forecast_days=4 -o "$CACHE.nuevo" 2>/dev/null && mv -f "$CACHE.nuevo" "$CACHE"
+  fi
+  [ -s "$CACHE" ]
+}
+
+muestra(){ # muestra barra|texto
+  python3 -I - "$1" "$CACHE" "$CIUDAD" \
+    "$(_ 'Despejado')" "$(_ 'Algunas nubes')" "$(_ 'Nublado')" "$(_ 'Niebla')" "$(_ 'Llovizna')" "$(_ 'Lluvia')" \
+    "$(_ 'Nieve')" "$(_ 'Chubascos')" "$(_ 'Tormenta')" "$(_ 'Sensación')" "$(_ 'Viento')" "$(_ 'Humedad')" "$(_ 'lluvia')" << "PY"
+import json, sys, datetime, locale
+try: locale.setlocale(locale.LC_TIME, "")
+except Exception: pass
+modo, f, ciudad, *t = sys.argv[1:]
+(DES, NUB1, NUB, NIE, LLO, LLU, NIEV, CHU, TOR, SEN, VIE, HUM, PLL) = t
+def cod(c):
+    if c == 0: return "󰖙", DES
+    if c in (1, 2): return "󰖕", NUB1
+    if c == 3: return "󰖐", NUB
+    if c in (45, 48): return "󰖑", NIE
+    if 51 <= c <= 57: return "󰖗", LLO
+    if 61 <= c <= 67: return "󰖖", LLU
+    if 71 <= c <= 77 or c in (85, 86): return "󰖘", NIEV
+    if 80 <= c <= 82: return "󰖖", CHU
+    return "󰖓", TOR
+d = json.load(open(f)); a = d["current"]; dd = d["daily"]
+i, txt = cod(a["weather_code"])
+dias = []
+for k in range(len(dd["time"])):
+    di, dt = cod(dd["weather_code"][k])
+    dia = datetime.date.fromisoformat(dd["time"][k]).strftime("%a %d")
+    dias.append(f"{dia}  {di}  {round(dd['temperature_2m_min'][k])}° / {round(dd['temperature_2m_max'][k])}°  ·  {PLL} {dd['precipitation_probability_max'][k]}%")
+cab = f"{ciudad}: {txt}, {round(a['temperature_2m'])}° ({SEN} {round(a['apparent_temperature'])}°) · {VIE} {round(a['wind_speed_10m'])} km/h · {HUM} {a['relative_humidity_2m']}%"
+if modo == "barra":
+    print(json.dumps({"text": f"{i} {round(a['temperature_2m'])}°", "tooltip": cab + "\n\n" + "\n".join(dias)}, ensure_ascii=False))
+else:
+    print(cab); print(); print("\n".join(dias))
+PY
+}
+
+case "${1:-}" in
+  ciudad|city) shift; n=$(ciudad "$@") && printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Ciudad del tiempo:')" "$n" ;;
+  quita|off) rm -f "$CONF" "$CACHE"; avisa_barra; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'El tiempo ya no sale en la barra')" ;;
+  barra) if datos 2>/dev/null; then muestra barra 2>/dev/null || echo '{"text":""}'; else echo '{"text":""}'; fi ;;
+  menu)
+    c=$(fuzzel --dmenu --prompt "$(_ 'Ciudad del tiempo') ❯ " --lines 0 --width 44 < /dev/null) || exit 0
+    [ -n "$c" ] && { n=$(ciudad "$c") && naranjos-notifica "$(_ 'Ciudad del tiempo:')" "$n" || naranjos-notifica "$(_ 'No encuentro esa ciudad')"; } ;;
+  "") [ -n "$LAT" ] || die "$(_ 'Primero elige ciudad:') naranjos-tiempo ciudad Ourense"
+      datos || die "$(_ 'Sin conexión con Open-Meteo')"; printf '%s' "$O"; muestra texto; printf '%s' "$Z" ;;
+  *) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

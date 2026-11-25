@@ -68,6 +68,8 @@ exprime(){
   fi
   [ -n "$GPGKEY" ] || die "$(_ 'no encuentro la clave de firma de NaranjOS (gpg)')"
   export GPGKEY GPG_TTY="${GPG_TTY:-$(tty 2>/dev/null)}"
+  # que cmake, meson… no lean el git del repositorio de recetas (metían nuestro mensaje en el programa: 6k2)
+  export GIT_CEILING_DIRECTORIES="$RECETAS:$(dirname "$RECETAS")"
   while [ $# -gt 0 ]; do
     case "$1" in
       -i|--instala|--install) INSTALA=1; shift ;;

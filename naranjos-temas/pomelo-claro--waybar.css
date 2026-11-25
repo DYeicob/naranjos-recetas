@@ -1,0 +1,13 @@
+/* NaranjOS · tema Pomelo claro (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema) */
+@define-color fondo #fbf3f5;
+@define-color superficie #ffffff;
+@define-color texto #2b2226;
+@define-color apagado #8a7a80;
+@define-color acento #d63e66;
+@define-color acento2 #f2809d;
+@define-color inactivo #eedae0;
+@define-color mal #c8323a;
+@define-color bien #3f8f3a;
+@define-color aviso #b07d00;
+@define-color fondo_barra rgba(251, 243, 245, 0.90);
+@define-color borde_barra rgba(214, 62, 102, 0.55);

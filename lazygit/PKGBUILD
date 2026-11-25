@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6o.sh
+pkgname=lazygit
+pkgver=0.66.3
+pkgrel=1
+pkgdesc='Git en la terminal (lazygit)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=('git')
+makedepends=('go')
+source=('https://github.com/jesseduffield/lazygit/archive/v0.66.3/lazygit-0.66.3.tar.gz')
+sha256sums=('49e80d28e03e53048105f6ebb5afefbe5caacffa8549347d8a59eab3a00dafe1')
+build() {
+  cd $pkgname-$pkgver
+  export CGO_ENABLED=0 GOTOOLCHAIN=local GOFLAGS="-mod=vendor -trimpath" GOPATH="$srcdir/gopath" GOCACHE="$srcdir/gocache"
+  go build -ldflags "-s -w -X main.version=$pkgver -X main.buildSource=naranjos" -o $pkgname .
+}
+package() { cd $pkgname-$pkgver; install -Dm755 $pkgname "$pkgdir/usr/bin/$pkgname"; install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"; }

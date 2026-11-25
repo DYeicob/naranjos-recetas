@@ -1,0 +1,13 @@
+/* NaranjOS · tema Lima clara (paquete naranjos-temas; NO lo edites: cambia de tema con naranjos-tema) */
+@define-color fondo #f5f8f0;
+@define-color superficie #ffffff;
+@define-color texto #222a1d;
+@define-color apagado #7a8570;
+@define-color acento #5e8f12;
+@define-color acento2 #8cbf3a;
+@define-color inactivo #dfe8d2;
+@define-color mal #c8323a;
+@define-color bien #3f8f3a;
+@define-color aviso #b07d00;
+@define-color fondo_barra rgba(245, 248, 240, 0.90);
+@define-color borde_barra rgba(94, 143, 18, 0.55);
