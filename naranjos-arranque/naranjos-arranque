@@ -193,14 +193,24 @@ genera_menu(){  # genera_menu <fichero> (con la EFI montada en ESP_DIR)
       fi
     done
     menu_fotos "$opc"
-    if [ -e "$ESP_DIR/EFI/ubuntu/shimx64.efi" ]; then
+    # Ubuntu: se carga SU menú (un shim no puede cargar otro shim, y GRUB 2.14 con Secure Boot no carga el GRUB de
+    # Canonical). Su partición se busca por el UUID que Ubuntu apunta en EFI/ubuntu/grub.cfg (solo se lee).
+    local ub_uuid="" ub_pfx=""
+    if [ -r "$ESP_DIR/EFI/ubuntu/grub.cfg" ]; then
+      ub_uuid=$(awk '$1 == "search.fs_uuid" { print $2; exit }' "$ESP_DIR/EFI/ubuntu/grub.cfg")
+      ub_pfx=$(sed -n "s/^set prefix=(\$root)'\([^']*\)'.*/\1/p" "$ESP_DIR/EFI/ubuntu/grub.cfg" | head -n1)
+    fi
+    if [[ "$ub_uuid" =~ ^[0-9A-Fa-f-]+$ ]]; then
       echo "menuentry 'Ubuntu' --class ubuntu --class os {"
-      echo "	chainloader (\$esp)/EFI/ubuntu/shimx64.efi"
+      echo "	search --no-floppy --fs-uuid --set=root $ub_uuid"
+      echo "	configfile (\$root)${ub_pfx:-/boot/grub}/grub.cfg"
       echo "}"
     fi
+    # Windows: la raíz tiene que ser la partición EFI y la ruta, sin disco (si no, 0xc00000bb al leer el BCD)
     if [ -e "$ESP_DIR/EFI/Microsoft/Boot/bootmgfw.efi" ]; then
       echo "menuentry 'Windows' --class windows --class os {"
-      echo "	chainloader (\$esp)/EFI/Microsoft/Boot/bootmgfw.efi"
+      echo "	set root=\$esp"
+      echo "	chainloader /EFI/Microsoft/Boot/bootmgfw.efi"
       echo "}"
     fi
     echo "menuentry '$(_ 'Ajustes del firmware (UEFI)')' --class efi { fwsetup }"
