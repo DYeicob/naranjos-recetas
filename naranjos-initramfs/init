@@ -45,15 +45,14 @@ emergencia(){
 
 # teclado (para escribir la contraseña del disco cifrado)
 if [ -r /etc/vconsole.conf ] && command -v loadkeys >/dev/null; then
-  KEYMAP=$(sed -n 's/^KEYMAP=//p' /etc/vconsole.conf | tr -d '"')
+  KEYMAP=$(sed -n 's/^KEYMAP=//p' /etc/vconsole.conf); KEYMAP=${KEYMAP//\"/}   # sin «tr»: no va en el initramfs
   [ -n "$KEYMAP" ] && loadkeys -q "$KEYMAP" 2>/dev/null
 fi
 
 # udev carga los módulos de los discos y crea /dev/disk/by-*
-/usr/lib/systemd/systemd-udevd --daemon --resolve-names=never
+SYSTEMD_LOG_LEVEL=err /usr/lib/systemd/systemd-udevd --daemon --resolve-names=never >/dev/null 2>&1
 udevadm trigger --type=subsystems --action=add
 udevadm trigger --type=devices --action=add
-udevadm settle --timeout=30
 
 # la pantalla de arranque de NaranjOS (Plymouth), con «splash» en la línea del kernel
 splash=0
@@ -63,6 +62,8 @@ if [ "$splash" = 1 ] && command -v plymouthd >/dev/null; then
   plymouthd --mode=boot --pid-file=/run/plymouth/pid --attach-to-session && plymouth show-splash
 fi
 hay_splash(){ plymouth --ping 2>/dev/null; }
+
+udevadm settle --timeout=30
 
 [ "$retraso" -gt 0 ] 2>/dev/null && sleep "$retraso"
 [ -n "$foto" ] && modo=ro

@@ -26,7 +26,7 @@ CARPETA=EFI/naranjos
 # módulos que van DENTRO de la imagen (con Secure Boot, GRUB no carga módulos sueltos del disco)
 MODULOS="part_gpt part_msdos fat ext2 btrfs normal boot linux chain configfile search search_fs_uuid search_fs_file
 search_label echo test true sleep reboot halt loadenv efi_gop efi_uga all_video video_fb gzio minicmd ls cat help
-efifwsetup regexp gfxterm gfxterm_background gfxmenu png font"
+efifwsetup regexp gfxterm gfxterm_background gfxmenu png font memdisk tar"
 MONTADA=""   # punto de montaje temporal de la EFI (si lo montamos nosotros)
 KRAIZ=""     # con «menu --raiz <dir>»: el menú es el del sistema que hay en <dir> (lo usa «fotos vuelve»)
 RAIZ_SUB=@; [ -r /etc/naranjos/fotos.conf ] && . /etc/naranjos/fotos.conf
@@ -147,7 +147,7 @@ genera_menu(){  # genera_menu <fichero> (con la EFI montada en ESP_DIR)
   # arranque sin mensajes y con la naranja (Plymouth), si está instalado y no lo has quitado en /etc/naranjos/arranque.conf
   BONITO=""; local SPLASH=1; [ -r "$KRAIZ/etc/naranjos/arranque.conf" ] && . "$KRAIZ/etc/naranjos/arranque.conf"
   if [ "$SPLASH" = 1 ] && [ -x "$KRAIZ/usr/bin/plymouth" ] && ! grep -qw splash <<< "$opc"; then
-    BONITO="quiet splash loglevel=3 rd.udev.log_level=3 systemd.show_status=auto vt.global_cursor_default=0"
+    BONITO="quiet splash plymouth.use-simpledrm loglevel=3 rd.udev.log_level=3 systemd.show_status=auto vt.global_cursor_default=0"
   fi
   esp_uuid=$(lsblk -no UUID "$(busca_esp)")
   {
@@ -158,8 +158,10 @@ genera_menu(){  # genera_menu <fichero> (con la EFI montada en ESP_DIR)
     if [ -r "$KRAIZ/boot/grub/themes/naranjos/theme.txt" ]; then
       echo "search --no-floppy --fs-uuid --set=root $BOOT_UUID"
       echo "set nj_tema=$BOOT_PFX/grub/themes/naranjos"
-      echo "if loadfont \$nj_tema/dejavu-16.pf2; then"
-      echo "	loadfont \$nj_tema/dejavu-bold-26.pf2"
+      # con Secure Boot, GRUB solo carga fuentes que van DENTRO de la imagen firmada (su memdisk)
+      echo "if test -e (memdisk)/fonts/dejavu-16.pf2; then set nj_fuentes=(memdisk)/fonts; else set nj_fuentes=\$nj_tema; fi"
+      echo "if loadfont \$nj_fuentes/dejavu-16.pf2; then"
+      echo "	loadfont \$nj_fuentes/dejavu-bold-26.pf2"
       echo "	set gfxmode=auto"
       echo "	terminal_output gfxterm"
       echo "	set theme=\$nj_tema/theme.txt"
@@ -244,9 +246,15 @@ configfile \$prefix/grub.cfg
 echo "NaranjOS: no encuentro \$prefix/grub.cfg"
 sleep 15
 FIN
+  # las fuentes del tema van dentro de la imagen (memdisk): con Secure Boot GRUB no las carga del disco
+  local md=()
+  if ls "$DATOS"/fuentes/*.pf2 >/dev/null 2>&1; then
+    mkdir -p "$t/md/fonts"; cp "$DATOS"/fuentes/*.pf2 "$t/md/fonts/"
+    tar -C "$t/md" -cf "$t/memdisk.tar" fonts && md=(-m "$t/memdisk.tar")
+  fi
   # shellcheck disable=SC2086
   grub-mkimage -O x86_64-efi -d "$GRUBDIR" -p "$BOOT_PFX/grub" -c "$t/inicio.cfg" --sbat "$DATOS/sbat.csv" \
-    -o "$t/grubx64.sinfirmar" $mods || die "$(_ 'grub-mkimage falló')"
+    "${md[@]}" -o "$t/grubx64.sinfirmar" $mods || die "$(_ 'grub-mkimage falló')"
   objdump -h "$t/grubx64.sinfirmar" 2>/dev/null | grep -q '\.sbat' || die "$(_ 'La imagen GRUB no lleva SBAT: el shim la rechazaría')"
   [ -r "$MOK/MOK.priv" ] && [ -r "$MOK/MOK.pem" ] || die "$(_ 'Falta la clave MOK en') $MOK"
   sbsign --key "$MOK/MOK.priv" --cert "$MOK/MOK.pem" --output "$t/grubx64.efi" "$t/grubx64.sinfirmar" >/dev/null 2>&1 \
