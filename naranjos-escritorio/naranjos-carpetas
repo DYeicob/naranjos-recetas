@@ -22,6 +22,15 @@ for par in "DOWNLOAD:$(_ 'Descargas')" "DOCUMENTS:$(_ 'Documentos')" "PICTURES:$
   fi
   nueva=1
 done
+# tus carpetas en la barra lateral de Thunar (marcadores de GTK), si aún no tienes marcadores
+B="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-3.0/bookmarks"
+if [ ! -s "$B" ]; then
+  mkdir -p "${B%/*}"
+  for clave in DOCUMENTS DOWNLOAD PICTURES MUSIC VIDEOS; do
+    d=$(naranjos_carpeta "$clave"); [ -d "$d" ] && [ "$d" != "$HOME" ] || continue
+    printf 'file://%s %s\n' "$(printf '%s' "$d" | sed 's/%/%25/g; s/ /%20/g')" "${d##*/}"
+  done > "$B"
+fi
 # enlace fijo a tu carpeta de descargas: lo vigila el antivirus (naranjos-vigia.path)
 mkdir -p "${XDG_STATE_HOME:-$HOME/.local/state}/naranjos"
 ln -sfn "$(naranjos_carpeta DOWNLOAD)" "${XDG_STATE_HOME:-$HOME/.local/state}/naranjos/descargas"

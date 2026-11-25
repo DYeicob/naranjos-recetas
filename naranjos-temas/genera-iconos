@@ -1,0 +1,43 @@
+#!/bin/bash
+# NaranjOS · temas de iconos de cada tema cítrico: Papirus con las carpetas del color del tema
+#   genera-iconos <dir-iconos-origen> <dir-destino>   (en el package() de naranjos-temas)
+# NaranjOS-<tema>/ hereda de Papirus-Dark (o de Papirus en el tema claro) y solo cambia las carpetas:
+# en Papirus, «folder.svg», «user-home.svg»… son enlaces a la versión azul; aquí apuntan al color del tema.
+set -euo pipefail
+ORIGEN=$1; DEST=$2
+# tema → color de Papirus y tema base
+TEMAS="naranja:orange:Papirus-Dark sanguina:red:Papirus-Dark lima:green:Papirus-Dark pomelo:pink:Papirus-Dark limon:yellow:Papirus-Dark brisa:blue:Papirus-Dark azahar:deeporange:Papirus"
+P="$ORIGEN/Papirus"
+[ -d "$P" ] || { echo "No encuentro $P"; exit 1; }
+for e in $TEMAS; do
+  t=${e%%:*}; r=${e#*:}; color=${r%%:*}; base=${r#*:}
+  nombre="NaranjOS-iconos-$t"; d="$DEST/$nombre"
+  mkdir -p "$d"
+  dirs=()
+  for s in "$P"/*/places; do
+    [ -d "$s" ] || continue
+    tam=${s%/places}; tam=${tam##*/}
+    mkdir -p "$d/$tam/places"; dirs+=("$tam/places")
+    for f in "$s"/*; do
+      [ -L "$f" ] || continue
+      obj=$(readlink "$f")
+      case "$obj" in folder-blue*|user-blue*) ;; *) continue ;; esac
+      nuevo=${obj/-blue/-$color}
+      [ -e "$s/$nuevo" ] || continue
+      ln -sfn "/usr/share/icons/Papirus/$tam/places/$nuevo" "$d/$tam/places/${f##*/}"
+    done
+  done
+  {
+    echo "[Icon Theme]"
+    echo "Name=$nombre"
+    echo "Comment=Iconos de NaranjOS, tema $t: Papirus con carpetas de color $color"
+    echo "Inherits=$base,hicolor"
+    echo "Directories=$(IFS=,; echo "${dirs[*]}")"
+    echo
+    for x in "${dirs[@]}"; do
+      # la sección de ese directorio, copiada del index.theme de Papirus
+      awk -v s="[$x]" '$0 == s {f = 1; print; next} /^\[/ {f = 0} f' "$P/index.theme"
+      echo
+    done
+  } > "$d/index.theme"
+done

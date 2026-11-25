@@ -26,3 +26,19 @@ done
 if [ ! -e "$HOME/.config/naranjos/tema" ] && command -v naranjos-tema >/dev/null 2>&1; then
   naranjos-tema pon naranja --sin-recargar >/dev/null 2>&1 || true
 fi
+# iconos del tema (6k3b): si el tema ya estaba puesto de antes, se vuelve a poner para que coja los iconos
+if command -v naranjos-tema >/dev/null 2>&1 && [ -e "$HOME/.config/naranjos/tema" ] && \
+   ! grep -q '^gtk-icon-theme-name=NaranjOS-iconos-' "$HOME/.config/gtk-3.0/settings.ini" 2>/dev/null; then
+  naranjos-tema pon "$(naranjos-tema actual)" --sin-recargar >/dev/null 2>&1 || true
+fi
+# Thunar como en NaranjOS, una sola vez (lo que ya tuviera guardado Thunar no pisa esto después)
+M="$HOME/.config/naranjos/.thunar-6k3b"
+if [ ! -e "$M" ] && command -v xfconf-query >/dev/null 2>&1; then
+  for p in "last-menubar-visible bool false" "last-statusbar-visible bool false" \
+           "last-icon-view-zoom-level string THUNAR_ZOOM_LEVEL_75_PERCENT" "shortcuts-icon-size string THUNAR_ICON_SIZE_24" \
+           "misc-symbolic-icons-in-toolbar bool true" "misc-small-toolbar-icons bool true"; do
+    set -- $p
+    xfconf-query -c thunar -p "/$1" -n -t "$2" -s "$3" >/dev/null 2>&1 || xfconf-query -c thunar -p "/$1" -s "$3" >/dev/null 2>&1 || true
+  done
+  mkdir -p "${M%/*}"; touch "$M"
+fi

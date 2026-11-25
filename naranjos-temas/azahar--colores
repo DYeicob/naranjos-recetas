@@ -4,6 +4,7 @@ CLARO=1
 FONDO=/usr/share/backgrounds/naranjos/temas/azahar/naranjos-01.jpg
 BLOQUEO=/usr/share/backgrounds/naranjos/temas/azahar/naranjos-bloqueo.jpg
 CURSOR=NaranjOS
+ICONOS=NaranjOS-iconos-azahar
 COLOR_FONDO=faf6ef
 COLOR_SUP=ffffff
 COLOR_TEXTO=2b2522

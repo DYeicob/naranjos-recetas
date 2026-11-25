@@ -95,6 +95,14 @@ pon_cursor(){
   return 0
 }
 
+# iconos del tema (Papirus con las carpetas de su color)
+pon_iconos(){
+  local i="$1" f="$CONF/gtk-3.0/settings.ini"
+  [ -n "$i" ] && [ -d "/usr/share/icons/$i" ] && [ -f "$f" ] || return 0
+  if grep -q '^gtk-icon-theme-name=' "$f"; then sed -i "s/^gtk-icon-theme-name=.*/gtk-icon-theme-name=$i/" "$f"
+  else sed -i "/^\[Settings\]/a gtk-icon-theme-name=$i" "$f"; fi
+}
+
 # GTK 3: claro u oscuro según el tema
 pon_gtk(){
   local claro="$1" f="$CONF/gtk-3.0/settings.ini" v=1
@@ -119,12 +127,13 @@ pon(){
   [ -n "$t" ] || die "$(_ 'Dime qué tema:') naranjos-tema pon <tema>   ($(_ 'mira:') naranjos-tema lista)"
   t=$(printf '%s' "$t" | tr '[:upper:]' '[:lower:]' | sed 's/ó/o/g; s/á/a/g')
   existe "$t" || die "$(_ 'No existe el tema') «$t» ($(_ 'mira:') naranjos-tema lista)"
-  local FONDO="" CLARO=0 CURSOR=NaranjOS
+  local FONDO="" CLARO=0 CURSOR=NaranjOS ICONOS=""
   # shellcheck disable=SC1090
   . "$TEMAS/$t/colores"
   mkdir -p "$CONF/naranjos"
   ln -sfn "$TEMAS/$t" "$ENLACE"
   pon_gtk "$CLARO"
+  pon_iconos "$ICONOS"
   [ "$quieto" = --sin-recargar ] && return 0
   recarga
   pon_cursor "$CURSOR"

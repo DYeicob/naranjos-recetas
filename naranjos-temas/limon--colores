@@ -4,6 +4,7 @@ CLARO=0
 FONDO=/usr/share/backgrounds/naranjos/temas/limon/naranjos-01.jpg
 BLOQUEO=/usr/share/backgrounds/naranjos/temas/limon/naranjos-bloqueo.jpg
 CURSOR=NaranjOS-limon
+ICONOS=NaranjOS-iconos-limon
 COLOR_FONDO=12110a
 COLOR_SUP=1d1b10
 COLOR_TEXTO=ecebd9

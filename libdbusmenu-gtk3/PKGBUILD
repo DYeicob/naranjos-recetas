@@ -15,7 +15,7 @@ build() {
   cd libdbusmenu-$pkgver
   # su Makefile compila con -Werror y GCC 16 avisa de cosas que en 2016 no existían
   CFLAGS+=" -Wno-error -Wno-deprecated-declarations"
-  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static \
+  HAVE_VALGRIND_TRUE='#' HAVE_VALGRIND_FALSE='' ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --disable-static \
     --disable-dumper --disable-tests --disable-gtk-doc --disable-introspection --disable-vala --with-gtk=3
   make
 }

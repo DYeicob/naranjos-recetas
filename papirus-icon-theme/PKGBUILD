@@ -1,0 +1,17 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6k3b.sh
+pkgname=papirus-icon-theme
+pkgver=20260801
+pkgrel=1
+pkgdesc='Tema de iconos Papirus (la base de los iconos de NaranjOS)'
+install=papirus-icon-theme.install
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-only')
+depends=('hicolor-icon-theme')
+makedepends=()
+source=('https://github.com/PapirusDevelopmentTeam/papirus-icon-theme/archive/20260801/papirus-icon-theme-20260801.tar.gz')
+sha256sums=('646f622e9e7e9e65eef9d0ab58999d4920ddb33d98e6a75232627cfe3bd508f9')
+package() {
+  cd papirus-icon-theme-$pkgver
+  make DESTDIR="$pkgdir" PREFIX=/usr install
+}

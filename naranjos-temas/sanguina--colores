@@ -4,6 +4,7 @@ CLARO=0
 FONDO=/usr/share/backgrounds/naranjos/temas/sanguina/naranjos-01.jpg
 BLOQUEO=/usr/share/backgrounds/naranjos/temas/sanguina/naranjos-bloqueo.jpg
 CURSOR=NaranjOS-sanguina
+ICONOS=NaranjOS-iconos-sanguina
 COLOR_FONDO=140c0c
 COLOR_SUP=1f1414
 COLOR_TEXTO=eadede
