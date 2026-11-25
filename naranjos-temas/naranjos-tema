@@ -89,14 +89,23 @@ pon_cursor(){
   local c="$1" f="$CONF/gtk-3.0/settings.ini" d="$HOME/.local/share/icons/default"
   [ -n "$c" ] && [ -d "/usr/share/icons/$c" ] || return 0
   [ -f "$f" ] && sed -i "s/^gtk-cursor-theme-name=.*/gtk-cursor-theme-name=$c/" "$f"
+  gs cursor-theme "$c"; gs cursor-size 24
   mkdir -p "$d"
   printf '[Icon Theme]\nName=Default\nComment=Cursor del tema de NaranjOS (naranjos-tema)\nInherits=%s\n' "$c" > "$d/index.theme"
   [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && hyprctl setcursor "$c" 24 >/dev/null 2>&1
   return 0
 }
 
+# GTK en Wayland lee el aspecto de GSettings (dconf) a través del portal: sin esto, settings.ini no manda
+gs(){
+  command -v gsettings >/dev/null 2>&1 || return 0
+  gsettings writable org.gnome.desktop.interface "$1" >/dev/null 2>&1 || return 0
+  gsettings set org.gnome.desktop.interface "$1" "$2" >/dev/null 2>&1 || true
+}
+
 # iconos del tema (Papirus con las carpetas de su color)
 pon_iconos(){
+  [ -n "$1" ] && [ -d "/usr/share/icons/$1" ] && gs icon-theme "$1"
   local i="$1" f="$CONF/gtk-3.0/settings.ini"
   [ -n "$i" ] && [ -d "/usr/share/icons/$i" ] && [ -f "$f" ] || return 0
   if grep -q '^gtk-icon-theme-name=' "$f"; then sed -i "s/^gtk-icon-theme-name=.*/gtk-icon-theme-name=$i/" "$f"
@@ -107,6 +116,7 @@ pon_iconos(){
 pon_gtk(){
   local claro="$1" f="$CONF/gtk-3.0/settings.ini" v=1
   [ "$claro" = 1 ] && v=0
+  if [ "$v" = 1 ]; then gs color-scheme prefer-dark; gs gtk-theme Adwaita-dark; else gs color-scheme default; gs gtk-theme Adwaita; fi
   [ -f "$f" ] || return 0
   if grep -q '^gtk-application-prefer-dark-theme=' "$f"; then
     sed -i "s/^gtk-application-prefer-dark-theme=.*/gtk-application-prefer-dark-theme=$v/" "$f"

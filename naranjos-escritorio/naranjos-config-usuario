@@ -31,6 +31,12 @@ if command -v naranjos-tema >/dev/null 2>&1 && [ -e "$HOME/.config/naranjos/tema
    ! grep -q '^gtk-icon-theme-name=NaranjOS-iconos-' "$HOME/.config/gtk-3.0/settings.ini" 2>/dev/null; then
   naranjos-tema pon "$(naranjos-tema actual)" --sin-recargar >/dev/null 2>&1 || true
 fi
+# GSettings (6k3c): GTK en Wayland lee iconos, cursor y modo oscuro de aquí (vía el portal), no de settings.ini
+if command -v naranjos-tema >/dev/null 2>&1 && command -v gsettings >/dev/null 2>&1 && \
+   [ -e /usr/lib/gio/modules/libdconfsettings.so ] && [ -e "$HOME/.config/naranjos/tema" ] && \
+   ! gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null | grep -q 'NaranjOS-iconos-'; then
+  naranjos-tema pon "$(naranjos-tema actual)" >/dev/null 2>&1 || true
+fi
 # Thunar como en NaranjOS, una sola vez (lo que ya tuviera guardado Thunar no pisa esto después)
 M="$HOME/.config/naranjos/.thunar-6k3b"
 if [ ! -e "$M" ] && command -v xfconf-query >/dev/null 2>&1; then

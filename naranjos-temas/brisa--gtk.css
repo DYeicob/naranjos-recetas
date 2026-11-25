@@ -12,22 +12,56 @@
 @define-color naranjos_acento2 #8cc4ff;
 @define-color naranjos_inactivo #1f2a38;
 
-/* Aspecto NaranjOS para las aplicaciones GTK 3 (Thunar…): fondo del tema, barra lateral, selección
-   con el acento y esquinas redondeadas, como la barra y el lanzador. */
+/* Aspecto NaranjOS para las aplicaciones GTK 3 (Thunar…): oscuro y limpio, el acento solo donde importa */
 window, .background, dialog { background-color: @naranjos_fondo; color: @naranjos_texto; }
 .view, iconview, treeview.view, textview text { background-color: @naranjos_fondo; color: @naranjos_texto; }
-placessidebar, placessidebar list, .sidebar, .sidebar list, .shortcuts-pane { background-color: @naranjos_superficie; }
-placessidebar row, .sidebar row { border-radius: 8px; margin: 1px 6px; padding: 2px 4px; }
-placessidebar row:hover, .sidebar row:hover { background-color: alpha(@naranjos_acento, 0.15); }
-*:selected, *:selected:focus, .view:selected, treeview.view:selected, iconview:selected, flowboxchild:selected,
-placessidebar row:selected, .sidebar row:selected, row:selected {
-  background-color: @naranjos_acento; color: @accent_fg_color; }
-iconview:selected, .view:selected { border-radius: 8px; }
-menubar, .menubar, toolbar, .primary-toolbar, headerbar, .titlebar { background-color: @naranjos_fondo; border: none; box-shadow: none; }
-entry { background-color: @naranjos_superficie; color: @naranjos_texto; border-radius: 8px; border-color: @naranjos_inactivo; }
-entry:focus { border-color: @naranjos_acento; box-shadow: inset 0 0 0 1px @naranjos_acento; }
-button.flat:hover, toolbar button:hover { background-color: alpha(@naranjos_acento, 0.15); border-radius: 8px; }
+*:selected, *:selected:focus, row:selected { background-color: @naranjos_acento; color: @accent_fg_color; }
+
+/* barra de herramientas y ruta */
+menubar, .menubar, toolbar, .primary-toolbar, headerbar, .titlebar {
+  background-color: @naranjos_fondo; border: none; box-shadow: none; padding: 6px 8px; }
+toolbar button, .primary-toolbar button, headerbar button {
+  background: none; border: none; box-shadow: none; border-radius: 10px; padding: 6px; color: @naranjos_apagado; }
+toolbar button:hover, .primary-toolbar button:hover, headerbar button:hover {
+  background-color: alpha(@naranjos_acento, 0.14); color: @naranjos_texto; }
+toolbar button:disabled { color: alpha(@naranjos_apagado, 0.35); }
+.path-bar, .location-button-box { background-color: @naranjos_superficie; border-radius: 12px; padding: 2px; }
+.path-bar button, .location-button-box button, .linked > button.toggle {
+  background: none; border: none; box-shadow: none; border-radius: 10px; padding: 4px 12px; color: @naranjos_apagado; }
+.path-bar button:hover, .location-button-box button:hover, .linked > button.toggle:hover {
+  background-color: alpha(@naranjos_acento, 0.12); color: @naranjos_texto; }
+.path-bar button:checked, .location-button-box button:checked, .linked > button.toggle:checked {
+  background-color: alpha(@naranjos_acento, 0.18); color: @naranjos_acento; font-weight: bold; }
+entry { background-color: @naranjos_superficie; color: @naranjos_texto; border-radius: 10px;
+  border: 1px solid @naranjos_inactivo; box-shadow: none; padding: 4px 10px; }
+entry:focus { border-color: @naranjos_acento; }
+
+/* barra lateral: un poco más clara, filas amplias y la selección como un toque de color */
+placessidebar, placessidebar list, .sidebar, .sidebar list, .sidebar .view, .sidebar treeview, .shortcuts-pane {
+  background-color: @naranjos_superficie; border: none; }
+placessidebar row, .sidebar row { border-radius: 10px; margin: 1px 8px; padding: 6px 8px; }
+.sidebar treeview.view { padding: 5px 8px; }
+placessidebar row:hover, .sidebar row:hover, .sidebar treeview.view:hover { background-color: alpha(@naranjos_acento, 0.10); }
+placessidebar row:selected, .sidebar row:selected, .sidebar .view:selected, .sidebar treeview.view:selected {
+  background-color: alpha(@naranjos_acento, 0.20); color: @naranjos_acento; border-radius: 10px; }
+paned > separator { background-color: @naranjos_fondo; min-width: 1px; background-image: none; }
+
+/* iconos de ficheros: selección suave y redondeada, recuadro de selección del acento */
+iconview, .view.iconview { padding: 6px; }
+iconview:selected, .view:selected, treeview.view:selected, flowboxchild:selected {
+  background-color: alpha(@naranjos_acento, 0.22); color: @naranjos_texto; border-radius: 12px; }
+iconview:selected:focus, .view:selected:focus { background-color: alpha(@naranjos_acento, 0.32); }
+.rubberband, rubberband { border: 1px solid @naranjos_acento; background-color: alpha(@naranjos_acento, 0.15); border-radius: 6px; }
+
+/* menús, ventanas emergentes y avisos */
+menu, .menu, .context-menu, popover, popover.background {
+  background-color: @naranjos_superficie; color: @naranjos_texto; border: 1px solid @naranjos_inactivo; border-radius: 12px; padding: 6px; }
+menuitem, modelbutton { border-radius: 8px; padding: 6px 10px; }
+menuitem:hover, modelbutton:hover { background-color: alpha(@naranjos_acento, 0.18); color: @naranjos_texto; }
+separator { background-color: @naranjos_inactivo; }
+tooltip, tooltip.background { background-color: @naranjos_superficie; color: @naranjos_texto;
+  border: 1px solid @naranjos_acento; border-radius: 8px; }
 statusbar, .statusbar { color: @naranjos_apagado; }
-scrollbar slider { background-color: @naranjos_inactivo; border-radius: 6px; min-width: 6px; min-height: 6px; }
+scrollbar, scrollbar trough { background: none; border: none; }
+scrollbar slider { background-color: @naranjos_inactivo; border: none; border-radius: 6px; min-width: 6px; min-height: 6px; }
 scrollbar slider:hover { background-color: @naranjos_acento; }
-paned > separator { background-color: @naranjos_inactivo; }
