@@ -3,6 +3,9 @@
 #     bash herramientas/haz-iso.sh            (en NaranjOS, como tu usuario; pide sudo)
 #     bash herramientas/haz-iso.sh --rapida   rehace SOLO el arranque (initramfs, kernel firmado, GRUB y la ISO)
 #                                             sobre la raíz de la vez anterior: minutos en vez de media hora
+#     bash herramientas/haz-iso.sh --limpia   borra la raíz de trabajo (unos 6 GB) cuando ya no la quieras
+# · La raíz de trabajo es un subvolumen Btrfs propio, comprimido con zstd: ocupa la mitad y las «fotos» del
+#   sistema NO la guardan dentro (un subvolumen no entra en la foto de @).
 # Resultado: ~/naranjos-iso/naranjos-<versión>-x86_64.iso (+ .sha256)
 # · La raíz se monta con paquetes de zumo (/srv/zumo/naranjos-core), SIN tus datos: ni usuarios, ni contraseñas,
 #   ni WiFi, ni claves (la MOK privada solo se usa aquí para firmar GRUB y el kernel; NO entra en la ISO).
@@ -22,6 +25,24 @@ NOMBRE="naranjos-$VERSION-x86_64"; ETIQUETA=NARANJOS_VIVO
 T=/var/tmp/naranjos-iso; RZ=$T/raiz; ISO=$T/iso; SAL=$HOME/naranjos-iso
 MOK=/etc/naranjos/mok; SHIM=/usr/share/naranjos/shim; GRUBDIR=/usr/lib/grub/x86_64-efi; ARR=/usr/share/naranjos/arranque
 RAPIDA=0; [ "${1:-}" = --rapida ] && RAPIDA=1
+# la raíz de trabajo: subvolumen Btrfs comprimido (si /var/tmp es Btrfs) o una carpeta normal
+BTRFS=0; [ "$(findmnt -no FSTYPE -T /var/tmp 2>/dev/null)" = btrfs ] && command -v btrfs >/dev/null && BTRFS=1
+borra_trabajo(){
+  [ -e "$T" ] || return 0
+  if [ "$BTRFS" = 1 ] && sudo btrfs subvolume show "$T" >/dev/null 2>&1; then
+    sudo btrfs subvolume delete "$T" >/dev/null || die "No pude borrar el subvolumen $T (¿algo montado dentro?)"
+  else sudo rm -rf "${T:?}"; fi
+}
+crea_trabajo(){
+  if [ "$BTRFS" = 1 ]; then
+    sudo btrfs subvolume create "$T" >/dev/null && sudo btrfs property set "$T" compression zstd || die "No pude crear el subvolumen $T"
+  else sudo mkdir -p "$T"; fi
+  sudo chown "$(id -u):$(id -g)" "$T"   # $T es tuyo (logs); la raíz y la ISO, de root
+}
+if [ "${1:-}" = --limpia ]; then
+  [ -e "$T" ] || { ok "No hay raíz de trabajo que borrar"; exit 0; }
+  sudo -v; borra_trabajo; ok "Borrada la raíz de trabajo ($T)"; exit 0
+fi
 mapfile -t EXCLUIR < <(grep -v '^\s*#' "$DATOS/excluir.txt" | grep -v '^\s*$')
 
 # --- 0. comprobaciones ------------------------------------------------------------------------------
@@ -32,9 +53,10 @@ sudo test -r "$MOK/MOK.priv" || die "Falta la clave MOK en $MOK (con ella se fir
 if [ "$RAPIDA" = 1 ]; then
   [ -d "$RZ/usr" ] && [ -s "$ISO/naranjos/x86_64/raiz.sfs" ] && [ -s "$T/pacman.conf" ] || die "No hay una ISO anterior que aprovechar: lánzalo sin --rapida"
 else
-  if [ -d "$T" ]; then say "Borrando la raíz de trabajo anterior ($T)…"; sudo rm -rf "$T"; fi
+  if [ -e "$T" ]; then say "Borrando la raíz de trabajo anterior ($T)…"; borra_trabajo; sleep 2; fi
   libre=$(df --output=avail -k /var/tmp | tail -n1)
-  [ "$libre" -gt $((14 * 1024 * 1024)) ] || die "Hacen falta unos 14 GB libres en /var/tmp (hay $((libre / 1024 / 1024)) GB): bash herramientas/libera-espacio.sh"
+  hace=14; [ "$BTRFS" = 1 ] && hace=9   # comprimida con zstd, la raíz ocupa más o menos la mitad
+  [ "$libre" -gt $((hace * 1024 * 1024)) ] || die "Hacen falta unos $hace GB libres en /var/tmp (hay $((libre / 1024 / 1024)) GB): bash herramientas/libera-espacio.sh (y mira «sudo fotos lista»: una foto hecha con la raíz de una ISO vieja dentro la retiene)"
 fi
 say "NaranjOS $VERSION · ISO en vivo · etiqueta $ETIQUETA"
 sudo -v
@@ -47,7 +69,7 @@ CH(){ sudo chroot "$RZ" /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sb
 
 if [ "$RAPIDA" = 0 ]; then
 # --- 1. la raíz con los paquetes ---------------------------------------------------------------------
-sudo rm -rf "$T"; sudo mkdir -p "$T"; sudo chown "$(id -u):$(id -g)" "$T"   # $T es tuyo (logs); la raíz y la ISO, de root
+borra_trabajo; crea_trabajo
 sudo mkdir -p "$RZ" "$ISO"; mkdir -p "$SAL"
 sudo mkdir -p "$RZ"/{dev,proc,run,tmp,etc,var/lib/pacman,var/cache/pacman/pkg}
 sudo chmod 1777 "$RZ/tmp"
@@ -83,7 +105,10 @@ say "Instalando ${#LISTA[@]} paquetes en la raíz de la ISO (de ${#TODO[@]}; fue
 sudo pacman --root "$RZ" --config "$T/pacman.conf" --cachedir /var/cache/pacman/pkg --gpgdir /etc/pacman.d/gnupg \
   -Sy --noconfirm --needed "${LISTA[@]}" > "$T/pacman.log" 2>&1 || { tail -30 "$T/pacman.log"; die "pacman falló (log: $T/pacman.log)"; }
 for p in "${EXCLUIR[@]}"; do
-  pacman --root "$RZ" -Qq "$p" >/dev/null 2>&1 && echo "${D}  (entró $p porque otro paquete lo necesita)${Z}"
+  if pacman --root "$RZ" -Qq "$p" >/dev/null 2>&1; then
+    q=$(LC_ALL=C pacman --root "$RZ" -Qi "$p" 2>/dev/null | sed -n 's/^Required By *: *//p')
+    echo "${D}  (entró $p porque lo necesita: ${q:-otro paquete})${Z}"
+  fi
 done
 ok "paquetes instalados ($(sudo du -shx "$RZ" | cut -f1))"
 
@@ -214,4 +239,4 @@ if [ "$TAM" -ge 2147483648 ]; then
   echo "${R}  ! Pasa de 2 GB: GitHub no la aceptará en un solo archivo. Lo que más ocupa dentro:${Z}"
   sudo du -sh "$RZ"/usr/lib/firmware "$RZ"/usr/lib/llvm* "$RZ"/usr/libexec/gcc "$RZ"/usr/lib/gcc "$RZ"/usr/share/{fonts,icons,naranjos} 2>/dev/null | sort -rh | head
 fi
-echo "${D}  (la raíz de trabajo queda en $T; bórrala con: sudo rm -rf $T)${Z}"
+echo "${D}  (la raíz de trabajo queda en $T para --rapida; bórrala con: bash herramientas/haz-iso.sh --limpia)${Z}"

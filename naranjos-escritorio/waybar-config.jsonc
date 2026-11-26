@@ -1,5 +1,9 @@
 // NaranjOS · barra superior (~/.config/waybar/config.jsonc)
 // Tras editar: Super + Shift + B dos veces, o cierra sesión y vuelve a entrar.
+// El aspecto de los módulos con números (sonido, red, brillo, batería, CPU, memoria, título, música)
+// lo pone naranjos-pantalla en ~/.config/naranjos/pantalla/waybar.jsonc: normal en pantallas anchas y
+// compacto (solo iconos; los números al pasar el ratón) en las estrechas. Ver: naranjos-pantalla barra compacta
+// Si defines aquí uno de esos módulos, manda lo tuyo.
 {
   "layer": "top",
   "include": ["~/.config/naranjos/pantalla/waybar.jsonc"],   // posición: naranjos-pantalla barra …
@@ -13,14 +17,6 @@
   "modules-center": ["clock", "custom/reloj"],
   "modules-right":  ["mpris", "custom/actualizaciones", "custom/remoto", "custom/portal", "custom/grabando", "custom/dictado", "custom/despierto", "custom/tailscale", "custom/tiempo", "custom/peel", "custom/noche", "bluetooth", "wireplumber", "wireplumber#micro", "hyprland/language", "network", "backlight", "battery", "cpu", "memory", "tray", "custom/notificaciones", "custom/sistema"],
 
-  "mpris": {
-    "format": "{player_icon} {title}",
-    "format-paused": "{status_icon} <i>{title}</i>",
-    "player-icons": { "default": "󰐊" },
-    "status-icons": { "paused": "󰏤" },
-    "max-length": 32,
-    "on-click": "playerctl play-pause", "on-scroll-up": "playerctl next", "on-scroll-down": "playerctl previous"
-  },
   "wireplumber#micro": {
     "node-type": "Audio/Source",
     "format": "󰍬",
@@ -41,19 +37,10 @@
     "tooltip": false,
     "on-click": "naranjos-menu"
   },
-  "custom/naranjos": {
-    "format": "NaranjOS",
-    "tooltip": false,
-    "on-click": "naranjos-menu"
-  },
   "hyprland/workspaces": {
     "format": "{id}",
     "on-click": "activate",
     "persistent-workspaces": { "*": 5 }
-  },
-  "hyprland/window": {
-    "max-length": 48,
-    "separate-outputs": true
   },
   "clock": {
     "format": "{:%H:%M}",
@@ -63,57 +50,6 @@
       "mode": "month",
       "format": { "today": "<span color='#ff8700'><b>{}</b></span>" }
     }
-  },
-  "wireplumber": {
-    "format": "{icon}  {volume}%",
-    "format-muted": "\uf026  ✕",
-    "format-icons": ["\uf026", "\uf027", "\uf028"],
-    "scroll-step": 5,
-    "max-volume": 100,
-    "tooltip-format": "{node_name}",
-    "on-click": "naranjos-tui sonido",
-    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-  },
-  "bluetooth": {
-    "format": "\uf294",
-    "format-off": "\uf294  ✕",
-    "format-disabled": "",
-    "format-no-controller": "",
-    "format-connected": "\uf294  {device_alias}",
-    "tooltip-format": "{controller_alias}",
-    "tooltip-format-connected": "{device_enumerate}",
-    "tooltip-format-enumerate-connected": "{device_alias}",
-    "on-click": "naranjos-tui bluetooth"
-  },
-  "network": {
-    "format-wifi": "  {essid}",
-    "format-ethernet": "",
-    "format-disconnected": "  ✕",
-    "tooltip-format": "{ifname} · {ipaddr}",
-    "tooltip-format-wifi": "{essid} ({signalStrength}%) · {ipaddr}",
-    "on-click": "naranjos-tui wifi"
-  },
-  "backlight": {
-    "format": "  {percent}%",
-    "on-scroll-up": "brightnessctl -e4 -n2 set 5%+",
-    "on-scroll-down": "brightnessctl -e4 -n2 set 5%-"
-  },
-  "battery": {
-    "states": { "warning": 25, "critical": 10 },
-    "format": "{icon}  {capacity}%",
-    "format-charging": "  {capacity}%",
-    "format-plugged": "  {capacity}%",
-    "format-icons": ["", "", "", "", ""],
-    "tooltip-format": "{timeTo}"
-  },
-  "cpu": {
-    "format": "  {usage}%",
-    "interval": 5
-  },
-  "memory": {
-    "format": "  {percentage}%",
-    "interval": 10,
-    "tooltip-format": "{used:0.1f} / {total:0.1f} GiB"
   },
   "custom/peel": {
     "exec": "naranjos-peel barra",

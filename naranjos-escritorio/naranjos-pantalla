@@ -5,6 +5,8 @@
 #   naranjos-pantalla escala [monitor] 1.5     escala de un monitor (1, 1.25, 1.5, 2…)
 #   naranjos-pantalla barra arriba|abajo|izquierda|derecha
 #   naranjos-pantalla barra transparencia 0-90 (0 opaca)
+#   naranjos-pantalla barra compacta|normal|auto   compacta: solo iconos (los números, al pasar el ratón);
+#                                              auto (de serie): compacta si la pantalla mide menos de 1500 px de ancho
 #   naranjos-pantalla fuente "Nombre"          la fuente de terminal, lanzador y barra (fuentes: las que hay)
 #   naranjos-pantalla menu                     elegir en un menú
 #   naranjos-pantalla prepara                  crea los ficheros que faltan (lo hace solo al entrar)
@@ -13,25 +15,49 @@ set -uo pipefail
 . /usr/lib/naranjos/naranjos-i18n.sh
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; R=; Z=; }
 C="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos"; P="$C/pantalla"; CONF="$P/pantalla.conf"
-TEXTO=1; POSICION=top; TRANSPARENCIA=10; FUENTE="JetBrainsMono Nerd Font"
+TEXTO=1; POSICION=top; TRANSPARENCIA=10; FUENTE="JetBrainsMono Nerd Font"; BARRA=auto
+MODULOS=/usr/share/naranjos/waybar; ESTRECHA=1500
 mkdir -p "$P"; [ -r "$CONF" ] && . "$CONF"
 die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
 num(){ awk -v a="$1" -v b="$2" 'BEGIN{printf "%d", a*b + 0.5}'; }
 
+# ancho útil de la pantalla más estrecha (en píxeles «lógicos»: el ancho entre la escala); 0 si no se sabe
+ancho(){
+  [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] || { echo 0; return; }
+  hyprctl monitors -j 2>/dev/null | python3 -Ic 'import json,sys
+m = [x for x in json.load(sys.stdin) if not x.get("disabled")]
+print(min(int(x["width"] / (x.get("scale") or 1)) for x in m) if m else 0)' 2>/dev/null || echo 0
+}
+compacta(){ # ¿barra compacta?
+  case "$BARRA" in compacta) return 0 ;; normal) return 1 ;; esac
+  local a; a=$(ancho); [ "${a:-0}" -gt 0 ] && [ "$a" -lt "$ESTRECHA" ]
+}
+
 escribe(){ # vuelve a generar los ficheros incluidos por foot, fuzzel y la barra
-  printf 'TEXTO=%s\nPOSICION=%s\nTRANSPARENCIA=%s\nFUENTE="%s"\n' "$TEXTO" "$POSICION" "$TRANSPARENCIA" "$FUENTE" > "$CONF"
+  printf 'TEXTO=%s\nPOSICION=%s\nTRANSPARENCIA=%s\nFUENTE="%s"\nBARRA=%s\n' "$TEXTO" "$POSICION" "$TRANSPARENCIA" "$FUENTE" "$BARRA" > "$CONF"
+  local mod="$MODULOS/modulos.json" tb=13
+  if compacta; then mod="$MODULOS/modulos-compacta.json"; tb=12; fi
   printf '# NaranjOS · naranjos-pantalla (no lo edites)\n[main]\nfont=%s:size=%s\n' "$FUENTE" "$(num 11 "$TEXTO")" > "$P/foot.ini"
   printf '# NaranjOS · naranjos-pantalla (no lo edites)\n[main]\nfont=%s:size=%s\n' "$FUENTE" "$(num 12 "$TEXTO")" > "$P/fuzzel.ini"
   local op; op=$(awk -v t="$TRANSPARENCIA" 'BEGIN{printf "%.2f", 1 - t/100}')
   printf '/* NaranjOS · naranjos-pantalla (no lo edites) */\n@define-color fondo_barra alpha(@fondo, %s);\n* { font-size: %spx; font-family: "%s", monospace; }\n' \
-    "$op" "$(num 13 "$TEXTO")" "$FUENTE" > "$P/waybar.css"
-  printf '// NaranjOS · naranjos-pantalla (no lo edites)\n{ "position": "%s" }\n' "$POSICION" > "$P/waybar.jsonc"
+    "$op" "$(num "$tb" "$TEXTO")" "$FUENTE" > "$P/waybar.css"
+  # posición + cómo se ven los módulos con números (normal o compacta); lo que pongas en tu config.jsonc manda
+  python3 -I - "$mod" "$POSICION" "$P/waybar.jsonc" << "PY" 2>/dev/null || printf '// NaranjOS · naranjos-pantalla (no lo edites)\n{ "position": "%s" }\n' "$POSICION" > "$P/waybar.jsonc"
+import json, sys
+m, pos, sal = sys.argv[1:4]
+try: d = json.load(open(m, encoding="utf-8"))
+except OSError: d = {}
+d = {"position": pos, **d}
+open(sal, "w", encoding="utf-8").write("// NaranjOS · naranjos-pantalla (no lo edites)\n" + json.dumps(d, ensure_ascii=False, indent=1) + "\n")
+PY
   [ -e "$C/monitores.lua" ] || printf -- '-- NaranjOS · monitores (naranjos-pantalla escala); vacío = automático\n' > "$C/monitores.lua"
 }
 aplica(){
   command -v gsettings >/dev/null && gsettings set org.gnome.desktop.interface text-scaling-factor "$TEXTO" 2>/dev/null
+  # primero Hyprland (la escala cambia el ancho útil), luego la barra con el ancho ya nuevo
+  [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && { hyprctl reload >/dev/null 2>&1; sleep 0.4; escribe; }
   pkill -SIGUSR2 -x waybar 2>/dev/null; pkill -x waybar 2>/dev/null && { sleep 0.3; setsid -f waybar >/dev/null 2>&1; }
-  [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] && hyprctl reload >/dev/null 2>&1
   return 0
 }
 
@@ -71,16 +97,17 @@ PY
 barra(){
   case "${1:-}" in
     arriba|top) POSICION=top ;; abajo|bottom) POSICION=bottom ;; izquierda|left) POSICION=left ;; derecha|right) POSICION=right ;;
+    compacta|compact) BARRA=compacta ;; normal) BARRA=normal ;; auto|automatica|automática) BARRA=auto ;;
     transparencia|transparency)
       [[ "${2:-}" =~ ^[0-9]+$ ]] && [ "$2" -le 90 ] || die "$(_ 'De 0 (opaca) a 90')"; TRANSPARENCIA=$2 ;;
-    *) die "$(_ 'Uso:') naranjos-pantalla barra arriba|abajo|izquierda|derecha|transparencia N" ;;
+    *) die "$(_ 'Uso:') naranjos-pantalla barra arriba|abajo|izquierda|derecha|compacta|normal|auto|transparencia N" ;;
   esac
   escribe; aplica; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Barra cambiada')"
 }
 
 estado(){
   printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'pantalla')" "$Z"
-  printf '  %-16s %s\n' "$(_ 'Texto:')" "$TEXTO" "$(_ 'Fuente:')" "$FUENTE" "$(_ 'Barra:')" "$POSICION · $(_ 'transparencia') $TRANSPARENCIA%"
+  printf '  %-16s %s\n' "$(_ 'Texto:')" "$TEXTO" "$(_ 'Fuente:')" "$FUENTE" "$(_ 'Barra:')" "$POSICION · $(_ 'transparencia') $TRANSPARENCIA% · $BARRA ($(compacta && _ 'compacta' || _ 'normal'))"
   hyprctl monitors -j 2>/dev/null | python3 -Ic 'import json,sys
 for m in json.load(sys.stdin): print("  %-16s %dx%d · %s %s" % (m["name"], m["width"], m["height"], "escala", m["scale"]))' 2>/dev/null
 }
@@ -89,13 +116,16 @@ menu(){
   local o
   o=$(printf '%s\n' "$(_ 'Texto normal')" "$(_ 'Texto grande')" "$(_ 'Texto muy grande')" "$(_ 'Texto pequeño')" \
       "$(_ 'Escala de la pantalla')" "$(_ 'Barra arriba')" "$(_ 'Barra abajo')" "$(_ 'Barra a la izquierda')" "$(_ 'Barra a la derecha')" \
-      "$(_ 'Barra opaca')" "$(_ 'Barra transparente')" "$(_ 'Cambiar la fuente')" | fuzzel --dmenu --index --prompt "$(_ 'Pantalla') ❯ " --lines 12 --width 40) || exit 0
+      "$(_ 'Barra opaca')" "$(_ 'Barra transparente')" "$(_ 'Cambiar la fuente')" \
+      "$(_ 'Barra compacta (solo iconos)')" "$(_ 'Barra normal (con números)')" "$(_ 'Barra automática (según el ancho)')" \
+      | fuzzel --dmenu --index --prompt "$(_ 'Pantalla') ❯ " --lines 15 --width 40) || exit 0
   case "$o" in
     0) texto 1 ;; 1) texto 1.15 ;; 2) texto 1.35 ;; 3) texto 0.9 ;;
     4) local e; e=$(printf '1\n1.25\n1.5\n1.75\n2\n' | fuzzel --dmenu --prompt "$(_ 'Escala') ❯ " --lines 5 --width 30) || exit 0; escala "$e" ;;
     5) barra arriba ;; 6) barra abajo ;; 7) barra izquierda ;; 8) barra derecha ;;
     9) barra transparencia 0 ;; 10) barra transparencia 30 ;;
     11) local f; f=$(fuentes | fuzzel --dmenu --prompt "$(_ 'Fuente') ❯ " --lines 14 --width 44) || exit 0; fuente "$f" ;;
+    12) barra compacta ;; 13) barra normal ;; 14) barra auto ;;
   esac >/dev/null
 }
 
@@ -121,6 +151,6 @@ case "${1:-}" in
   menu) menu ;;
   fuente|font) shift; fuente "$@" ;;
   fuentes|fonts) fuentes ;;
-  prepara) [ -e "$P/waybar.css" ] && [ -e "$P/foot.ini" ] && [ -e "$P/waybar.jsonc" ] || escribe ;;
-  *) sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+  prepara) escribe ;;   # siempre: la barra normal o compacta depende de la pantalla de ahora
+  *) sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
