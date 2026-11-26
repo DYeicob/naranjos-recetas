@@ -7,10 +7,11 @@ Arranca en cualquier PC con UEFI (64 bits). Graba la ISO en un USB de 4 GB o má
 Secure Boot
 -----------
 NaranjOS arranca con el shim de Ubuntu (firmado por Microsoft) y con su propia clave (MOK).
-La primera vez, con Secure Boot activado, saldrá una pantalla azul (MokManager):
-  1. «Enroll key from disk»
-  2. Elige NARANJOS-MOK.der (en la raíz del USB)
-  3. «Continue» → «Yes» → «Reboot»
+La primera vez, con Secure Boot activado:
+  1. «Verification failed: (0x1A) Security Violation» → pulsa Enter
+  2. «Press any key to perform MOK management» → pulsa una tecla enseguida (hay 10 segundos)
+  3. «Enroll key from disk» → la unidad de NaranjOS → NARANJOS-MOK.der
+  4. «Continue» → «Yes» → «Reboot»
 Si no quieres registrar la clave, desactiva Secure Boot en la BIOS.
 
 En vivo

@@ -1,6 +1,8 @@
 #!/bin/bash
 # NaranjOS — construye la ISO «en vivo» (UEFI, Secure Boot con la MOK de NaranjOS):
 #     bash herramientas/haz-iso.sh            (en NaranjOS, como tu usuario; pide sudo)
+#     bash herramientas/haz-iso.sh --rapida   rehace SOLO el arranque (initramfs, kernel firmado, GRUB y la ISO)
+#                                             sobre la raíz de la vez anterior: minutos en vez de media hora
 # Resultado: ~/naranjos-iso/naranjos-<versión>-x86_64.iso (+ .sha256)
 # · La raíz se monta con paquetes de zumo (/srv/zumo/naranjos-core), SIN tus datos: ni usuarios, ni contraseñas,
 #   ni WiFi, ni claves (la MOK privada solo se usa aquí para firmar GRUB y el kernel; NO entra en la ISO).
@@ -19,6 +21,7 @@ VERSION=$(sed -n 's/^VERSION_ID=//p' /etc/os-release | tr -d '"'); VERSION=${VER
 NOMBRE="naranjos-$VERSION-x86_64"; ETIQUETA=NARANJOS_VIVO
 T=/var/tmp/naranjos-iso; RZ=$T/raiz; ISO=$T/iso; SAL=$HOME/naranjos-iso
 MOK=/etc/naranjos/mok; SHIM=/usr/share/naranjos/shim; GRUBDIR=/usr/lib/grub/x86_64-efi; ARR=/usr/share/naranjos/arranque
+RAPIDA=0; [ "${1:-}" = --rapida ] && RAPIDA=1
 mapfile -t EXCLUIR < <(grep -v '^\s*#' "$DATOS/excluir.txt" | grep -v '^\s*$')
 
 # --- 0. comprobaciones ------------------------------------------------------------------------------
@@ -26,9 +29,13 @@ for c in pacman mksquashfs xorriso mkfs.fat sbsign sbverify grub-mkimage; do com
 for f in "$SHIM/shimx64.efi" "$SHIM/mmx64.efi" "$ARR/sbat.csv"; do [ -r "$f" ] || die "Falta $f"; done
 sudo test -r "$MOK/MOK.priv" || die "Falta la clave MOK en $MOK (con ella se firman GRUB y el kernel)"
 # lo que dejó una ISO anterior (a medias o no) no cuenta: se borra antes de mirar el sitio libre
-if [ -d "$T" ]; then say "Borrando la raíz de trabajo anterior ($T)…"; sudo rm -rf "$T"; fi
-libre=$(df --output=avail -k /var/tmp | tail -n1)
-[ "$libre" -gt $((14 * 1024 * 1024)) ] || die "Hacen falta unos 14 GB libres en /var/tmp (hay $((libre / 1024 / 1024)) GB): bash herramientas/libera-espacio.sh"
+if [ "$RAPIDA" = 1 ]; then
+  [ -d "$RZ/usr" ] && [ -s "$ISO/naranjos/x86_64/raiz.sfs" ] && [ -s "$T/pacman.conf" ] || die "No hay una ISO anterior que aprovechar: lánzalo sin --rapida"
+else
+  if [ -d "$T" ]; then say "Borrando la raíz de trabajo anterior ($T)…"; sudo rm -rf "$T"; fi
+  libre=$(df --output=avail -k /var/tmp | tail -n1)
+  [ "$libre" -gt $((14 * 1024 * 1024)) ] || die "Hacen falta unos 14 GB libres en /var/tmp (hay $((libre / 1024 / 1024)) GB): bash herramientas/libera-espacio.sh"
+fi
 say "NaranjOS $VERSION · ISO en vivo · etiqueta $ETIQUETA"
 sudo -v
 
@@ -38,6 +45,7 @@ trap desmonta EXIT
 monta(){ sudo mount "$@"; MONTAJES+=("${!#}"); }
 CH(){ sudo chroot "$RZ" /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin HOME=/root "$@"; }
 
+if [ "$RAPIDA" = 0 ]; then
 # --- 1. la raíz con los paquetes ---------------------------------------------------------------------
 sudo rm -rf "$T"; sudo mkdir -p "$T"; sudo chown "$(id -u):$(id -g)" "$T"   # $T es tuyo (logs); la raíz y la ISO, de root
 sudo mkdir -p "$RZ" "$ISO"; mkdir -p "$SAL"
@@ -130,6 +138,14 @@ sudo rm -f "$RZ"/etc/ssh/ssh_host_* "$RZ/var/lib/systemd/random-seed"
 sudo rm -rf "$RZ/var/cache/pacman/pkg"/* "$RZ/var/lib/pacman/sync"/* "$RZ/var/log"/* "$RZ/root/.bash_history"
 ok "greetd entra solo como «naranjos»; llavero de pacman nuevo en cada arranque"
 
+else
+  say "Modo rápido: se aprovecha la raíz de la vez anterior (solo se pone al día naranjos-initramfs)"
+  monta --bind /dev "$RZ/dev"; monta -t proc proc "$RZ/proc"; monta -t tmpfs -o mode=0755 run "$RZ/run"
+  sudo pacman --root "$RZ" --config "$T/pacman.conf" --cachedir /var/cache/pacman/pkg --gpgdir /etc/pacman.d/gnupg \
+    -Sy --noconfirm --needed naranjos-initramfs > "$T/pacman-rapida.log" 2>&1 || { tail -20 "$T/pacman-rapida.log"; die "pacman falló"; }
+  ok "naranjos-initramfs $(pacman --root "$RZ" -Q naranjos-initramfs | cut -d" " -f2)"
+fi
+
 # --- 5. cachés y el arranque de la ISO ---------------------------------------------------------------
 say "Preparando cachés, initramfs y kernel firmado…"
 K=$(ls "$RZ/usr/lib/modules" | head -n1)
@@ -149,9 +165,11 @@ ok "kernel $K firmado con la MOK e initramfs con el modo en vivo"
 
 # --- 6. la raíz comprimida ---------------------------------------------------------------------------
 desmonta; trap - EXIT
-say "Comprimiendo la raíz (squashfs + xz; unos minutos)…"
-sudo mksquashfs "$RZ" "$ISO/naranjos/x86_64/raiz.sfs" -comp xz -Xbcj x86 -b 1M -noappend -no-progress -quiet \
-  -e boot/initramfs-linux-naranjos.img > /dev/null
+if [ "$RAPIDA" = 0 ]; then
+  say "Comprimiendo la raíz (squashfs + xz; unos minutos)…"
+  sudo mksquashfs "$RZ" "$ISO/naranjos/x86_64/raiz.sfs" -comp xz -Xbcj x86 -b 1M -noappend -no-progress -quiet \
+    -e boot/initramfs-linux-naranjos.img > /dev/null
+fi
 ok "raiz.sfs: $(du -h "$ISO/naranjos/x86_64/raiz.sfs" | cut -f1)"
 
 # --- 7. GRUB firmado y la partición EFI de la ISO ----------------------------------------------------
@@ -182,6 +200,7 @@ ok "shim (Canonical/Microsoft) → GRUB firmado con la MOK de NaranjOS"
 
 # --- 8. la ISO híbrida (DVD y USB) -------------------------------------------------------------------
 say "Escribiendo la ISO…"
+rm -f "$SAL/$NOMBRE.iso" "$SAL/$NOMBRE.iso.sha256"
 sudo xorriso -as mkisofs -iso-level 3 -full-iso9660-filenames -joliet -joliet-long -rational-rock \
   -volid "$ETIQUETA" -appid "NaranjOS $VERSION" -publisher "NaranjOS" -preparer "naranjos haz-iso.sh" \
   -partition_offset 16 -append_partition 2 C12A7328-F81F-11D2-BA4B-00A0C93EC93B "$EFI" -appended_part_as_gpt \

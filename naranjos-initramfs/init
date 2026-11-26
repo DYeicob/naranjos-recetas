@@ -84,7 +84,10 @@ dispositivo(){
 # NaranjOS en vivo (la ISO): el medio, por su etiqueta; la raíz, su squashfs; los cambios, en memoria
 if [ -n "$vivo" ]; then
   V=/run/naranjos-vivo
-  for m in isofs squashfs overlay loop sr_mod cdrom usb_storage uas; do modprobe -q "$m" 2>/dev/null; done
+  # los controladores del medio, a mano (udev no siempre los carga solo): SATA/AHCI, NVMe, USB, virtio y CD/DVD
+  for m in ahci ata_piix sd_mod sr_mod cdrom nvme virtio_pci virtio_blk virtio_scsi xhci_pci ehci_pci uhci_hcd ohci_pci \
+           usb_storage uas isofs squashfs overlay loop; do modprobe -q "$m" 2>/dev/null; done
+  udevadm settle --timeout=10
   mkdir -p "$V/medio" "$V/abajo" "$V/arriba"
   while :; do
     d=""; t=0
