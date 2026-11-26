@@ -51,6 +51,8 @@ seccion_aspecto(){
   mete "󰏘  $(_ 'Crear mi tema…')"                 "naranjos-tema-nuevo"
   mete "󰉼  $(_ 'Apariencia (todo)')…"             "naranjos-apariencia menu"
   mete "󱂬  $(_ 'Dock: mostrar / ocultar')"        "naranjos-dock alterna"
+  mete "󰐃  $(_ 'Dock: fijar una app')"           "naranjos-dock fija"
+  mete "󰐄  $(_ 'Dock: quitar una app')"          "naranjos-dock quita"
   mete "󰕴  $(_ 'Modo escritorio (flotante + dock)')" "naranjos-disposicion escritorio activa"
   mete "󰕴  $(_ 'Modo mosaico')"                   "naranjos-disposicion escritorio apaga"
   mete "󰖔  $(_ 'Luz nocturna')…"                  "naranjos-noche menu"

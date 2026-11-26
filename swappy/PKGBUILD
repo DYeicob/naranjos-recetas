@@ -10,5 +10,6 @@ depends=('gtk3' 'cairo' 'pango')
 makedepends=('meson' 'ninja')
 source=('https://github.com/jtheoof/swappy/releases/download/v1.8.0/swappy-1.8.0.tar.gz')
 sha256sums=('f615cc4c61e033cddc60093003ef03646d246a0ac14becb9cdac9b5fabf37bbe')
+prepare() { cd swappy-$pkgver; git init -q; git -c user.name=NaranjOS -c user.email=zumo@naranjos.invalid commit -q --allow-empty -m v$pkgver; git tag -f v$pkgver; }
 build() { cd swappy-$pkgver; meson setup build --prefix=/usr --buildtype=release -D man-pages=disabled; meson compile -C build; }
 package() { cd swappy-$pkgver; DESTDIR="$pkgdir" meson install -C build; install -Dm644 LICENSE "$pkgdir/usr/share/licenses/swappy/LICENSE"; }

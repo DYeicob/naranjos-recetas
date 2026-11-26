@@ -10,6 +10,7 @@ depends=('libgusb' 'glib2' 'pixman' 'openssl' 'libgudev')
 makedepends=('meson' 'ninja')
 source=('https://gitlab.freedesktop.org/libfprint/libfprint/-/archive/v1.94.100/libfprint-v1.94.100.tar.gz')
 sha256sums=('edc90e02f330a7595ceaf37f2c6ec32ed43541347fe936d3273b0bb2524fd19c')
+prepare() { cd libfprint-v$pkgver; sed -i "s/foreach driver_test: drivers_tests/foreach driver_test, _x: drivers_tests/" tests/meson.build; }
 build() {
   cd libfprint-v$pkgver
   # sin los lectores que piden NSS (uru4000) ni la documentación

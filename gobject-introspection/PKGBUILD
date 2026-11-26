@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q2.sh
+pkgname=gobject-introspection
+pkgver=1.86.0
+pkgrel=1
+pkgdesc='Describe las bibliotecas GObject (lo necesitan programas en Go y Python)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.0-or-later' 'GPL-2.0-or-later')
+depends=('glib2')
+makedepends=('meson' 'ninja' 'python')
+source=('https://download.gnome.org/sources/gobject-introspection/1.86/gobject-introspection-1.86.0.tar.xz')
+sha256sums=('920d1a3fcedeadc32acff95c2e203b319039dd4b4a08dd1a2dfd283d19c0b9ae')
+build() { cd gobject-introspection-$pkgver; meson setup build --prefix=/usr --buildtype=release; meson compile -C build; }
+package() { cd gobject-introspection-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

@@ -1,19 +1,169 @@
 #!/bin/bash
-# naranjos-dock — el dock de NaranjOS (apps fijadas, abiertas y todas) y las ventanas minimizadas
+# naranjos-dock — el dock de NaranjOS (una barra de Waybar abajo: apps fijadas, ventanas abiertas y el menú)
 #   naranjos-dock activa | apaga | alterna    mostrarlo siempre (se recuerda) o quitarlo
+#   naranjos-dock fija | quita                añadir o quitar apps fijadas (también: clic derecho en un icono fijado)
 #   naranjos-dock arranca                     al entrar en la sesión (si está activado)
 #   naranjos-dock minimizadas                 volver a traer una ventana minimizada (Super + M la minimiza)
-# Clic derecho en un icono: fijarlo o quitarlo. El último botón abre el menú de NaranjOS.
 set -uo pipefail
 . /usr/lib/naranjos/naranjos-i18n.sh
-C="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos"; MARCA="$C/dock-activo"
-CSS="$C/tema/dock.css"; [ -r "$CSS" ] || CSS=/usr/share/naranjos/dock.css
+C="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos"; MARCA="$C/dock-activo"; FIJ="$C/dock-fijadas"; D="$C/dock"
+BARRA=/usr/lib/naranjos/naranjos-dock-barra     # enlace a waybar: con otro nombre para no confundirlo con la barra de arriba
+NOMBRE=naranjos-dock-b                          # así lo ve pgrep (15 letras)
+
+# Las apps fijadas la primera vez: las que estén instaladas de esta lista
+fijadas_iniciales(){
+  local id
+  for id in firefox org.mozilla.firefox foot thunar org.gnome.Calculator naranjos-ajustes; do
+    _desktop "$id" >/dev/null && echo "$id"
+  done
+}
+_desktop(){ # _desktop <id> → ruta del .desktop
+  local d
+  for d in "${XDG_DATA_HOME:-$HOME/.local/share}/applications" /var/lib/flatpak/exports/share/applications \
+           "${XDG_DATA_HOME:-$HOME/.local/share}/flatpak/exports/share/applications" /usr/local/share/applications /usr/share/applications; do
+    [ -r "$d/$1.desktop" ] && { echo "$d/$1.desktop"; return 0; }
+  done
+  return 1
+}
+
+genera(){ # escribe ~/.config/naranjos/dock/{config.jsonc,style.css} a partir de las fijadas
+  mkdir -p "$D"
+  [ -e "$FIJ" ] || fijadas_iniciales > "$FIJ"
+  python3 - "$FIJ" "$D" "$(_ 'Menú de NaranjOS')" "$(_ 'Clic: abrir · clic derecho: quitar del dock')" << "PY"
+import configparser, json, os, pathlib, sys
+fij, dst, t_menu, t_fija = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), sys.argv[3], sys.argv[4]
+H = pathlib.Path.home(); XD = pathlib.Path(os.environ.get("XDG_DATA_HOME", H / ".local/share"))
+APPS = [XD / "applications", pathlib.Path("/var/lib/flatpak/exports/share/applications"),
+        XD / "flatpak/exports/share/applications", pathlib.Path("/usr/local/share/applications"), pathlib.Path("/usr/share/applications")]
+ICONOS = [XD / "icons", pathlib.Path("/var/lib/flatpak/exports/share/icons"), XD / "flatpak/exports/share/icons",
+          pathlib.Path("/usr/local/share/icons"), pathlib.Path("/usr/share/icons")]
+
+def tema_iconos():
+    try:
+        c = configparser.ConfigParser(); c.read(H / ".config/gtk-3.0/settings.ini")
+        return c.get("Settings", "gtk-icon-theme-name", fallback="")
+    except Exception:
+        return ""
+
+TEMAS = [t for t in (tema_iconos(), "Papirus-Dark", "Papirus", "Adwaita", "hicolor") if t]
+TAM = ["scalable", "256x256", "192x192", "128x128", "96x96", "64x64", "512x512", "48x48"]
+
+def icono(nombre):
+    if not nombre: return None
+    if nombre.startswith("/"): return nombre if os.path.exists(nombre) else None
+    for base in ICONOS:
+        for t in TEMAS:
+            for s in TAM:
+                for sub in ("apps", "applications"):
+                    for ext in (".svg", ".png"):
+                        p = base / t / s / sub / (nombre + ext)
+                        if p.exists(): return str(p)
+                        p = base / t / sub / s / (nombre + ext)       # Papirus: 64x64/apps y también apps/64
+                        if p.exists(): return str(p)
+    for ext in (".svg", ".png", ".xpm"):
+        p = pathlib.Path("/usr/share/pixmaps") / (nombre + ext)
+        if p.exists(): return str(p)
+    return None
+
+def desktop(i):
+    for d in APPS:
+        p = d / (i + ".desktop")
+        if p.exists():
+            c = configparser.ConfigParser(interpolation=None, strict=False)
+            try: c.read(p, encoding="utf-8")
+            except Exception: return None
+            if "Desktop Entry" in c: return c["Desktop Entry"]
+    return None
+
+mods, conf = [], {}
+for n, i in enumerate(x.strip() for x in fij.read_text().splitlines()):
+    if not i or i.startswith("#"): continue
+    e = desktop(i)
+    if e is None: continue
+    ic = icono(e.get("Icon", "")) or icono("application-x-executable")
+    nombre = e.get("Name", i)
+    if ic:
+        k = "image#f%d" % n
+        conf[k] = {"path": ic, "size": 36, "tooltip": True, "tooltip-format": nombre,
+                   "on-click": "naranjos-dock abre %s" % i, "on-click-right": "naranjos-dock quita %s" % i}
+    else:   # sin icono: la inicial con el acento del tema
+        k = "custom/f%d" % n
+        conf[k] = {"format": nombre[:1].upper(), "tooltip-format": nombre,
+                   "on-click": "naranjos-dock abre %s" % i, "on-click-right": "naranjos-dock quita %s" % i}
+    mods.append(k)
+
+base = {
+    "name": "naranjos-dock", "layer": "top", "position": "bottom", "exclusive": True,
+    "height": 58, "margin-bottom": 6, "spacing": 2,
+    "modules-center": mods + (["custom/raya"] if mods else []) + ["wlr/taskbar", "custom/raya", "custom/menu"],
+    "wlr/taskbar": {"format": "{icon}", "icon-size": 36, "tooltip-format": "{title}",
+                    "on-click": "activate", "on-click-middle": "close", "on-click-right": "fullscreen"},
+    "custom/raya": {"format": "│", "tooltip": False},
+    "custom/menu": {"format": "", "tooltip-format": t_menu, "on-click": "naranjos-menu"},
+}
+base.update(conf)
+(dst / "config.jsonc").write_text("// NaranjOS · el dock (lo genera naranjos-dock: no lo edites, usa «naranjos-dock fija/quita»)\n"
+                                  + json.dumps(base, indent=2, ensure_ascii=False) + "\n")
+PY
+  cp -f /usr/share/naranjos/dock.css "$D/style.css"
+}
 
 lanza(){
-  pgrep -x nwg-dock-hyprla >/dev/null && return 0
-  setsid -f nwg-dock-hyprland -d -i 40 -mb 8 -p bottom -c naranjos-menu -s "$CSS" -nolauncher=false >/dev/null 2>&1
+  pgrep -x "$NOMBRE" >/dev/null && return 0
+  genera || return 1
+  setsid -f "$BARRA" -c "$D/config.jsonc" -s "$D/style.css" >/dev/null 2>&1
 }
-para(){ pkill -x nwg-dock-hyprla 2>/dev/null; pkill -f '^nwg-dock-hyprland' 2>/dev/null; true; }
+para(){ pkill -x "$NOMBRE" 2>/dev/null; true; }
+relanza(){ if [ -e "$MARCA" ]; then para; sleep 0.3; lanza; fi; }
+
+abre(){ # abre <id>: lanza la app de un .desktop (sin los %u %f… del Exec)
+  local f ex
+  f=$(_desktop "$1") || { naranjos-notifica "$(_ 'Dock')" "$(_ 'No encuentro la app') $1"; return 1; }
+  if command -v gtk-launch >/dev/null; then setsid -f gtk-launch "$1" >/dev/null 2>&1; return 0; fi
+  ex=$(sed -n 's/^Exec=//p' "$f" | head -n1 | sed 's/ *%[fFuUdDnNickvm]//g')
+  if command -v naranjos-lanza >/dev/null; then setsid -f naranjos-lanza sh -c "$ex" >/dev/null 2>&1
+  else setsid -f sh -c "$ex" >/dev/null 2>&1; fi
+}
+
+fija(){ # elegir una app instalada y añadirla al final
+  local sel id
+  [ -e "$FIJ" ] || { mkdir -p "$C"; fijadas_iniciales > "$FIJ"; }
+  sel=$(python3 - "$FIJ" << "PY"
+import configparser, os, pathlib, sys
+H = pathlib.Path.home(); XD = pathlib.Path(os.environ.get("XDG_DATA_HOME", H / ".local/share"))
+ya = set(x.strip() for x in pathlib.Path(sys.argv[1]).read_text().splitlines())
+vistos = {}
+for d in (XD / "applications", pathlib.Path("/var/lib/flatpak/exports/share/applications"), XD / "flatpak/exports/share/applications",
+          pathlib.Path("/usr/local/share/applications"), pathlib.Path("/usr/share/applications")):
+    for p in sorted(d.glob("*.desktop")) if d.is_dir() else []:
+        i = p.stem
+        if i in vistos or i in ya: continue
+        c = configparser.ConfigParser(interpolation=None, strict=False)
+        try: c.read(p, encoding="utf-8")
+        except Exception: continue
+        e = c["Desktop Entry"] if "Desktop Entry" in c else None
+        if e is None or e.get("NoDisplay", "false").lower() == "true" or e.get("Type", "Application") != "Application": continue
+        vistos[i] = e.get("Name", i)
+for i, n in sorted(vistos.items(), key=lambda x: x[1].lower()):
+    print("%s\t%s" % (i, n))
+PY
+  )
+  id=$(printf '%s\n' "$sel" | fuzzel --dmenu --with-nth=2 --accept-nth=1 -p "$(_ 'Fijar en el dock') ❯ ") || return 0
+  [ -n "$id" ] || return 0
+  grep -qxF "$id" "$FIJ" || echo "$id" >> "$FIJ"
+  relanza
+}
+
+quita(){ # quita [id]: sin id, elegir de la lista
+  local id="${1:-}"
+  [ -e "$FIJ" ] || return 0
+  if [ -z "$id" ]; then
+    id=$(fuzzel --dmenu -p "$(_ 'Quitar del dock') ❯ " < "$FIJ") || return 0
+  fi
+  [ -n "$id" ] || return 0
+  grep -vxF "$id" "$FIJ" > "$FIJ.nuevo"; mv "$FIJ.nuevo" "$FIJ"
+  relanza
+}
 
 minimizadas(){
   local sel addr ws
@@ -35,6 +185,9 @@ case "${1:-alterna}" in
   apaga)   rm -f "$MARCA"; para ;;
   alterna) if [ -e "$MARCA" ]; then rm -f "$MARCA"; para; else mkdir -p "$C"; touch "$MARCA"; lanza; fi ;;
   arranca) [ -e "$MARCA" ] && lanza; true ;;
-  minimizadas) minimizadas ;;
+  fija|pin)       fija ;;
+  quita|unpin)    shift; quita "${1:-}" ;;
+  abre)           shift; abre "$1" ;;
+  minimizadas)    minimizadas ;;
   *) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac

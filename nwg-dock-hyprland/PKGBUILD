@@ -12,7 +12,7 @@ source=('https://github.com/nwg-piotr/nwg-dock-hyprland/archive/v0.4.11/nwg-dock
 sha256sums=('ee88452f1afb612fdb43c66eb62752f255d23c51eb35ce9657b35cff79eede8e')
 build() {
   cd nwg-dock-hyprland-$pkgver
-  export GOTOOLCHAIN=local GOFLAGS="-trimpath -mod=mod" GOPATH="$srcdir/gopath" GOCACHE="$srcdir/gocache"
+  export GOTOOLCHAIN=local GOFLAGS="-trimpath -mod=mod -modcacherw" GOPATH="$srcdir/gopath" GOCACHE="$srcdir/gocache"
   go build -ldflags "-s -w" -o bin/nwg-dock-hyprland .
 }
 package() {
