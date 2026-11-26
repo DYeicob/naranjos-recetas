@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-7c.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-7c2.sh (NO editar a mano)
 pkgname=naranjos-instalador
-pkgver=0.1.0
+pkgver=0.1.1
 pkgrel=1
 pkgdesc='Instalador de NaranjOS (desde la ISO en vivo): disco entero o espacio libre, LUKS2 + Btrfs y arranque firmado'
 arch=('any')
@@ -9,7 +9,7 @@ license=('GPL-3.0-or-later')
 depends=('cryptsetup' 'btrfs-progs' 'e2fsprogs' 'dosfstools' 'util-linux' 'efibootmgr' 'openssl' 'sbsigntools' 'naranjos-arranque' 'naranjos-initramfs' 'naranjos-shim16' 'foot' 'fuzzel' 'sudo')
 makedepends=()
 source=('naranjos-instala')
-sha256sums=('89525851b553b00e2b2df686670f884f4b410cce7fb2e42d24b3963087cf33c0')
+sha256sums=('723c440a183c9947da59d0f2f4371fb02a999ce0b130b9fcfa801001bb7fd2a0')
 package() {
   install -Dm755 naranjos-instala "$pkgdir/usr/bin/naranjos-instala"
 }

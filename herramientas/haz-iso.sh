@@ -87,7 +87,7 @@ if [ "$RAPIDA" = 0 ]; then
 # --- 1. la raíz con los paquetes ---------------------------------------------------------------------
 borra_trabajo; crea_trabajo
 sudo mkdir -p "$RZ" "$ISO"; mkdir -p "$SAL"
-sudo mkdir -p "$RZ"/{dev,proc,run,tmp,etc,var/lib/pacman,var/cache/pacman/pkg}
+sudo mkdir -p "$RZ"/{dev,proc,sys,run,tmp,etc,var/lib/pacman,var/cache/pacman/pkg}   # /sys vacío: el sistema lo necesita al arrancar
 sudo chmod 1777 "$RZ/tmp"
 # la forma de la raíz que no es de ningún paquete (LFS): /bin, /sbin, /lib → usr/… y /lib64 con el cargador
 # de programas (ld-linux). Sin esto, dentro de la raíz no arranca ningún programa (ni los scripts de pacman)
