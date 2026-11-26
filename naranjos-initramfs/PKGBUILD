@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-7b.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-7c.sh (NO editar a mano)
 pkgname=naranjos-initramfs
-pkgver=0.6.1
+pkgver=0.6.2
 pkgrel=1
 pkgdesc='Arranque de NaranjOS: initramfs propio y kernels firmados para Secure Boot'
 arch=('any')
@@ -9,7 +9,7 @@ license=('GPL-3.0-or-later')
 depends=('bash' 'kmod' 'util-linux' 'systemd' 'libarchive' 'zstd' 'coreutils' 'findutils' 'gawk' 'naranjos-idiomas' 'intel-ucode' 'sbsigntools' 'python' 'kbd')
 optdepends=('plymouth: pantalla de arranque')
 source=('60-naranjos-kernel.hook' '60-naranjos-kernel-quita.hook' '90-naranjos-initramfs.hook' 'init' 'initramfs.conf' 'naranjos-initramfs' 'naranjos-kernel')
-sha256sums=('b4dd00182e830a78ac65dcbd555425c592c3b1c46a036905ec2740930f65a861' '51b7409939157fc2b6e9ef9e0a5053e1199645ec8ba21198f36c9cb42fcbf036' 'cbdac623a916a8950356e5b379ef44e8edc1e8d6c4bab14d96bdd4f325905f82' 'a945fff0c100ee2a2549d83fec770387d5e23ed5ae430487b06295f9b5ac3046' '7aef95d9e0a7d465686e77cc1376566adeb8dda203409dbd5877450c6c815ddb' 'bd61fea6edbf44a66d15b0d0ae00a74e01b4b09c1310a96051135a4db1860878' '1af4d8daadf63c305be54a1caefa3041830f53bd5dd46c6558120261a12f9a9b')
+sha256sums=('b4dd00182e830a78ac65dcbd555425c592c3b1c46a036905ec2740930f65a861' '51b7409939157fc2b6e9ef9e0a5053e1199645ec8ba21198f36c9cb42fcbf036' 'cbdac623a916a8950356e5b379ef44e8edc1e8d6c4bab14d96bdd4f325905f82' '7a89ab82731988d139e6744ee0ee89c84b9d0744a2be7e536330d3ddab04ee65' '7aef95d9e0a7d465686e77cc1376566adeb8dda203409dbd5877450c6c815ddb' 'bd61fea6edbf44a66d15b0d0ae00a74e01b4b09c1310a96051135a4db1860878' '1af4d8daadf63c305be54a1caefa3041830f53bd5dd46c6558120261a12f9a9b')
 install=naranjos-initramfs.install
 backup=('etc/naranjos/initramfs.conf')
 optdepends=('cryptsetup: arrancar desde un disco cifrado con LUKS')

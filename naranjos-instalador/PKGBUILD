@@ -1,0 +1,15 @@
+# Paquete propio de NaranjOS — generado por naranjos-tanda-7c.sh (NO editar a mano)
+pkgname=naranjos-instalador
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Instalador de NaranjOS (desde la ISO en vivo): disco entero o espacio libre, LUKS2 + Btrfs y arranque firmado'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('cryptsetup' 'btrfs-progs' 'e2fsprogs' 'dosfstools' 'util-linux' 'efibootmgr' 'openssl' 'sbsigntools' 'naranjos-arranque' 'naranjos-initramfs' 'naranjos-shim16' 'foot' 'fuzzel' 'sudo')
+makedepends=()
+source=('naranjos-instala')
+sha256sums=('89525851b553b00e2b2df686670f884f4b410cce7fb2e42d24b3963087cf33c0')
+package() {
+  install -Dm755 naranjos-instala "$pkgdir/usr/bin/naranjos-instala"
+}

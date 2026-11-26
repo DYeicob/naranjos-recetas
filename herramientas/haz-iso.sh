@@ -1,8 +1,8 @@
 #!/bin/bash
 # NaranjOS — construye la ISO «en vivo» (UEFI, Secure Boot con la MOK de NaranjOS):
 #     bash herramientas/haz-iso.sh            (en NaranjOS, como tu usuario; pide sudo)
-#     bash herramientas/haz-iso.sh --rapida   rehace SOLO el arranque (initramfs, kernel firmado, GRUB y la ISO)
-#                                             sobre la raíz de la vez anterior: minutos en vez de media hora
+#     bash herramientas/haz-iso.sh --rapida   aprovecha la raíz de la vez anterior: solo pone al día el arranque y el
+#                                             instalador, y vuelve a comprimir (minutos en vez de media hora)
 #     bash herramientas/haz-iso.sh --limpia   borra la raíz de trabajo (unos 6 GB) cuando ya no la quieras
 # · La raíz de trabajo es un subvolumen Btrfs propio, comprimido con zstd: ocupa la mitad y las «fotos» del
 #   sistema NO la guardan dentro (un subvolumen no entra en la foto de @).
@@ -69,6 +69,19 @@ desmonta(){ local i; for ((i=${#MONTAJES[@]}-1; i>=0; i--)); do sudo umount -l "
 trap desmonta EXIT
 monta(){ sudo mount "$@"; MONTAJES+=("${!#}"); }
 CH(){ sudo chroot "$RZ" /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin HOME=/root "$@"; }
+
+pon_instalador(){
+  # el instalador: en el menú de aplicaciones (solo en la ISO) y un aviso al entrar
+  if [ -x "$RZ/usr/bin/naranjos-instala" ]; then
+    printf '[Desktop Entry]\nType=Application\nName=Instalar NaranjOS\nName[en]=Install NaranjOS\nComment=Instala NaranjOS en este equipo\nExec=naranjos-instala\nIcon=system-software-install\nTerminal=false\nCategories=System;\n' \
+      | sudo install -Dm644 /dev/stdin "$RZ/usr/share/applications/naranjos-instala.desktop"
+    sudo install -d -o 1000 -g 1000 "$RZ/home/naranjos/.config/naranjos"
+    printf -- '-- NaranjOS en vivo: aviso de cómo instalarlo\nhl.on("hyprland.start", function() hl.exec_cmd("sleep 4; naranjos-instala --bienvenida") end)\n' \
+      | sudo install -m644 -o 1000 -g 1000 /dev/stdin "$RZ/home/naranjos/.config/naranjos/complementos.lua"
+  else
+    echo "${R}  ! Falta naranjos-instala (lanza la tanda 7c): la ISO saldrá sin instalador${Z}"
+  fi
+}
 
 if [ "$RAPIDA" = 0 ]; then
 # --- 1. la raíz con los paquetes ---------------------------------------------------------------------
@@ -155,6 +168,7 @@ if [ -f "$RZ/etc/greetd/config.toml" ]; then
   printf '\n[initial_session]\ncommand = "%s"\nuser = "naranjos"\n' "$(command -v naranjos-sesion || echo Hyprland)" \
     | sudo tee -a "$RZ/etc/greetd/config.toml" >/dev/null
 fi
+pon_instalador
 sudo install -Dm644 "$DATOS/naranjos-llavero.service" "$RZ/etc/systemd/system/naranjos-llavero.service"
 sudo mkdir -p "$RZ/etc/systemd/system/multi-user.target.wants"
 sudo ln -sf ../naranjos-llavero.service "$RZ/etc/systemd/system/multi-user.target.wants/naranjos-llavero.service"
@@ -167,11 +181,13 @@ sudo rm -rf "$RZ/var/cache/pacman/pkg"/* "$RZ/var/lib/pacman/sync"/* "$RZ/var/lo
 ok "greetd entra solo como «naranjos»; llavero de pacman nuevo en cada arranque"
 
 else
-  say "Modo rápido: se aprovecha la raíz de la vez anterior (solo se pone al día naranjos-initramfs)"
+  say "Modo rápido: se aprovecha la raíz de la vez anterior (solo se ponen al día el arranque y el instalador)"
   monta --bind /dev "$RZ/dev"; monta -t proc proc "$RZ/proc"; monta -t tmpfs -o mode=0755 run "$RZ/run"
   sudo pacman --root "$RZ" --config "$T/pacman.conf" --cachedir /var/cache/pacman/pkg --gpgdir /etc/pacman.d/gnupg \
-    -Sy --noconfirm --needed naranjos-initramfs > "$T/pacman-rapida.log" 2>&1 || { tail -20 "$T/pacman-rapida.log"; die "pacman falló"; }
-  ok "naranjos-initramfs $(pacman --root "$RZ" -Q naranjos-initramfs | cut -d" " -f2)"
+    -Sy --noconfirm --needed naranjos-initramfs naranjos-arranque naranjos-shim16 naranjos-instalador > "$T/pacman-rapida.log" 2>&1 \
+    || { tail -20 "$T/pacman-rapida.log"; die "pacman falló"; }
+  ok "$(pacman --root "$RZ" -Q naranjos-initramfs naranjos-arranque naranjos-instalador 2>/dev/null | tr '\n' ' ')"
+  pon_instalador
 fi
 
 # --- 5. cachés y el arranque de la ISO ---------------------------------------------------------------
@@ -193,7 +209,7 @@ ok "kernel $K firmado con la MOK e initramfs con el modo en vivo"
 
 # --- 6. la raíz comprimida ---------------------------------------------------------------------------
 desmonta; trap - EXIT
-if [ "$RAPIDA" = 0 ]; then
+if :; then   # también con --rapida: el instalador y el arranque cambian dentro de la raíz
   say "Comprimiendo la raíz (squashfs + xz; unos minutos)…"
   sudo mksquashfs "$RZ" "$ISO/naranjos/x86_64/raiz.sfs" -comp xz -Xbcj x86 -b 1M -noappend -no-progress -quiet \
     -e boot/initramfs-linux-naranjos.img > /dev/null

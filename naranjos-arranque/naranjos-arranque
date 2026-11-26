@@ -7,7 +7,7 @@
 # Uso:  naranjos-arranque estado  ·  sudo naranjos-arranque menu  ·  sudo naranjos-arranque instala
 #       (zumo lo lanza solo con «auto» cuando cambia un kernel, GRUB o el shim)
 set -euo pipefail
-VERSION="0.3.0"
+VERSION="0.3.4"
 . /usr/lib/naranjos/naranjos-i18n.sh
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
 [ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
@@ -17,6 +17,12 @@ aviso(){ printf '%s!%s %s\n' "$A" "$Z" "$1"; }
 
 MOK=/etc/naranjos/mok
 SHIM=/usr/share/naranjos/shim
+# shim 16.1 (naranjos-shim16) si /etc/naranjos/arranque.conf dice SHIM16=1 (lo pone naranjos-instala): con él, GRUB
+# carga el kernel con el protocolo de carga de shim, que funciona en firmwares estrictos (protección de memoria NX)
+if [ "$(sed -n 's/^SHIM16=//p' /etc/naranjos/arranque.conf 2>/dev/null | tail -n1)" = 1 ] \
+   && [ -r /usr/share/naranjos/shim16/shimx64.efi ] && [ -r /usr/share/naranjos/shim16/mmx64.efi ]; then
+  SHIM=/usr/share/naranjos/shim16
+fi
 DATOS=/usr/share/naranjos/arranque
 ESTADO=/var/lib/naranjos/arranque
 CFG=/boot/grub/grub.cfg
@@ -46,10 +52,19 @@ secure_boot(){
 }
 es_root(){ [ "$(id -u)" = 0 ] || die "$(_ 'Hace falta root:') sudo naranjos-arranque $1"; }
 
+# la partición de NaranjOS; con la raíz cifrada (LUKS, desde la 7c), la partición cifrada de debajo
+particion_raiz(){
+  local dev; dev=$(dispositivo_raiz)
+  if [ "$(lsblk -dno TYPE "$dev" 2>/dev/null)" = crypt ]; then
+    dev="/dev/$(lsblk -dnro PKNAME "$dev" 2>/dev/null | head -n1)"
+  fi
+  echo "$dev"
+}
+
 # la partición EFI del mismo disco que NaranjOS (o la primera que haya)
 busca_esp(){
   local raiz disco p
-  raiz=$(dispositivo_raiz)
+  raiz=$(particion_raiz)
   disco=$(lsblk -no PKNAME "$raiz" 2>/dev/null | head -n1)
   p=$(lsblk -rpno PATH,PARTTYPE,FSTYPE ${disco:+/dev/$disco} 2>/dev/null \
       | awk -v t="$ESP_TIPO" 'tolower($2)==t && $3=="vfat" {print $1; exit}')
@@ -92,9 +107,14 @@ datos_boot(){
     if [ -n "$KRAIZ" ] || en_foto; then SUBVOL="/$RAIZ_SUB"; else SUBVOL=$(findmnt -no FSROOT /); fi
     [ "$SUBVOL" = / ] && SUBVOL=""
   fi
-  if [ -z "$KRAIZ" ] && ! en_foto && mountpoint -q /boot; then BOOT_UUID=$(findmnt -no UUID /boot); BOOT_PFX=""
+  # /boot aparte (las instalaciones cifradas de la 7c: GRUB lee el kernel de ahí, sin cifrar)
+  BOOT_APARTE=0
+  if [ -z "$KRAIZ" ] && mountpoint -q /boot; then BOOT_UUID=$(findmnt -no UUID /boot); BOOT_PFX=""; BOOT_APARTE=1
+  elif [ -n "$KRAIZ" ] && [ -r "$KRAIZ/etc/fstab" ] && awk '$2=="/boot"' "$KRAIZ/etc/fstab" | grep -q .; then
+    BOOT_UUID=$(findmnt -no UUID /boot); BOOT_PFX=""; BOOT_APARTE=1
   else BOOT_UUID=$(lsblk -dno UUID "$dev"); BOOT_PFX="$SUBVOL/boot"; fi
-  RAIZ_PARTUUID=$(lsblk -dno PARTUUID "$dev")
+  # con la raíz cifrada, root= es la partición cifrada (el initramfs pide la contraseña y la abre)
+  RAIZ_PARTUUID=$(lsblk -dno PARTUUID "$(particion_raiz)")
   [ -n "$BOOT_UUID" ] && [ -n "$RAIZ_PARTUUID" ] || die "$(_ 'No sé identificar la partición de NaranjOS')"
   RAIZ_OPC="root=PARTUUID=$RAIZ_PARTUUID"
   [ "$tipo" = btrfs ] && RAIZ_OPC+=" rootfstype=btrfs${SUBVOL:+ rootflags=subvol=${SUBVOL#/}}"
@@ -132,6 +152,8 @@ menu_fotos(){
       hay=1
     fi
     sub="${FOTOS_SUB:-@fotos}/$n/foto"; p="/$sub/boot"
+    # con /boot aparte (cifrado), la foto arranca con el kernel de ahora: los de la foto no se pueden leer sin descifrar
+    [ "$BOOT_APARTE" = 1 ] && { p=""; i=1; }
     echo "	menuentry '$(asciiza "$(_ 'Foto') $n - $f - $m")' --class naranjos --class gnu-linux --class os {"
     echo "		search --no-floppy --fs-uuid --set=root $BOOT_UUID"
     echo "		echo '$(asciiza "$(_ 'Cargando la foto') $n...")'"

@@ -67,6 +67,11 @@ fi
 hay_splash(){ plymouth --ping 2>/dev/null; }
 
 udevadm settle --timeout=30
+# los controladores de discos, a mano (udev no siempre los carga solo en el initramfs: en QEMU no cargó ni
+# ahci ni virtio): SATA/AHCI, NVMe, virtio, USB y CD/DVD. Los que no hacen falta no molestan (0.6.2)
+for m in ahci ata_piix sd_mod sr_mod cdrom nvme virtio_pci virtio_blk virtio_scsi xhci_pci ehci_pci uhci_hcd ohci_pci \
+         usb_storage uas; do modprobe -q "$m" 2>/dev/null; done
+udevadm settle --timeout=10
 
 [ "$retraso" -gt 0 ] 2>/dev/null && sleep "$retraso"
 [ -n "$foto" ] && modo=ro
@@ -84,10 +89,7 @@ dispositivo(){
 # NaranjOS en vivo (la ISO): el medio, por su etiqueta; la raíz, su squashfs; los cambios, en memoria
 if [ -n "$vivo" ]; then
   V=/run/naranjos-vivo
-  # los controladores del medio, a mano (udev no siempre los carga solo): SATA/AHCI, NVMe, USB, virtio y CD/DVD
-  for m in ahci ata_piix sd_mod sr_mod cdrom nvme virtio_pci virtio_blk virtio_scsi xhci_pci ehci_pci uhci_hcd ohci_pci \
-           usb_storage uas isofs squashfs overlay loop; do modprobe -q "$m" 2>/dev/null; done
-  udevadm settle --timeout=10
+  for m in isofs squashfs overlay loop; do modprobe -q "$m" 2>/dev/null; done
   mkdir -p "$V/medio" "$V/abajo" "$V/arriba"
   while :; do
     d=""; t=0
