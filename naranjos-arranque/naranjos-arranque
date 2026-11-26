@@ -7,7 +7,7 @@
 # Uso:  naranjos-arranque estado  ·  sudo naranjos-arranque menu  ·  sudo naranjos-arranque instala
 #       (zumo lo lanza solo con «auto» cuando cambia un kernel, GRUB o el shim)
 set -euo pipefail
-VERSION="0.3.4"
+VERSION="0.3.5"
 . /usr/lib/naranjos/naranjos-i18n.sh
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
 [ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
@@ -54,9 +54,13 @@ es_root(){ [ "$(id -u)" = 0 ] || die "$(_ 'Hace falta root:') sudo naranjos-arra
 
 # la partición de NaranjOS; con la raíz cifrada (LUKS, desde la 7c), la partición cifrada de debajo
 particion_raiz(){
-  local dev; dev=$(dispositivo_raiz)
+  local dev d s; dev=$(dispositivo_raiz)
   if [ "$(lsblk -dno TYPE "$dev" 2>/dev/null)" = crypt ]; then
-    dev="/dev/$(lsblk -dnro PKNAME "$dev" 2>/dev/null | head -n1)"
+    # lo que hay debajo de /dev/mapper/…, por sysfs (lsblk -d no da el padre de un dispositivo dm)
+    d=$(basename "$(readlink -f "$dev")")
+    s=$(ls "/sys/block/$d/slaves" 2>/dev/null | head -n1)
+    [ -n "$s" ] && [ -b "/dev/$s" ] || die "$(_ 'No encuentro la partición cifrada de debajo de') $dev"
+    dev=/dev/$s
   fi
   echo "$dev"
 }
