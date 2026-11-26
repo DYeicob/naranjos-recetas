@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Juegos retro
+Name[en]=Retro games
+Comment=Emuladores y juegos (RetroArch)
+Exec=naranjos-extra juegos
+Icon=applications-games
+Terminal=false
+Categories=Utility;

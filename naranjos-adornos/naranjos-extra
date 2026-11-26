@@ -1,0 +1,20 @@
+#!/bin/bash
+# naranjos-extra — apps gratis y sin cuenta que NaranjOS instala la primera vez que las abres (Flathub)
+#   naranjos-extra pdf      firmar y escribir en PDF (Xournal++)
+#   naranjos-extra disco    mapa de lo que ocupa el disco (Analizador de uso de disco, Baobab)
+#   naranjos-extra juegos   juegos retro y emuladores (RetroArch)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh 2>/dev/null || _(){ printf '%s' "$1"; }
+case "${1:-}" in
+  pdf)    id=com.github.xournalpp.xournalpp; n="Xournal++" ;;
+  disco)  id=org.gnome.baobab; n="Baobab" ;;
+  juegos) id=org.libretro.RetroArch; n="RetroArch" ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac
+shift
+if ! flatpak info "$id" >/dev/null 2>&1; then
+  naranjos-notifica "$n" "$(_ 'Instalando desde Flathub (gratis y sin cuenta)…')"
+  flatpak install -y --user flathub "$id" >/dev/null 2>&1 || flatpak install -y flathub "$id" >/dev/null 2>&1 \
+    || { naranjos-notifica "$n" "$(_ 'No pude instalarlo: mira naranjos-apps')"; exit 1; }
+fi
+exec flatpak run "$id" "$@"

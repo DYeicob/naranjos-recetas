@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Identidad de git
+Name[en]=Git identity
+Comment=Tu nombre y correo para git
+Exec=naranjos-git
+Icon=preferences-desktop-personal
+Terminal=false
+Categories=Development;

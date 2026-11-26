@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Controlador NVIDIA
+Name[en]=NVIDIA driver
+Comment=Instala el controlador de la gráfica NVIDIA
+Exec=naranjos-graficos nvidia
+Icon=video-display
+Terminal=false
+Categories=System;

@@ -1,0 +1,16 @@
+#!/bin/bash
+# naranjos-git — tu nombre y tu correo para git (sin cuentas: no inicia sesión en ningún sitio)
+#   naranjos-git             preguntarlos
+#   naranjos-git estado      ver cuáles hay
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh 2>/dev/null || _(){ printf '%s' "$1"; }
+if [ "${1:-}" = estado ]; then
+  echo "$(_ 'Nombre:') $(git config --global user.name || echo -)"; echo "$(_ 'Correo:') $(git config --global user.email || echo -)"; exit 0
+fi
+if [ ! -t 0 ] && command -v foot >/dev/null; then exec foot -e bash -c "naranjos-git; read -rsn1"; fi
+read -rp "$(_ 'Tu nombre para git:') [$(git config --global user.name)] " n; n=${n:-$(git config --global user.name)}
+read -rp "$(_ 'Tu correo para git:') [$(git config --global user.email)] " c; c=${c:-$(git config --global user.email)}
+[ -n "$n" ] && git config --global user.name "$n"
+[ -n "$c" ] && git config --global user.email "$c"
+git config --global init.defaultBranch main
+echo "✔ $(_ 'Listo. (Si no quieres que se vea tu correo de verdad, usa el «noreply» que te da GitHub o tu forja.)')"

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Firmar PDF
+Name[en]=Sign PDF
+Comment=Escribe y firma en PDF (Xournal++)
+Exec=naranjos-extra pdf
+Icon=accessories-text-editor
+Terminal=false
+Categories=Utility;

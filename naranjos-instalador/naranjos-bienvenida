@@ -5,6 +5,8 @@
 set -uo pipefail
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; B=$'\e[1m'; Z=$'\e[0m'
 MARCA=/etc/naranjos/nuevo-dueno
+. /usr/lib/naranjos/naranjos-i18n.sh 2>/dev/null || _(){ printf '%s' "$1"; }
+_f(){ local m; m=$(_ "$1"); shift; printf "$m" "$@"; }
 [ "$(id -u)" = 0 ] && [ -e "$MARCA" ] || exit 0
 command -v plymouth >/dev/null && plymouth quit 2>/dev/null
 titulo(){ printf '\n%s━━ %s ━━%s\n' "$O" "$1" "$Z"; }
@@ -14,84 +16,91 @@ elige(){  # elige <título> <opción>… → ELEGIDO (desde 0)
   local t="$1" i o; shift
   while :; do
     echo "  $B$t$Z"; i=1; for o in "$@"; do printf '    %d) %s\n' $i "$o"; i=$((i + 1)); done
-    read -rp "  Número [1]: " o; o=${o:-1}
+    read -rp "  $(_ 'Número:') [1] " o; o=${o:-1}
     [[ "$o" =~ ^[0-9]+$ ]] && [ "$o" -ge 1 ] && [ "$o" -le $# ] && { ELEGIDO=$((o - 1)); return 0; }
   done
 }
 pregunta_clave(){
   local a b
   while :; do
-    read -rsp "  $1: " a; echo; read -rsp "  Otra vez: " b; echo
-    [ "$a" = "$b" ] || { aviso "No coinciden."; continue; }
-    [ ${#a} -ge 6 ] || { aviso "Mínimo 6 caracteres."; continue; }
+    read -rsp "  $1: " a; echo; read -rsp "  $(_ 'Otra vez:') " b; echo
+    [ "$a" = "$b" ] || { aviso "$(_ 'No coinciden. Otra vez.')"; continue; }
+    [ ${#a} -ge 6 ] || { aviso "$(_ 'Mínimo 6 caracteres.')"; continue; }
     CLAVE=$a; return 0
   done
 }
 
 clear
+printf 'Idioma · Language\n  1) Español\n  2) English\n'; read -rp "[1]: " i
+if [ "${i:-1}" = 2 ]; then LENGUA=en; LOCAL=en_US.UTF-8; else LENGUA=es; LOCAL=es_ES.UTF-8; fi
+export LANGUAGE=$LENGUA
+clear
 printf '%s' "$O"
 cat << 'LOGO'
       ▄▄▄▄
-    ▄█████▀   ¡Bienvenido/a a NaranjOS!
+    ▄█████▀   NaranjOS
    ███████
    ▀█████▀
 LOGO
 printf '%s' "$Z"
-echo "  Este equipo es tuyo ahora. Cuatro preguntas y a estrenarlo."
+echo "  $(_ '¡Bienvenido/a a NaranjOS! Este equipo es tuyo ahora. Cuatro preguntas y a estrenarlo.')"
 
-titulo "1 · Teclado"
-TECLADOS=("Español (España)|es|es" "Español (Latinoamérica)|latam|la-latin1" "Inglés (EE. UU.)|us|us" "Inglés (Reino Unido)|gb|uk"
-          "Francés|fr|fr" "Alemán|de|de" "Italiano|it|it" "Portugués (Portugal)|pt|pt-latin1" "Portugués (Brasil)|br|br-abnt2")
-elige "Teclado" "${TECLADOS[@]%%|*}"
+titulo "$(_ '1 · Teclado')"
+TECLADOS=("$(_ 'Español (España)')|es|es" "$(_ 'Español (Latinoamérica)')|latam|la-latin1" "$(_ 'Inglés (EE. UU.)')|us|us" "$(_ 'Inglés (Reino Unido)')|gb|uk"
+          "$(_ 'Francés')|fr|fr" "$(_ 'Alemán')|de|de" "$(_ 'Italiano')|it|it" "$(_ 'Portugués (Portugal)')|pt|pt-latin1" "$(_ 'Portugués (Brasil)')|br|br-abnt2")
+[ "$LENGUA" = en ] && TECLADOS=("${TECLADOS[2]}" "${TECLADOS[3]}" "${TECLADOS[0]}" "${TECLADOS[@]:4}" "${TECLADOS[1]}")
+elige "$(_ 'Teclado')" "${TECLADOS[@]%%|*}"
 IFS='|' read -r TEC XKB KEYMAP <<< "${TECLADOS[$ELEGIDO]}"
 loadkeys -q "$KEYMAP" 2>/dev/null; bien "$TEC"
 
-titulo "2 · Zona horaria"
+titulo "$(_ '2 · Zona horaria')"
 ZONAS=(Europe/Madrid Atlantic/Canary Europe/Lisbon Europe/London Europe/Paris America/Mexico_City America/Bogota
-       America/Argentina/Buenos_Aires America/Santiago America/Lima America/New_York UTC "Otra (la escribo)")
-elige "Zona horaria" "${ZONAS[@]}"
+       America/Argentina/Buenos_Aires America/Santiago America/Lima America/New_York UTC "$(_ 'Otra (la escribo)')")
+elige "$(_ 'Zona horaria')" "${ZONAS[@]}"
 ZONA=${ZONAS[$ELEGIDO]}
 if [ "$ELEGIDO" = $(( ${#ZONAS[@]} - 1 )) ]; then
-  while :; do read -rp "  Zona (p. ej. America/Caracas): " ZONA; [ -f "/usr/share/zoneinfo/$ZONA" ] && break; aviso "No la encuentro."; done
+  while :; do read -rp "  $(_ 'Zona (p. ej. America/Caracas):') " ZONA; [ -f "/usr/share/zoneinfo/$ZONA" ] && break; aviso "$(_ 'No la encuentro.')"; done
 fi
 bien "$ZONA"
 
-titulo "3 · Tu usuario"
-while :; do read -rp "  Tu nombre: " NOMBRE; [ -n "$NOMBRE" ] && [[ "$NOMBRE" != *:* ]] && break; done
+titulo "$(_ '3 · Tu usuario')"
+while :; do read -rp "  $(_ 'Tu nombre (p. ej. Ana García):') " NOMBRE; [ -n "$NOMBRE" ] && [[ "$NOMBRE" != *:* ]] && break; done
 SUG=$(printf '%s' "${NOMBRE%% *}" | iconv -f UTF-8 -t ASCII//TRANSLIT 2>/dev/null | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9')
 while :; do
-  read -rp "  Nombre de usuario [${SUG:-yo}]: " USUARIO; USUARIO=${USUARIO:-${SUG:-yo}}
+  read -rp "  $(_ 'Nombre de usuario') [${SUG:-yo}]: " USUARIO; USUARIO=${USUARIO:-${SUG:-yo}}
   [[ "$USUARIO" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] && ! getent passwd "$USUARIO" >/dev/null && break
-  aviso "Solo minúsculas, números, - y _, empezando por una letra (y que no exista ya)."
+  aviso "$(_ 'Solo minúsculas, números, - y _, empezando por una letra (y que no exista ya).')"
 done
-pregunta_clave "Contraseña de $USUARIO"; CLAVE_USU=$CLAVE; unset CLAVE
+pregunta_clave "$(_f 'Contraseña de %s' "$USUARIO")"; CLAVE_USU=$CLAVE; unset CLAVE
 while :; do
-  read -rp "  Nombre del equipo [naranjos-$USUARIO]: " EQUIPO; EQUIPO=${EQUIPO:-naranjos-$USUARIO}
-  [[ "$EQUIPO" =~ ^[A-Za-z0-9][A-Za-z0-9-]{0,62}$ ]] && break; aviso "Letras, números y guiones."
+  read -rp "  $(_ 'Nombre del equipo') [naranjos-$USUARIO]: " EQUIPO; EQUIPO=${EQUIPO:-naranjos-$USUARIO}
+  [[ "$EQUIPO" =~ ^[A-Za-z0-9][A-Za-z0-9-]{0,62}$ ]] && break; aviso "$(_ 'Letras, números y guiones.')"
 done
 
 # la contraseña del disco: la temporal que te dieron → la tuya
 raiz=$(findmnt -nvo SOURCE /)
 if [ "$(lsblk -dno TYPE "$raiz" 2>/dev/null)" = crypt ]; then
   part=/dev/$(ls "/sys/block/$(basename "$(readlink -f "$raiz")")/slaves" | head -n1)
-  titulo "4 · Contraseña del disco"
-  echo "  El disco está cifrado. Pon tu propia contraseña: primero escribe la ${B}temporal${Z} que te dieron"
-  echo "  (la de al encender) y luego la tuya, dos veces. ${B}Si la olvidas, los datos se pierden.${Z}"
+  titulo "$(_ '4 · Contraseña del disco')"
+  echo "  $(_ 'El disco está cifrado. Pon tu propia contraseña: primero escribe la temporal que te dieron')"
+  echo "  $(_ '(la de al encender) y luego la tuya, dos veces.') ${B}$(_ 'Si la olvidas, los datos se pierden para siempre.')${Z}"
   t=0
   until cryptsetup luksChangeKey -y "$part"; do
-    t=$((t + 1)); [ $t -ge 3 ] && { aviso "No se cambió: sigue valiendo la temporal (cámbiala luego con: sudo cryptsetup luksChangeKey $part)"; break; }
-    aviso "No se cambió. Otra vez."
+    t=$((t + 1)); [ $t -ge 3 ] && { aviso "$(_f 'No se cambió: sigue valiendo la temporal (cámbiala luego con: sudo cryptsetup luksChangeKey %s)' "$part")"; break; }
+    aviso "$(_ 'No se cambió. Otra vez.')"
   done
-  [ $t -lt 3 ] && bien "Contraseña del disco cambiada"
+  [ $t -lt 3 ] && bien "$(_ 'Contraseña del disco cambiada')"
 fi
 
-titulo "Preparando tu NaranjOS"
+titulo "$(_ 'Preparando tu NaranjOS')"
+printf 'LANG=%s\n' "$LOCAL" > /etc/locale.conf
+localedef --list-archive 2>/dev/null | grep -qix "${LOCAL/UTF-8/utf8}" || localedef -i "${LOCAL%%.*}" -f UTF-8 "$LOCAL" >/dev/null 2>&1
 echo "$EQUIPO" > /etc/hostname; hostname "$EQUIPO" 2>/dev/null
 printf '127.0.0.1 localhost\n::1 localhost\n127.0.1.1 %s\n' "$EQUIPO" > /etc/hosts
 ln -sf "/usr/share/zoneinfo/$ZONA" /etc/localtime
 touch /etc/vconsole.conf; sed -i '/^KEYMAP=/d; /^XKBLAYOUT=/d' /etc/vconsole.conf; echo "KEYMAP=$KEYMAP" >> /etc/vconsole.conf
 useradd -m -U -G wheel,video,audio,input,storage,plugdev -s /usr/bin/zsh -c "$NOMBRE" "$USUARIO" 2>/dev/null \
-  || useradd -m -U -G wheel -s /bin/bash -c "$NOMBRE" "$USUARIO" || { aviso "No pude crear el usuario"; sleep 10; exit 1; }
+  || useradd -m -U -G wheel -s /bin/bash -c "$NOMBRE" "$USUARIO" || { aviso "$(_ 'No pude crear el usuario')"; sleep 10; exit 1; }
 printf '%s:%s\n' "$USUARIO" "$CLAVE_USU" | chpasswd; unset CLAVE_USU
 printf '%s:100000:65536\n' "$USUARIO" >> /etc/subuid; printf '%s:100000:65536\n' "$USUARIO" >> /etc/subgid
 if [ "$XKB" != es ]; then
@@ -100,8 +109,8 @@ if [ "$XKB" != es ]; then
   chown "$USUARIO:$USUARIO" "/home/$USUARIO/.config/naranjos/complementos.lua"
 fi
 # el initramfs, con el teclado nuevo (para escribir la contraseña del disco)
-naranjos-initramfs --todos >/dev/null 2>&1 || aviso "No pude rehacer el initramfs (el teclado del arranque sigue siendo el de antes)"
+naranjos-initramfs --todos >/dev/null 2>&1 || aviso "$(_ 'No pude rehacer el initramfs (el teclado del arranque sigue siendo el de antes)')"
 rm -f "$MARCA" /etc/systemd/system/multi-user.target.wants/naranjos-bienvenida.service
-bien "¡Listo, $NOMBRE! Ahora entra con tu usuario: $USUARIO"
+bien "$(_f '¡Listo, %s! Ahora entra con tu usuario: %s' "$NOMBRE" "$USUARIO")"
 sleep 3
 exit 0

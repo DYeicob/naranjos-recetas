@@ -1,0 +1,7 @@
+post_install() {
+  # vídeo por hardware en mpv (y en el fondo en movimiento); solo si no hay ya un mpv.conf del sistema
+  if [ ! -e /etc/mpv/mpv.conf ]; then mkdir -p /etc/mpv; printf '# NaranjOS: vídeo por hardware cuando se puede\nhwdec=auto-safe\n' > /etc/mpv/mpv.conf; fi
+  sysctl -q --system >/dev/null 2>&1 || true
+  udevadm control --reload >/dev/null 2>&1 || true
+}
+post_upgrade() { post_install; }

@@ -1,0 +1,8 @@
+#!/bin/bash
+# naranjos-consola-ia — Super + º (la tecla de debajo de Esc): una consola que baja desde arriba con el agente de IA
+# local de NaranjOS (naranjos-ia agente: opencode + Ollama, en tu equipo y sin cuentas). Otra vez la tecla: se esconde.
+if ! hyprctl clients -j 2>/dev/null | grep -q '"class": "naranjos-consola-ia"'; then
+  setsid -f foot --app-id=naranjos-consola-ia -T "NaranjOS · IA" -e bash -c 'naranjos-ia agente || { echo; read -rsn1; }' >/dev/null 2>&1
+  sleep 0.4
+fi
+hyprctl dispatch 'hl.dsp.workspace.toggle_special("ia")' >/dev/null 2>&1

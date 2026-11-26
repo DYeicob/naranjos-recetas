@@ -1,0 +1,23 @@
+#!/bin/bash
+# naranjos-estilo — cómo se ven las ventanas
+#   naranjos-estilo transparencia opaca|transparente|cristal
+#   naranjos-estilo esquinas tema|rectas|redondas
+#   naranjos-estilo animaciones si|no|auto        (auto: sin animaciones en máquinas virtuales)
+#   naranjos-estilo menu                           elegir en un menú
+# Se guarda en ~/.config/naranjos/estilo.conf (lo lee Hyprland con adornos.lua).
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh 2>/dev/null || _(){ printf '%s' "$1"; }
+F="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos/estilo.conf"; mkdir -p "${F%/*}"; touch "$F"
+pon(){ sed -i "/^$1=/d" "$F"; echo "$1=$2" >> "$F"; hyprctl reload >/dev/null 2>&1; echo "✔ $1 = $2"; }
+case "${1:-}" in
+  transparencia|transparency) case "${2:-}" in opaca|transparente|cristal) pon transparencia "$2" ;; *) echo "opaca|transparente|cristal"; exit 1 ;; esac ;;
+  esquinas|corners) case "${2:-}" in tema|rectas|redondas) pon esquinas "$2" ;; *) echo "tema|rectas|redondas"; exit 1 ;; esac ;;
+  animaciones|animations) case "${2:-}" in si|no|auto) pon animaciones "$2" ;; *) echo "si|no|auto"; exit 1 ;; esac ;;
+  menu)
+    o=$(printf '%s\n' "$(_ 'Ventanas opacas')" "$(_ 'Ventanas transparentes')" "$(_ 'Ventanas de cristal (desenfoque)')" \
+        "$(_ 'Esquinas del tema')" "$(_ 'Esquinas rectas')" "$(_ 'Esquinas redondas')" "$(_ 'Con animaciones')" "$(_ 'Sin animaciones')" \
+        | fuzzel --dmenu --index --prompt "$(_ 'Estilo') ❯ " --lines 8 --width 40) || exit 0
+    case "$o" in 0) "$0" transparencia opaca ;; 1) "$0" transparencia transparente ;; 2) "$0" transparencia cristal ;;
+      3) "$0" esquinas tema ;; 4) "$0" esquinas rectas ;; 5) "$0" esquinas redondas ;; 6) "$0" animaciones si ;; 7) "$0" animaciones no ;; esac >/dev/null ;;
+  *) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; [ -s "$F" ] && cat "$F"; exit 0 ;;
+esac

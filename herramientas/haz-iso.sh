@@ -184,7 +184,7 @@ else
   say "Modo rápido: se aprovecha la raíz de la vez anterior (solo se ponen al día el arranque y el instalador)"
   monta --bind /dev "$RZ/dev"; monta -t proc proc "$RZ/proc"; monta -t tmpfs -o mode=0755 run "$RZ/run"
   sudo pacman --root "$RZ" --config "$T/pacman.conf" --cachedir /var/cache/pacman/pkg --gpgdir /etc/pacman.d/gnupg \
-    -Sy --noconfirm --needed naranjos-initramfs naranjos-arranque naranjos-shim16 naranjos-fotos naranjos-instalador > "$T/pacman-rapida.log" 2>&1 \
+    -Sy --noconfirm --needed naranjos-initramfs naranjos-arranque naranjos-shim16 naranjos-fotos naranjos-instalador naranjos-adornos naranjos-idiomas > "$T/pacman-rapida.log" 2>&1 \
     || { tail -20 "$T/pacman-rapida.log"; die "pacman falló"; }
   ok "$(pacman --root "$RZ" -Q naranjos-initramfs naranjos-arranque naranjos-fotos naranjos-instalador 2>/dev/null | tr '\n' ' ')"
   pon_instalador
@@ -206,6 +206,27 @@ sudo sbsign --key "$MOK/MOK.priv" --cert "$MOK/MOK.pem" --output "$ISO/boot/vmli
 sudo sbverify --cert "$MOK/MOK.pem" "$ISO/boot/vmlinuz-linux-naranjos" >/dev/null 2>&1 || die "La firma del kernel no se verifica"
 sudo cp "$RZ/boot/initramfs-linux-naranjos.img" "$ISO/boot/"
 ok "kernel $K firmado con la MOK e initramfs con el modo en vivo"
+
+# --- 5b. lo que sale al público: sin /srv/zumo y sin NADA privado ----------------------------------------
+# los equipos instalados se actualizan desde la Release «naranjos-core» de GitHub (el /srv/zumo es solo de tu equipo)
+sudo sed -i '\|^Server *= *file:///srv/zumo|d' "$RZ/etc/pacman.conf"
+grep -q '^Server *= *https://' "$RZ/etc/pacman.conf" || die "El pacman.conf de la ISO no tiene ningún servidor en internet"
+say "Revisando que la ISO no lleve nada privado…"
+MAL=$(sudo find "$RZ" -xdev \( -name 'MOK.priv' -o -name '*.priv' -o -name '*.key' -path '*/naranjos/*' -o -path "$RZ/etc/naranjos/mok" \
+        -o -path "$RZ/root/.gnupg" -o -path "$RZ/etc/pacman.d/gnupg/private-keys-v1.d" -o -name 'ssh_host_*' \
+        -o -path "$RZ/var/lib/iwd/*.psk" -o -path "$RZ/var/lib/iwd/*.8021x" -o -path "$RZ/etc/NetworkManager/system-connections/*" \
+        -o -path "$RZ/etc/wireguard/*.conf" -o -path "$RZ/var/lib/tailscale/*" \) -print 2>/dev/null | head -20)
+OTROS=$(sudo find "$RZ/home" -mindepth 1 -maxdepth 1 ! -name naranjos -print 2>/dev/null)
+TUYO=$(sudo grep -rIl --exclude-dir=pacman.d -e "$(id -un)@" -e "/home/$(id -un)" "$RZ/etc" 2>/dev/null | head -10)
+if [ -n "$MAL$OTROS$TUYO" ]; then
+  printf '%s\n' $MAL $OTROS $TUYO | sed 's/^/    /'
+  die "La ISO llevaría cosas privadas (arriba). No se ha hecho la ISO: quítalas de herramientas/iso/no-copiar.txt o del sistema."
+fi
+ok "Sin claves, contraseñas, Wi-Fi ni nada tuyo dentro; se actualiza desde GitHub"
+# la lista de paquetes de la ISO, con versión y licencia (para las licencias y las fuentes)
+mkdir -p "$SAL"
+LC_ALL=C pacman --root "$RZ" -Qi 2>/dev/null | awk -F' *: ' '/^Name/{n=$2} /^Version/{v=$2} /^Licenses/{print n"\t"v"\t"$2}' > "$SAL/$NOMBRE.paquetes.tsv"
+ok "Lista de paquetes: $SAL/$NOMBRE.paquetes.tsv ($(wc -l < "$SAL/$NOMBRE.paquetes.tsv"))"
 
 # --- 6. la raíz comprimida ---------------------------------------------------------------------------
 desmonta; trap - EXIT
@@ -254,6 +275,13 @@ sudo xorriso -as mkisofs -iso-level 3 -full-iso9660-filenames -joliet -joliet-lo
   -output "$SAL/$NOMBRE.iso" "$ISO" > "$T/xorriso.log" 2>&1 || { tail -20 "$T/xorriso.log"; die "xorriso falló"; }
 sudo chown "$(id -u):$(id -g)" "$SAL/$NOMBRE.iso"
 (cd "$SAL" && sha256sum "$NOMBRE.iso" > "$NOMBRE.iso.sha256")
+# la suma, firmada con la clave de NaranjOS (la de los paquetes): así se puede comprobar que la ISO es la tuya
+LLAVE=24D20F18D4A51E6B5222A5A2FCCC1B88ED9963AD
+if command -v gpg >/dev/null && gpg --list-secret-keys "$LLAVE" >/dev/null 2>&1; then
+  if (cd "$SAL" && gpg --yes --quiet --local-user "$LLAVE" --armor --detach-sign "$NOMBRE.iso.sha256"); then
+    ok "sha256 firmado con la clave de NaranjOS ($NOMBRE.iso.sha256.asc)"
+  else echo "${R}  ! No pude firmar el sha256 (¿frase de la clave?). La ISO vale igual; fírmalo luego con:${Z} gpg -u $LLAVE -ab $SAL/$NOMBRE.iso.sha256"; fi
+fi
 TAM=$(stat -c %s "$SAL/$NOMBRE.iso")
 ok "$SAL/$NOMBRE.iso  ($(numfmt --to=iec "$TAM"))"
 if [ "$TAM" -ge 2147483648 ]; then

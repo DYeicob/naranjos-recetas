@@ -1,18 +1,26 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
 pkgname=naranjos-adornos
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc='Barras de título, fondo en movimiento, animación de tema, escritura CJK y sincronizar carpetas'
 arch=('any')
 url='https://github.com/DYeicob/naranjos-recetas'
 license=('GPL-3.0-or-later')
-depends=('hyprbars' 'mpv' 'mpvpaper' 'ffmpeg' 'fcitx5' 'fcitx5-gtk' 'fcitx5-chinese-addons' 'fcitx5-anthy' 'fcitx5-hangul' 'syncthing' 'python')
+depends=('hyprbars' 'mpv' 'mpvpaper' 'ffmpeg' 'fcitx5' 'fcitx5-gtk' 'fcitx5-chinese-addons' 'fcitx5-anthy' 'fcitx5-hangul' 'syncthing' 'python' 'flatpak' 'foot' 'fuzzel' 'git')
 makedepends=()
-source=('naranjos-barras' 'naranjos-fondo-video' 'naranjos-escritura' 'naranjos-sincroniza' 'adornos.lua' 'fcitx5-tema.conf' )
-sha256sums=('c9440aa56b64007caae60df6fee0e04d8966293e801f381638340d837c09a611' '70f7e979268fc1c667b729de551e64eddf0bcbddc5a7a3c40744accd13b22861' 'd41cc2e6ead1f9a53c047950c8ae35089a7d191068be94212707e9d7005cc7ca' 'c94d0b6a5ccc53952862869906da9d7aeff1680e0b3a962efc262d02f50ec36d' '24c47b3c885451def212c679cb1258330049672e97eecef11ef174228a3738e7' '8cd494b9608ab9823d8a4255f5adc3c6f1ec972221d22c9cad9d26553cad89be')
+source=('naranjos-barras' 'naranjos-fondo-video' 'naranjos-escritura' 'naranjos-sincroniza' 'adornos.lua' 'fcitx5-tema.conf' 'naranjos-extra' 'naranjos-graficos' 'naranjos-git' 'naranjos-estilo' 'naranjos-consola-ia' '60-naranjos-red.conf' '60-naranjos-planificador.rules' 'naranjos-extra-pdf.desktop' 'naranjos-extra-disco.desktop' 'naranjos-extra-juegos.desktop' 'naranjos-graficos.desktop' 'naranjos-git.desktop')
+sha256sums=('c9440aa56b64007caae60df6fee0e04d8966293e801f381638340d837c09a611' '70f7e979268fc1c667b729de551e64eddf0bcbddc5a7a3c40744accd13b22861' 'd41cc2e6ead1f9a53c047950c8ae35089a7d191068be94212707e9d7005cc7ca' 'c94d0b6a5ccc53952862869906da9d7aeff1680e0b3a962efc262d02f50ec36d' '22dab8dde5dc9ac3d172953cf64e7a7262cf3970dd7c2176748d2a7bbe3eb1d2' '8cd494b9608ab9823d8a4255f5adc3c6f1ec972221d22c9cad9d26553cad89be' '93f1ba12e32a4063cfd7a9c59c8da539ddd145d90256fa7882f298dee6c51c3f' '6d7b8a10fa5aa4442a2a5f0ffe0ad807f343951fdc283a3793297b3cd169247c' '8d1ab9e3e53d426bde2341507e8a35733a88d1e52efb5b33e5ef0d38da1c1aec' 'c722997801fee1d6864b6cdbe0b300731eaf9c03abc9f6b31ad8f6a54a122ac0' 'd42c6c4055246d6f8df49de2d3a88b062fbb24e0310f78363c32fb040a52adec' '97cfd02916bf8beb8023a3f74c089adb9299286743cff76ef1840f9928e0fd23' '2fd92e070d050c7c509d43994286bfbfae96ebce44351b41588ca267e66598a4' '5448cd50be11587b26498db316afbcee005e1ff6364a26d601564be8d31e7365' '399254da38efc34256e9a34829cdd49ab63f31773ce06de9165c5556ba677c71' '9d252df6b7b7cab54f8f6733ee5de318a26557699ade8420bca99360a025cb54' '56dd6ad6fc12ab32794b8652d1049fcd5be9bb033072d3374cf70b2291788e76' 'fbe00acc82781e558e2299acad5acbf3ec1e6f6f8ca9073cd2522be0b14c1a0a')
+install=naranjos-adornos.install
 package() {
   local s
   for s in naranjos-barras naranjos-fondo-video naranjos-escritura naranjos-sincroniza; do install -Dm755 "$s" "$pkgdir/usr/bin/$s"; done
   install -Dm644 adornos.lua      "$pkgdir/usr/share/naranjos/hypr/adornos.lua"
   install -Dm644 fcitx5-tema.conf "$pkgdir/usr/share/naranjos/fcitx5-tema.conf"
+  # (7e) apps gratis y sin cuenta, NVIDIA, git, estilo, consola de IA; red, discos y vídeo
+  for s in naranjos-extra naranjos-graficos naranjos-git naranjos-estilo naranjos-consola-ia; do install -Dm755 "$s" "$pkgdir/usr/bin/$s"; done
+  install -Dm644 60-naranjos-red.conf "$pkgdir/usr/lib/sysctl.d/60-naranjos-red.conf"
+  install -Dm644 60-naranjos-planificador.rules "$pkgdir/usr/lib/udev/rules.d/60-naranjos-planificador.rules"
+  for s in naranjos-extra-pdf naranjos-extra-disco naranjos-extra-juegos naranjos-graficos naranjos-git; do
+    install -Dm644 "$s.desktop" "$pkgdir/usr/share/applications/$s.desktop"
+  done
 }

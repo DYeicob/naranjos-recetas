@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Mapa del disco
+Name[en]=Disk map
+Comment=Qué ocupa tu disco (Baobab)
+Exec=naranjos-extra disco
+Icon=drive-harddisk
+Terminal=false
+Categories=Utility;

@@ -59,3 +59,31 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("naranjos-fondo-video arranca")
     hl.exec_cmd("naranjos-escritura arranca")
 end)
+
+---- (7e) estilo de las ventanas: naranjos-estilo (~/.config/naranjos/estilo.conf) ----
+local estilo = {}
+if io then
+    local f = io.open(C .. "estilo.conf", "r")
+    if f then
+        for l in f:lines() do local k, v = l:match("^(%a+)=(%a+)$"); if k then estilo[k] = v end end
+        f:close()
+    end
+end
+local deco = {}
+if estilo.transparencia == "opaca" then deco.active_opacity = 1.0; deco.inactive_opacity = 1.0
+elseif estilo.transparencia == "transparente" then deco.active_opacity = 0.92; deco.inactive_opacity = 0.85
+elseif estilo.transparencia == "cristal" then
+    deco.active_opacity = 0.85; deco.inactive_opacity = 0.78; deco.blur = { enabled = true, size = 8, passes = 3 }
+end
+if estilo.esquinas == "rectas" then deco.rounding = 0 elseif estilo.esquinas == "redondas" then deco.rounding = 14 end
+if next(deco) then hl.config({ decoration = deco }) end
+-- sin animaciones si lo pides, o en máquinas virtuales (de serie: «auto»)
+local anim = estilo.animaciones or "auto"
+if anim == "no" or (anim == "auto" and os and os.execute and os.execute("systemd-detect-virt -q") == true) then
+    hl.config({ animations = { enabled = false } })
+end
+
+---- (7e) consola de IA que baja desde arriba: Super + º (o Super + ` en teclados ingleses) ----
+hl.window_rule({ name = "consola-ia", match = { class = "^naranjos-consola-ia$" }, float = true, workspace = "special:ia" })
+hl.bind("SUPER + masculine", hl.dsp.exec_cmd("naranjos-consola-ia"))
+hl.bind("SUPER + grave", hl.dsp.exec_cmd("naranjos-consola-ia"))

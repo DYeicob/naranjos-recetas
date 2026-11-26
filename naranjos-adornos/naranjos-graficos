@@ -1,0 +1,36 @@
+#!/bin/bash
+# naranjos-graficos — la tarjeta gráfica (fase 7e)
+#   naranjos-graficos            qué gráficas hay y qué controlador usan
+#   naranjos-graficos nvidia     instala el controlador de NVIDIA (nvidia-open + nvidia-utils, del repositorio de NaranjOS)
+# La ISO no lleva NVIDIA (no cabría en 2 GB): se instala después con esto, desde internet.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh 2>/dev/null || _(){ printf '%s' "$1"; }
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'
+hay_nvidia(){ local d; for d in /sys/bus/pci/devices/*; do
+  [ "$(cat "$d/vendor" 2>/dev/null)" = 0x10de ] && [[ "$(cat "$d/class" 2>/dev/null)" == 0x03* ]] && return 0; done; return 1; }
+estado(){
+  local d v c drv
+  printf '%sNaranjOS · %s%s\n' "$O" "$(_ 'gráficas')" "$Z"
+  for d in /sys/bus/pci/devices/*; do
+    c=$(cat "$d/class" 2>/dev/null); [[ "$c" == 0x03* ]] || continue
+    v=$(cat "$d/vendor"); drv=$(basename "$(readlink "$d/driver" 2>/dev/null)" 2>/dev/null)
+    case "$v" in 0x8086) v=Intel ;; 0x1002) v=AMD ;; 0x10de) v=NVIDIA ;; 0x1af4|0x1234|0x15ad) v=$(_ 'virtual') ;; esac
+    printf '  %-8s %s %s\n' "$v" "$(_ 'controlador:')" "${drv:-$(_ 'ninguno')}"
+  done
+  hay_nvidia && ! pacman -Q nvidia-open >/dev/null 2>&1 && echo "  $(_ 'Hay una NVIDIA sin su controlador: naranjos-graficos nvidia')"
+  return 0
+}
+nvidia(){
+  hay_nvidia || { echo "$(_ 'Este equipo no tiene gráfica NVIDIA.')"; exit 0; }
+  pacman -Q nvidia-open >/dev/null 2>&1 && { echo "${G}✔${Z} $(_ 'El controlador de NVIDIA ya está instalado.')"; exit 0; }
+  echo "$(_ 'Se instalará el controlador de NVIDIA (unos 900 MB) desde el repositorio de NaranjOS.')"
+  read -rp "$(_ 'Escribe SI para seguir:') " r; [ "$r" = SI ] || exit 0
+  sudo zumo instala nvidia-open nvidia-utils || { echo "${R}✘${Z} $(_ 'No se pudo instalar (¿hay internet?)')"; exit 1; }
+  sudo naranjos-initramfs --todos >/dev/null 2>&1
+  echo "${G}✔${Z} $(_ 'Listo: reinicia para usar la NVIDIA.')"
+}
+case "${1:-}" in
+  ""|estado) estado ;;
+  nvidia) if [ ! -t 0 ] && command -v foot >/dev/null; then exec foot -e bash -c "naranjos-graficos nvidia; read -rsn1"; fi; nvidia ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

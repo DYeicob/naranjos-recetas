@@ -4265,3 +4265,755 @@ msgstr ""
 #: zumo:207
 msgid "Vaciando la caché de versiones antiguas…"
 msgstr ""
+
+#: 7e
+msgid "NaranjOS en vivo"
+msgstr ""
+
+#: 7e
+msgid "Pruébalo sin miedo: nada se guarda. Para instalarlo: Super + Espacio → «Instalar NaranjOS»."
+msgstr ""
+
+#: 7e
+msgid "Instalar NaranjOS"
+msgstr ""
+
+#: 7e
+msgid "(todo lo que ha pasado está en /tmp/naranjos-instala.log)"
+msgstr ""
+
+#: 7e
+msgid "naranjos-instala solo funciona en la sesión en vivo de la ISO de NaranjOS."
+msgstr ""
+
+#: 7e
+msgid "Este equipo ha arrancado en modo BIOS (sin UEFI): NaranjOS necesita UEFI."
+msgstr ""
+
+#: 7e
+msgid "Hace falta sudo sin contraseña (la sesión en vivo lo trae)."
+msgstr ""
+
+#: 7e
+msgid "Número:"
+msgstr ""
+
+#: 7e
+msgid "Otra vez:"
+msgstr ""
+
+#: 7e
+msgid "No coinciden. Otra vez."
+msgstr ""
+
+#: 7e
+msgid "Mínimo 6 caracteres."
+msgstr ""
+
+#: 7e
+msgid "Vamos a instalar NaranjOS en este equipo. Primero te pregunto todo;"
+msgstr ""
+
+#: 7e
+msgid "no se toca ningún disco hasta el final, cuando escribas SI."
+msgstr ""
+
+#: 7e
+msgid "1 · Teclado"
+msgstr ""
+
+#: 7e
+msgid "Español (España)"
+msgstr ""
+
+#: 7e
+msgid "Español (Latinoamérica)"
+msgstr ""
+
+#: 7e
+msgid "Inglés (EE. UU.)"
+msgstr ""
+
+#: 7e
+msgid "Inglés (Reino Unido)"
+msgstr ""
+
+#: 7e
+msgid "Francés"
+msgstr ""
+
+#: 7e
+msgid "Alemán"
+msgstr ""
+
+#: 7e
+msgid "Italiano"
+msgstr ""
+
+#: 7e
+msgid "Portugués (Portugal)"
+msgstr ""
+
+#: 7e
+msgid "Portugués (Brasil)"
+msgstr ""
+
+#: 7e
+msgid "Teclado"
+msgstr ""
+
+#: 7e
+msgid "2 · Zona horaria"
+msgstr ""
+
+#: 7e
+msgid "Zona horaria"
+msgstr ""
+
+#: 7e
+msgid "3 · Disco"
+msgstr ""
+
+#: 7e
+msgid "vacío"
+msgstr ""
+
+#: 7e
+msgid "disco"
+msgstr ""
+
+#: 7e
+msgid "con datos"
+msgstr ""
+
+#: 7e
+msgid "No hay ningún disco de al menos %s GB (sin contar el USB/DVD de NaranjOS)."
+msgstr ""
+
+#: 7e
+msgid "Disco donde instalar"
+msgstr ""
+
+#: 7e
+msgid "Algo de ese disco está en uso (montado). Desmóntalo y vuelve a empezar."
+msgstr ""
+
+#: 7e
+msgid "Borrar TODO el disco e instalar NaranjOS"
+msgstr ""
+
+#: 7e
+msgid "Usar el espacio libre (%s GB) y dejar lo demás como está"
+msgstr ""
+
+#: 7e
+msgid "Cómo usar %s"
+msgstr ""
+
+#: 7e
+msgid "Disco entero: SE BORRARÁ TODO lo que hay en %s"
+msgstr ""
+
+#: 7e
+msgid "Espacio libre: %s GB (se usa la partición EFI que ya hay: %s)"
+msgstr ""
+
+#: 7e
+msgid "(para instalar junto a otro sistema hace falta un hueco libre de %s GB o más en un disco GPT con partición EFI;"
+msgstr ""
+
+#: 7e
+msgid "hazlo antes desde ese sistema, p. ej. «Administración de discos» en Windows → Reducir volumen)"
+msgstr ""
+
+#: 7e
+msgid "4 · Tu usuario"
+msgstr ""
+
+#: 7e
+msgid "Tu nombre (p. ej. Ana García):"
+msgstr ""
+
+#: 7e
+msgid "Nombre de usuario"
+msgstr ""
+
+#: 7e
+msgid "Solo minúsculas, números, - y _, empezando por una letra (y que no sea root ni naranjos)."
+msgstr ""
+
+#: 7e
+msgid "Contraseña de %s"
+msgstr ""
+
+#: 7e
+msgid "Nombre del equipo"
+msgstr ""
+
+#: 7e
+msgid "Letras, números y guiones."
+msgstr ""
+
+#: 7e
+msgid "5 · Cifrado del disco"
+msgstr ""
+
+#: 7e
+msgid "NaranjOS cifra el disco: sin la contraseña, nadie puede leer tus datos aunque se lleve el equipo."
+msgstr ""
+
+#: 7e
+msgid "Se pide al encender."
+msgstr ""
+
+#: 7e
+msgid "Si la olvidas, los datos se pierden para siempre."
+msgstr ""
+
+#: 7e
+msgid "Contraseña del disco"
+msgstr ""
+
+#: 7e
+msgid "La misma que la de %s"
+msgstr ""
+
+#: 7e
+msgid "Otra distinta"
+msgstr ""
+
+#: 7e
+msgid "6 · La hora (hay Windows)"
+msgstr ""
+
+#: 7e
+msgid "Windows guarda la hora del reloj del equipo en hora local; Linux, en UTC. Si no coinciden, al pasar"
+msgstr ""
+
+#: 7e
+msgid "de uno a otro la hora sale mal (1 o 2 horas)."
+msgstr ""
+
+#: 7e
+msgid "Hora del reloj del equipo"
+msgstr ""
+
+#: 7e
+msgid "Hora local, como Windows (recomendado con Windows)"
+msgstr ""
+
+#: 7e
+msgid "UTC (lo normal en Linux)"
+msgstr ""
+
+#: 7e
+msgid "Resumen"
+msgstr ""
+
+#: 7e
+msgid "Idioma:"
+msgstr ""
+
+#: 7e
+msgid "Teclado:"
+msgstr ""
+
+#: 7e
+msgid "Zona:"
+msgstr ""
+
+#: 7e
+msgid "reloj en hora local"
+msgstr ""
+
+#: 7e
+msgid "Usuario:"
+msgstr ""
+
+#: 7e
+msgid "Equipo:"
+msgstr ""
+
+#: 7e
+msgid "Disco:"
+msgstr ""
+
+#: 7e
+msgid "SE BORRA TODO EL DISCO %s"
+msgstr ""
+
+#: 7e
+msgid "y se crean: EFI 1 GB · /boot 1 GB · NaranjOS cifrado (el resto)"
+msgstr ""
+
+#: 7e
+msgid "En el espacio libre (%s GB): /boot 1 GB · NaranjOS cifrado (el resto). Lo demás no se toca."
+msgstr ""
+
+#: 7e
+msgid "El arranque se añade a la partición EFI que ya hay (%s), en EFI/naranjos (nada más)."
+msgstr ""
+
+#: 7e
+msgid "activo → al reiniciar tendrás que registrar la clave de este equipo (te explico cómo)"
+msgstr ""
+
+#: 7e
+msgid "Escribe SI (en mayúsculas) para instalar:"
+msgstr ""
+
+#: 7e
+msgid "No se ha tocado nada."
+msgstr ""
+
+#: 7e
+msgid "Instalando"
+msgstr ""
+
+#: 7e
+msgid "Creando las particiones…"
+msgstr ""
+
+#: 7e
+msgid "sfdisk no pudo crear las particiones"
+msgstr ""
+
+#: 7e
+msgid "Creando las particiones en el espacio libre…"
+msgstr ""
+
+#: 7e
+msgid "No veo las particiones nuevas"
+msgstr ""
+
+#: 7e
+msgid "Particiones:"
+msgstr ""
+
+#: 7e
+msgid "Cifrando %s (LUKS2)…"
+msgstr ""
+
+#: 7e
+msgid "Cifrado y Btrfs listos"
+msgstr ""
+
+#: 7e
+msgid "Copiando NaranjOS al disco (unos minutos)…"
+msgstr ""
+
+#: 7e
+msgid "%s escritos en el disco (comprimidos)…"
+msgstr ""
+
+#: 7e
+msgid "La copia falló"
+msgstr ""
+
+#: 7e
+msgid "Sistema copiado"
+msgstr ""
+
+#: 7e
+msgid "Configurando el sistema nuevo…"
+msgstr ""
+
+#: 7e
+msgid "quitando lo de la sesión en vivo"
+msgstr ""
+
+#: 7e
+msgid "llavero de pacman"
+msgstr ""
+
+#: 7e
+msgid "equipo, hora, idioma y teclado"
+msgstr ""
+
+#: 7e
+msgid "usuario"
+msgstr ""
+
+#: 7e
+msgid "clave MOK de este equipo"
+msgstr ""
+
+#: 7e
+msgid "kernel firmado"
+msgstr ""
+
+#: 7e
+msgid "arranque (GRUB firmado y menú)"
+msgstr ""
+
+#: 7e
+msgid "entrada en el firmware"
+msgstr ""
+
+#: 7e
+msgid "foto de fábrica"
+msgstr ""
+
+#: 7e
+msgid "La configuración del sistema nuevo falló"
+msgstr ""
+
+#: 7e
+msgid "Usuario %s, clave MOK de %s, kernel firmado, initramfs y arranque"
+msgstr ""
+
+#: 7e
+msgid "¡NaranjOS está instalado!"
+msgstr ""
+
+#: 7e
+msgid "1. Apaga, quita el USB/DVD de NaranjOS y enciende."
+msgstr ""
+
+#: 7e
+msgid "2. Al arrancar te pedirá la contraseña del disco y luego la de %s."
+msgstr ""
+
+#: 7e
+msgid "Con Secure Boot, la primera vez saldrá una pantalla azul (MokManager):"
+msgstr ""
+
+#: 7e
+msgid "«Verification failed» → Enter · «Press any key to perform MOK management» → pulsa una tecla YA (10 s)"
+msgstr ""
+
+#: 7e
+msgid "→ Enroll key from disk → la partición EFI → EFI → naranjos → NARANJOS-MOK.der → Continue → Yes → Reboot"
+msgstr ""
+
+#: 7e
+msgid "Si algún día quieres dejarlo como recién instalado: Super + Espacio → «Restablecer NaranjOS»."
+msgstr ""
+
+#: 7e
+msgid "Pulsa una tecla…"
+msgstr ""
+
+#: 7e
+msgid "Restablecer NaranjOS"
+msgstr ""
+
+#: 7e
+msgid "Esto es para un NaranjOS instalado, no para la sesión en vivo."
+msgstr ""
+
+#: 7e
+msgid "Has arrancado una foto: arranca NaranjOS normal antes."
+msgstr ""
+
+#: 7e
+msgid "Falta fotos (naranjos-fotos)"
+msgstr ""
+
+#: 7e
+msgid "No encuentro la foto «fábrica» (la hace el instalador al terminar). Sin ella no se puede restablecer."
+msgstr ""
+
+#: 7e
+msgid "restablecer"
+msgstr ""
+
+#: 7e
+msgid "foto de fábrica:"
+msgstr ""
+
+#: 7e
+msgid "Restablecer el sistema"
+msgstr ""
+
+#: 7e
+msgid "NaranjOS como recién instalado."
+msgstr ""
+
+#: 7e
+msgid "Tus usuarios y archivos se quedan."
+msgstr ""
+
+#: 7e
+msgid "(programas instalados después, ajustes del sistema, Wi-Fi guardadas… vuelven a como estaban)"
+msgstr ""
+
+#: 7e
+msgid "Nuevo dueño"
+msgstr ""
+
+#: 7e
+msgid "se borra TODO lo tuyo"
+msgstr ""
+
+#: 7e
+msgid "(usuarios, archivos, Wi-Fi, fotos del sistema)."
+msgstr ""
+
+#: 7e
+msgid "Para venderlo o regalarlo: al encender, la otra persona crea su usuario y su contraseña del disco."
+msgstr ""
+
+#: 7e
+msgid "Elige 1 o 2 (otra cosa para salir):"
+msgstr ""
+
+#: 7e
+msgid "Escribe SI para restablecer el sistema:"
+msgstr ""
+
+#: 7e
+msgid "No pude volver a la foto de fábrica"
+msgstr ""
+
+#: 7e
+msgid "Listo: al reiniciar, NaranjOS estará como recién instalado (tus archivos siguen ahí)."
+msgstr ""
+
+#: 7e
+msgid "Se borrará TODO lo tuyo de este equipo"
+msgstr ""
+
+#: 7e
+msgid "usuarios, archivos de /home, Wi-Fi, registros y fotos."
+msgstr ""
+
+#: 7e
+msgid "BORRAR TODO"
+msgstr ""
+
+#: 7e
+msgid "Escribe %s para seguir:"
+msgstr ""
+
+#: 7e
+msgid "Ahora la contraseña del disco: primero la tuya de ahora; luego una temporal para el nuevo dueño"
+msgstr ""
+
+#: 7e
+msgid "(dásela: la necesitará al encender y la cambiará por la suya)."
+msgstr ""
+
+#: 7e
+msgid "No se cambió. ¿Otra vez? (s/n)"
+msgstr ""
+
+#: 7e
+msgid "Cancelado: no se ha borrado nada."
+msgstr ""
+
+#: 7e
+msgid "Contraseña temporal del disco puesta"
+msgstr ""
+
+#: 7e
+msgid "Volviendo a la foto de fábrica…"
+msgstr ""
+
+#: 7e
+msgid "No pude montar el Btrfs"
+msgstr ""
+
+#: 7e
+msgid "No pude quitar los usuarios"
+msgstr ""
+
+#: 7e
+msgid "Sistema de fábrica, sin usuarios"
+msgstr ""
+
+#: 7e
+msgid "Borrando tus archivos, registros y fotos…"
+msgstr ""
+
+#: 7e
+msgid "Archivos, registros y fotos borrados (queda solo la de fábrica)"
+msgstr ""
+
+#: 7e
+msgid "Listo."
+msgstr ""
+
+#: 7e
+msgid "Apaga el equipo. Al encenderlo, el nuevo dueño:"
+msgstr ""
+
+#: 7e
+msgid "1. escribe la contraseña temporal del disco que le des,"
+msgstr ""
+
+#: 7e
+msgid "2. y NaranjOS le da la bienvenida: teclado, hora, su usuario y su contraseña."
+msgstr ""
+
+#: 7e
+msgid "¿Reiniciar ahora?"
+msgstr ""
+
+#: 7e
+msgid "¿Apagar ahora?"
+msgstr ""
+
+#: 7e
+msgid "Vale: se aplicará la próxima vez que enciendas el equipo."
+msgstr ""
+
+#: 7e
+msgid "¡Bienvenido/a a NaranjOS! Este equipo es tuyo ahora. Cuatro preguntas y a estrenarlo."
+msgstr ""
+
+#: 7e
+msgid "Otra (la escribo)"
+msgstr ""
+
+#: 7e
+msgid "Zona (p. ej. America/Caracas):"
+msgstr ""
+
+#: 7e
+msgid "No la encuentro."
+msgstr ""
+
+#: 7e
+msgid "3 · Tu usuario"
+msgstr ""
+
+#: 7e
+msgid "Solo minúsculas, números, - y _, empezando por una letra (y que no exista ya)."
+msgstr ""
+
+#: 7e
+msgid "4 · Contraseña del disco"
+msgstr ""
+
+#: 7e
+msgid "El disco está cifrado. Pon tu propia contraseña: primero escribe la temporal que te dieron"
+msgstr ""
+
+#: 7e
+msgid "(la de al encender) y luego la tuya, dos veces."
+msgstr ""
+
+#: 7e
+msgid "No se cambió: sigue valiendo la temporal (cámbiala luego con: sudo cryptsetup luksChangeKey %s)"
+msgstr ""
+
+#: 7e
+msgid "No se cambió. Otra vez."
+msgstr ""
+
+#: 7e
+msgid "Contraseña del disco cambiada"
+msgstr ""
+
+#: 7e
+msgid "Preparando tu NaranjOS"
+msgstr ""
+
+#: 7e
+msgid "No pude crear el usuario"
+msgstr ""
+
+#: 7e
+msgid "No pude rehacer el initramfs (el teclado del arranque sigue siendo el de antes)"
+msgstr ""
+
+#: 7e
+msgid "¡Listo, %s! Ahora entra con tu usuario: %s"
+msgstr ""
+
+#: 7e
+msgid "Instalando desde Flathub (gratis y sin cuenta)…"
+msgstr ""
+
+#: 7e
+msgid "gráficas"
+msgstr ""
+
+#: 7e
+msgid "virtual"
+msgstr ""
+
+#: 7e
+msgid "controlador:"
+msgstr ""
+
+#: 7e
+msgid "Hay una NVIDIA sin su controlador: naranjos-graficos nvidia"
+msgstr ""
+
+#: 7e
+msgid "Este equipo no tiene gráfica NVIDIA."
+msgstr ""
+
+#: 7e
+msgid "El controlador de NVIDIA ya está instalado."
+msgstr ""
+
+#: 7e
+msgid "Se instalará el controlador de NVIDIA (unos 900 MB) desde el repositorio de NaranjOS."
+msgstr ""
+
+#: 7e
+msgid "No se pudo instalar (¿hay internet?)"
+msgstr ""
+
+#: 7e
+msgid "Listo: reinicia para usar la NVIDIA."
+msgstr ""
+
+#: 7e
+msgid "Nombre:"
+msgstr ""
+
+#: 7e
+msgid "Correo:"
+msgstr ""
+
+#: 7e
+msgid "Tu nombre para git:"
+msgstr ""
+
+#: 7e
+msgid "Tu correo para git:"
+msgstr ""
+
+#: 7e
+msgid "Listo. (Si no quieres que se vea tu correo de verdad, usa el «noreply» que te da GitHub o tu forja.)"
+msgstr ""
+
+#: 7e
+msgid "Ventanas opacas"
+msgstr ""
+
+#: 7e
+msgid "Ventanas transparentes"
+msgstr ""
+
+#: 7e
+msgid "Ventanas de cristal (desenfoque)"
+msgstr ""
+
+#: 7e
+msgid "Esquinas del tema"
+msgstr ""
+
+#: 7e
+msgid "Esquinas rectas"
+msgstr ""
+
+#: 7e
+msgid "Esquinas redondas"
+msgstr ""
+
+#: 7e
+msgid "Con animaciones"
+msgstr ""
+
+#: 7e
+msgid "Sin animaciones"
+msgstr ""
+
+#: 7e
+msgid "Estilo"
+msgstr ""

@@ -6,66 +6,69 @@
 #                                       al encender, el nuevo dueño crea su usuario y su contraseña del disco
 # Se apoya en la foto «fábrica» que hace naranjos-instala al terminar (sudo fotos lista).
 set -uo pipefail
-VERSION=0.1.1
+VERSION=0.2.0
+. /usr/lib/naranjos/naranjos-i18n.sh 2>/dev/null || _(){ printf '%s' "$1"; }
+_f(){ local m; m=$(_ "$1"); shift; printf "$m" "$@"; }
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; B=$'\e[1m'; Z=$'\e[0m'
-die(){ printf '\n%s✘ %s%s\n' "$R" "$1" "$Z" >&2; [ -t 0 ] && read -rsn1 -p "Pulsa una tecla…"; exit 1; }
+die(){ printf '\n%s✘ %s%s\n' "$R" "$1" "$Z" >&2; [ -t 0 ] && read -rsn1 -p "$(_ 'Pulsa una tecla…')"; exit 1; }
 bien(){ printf '%s✔%s %s\n' "$G" "$Z" "$*"; }
 di(){ printf '%s▸%s %s\n' "$O" "$Z" "$*"; }
 
 # desde el menú: en una terminal, y con sudo
-if [ ! -t 0 ] && command -v foot >/dev/null; then exec foot --app-id=naranjos-fabrica -T "Restablecer NaranjOS" -e "$0" "$@"; fi
+if [ ! -t 0 ] && command -v foot >/dev/null; then exec foot --app-id=naranjos-fabrica -T "$(_ 'Restablecer NaranjOS')" -e "$0" "$@"; fi
 [ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
-[ -r /run/naranjos-vivo.estado ] && die "Esto es para un NaranjOS instalado, no para la sesión en vivo."
-[ -r /run/naranjos-foto ] && die "Has arrancado una foto: arranca NaranjOS normal antes."
-command -v fotos >/dev/null || die "Falta fotos (naranjos-fotos)"
+[ -r /run/naranjos-vivo.estado ] && die "$(_ 'Esto es para un NaranjOS instalado, no para la sesión en vivo.')"
+[ -r /run/naranjos-foto ] && die "$(_ 'Has arrancado una foto: arranca NaranjOS normal antes.')"
+command -v fotos >/dev/null || die "$(_ 'Falta fotos (naranjos-fotos)')"
 
 N=$(fotos lista 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | awk '/fábrica/ {print $1; exit}')
-[[ "$N" =~ ^[0-9]+$ ]] || die "No encuentro la foto «fábrica» (la hace el instalador al terminar). Sin ella no se puede restablecer."
+[[ "$N" =~ ^[0-9]+$ ]] || die "$(_ 'No encuentro la foto «fábrica» (la hace el instalador al terminar). Sin ella no se puede restablecer.')"
 
 clear
-printf '%sNaranjOS · restablecer%s   %s(foto de fábrica: %s)%s\n\n' "$O" "$Z" "$D" "$N" "$Z"
+printf '%sNaranjOS · %s%s   %s(%s %s)%s\n\n' "$O" "$(_ 'restablecer')" "$Z" "$D" "$(_ 'foto de fábrica:')" "$N" "$Z"
 MODO=${1:-}
 if [ -z "$MODO" ]; then
-  echo "  1) ${B}Restablecer el sistema${Z}: NaranjOS como recién instalado. ${G}Tus usuarios y archivos se quedan.${Z}"
-  echo "     (programas instalados después, ajustes del sistema, Wi-Fi guardadas… vuelven a como estaban)"
-  echo "  2) ${B}Nuevo dueño${Z}: ${R}se borra TODO lo tuyo${Z} (usuarios, archivos, Wi-Fi, fotos del sistema)."
-  echo "     Para venderlo o regalarlo: al encender, la otra persona crea su usuario y su contraseña del disco."
+  echo "  1) ${B}$(_ 'Restablecer el sistema')${Z}: $(_ 'NaranjOS como recién instalado.') ${G}$(_ 'Tus usuarios y archivos se quedan.')${Z}"
+  echo "     $(_ '(programas instalados después, ajustes del sistema, Wi-Fi guardadas… vuelven a como estaban)')"
+  echo "  2) ${B}$(_ 'Nuevo dueño')${Z}: ${R}$(_ 'se borra TODO lo tuyo')${Z} $(_ '(usuarios, archivos, Wi-Fi, fotos del sistema).')"
+  echo "     $(_ 'Para venderlo o regalarlo: al encender, la otra persona crea su usuario y su contraseña del disco.')"
   echo
-  read -rp "  Elige 1 o 2 (otra cosa para salir): " o
+  read -rp "  $(_ 'Elige 1 o 2 (otra cosa para salir):') " o
   case "$o" in 1) MODO=sistema ;; 2) MODO=nuevo-dueno ;; *) exit 0 ;; esac
 fi
 
 case "$MODO" in
 sistema)
   echo
-  read -rp "  Escribe ${B}SI${Z} para restablecer el sistema: " r; [ "$r" = SI ] || die "No se ha tocado nada."
-  fotos vuelve "$N" --si || die "No pude volver a la foto de fábrica"
-  bien "Listo: al reiniciar, NaranjOS estará como recién instalado (tus archivos siguen ahí)."
+  read -rp "  $(_ 'Escribe SI para restablecer el sistema:') " r; [ "$r" = SI ] || die "$(_ 'No se ha tocado nada.')"
+  fotos vuelve "$N" --si || die "$(_ 'No pude volver a la foto de fábrica')"
+  bien "$(_ 'Listo: al reiniciar, NaranjOS estará como recién instalado (tus archivos siguen ahí).')"
   ;;
 nuevo-dueno|nuevo-dueño)
   echo
-  echo "  ${R}${B}Se borrará TODO lo tuyo de este equipo${Z}: usuarios, archivos de /home, Wi-Fi, registros y fotos."
-  read -rp "  Escribe ${B}BORRAR TODO${Z} para seguir: " r; [ "$r" = "BORRAR TODO" ] || die "No se ha tocado nada."
+  echo "  ${R}${B}$(_ 'Se borrará TODO lo tuyo de este equipo')${Z}: $(_ 'usuarios, archivos de /home, Wi-Fi, registros y fotos.')"
+  P=$(_ 'BORRAR TODO')
+  read -rp "  $(_f 'Escribe %s para seguir:' "$P") " r; [ "$r" = "$P" ] || die "$(_ 'No se ha tocado nada.')"
   # la contraseña del disco: una temporal, que le das al nuevo dueño (la cambia al encender)
   raiz=$(findmnt -nvo SOURCE /); part=""
   if [ "$(lsblk -dno TYPE "$raiz" 2>/dev/null)" = crypt ]; then
     s=$(ls "/sys/block/$(basename "$(readlink -f "$raiz")")/slaves" 2>/dev/null | head -n1); part=/dev/$s
     echo
-    echo "  Ahora la ${B}contraseña del disco${Z}: primero la tuya de ahora; luego una ${B}temporal${Z} para el nuevo dueño"
-    echo "  (dásela: la necesitará al encender y la cambiará por la suya)."
+    echo "  $(_ 'Ahora la contraseña del disco: primero la tuya de ahora; luego una temporal para el nuevo dueño')"
+    echo "  $(_ '(dásela: la necesitará al encender y la cambiará por la suya).')"
     until cryptsetup luksChangeKey -y "$part"; do
-      read -rp "  No se cambió. ¿Otra vez? (s/n) " r; [ "$r" = s ] || die "Cancelado: no se ha borrado nada."
+      read -rp "  $(_ 'No se cambió. ¿Otra vez? (s/n)') " r; case "$r" in s|S|y|Y) ;; *) die "$(_ 'Cancelado: no se ha borrado nada.')" ;; esac
     done
-    bien "Contraseña temporal del disco puesta"
+    bien "$(_ 'Contraseña temporal del disco puesta')"
   fi
-  di "Volviendo a la foto de fábrica…"
-  fotos vuelve "$N" --si >/dev/null || die "No pude volver a la foto de fábrica"
+  di "$(_ 'Volviendo a la foto de fábrica…')"
+  fotos vuelve "$N" --si >/dev/null || die "$(_ 'No pude volver a la foto de fábrica')"
   # el sistema restaurado, sin rastro del dueño anterior (en el subvolumen @ que arrancará)
   T=/run/naranjos-fabrica; mkdir -p "$T"
-  mount -o subvolid=5 "$raiz" "$T" || die "No pude montar el Btrfs"
+  mount -o subvolid=5 "$raiz" "$T" || die "$(_ 'No pude montar el Btrfs')"
   NR="$T/@"
   # fuera los usuarios de personas (uid 1000–59999): de passwd, shadow, sus grupos y de los grupos donde estaban
-  python3 -I - "$NR/etc" << "PY" || die "No pude quitar los usuarios"
+  python3 -I - "$NR/etc" << "PY" || die "$(_ 'No pude quitar los usuarios')"
 import sys, os
 e = sys.argv[1]
 def lee(f):
@@ -98,30 +101,30 @@ PY
   mkdir -p "$NR/etc/naranjos" "$NR/etc/systemd/system/multi-user.target.wants"
   date '+%Y-%m-%d %H:%M' > "$NR/etc/naranjos/nuevo-dueno"
   ln -sf /usr/lib/systemd/system/naranjos-bienvenida.service "$NR/etc/systemd/system/multi-user.target.wants/naranjos-bienvenida.service"
-  bien "Sistema de fábrica, sin usuarios"
+  bien "$(_ 'Sistema de fábrica, sin usuarios')"
   # lo que no va en la foto: /home, registros, cachés y /srv (subvolúmenes aparte), y las demás fotos
-  di "Borrando tus archivos, registros y fotos…"
+  di "$(_ 'Borrando tus archivos, registros y fotos…')"
   for v in @home @srv @log; do [ -d "$T/$v" ] && find "$T/$v" -mindepth 1 -delete 2>/dev/null; done
   for x in "$T"/@cache/*; do [ "$x" = "$T/@cache/pacman" ] || rm -rf "$x"; done
   umount "$T"
   otras=$(fotos lista 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | awk -v n="$N" '$1 ~ /^[0-9]+$/ && $1 != n {print $1}')
   [ -n "$otras" ] && fotos borra $otras >/dev/null 2>&1
-  bien "Archivos, registros y fotos borrados (queda solo la de fábrica)"
+  bien "$(_ 'Archivos, registros y fotos borrados (queda solo la de fábrica)')"
   echo
-  echo "  ${B}Listo.${Z} Apaga el equipo. Al encenderlo, el nuevo dueño:"
-  [ -n "$part" ] && echo "   1. escribe la ${B}contraseña temporal del disco${Z} que le des,"
-  echo "   2. y NaranjOS le da la bienvenida: teclado, hora, su usuario$([ -n "$part" ] && echo " y su propia contraseña del disco")."
+  echo "  ${B}$(_ 'Listo.')${Z} $(_ 'Apaga el equipo. Al encenderlo, el nuevo dueño:')"
+  [ -n "$part" ] && echo "   $(_ '1. escribe la contraseña temporal del disco que le des,')"
+  echo "   $(_ '2. y NaranjOS le da la bienvenida: teclado, hora, su usuario y su contraseña.')"
   ;;
 *) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
 echo
 # lo que se haya tecleado mientras trabajaba no cuenta como respuesta
 while read -r -t 0.1 -n 1000 _; do :; done
-if [ "$MODO" = sistema ]; then q="¿Reiniciar ahora?"; else q="¿Apagar ahora?"; fi
+if [ "$MODO" = sistema ]; then q=$(_ '¿Reiniciar ahora?'); else q=$(_ '¿Apagar ahora?'); fi
 while :; do
   read -rp "  $q (s/n) " r
   case "$r" in
-    s|S|si|SI|sí) if [ "$MODO" = sistema ]; then systemctl reboot; else systemctl poweroff; fi; exit 0 ;;
-    n|N|no|NO) echo "  Vale: se aplicará cuando $([ "$MODO" = sistema ] && echo reinicies || echo apagues)."; sleep 3; exit 0 ;;
+    s|S|si|SI|sí|y|Y|yes) if [ "$MODO" = sistema ]; then systemctl reboot; else systemctl poweroff; fi; exit 0 ;;
+    n|N|no|NO) echo "  $(_ 'Vale: se aplicará la próxima vez que enciendas el equipo.')"; sleep 3; exit 0 ;;
   esac
 done
