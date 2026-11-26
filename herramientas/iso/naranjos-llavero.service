@@ -1,0 +1,13 @@
+[Unit]
+Description=NaranjOS: llavero de pacman propio de este equipo
+ConditionPathExists=!/etc/pacman.d/gnupg/trustdb.gpg
+After=systemd-remount-fs.service time-sync.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/pacman-key --init
+ExecStart=/usr/bin/pacman-key --populate naranjos
+
+[Install]
+WantedBy=multi-user.target

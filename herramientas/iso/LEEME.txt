@@ -1,0 +1,20 @@
+NaranjOS · ISO en vivo
+======================
+
+Arranca en cualquier PC con UEFI (64 bits). Graba la ISO en un USB de 4 GB o más
+(por ejemplo con «dd», GNOME Discos, balenaEtcher o Rufus en modo DD) y arranca desde él.
+
+Secure Boot
+-----------
+NaranjOS arranca con el shim de Ubuntu (firmado por Microsoft) y con su propia clave (MOK).
+La primera vez, con Secure Boot activado, saldrá una pantalla azul (MokManager):
+  1. «Enroll key from disk»
+  2. Elige NARANJOS-MOK.der (en la raíz del USB)
+  3. «Continue» → «Yes» → «Reboot»
+Si no quieres registrar la clave, desactiva Secure Boot en la BIOS.
+
+En vivo
+-------
+Entra solo, con el usuario «naranjos» (sin contraseña). Lo que cambies se pierde al apagar.
+
+Licencias y código fuente: https://github.com/DYeicob/naranjos-recetas (AVISO-LEGAL.md).

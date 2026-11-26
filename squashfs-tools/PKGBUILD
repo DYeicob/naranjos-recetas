@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-7b.sh
+pkgname=squashfs-tools
+pkgver=4.7.5
+pkgrel=1
+pkgdesc='Crear y leer sistemas de ficheros squashfs (la raíz comprimida de la ISO)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('zlib' 'xz' 'zstd' 'lz4')
+makedepends=()
+source=('https://github.com/plougher/squashfs-tools/archive/4.7.5/squashfs-tools-4.7.5.tar.gz')
+sha256sums=('547b7b7f4d2e44bf91b6fc554664850c69563701deab9fd9cd7e21f694c88ea6')
+_v="XZ_SUPPORT=1 LZ4_SUPPORT=1 ZSTD_SUPPORT=1 LZO_SUPPORT=0 GZIP_SUPPORT=1"
+build() { cd squashfs-tools-$pkgver/squashfs-tools; make $_v; }
+package() { cd squashfs-tools-$pkgver/squashfs-tools; make $_v INSTALL_PREFIX="$pkgdir/usr" INSTALL_MANPAGES_DIR= install; }

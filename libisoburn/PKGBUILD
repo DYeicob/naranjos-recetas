@@ -1,0 +1,15 @@
+# Receta de NaranjOS — generada por naranjos-tanda-7b.sh
+pkgname=libisoburn
+pkgver=1.5.8.pl02
+pkgrel=1
+pkgdesc='xorriso: crea las ISO de arranque (UEFI y USB)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('libburn' 'libisofs' 'readline' 'acl' 'zlib')
+makedepends=()
+source=('https://files.libburnia-project.org/releases/libisoburn-1.5.8.pl02.tar.gz')
+sha256sums=('a977b03dc3686d9fdca600458b1578f9cac2b875609bd5ec21f5ada55f20ec50')
+_d(){ cd "$srcdir"/libisoburn-1.5.8* 2>/dev/null || cd "$srcdir"/libisoburn-*/; }
+build() { _d; ./configure --prefix=/usr --disable-static --enable-pkg-check-modules; make; }
+package() { _d; make DESTDIR="$pkgdir" install; }

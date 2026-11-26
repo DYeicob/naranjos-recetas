@@ -1,0 +1,6 @@
+squashfs-tools
+libburn
+libisofs
+libisoburn
+dosfstools
+naranjos-initramfs

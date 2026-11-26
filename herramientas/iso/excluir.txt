@@ -1,0 +1,19 @@
+# NaranjOS · paquetes que NO van en la ISO (para que quepa en 2 GB); se instalan luego con zumo.
+# Si otro paquete de la ISO los necesita, entran igualmente (haz-iso.sh lo avisa).
+nvidia-open
+nvidia-utils
+linux-naranjos-headers
+naranjos-ciber
+aircrack-ng
+ffuf
+gobuster
+hydra
+john
+lynis
+nmap
+sqlmap
+rust
+go
+mise
+cargo-c
+nwg-dock-hyprland

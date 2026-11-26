@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-7b.sh
+pkgname=libburn
+pkgver=1.5.8
+pkgrel=1
+pkgdesc='Grabar CD, DVD y BD (lo usa xorriso)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=()
+makedepends=()
+source=('https://files.libburnia-project.org/releases/libburn-1.5.8.tar.gz')
+sha256sums=('8e24dd99f5b7cafbecf0116d61b619ee89098e20263e6f47c793aaf4a98d6473')
+build() { cd libburn-$pkgver; ./configure --prefix=/usr --disable-static; make; }
+package() { cd libburn-$pkgver; make DESTDIR="$pkgdir" install; }

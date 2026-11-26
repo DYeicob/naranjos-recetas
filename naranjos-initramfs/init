@@ -4,6 +4,8 @@
 # Opciones del kernel que entiende:
 #   root=UUID=… | PARTUUID=… | LABEL=… | PARTLABEL=… | /dev/…   rootfstype=…   rootflags=…
 #   ro | rw   rootwait   rootdelay=<s>   init=<ruta>   rd.break (shell antes de arrancar)   rd.debug
+#   naranjos.vivo=<etiqueta>  NaranjOS en vivo (la ISO): busca el medio con esa etiqueta, monta su
+#                      naranjos/x86_64/raiz.sfs y le pone encima un overlay en memoria
 #   naranjos.foto=<n>  arranca una foto del sistema (naranjos-fotos): la foto es de solo lectura y
 #                      se le pone encima un overlay en memoria; lo que cambie se pierde al apagar
 export PATH=/usr/bin:/usr/sbin:/bin:/sbin
@@ -16,7 +18,7 @@ exec </dev/console >/dev/console 2>&1
 N=$'\e[1;38;5;208m'; Z=$'\e[0m'
 di(){ if command -v plymouth >/dev/null && plymouth --ping 2>/dev/null; then plymouth display-message --text="$*"; else echo "${N}NaranjOS:${Z} $*"; fi; }
 
-raiz="" tipo="" flags="" modo=ro espera=10 retraso=0 programa=/sbin/init parar=0 foto=""
+vivo="" raiz="" tipo="" flags="" modo=ro espera=10 retraso=0 programa=/sbin/init parar=0 foto=""
 read -r -a args < /proc/cmdline
 for a in "${args[@]}"; do
   case "$a" in
@@ -31,6 +33,7 @@ for a in "${args[@]}"; do
     rd.break)     parar=1 ;;
     rd.debug)     set -x ;;
     naranjos.foto=*) foto=${a#naranjos.foto=} ;;
+    naranjos.vivo=*) vivo=${a#naranjos.vivo=} ;;
   esac
 done
 
@@ -78,7 +81,35 @@ dispositivo(){
   esac
 }
 
-while :; do
+# NaranjOS en vivo (la ISO): el medio, por su etiqueta; la raíz, su squashfs; los cambios, en memoria
+if [ -n "$vivo" ]; then
+  V=/run/naranjos-vivo
+  for m in isofs squashfs overlay loop sr_mod cdrom usb_storage uas; do modprobe -q "$m" 2>/dev/null; done
+  mkdir -p "$V/medio" "$V/abajo" "$V/arriba"
+  while :; do
+    d=""; t=0
+    until d=$(blkid -l -o device -t "LABEL=$vivo" 2>/dev/null) && [ -b "$d" ]; do
+      [ "$t" = 2 ] && di "buscando el USB o DVD de NaranjOS… / looking for the NaranjOS USB or DVD…"
+      [ "$t" -ge 120 ] && break
+      sleep 0.5; t=$((t + 1)); udevadm settle --timeout=2
+    done
+    [ -b "$d" ] || { emergencia "No encuentro el medio de NaranjOS ($vivo) / Cannot find the NaranjOS medium ($vivo)"; continue; }
+    mount -o ro "$d" "$V/medio" 2>/dev/null || mount -t iso9660 -o ro "$d" "$V/medio" \
+      || { emergencia "No se pudo montar $d / Could not mount $d"; continue; }
+    if mount -o ro,loop "$V/medio/naranjos/x86_64/raiz.sfs" "$V/abajo"; then break; fi
+    umount "$V/medio"
+    emergencia "No se pudo abrir naranjos/x86_64/raiz.sfs / Could not open the live root"
+  done
+  mount -t tmpfs -o mode=0755,size=75% naranjos-vivo "$V/arriba"
+  mkdir -p "$V/arriba/cambios" "$V/arriba/trabajo"
+  until mount -t overlay naranjos-vivo -o "lowerdir=$V/abajo,upperdir=$V/arriba/cambios,workdir=$V/arriba/trabajo" /sysroot; do
+    emergencia "No se pudo montar la raíz en vivo / Could not mount the live root"
+  done
+  printf 'dev=%s\n' "$d" > /run/naranjos-vivo.estado
+  di "NaranjOS en vivo: lo que cambies se pierde al apagar / live session: changes are lost at shutdown"
+fi
+
+while [ -z "$vivo" ]; do
   [ -n "$raiz" ] || { emergencia "Falta root= en la línea del kernel / root= is missing"; continue; }
   dev=$(dispositivo); t=0
   until [ -b "$dev" ]; do
