@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Restablecer NaranjOS
+Name[en]=Reset NaranjOS
+Comment=Dejar NaranjOS como recién instalado (o para un nuevo dueño)
+Exec=naranjos-fabrica
+Icon=system-reboot
+Terminal=false
+Categories=System;

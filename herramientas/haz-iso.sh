@@ -184,9 +184,9 @@ else
   say "Modo rápido: se aprovecha la raíz de la vez anterior (solo se ponen al día el arranque y el instalador)"
   monta --bind /dev "$RZ/dev"; monta -t proc proc "$RZ/proc"; monta -t tmpfs -o mode=0755 run "$RZ/run"
   sudo pacman --root "$RZ" --config "$T/pacman.conf" --cachedir /var/cache/pacman/pkg --gpgdir /etc/pacman.d/gnupg \
-    -Sy --noconfirm --needed naranjos-initramfs naranjos-arranque naranjos-shim16 naranjos-instalador > "$T/pacman-rapida.log" 2>&1 \
+    -Sy --noconfirm --needed naranjos-initramfs naranjos-arranque naranjos-shim16 naranjos-fotos naranjos-instalador > "$T/pacman-rapida.log" 2>&1 \
     || { tail -20 "$T/pacman-rapida.log"; die "pacman falló"; }
-  ok "$(pacman --root "$RZ" -Q naranjos-initramfs naranjos-arranque naranjos-instalador 2>/dev/null | tr '\n' ' ')"
+  ok "$(pacman --root "$RZ" -Q naranjos-initramfs naranjos-arranque naranjos-fotos naranjos-instalador 2>/dev/null | tr '\n' ' ')"
   pon_instalador
 fi
 

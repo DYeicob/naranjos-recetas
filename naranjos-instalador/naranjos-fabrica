@@ -1,0 +1,120 @@
+#!/bin/bash
+# naranjos-fabrica — dejar NaranjOS como recién instalado (fase 7d)
+#   sudo naranjos-fabrica               elegir en un menú
+#   sudo naranjos-fabrica sistema       el SISTEMA como recién instalado; tus usuarios y archivos (/home) se quedan
+#   sudo naranjos-fabrica nuevo-dueno   TODO como recién instalado y sin nada tuyo, para venderlo o regalarlo:
+#                                       al encender, el nuevo dueño crea su usuario y su contraseña del disco
+# Se apoya en la foto «fábrica» que hace naranjos-instala al terminar (sudo fotos lista).
+set -uo pipefail
+VERSION=0.1.0
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; B=$'\e[1m'; Z=$'\e[0m'
+die(){ printf '\n%s✘ %s%s\n' "$R" "$1" "$Z" >&2; [ -t 0 ] && read -rsn1 -p "Pulsa una tecla…"; exit 1; }
+bien(){ printf '%s✔%s %s\n' "$G" "$Z" "$*"; }
+di(){ printf '%s▸%s %s\n' "$O" "$Z" "$*"; }
+
+# desde el menú: en una terminal, y con sudo
+if [ ! -t 0 ] && command -v foot >/dev/null; then exec foot --app-id=naranjos-fabrica -T "Restablecer NaranjOS" -e "$0" "$@"; fi
+[ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+[ -r /run/naranjos-vivo.estado ] && die "Esto es para un NaranjOS instalado, no para la sesión en vivo."
+[ -r /run/naranjos-foto ] && die "Has arrancado una foto: arranca NaranjOS normal antes."
+command -v fotos >/dev/null || die "Falta fotos (naranjos-fotos)"
+
+N=$(fotos lista 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | awk '/fábrica/ {print $1; exit}')
+[[ "$N" =~ ^[0-9]+$ ]] || die "No encuentro la foto «fábrica» (la hace el instalador al terminar). Sin ella no se puede restablecer."
+
+clear
+printf '%sNaranjOS · restablecer%s   %s(foto de fábrica: %s)%s\n\n' "$O" "$Z" "$D" "$N" "$Z"
+MODO=${1:-}
+if [ -z "$MODO" ]; then
+  echo "  1) ${B}Restablecer el sistema${Z}: NaranjOS como recién instalado. ${G}Tus usuarios y archivos se quedan.${Z}"
+  echo "     (programas instalados después, ajustes del sistema, Wi-Fi guardadas… vuelven a como estaban)"
+  echo "  2) ${B}Nuevo dueño${Z}: ${R}se borra TODO lo tuyo${Z} (usuarios, archivos, Wi-Fi, fotos del sistema)."
+  echo "     Para venderlo o regalarlo: al encender, la otra persona crea su usuario y su contraseña del disco."
+  echo
+  read -rp "  Elige 1 o 2 (otra cosa para salir): " o
+  case "$o" in 1) MODO=sistema ;; 2) MODO=nuevo-dueno ;; *) exit 0 ;; esac
+fi
+
+case "$MODO" in
+sistema)
+  echo
+  read -rp "  Escribe ${B}SI${Z} para restablecer el sistema: " r; [ "$r" = SI ] || die "No se ha tocado nada."
+  fotos vuelve "$N" --si || die "No pude volver a la foto de fábrica"
+  bien "Listo: al reiniciar, NaranjOS estará como recién instalado (tus archivos siguen ahí)."
+  ;;
+nuevo-dueno|nuevo-dueño)
+  echo
+  echo "  ${R}${B}Se borrará TODO lo tuyo de este equipo${Z}: usuarios, archivos de /home, Wi-Fi, registros y fotos."
+  read -rp "  Escribe ${B}BORRAR TODO${Z} para seguir: " r; [ "$r" = "BORRAR TODO" ] || die "No se ha tocado nada."
+  # la contraseña del disco: una temporal, que le das al nuevo dueño (la cambia al encender)
+  raiz=$(findmnt -nvo SOURCE /); part=""
+  if [ "$(lsblk -dno TYPE "$raiz" 2>/dev/null)" = crypt ]; then
+    s=$(ls "/sys/block/$(basename "$(readlink -f "$raiz")")/slaves" 2>/dev/null | head -n1); part=/dev/$s
+    echo
+    echo "  Ahora la ${B}contraseña del disco${Z}: primero la tuya de ahora; luego una ${B}temporal${Z} para el nuevo dueño"
+    echo "  (dásela: la necesitará al encender y la cambiará por la suya)."
+    until cryptsetup luksChangeKey -y "$part"; do
+      read -rp "  No se cambió. ¿Otra vez? (s/n) " r; [ "$r" = s ] || die "Cancelado: no se ha borrado nada."
+    done
+    bien "Contraseña temporal del disco puesta"
+  fi
+  di "Volviendo a la foto de fábrica…"
+  fotos vuelve "$N" --si >/dev/null || die "No pude volver a la foto de fábrica"
+  # el sistema restaurado, sin rastro del dueño anterior (en el subvolumen @ que arrancará)
+  T=/run/naranjos-fabrica; mkdir -p "$T"
+  mount -o subvolid=5 "$raiz" "$T" || die "No pude montar el Btrfs"
+  NR="$T/@"
+  # fuera los usuarios de personas (uid 1000–59999): de passwd, shadow, sus grupos y de los grupos donde estaban
+  python3 -I - "$NR/etc" << "PY" || die "No pude quitar los usuarios"
+import sys, os
+e = sys.argv[1]
+def lee(f):
+    p = os.path.join(e, f)
+    return open(p).read().splitlines() if os.path.exists(p) else None
+pw = lee("passwd")
+fuera = {l.split(":")[0] for l in pw if l.count(":") >= 6 and 1000 <= int(l.split(":")[2] or 0) < 60000}
+for f in ("passwd", "shadow", "subuid", "subgid"):
+    ls = lee(f)
+    if ls is None: continue
+    open(os.path.join(e, f), "w").write("".join(l + "\n" for l in ls if l.split(":")[0] not in fuera))
+for f in ("group", "gshadow"):
+    ls = lee(f)
+    if ls is None: continue
+    out = []
+    for l in ls:
+        c = l.split(":")
+        if c[0] in fuera: continue
+        if len(c) >= 4: c[-1] = ",".join(m for m in c[-1].split(",") if m and m not in fuera)
+        out.append(":".join(c))
+    open(os.path.join(e, f), "w").write("".join(l + "\n" for l in out))
+print(" ".join(sorted(fuera)))
+PY
+  echo naranjos > "$NR/etc/hostname"
+  printf '127.0.0.1 localhost\n::1 localhost\n127.0.1.1 naranjos\n' > "$NR/etc/hosts"
+  : > "$NR/etc/machine-id"
+  rm -f "$NR"/etc/ssh/ssh_host_* "$NR"/var/lib/systemd/random-seed
+  rm -rf "$NR"/etc/NetworkManager/system-connections/* "$NR"/var/lib/iwd/* "$NR"/var/lib/bluetooth/* "$NR"/var/lib/fprint/* \
+         "$NR"/var/lib/tailscale/* "$NR"/root/.bash_history "$NR"/root/.cache 2>/dev/null
+  mkdir -p "$NR/etc/naranjos" "$NR/etc/systemd/system/multi-user.target.wants"
+  date '+%Y-%m-%d %H:%M' > "$NR/etc/naranjos/nuevo-dueno"
+  ln -sf /usr/lib/systemd/system/naranjos-bienvenida.service "$NR/etc/systemd/system/multi-user.target.wants/naranjos-bienvenida.service"
+  bien "Sistema de fábrica, sin usuarios"
+  # lo que no va en la foto: /home, registros, cachés y /srv (subvolúmenes aparte), y las demás fotos
+  di "Borrando tus archivos, registros y fotos…"
+  for v in @home @srv @log; do [ -d "$T/$v" ] && find "$T/$v" -mindepth 1 -delete 2>/dev/null; done
+  for x in "$T"/@cache/*; do [ "$x" = "$T/@cache/pacman" ] || rm -rf "$x"; done
+  umount "$T"
+  otras=$(fotos lista 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | awk -v n="$N" '$1 ~ /^[0-9]+$/ && $1 != n {print $1}')
+  [ -n "$otras" ] && fotos borra $otras >/dev/null 2>&1
+  bien "Archivos, registros y fotos borrados (queda solo la de fábrica)"
+  echo
+  echo "  ${B}Listo.${Z} Apaga el equipo. Al encenderlo, el nuevo dueño:"
+  [ -n "$part" ] && echo "   1. escribe la ${B}contraseña temporal del disco${Z} que le des,"
+  echo "   2. y NaranjOS le da la bienvenida: teclado, hora, su usuario$([ -n "$part" ] && echo " y su propia contraseña del disco")."
+  ;;
+*) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac
+echo
+read -rp "  ¿Reiniciar ahora? (s/n) " r
+[ "$r" = s ] && { [ "$MODO" = sistema ] && systemctl reboot || systemctl poweroff; }
+exit 0
