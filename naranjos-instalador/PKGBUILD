@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-7d.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-7d2.sh (NO editar a mano)
 pkgname=naranjos-instalador
-pkgver=0.2.0
+pkgver=0.2.1
 pkgrel=1
 pkgdesc='Instalador de NaranjOS (desde la ISO), restablecer de fábrica y bienvenida del nuevo dueño'
 arch=('any')
@@ -9,7 +9,7 @@ license=('GPL-3.0-or-later')
 depends=('cryptsetup' 'btrfs-progs' 'e2fsprogs' 'dosfstools' 'util-linux' 'efibootmgr' 'openssl' 'sbsigntools' 'naranjos-arranque' 'naranjos-initramfs' 'naranjos-shim16' 'naranjos-fotos' 'foot' 'fuzzel' 'sudo' 'python')
 makedepends=()
 source=('naranjos-instala' 'naranjos-fabrica' 'naranjos-bienvenida' 'naranjos-bienvenida.service' 'naranjos-fabrica.desktop')
-sha256sums=('eb272c32b64e3191fee693781e9d71341e30bf161c9c848085f73b70736bc1d0' 'ccf7df5e0eabfa5b09b8a46862477189777fc636351fd3adf2ce193b765488ba' '958051c352c1429a9b5fadf4d55f312642937aa1d30274433adc2751bd83f2b5' '7f58c219a34d78068414f04cd2e7622a4d27bc1309e0629fe9a0c6553c314db0' 'a9ec55ddc50690fa1f1e2b80353dd0e07ad2fe641927e121eb4db5d164f951c8')
+sha256sums=('eb272c32b64e3191fee693781e9d71341e30bf161c9c848085f73b70736bc1d0' '464403ab18bf533b619d63aa5e72e07523983cfafe74af87e031eeae099a8444' '958051c352c1429a9b5fadf4d55f312642937aa1d30274433adc2751bd83f2b5' '7f58c219a34d78068414f04cd2e7622a4d27bc1309e0629fe9a0c6553c314db0' 'a9ec55ddc50690fa1f1e2b80353dd0e07ad2fe641927e121eb4db5d164f951c8')
 package() {
   local s
   for s in naranjos-instala naranjos-fabrica naranjos-bienvenida; do install -Dm755 "$s" "$pkgdir/usr/bin/$s"; done

@@ -6,7 +6,7 @@
 # Lo que entra en la foto: la raíz (subvolumen @, con /boot y /etc). NO entran /home, /var/log,
 # la caché de paquetes (/var/cache/pacman/pkg), /srv ni el swap: son subvolúmenes aparte.
 set -euo pipefail
-VERSION="0.1.1"
+VERSION="0.1.2"
 if [ -r /usr/lib/naranjos/naranjos-i18n.sh ]; then . /usr/lib/naranjos/naranjos-i18n.sh; else _(){ printf '%s' "$1"; }; fi
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; Z=$'\e[0m'
 [ -t 1 ] || { O=; G=; R=; A=; D=; Z=; }
@@ -199,7 +199,7 @@ vuelve(){
   sync
   exec 9>&-
   # el menú de arranque del sistema «nuevo» (el GRUB siempre lee /@/boot/grub/grub.cfg)
-  if command -v naranjos-arranque >/dev/null; then
+  if command -v naranjos-arranque >/dev/null && ! mountpoint -q /boot; then
     naranjos-arranque menu --raiz "$TOP/$RAIZ_SUB" >/dev/null || aviso "$(_ 'No pude rehacer el menú de arranque')"
   fi
   sincroniza_boot || true
@@ -220,11 +220,18 @@ sincroniza_boot(){
   mount -t proc proc "$r/proc"; mount -t tmpfs -o mode=0755 run "$r/run"
   mkdir -p "$r/run/udev"; mount --bind /run/udev "$r/run/udev"
   mount --rbind /boot "$r/boot"; mount --make-rslave "$r/boot"
-  if chroot "$r" /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin /bin/bash -c \
-       'naranjos-kernel instala >/dev/null && naranjos-initramfs --todos >/dev/null 2>&1 && naranjos-arranque instala --si >/dev/null'; then
+  # cada paso, a la vista; lo que digan, en el registro; y sin teclado (nada puede quedarse esperando un Enter)
+  local reg=/var/log/naranjos-fotos-boot.log ok=1 paso
+  : > "$reg"
+  for paso in "kernel:ls -d /usr/lib/modules/*/vmlinuz | sed s,^/,, | naranjos-kernel instala" "initramfs:naranjos-initramfs --todos" "arranque:naranjos-arranque instala --si"; do
+    printf '  · %s…\n' "${paso%%:*}"
+    chroot "$r" /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin /bin/bash -c "${paso#*:}" \
+      < /dev/null >> "$reg" 2>&1 || { ok=0; break; }
+  done
+  if [ "$ok" = 1 ]; then
     hecho "$(_ 'Kernel, initramfs y arranque de /boot al día con la foto')"
   else
-    aviso "$(_ 'No pude rehacer /boot desde la foto: arranca, entra y ejecuta  sudo naranjos-kernel instala && sudo naranjos-initramfs --todos')"
+    aviso "$(_ 'No pude rehacer /boot desde la foto (mira') $reg$(_ '): arranca, entra y ejecuta  sudo naranjos-kernel instala && sudo naranjos-initramfs --todos && sudo naranjos-arranque instala --si')"
   fi
   umount -R "$r" 2>/dev/null || umount -lR "$r"
 }

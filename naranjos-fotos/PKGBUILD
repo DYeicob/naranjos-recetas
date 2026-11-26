@@ -1,6 +1,6 @@
-# Paquete propio de NaranjOS — generado por naranjos-tanda-7d.sh (NO editar a mano)
+# Paquete propio de NaranjOS — generado por naranjos-tanda-7d2.sh (NO editar a mano)
 pkgname=naranjos-fotos
-pkgver=0.1.1
+pkgver=0.1.2
 pkgrel=1
 pkgdesc='Fotos del sistema de NaranjOS (instantáneas Btrfs): volver atrás tras una actualización'
 arch=('any')
@@ -9,7 +9,7 @@ license=('GPL-3.0-or-later')
 depends=('bash' 'btrfs-progs' 'util-linux' 'coreutils' 'sed' 'naranjos-idiomas')
 backup=('etc/naranjos/fotos.conf')
 source=('fotos' 'fotos.conf' 'naranjos-fotos-limpia.service' 'naranjos-fotos.sh')
-sha256sums=('274a0ac27d947bcd826fc769680447605e9c5d1a0e1831414ffe14ab58c3bb75' 'fe40c0b756cdf4f80a60811d499b8c4b1c9e6dc27228021c30b7a8ac7ca71530' '6a256db91e570d2bbfbcdcfac90581fc7eb73f0db0e7dc15703fc4ff522f5be2' 'dd207dba625c17196301b931b767007baa7ae1b01ed88b655557343888832eef')
+sha256sums=('35ff96add394b3550be3fc2afba580013735718c3d47c7876df894e0fd43a3de' 'fe40c0b756cdf4f80a60811d499b8c4b1c9e6dc27228021c30b7a8ac7ca71530' '6a256db91e570d2bbfbcdcfac90581fc7eb73f0db0e7dc15703fc4ff522f5be2' 'dd207dba625c17196301b931b767007baa7ae1b01ed88b655557343888832eef')
 package() {
   install -Dm755 fotos "$pkgdir/usr/bin/fotos"
   ln -s fotos "$pkgdir/usr/bin/naranjos-fotos"

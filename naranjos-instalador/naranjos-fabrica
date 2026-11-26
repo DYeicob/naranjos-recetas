@@ -6,7 +6,7 @@
 #                                       al encender, el nuevo dueño crea su usuario y su contraseña del disco
 # Se apoya en la foto «fábrica» que hace naranjos-instala al terminar (sudo fotos lista).
 set -uo pipefail
-VERSION=0.1.0
+VERSION=0.1.1
 O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; R=$'\e[1;31m'; A=$'\e[1;33m'; D=$'\e[2m'; B=$'\e[1m'; Z=$'\e[0m'
 die(){ printf '\n%s✘ %s%s\n' "$R" "$1" "$Z" >&2; [ -t 0 ] && read -rsn1 -p "Pulsa una tecla…"; exit 1; }
 bien(){ printf '%s✔%s %s\n' "$G" "$Z" "$*"; }
@@ -115,6 +115,13 @@ PY
 *) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
 echo
-read -rp "  ¿Reiniciar ahora? (s/n) " r
-[ "$r" = s ] && { [ "$MODO" = sistema ] && systemctl reboot || systemctl poweroff; }
-exit 0
+# lo que se haya tecleado mientras trabajaba no cuenta como respuesta
+while read -r -t 0.1 -n 1000 _; do :; done
+if [ "$MODO" = sistema ]; then q="¿Reiniciar ahora?"; else q="¿Apagar ahora?"; fi
+while :; do
+  read -rp "  $q (s/n) " r
+  case "$r" in
+    s|S|si|SI|sí) if [ "$MODO" = sistema ]; then systemctl reboot; else systemctl poweroff; fi; exit 0 ;;
+    n|N|no|NO) echo "  Vale: se aplicará cuando $([ "$MODO" = sistema ] && echo reinicies || echo apagues)."; sleep 3; exit 0 ;;
+  esac
+done
