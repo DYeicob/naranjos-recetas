@@ -1,0 +1,23 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=syncthing
+pkgver=2.1.7
+pkgrel=1
+pkgdesc='Sincroniza carpetas entre tus equipos (sin nube, sin cuentas, cifrado)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MPL-2.0')
+depends=()
+makedepends=('go')
+source=('https://github.com/syncthing/syncthing/releases/download/v2.1.7/syncthing-source-v2.1.7.tar.gz')
+sha256sums=('5b84abd0e8b187f618fb2c38c37fa37ce0b377a275d3e0b981bad94176a24afa')
+build() {
+  cd syncthing
+  export GOTOOLCHAIN=local GOFLAGS="-trimpath -modcacherw" GOPATH="$srcdir/gopath" GOCACHE="$srcdir/gocache"
+  go run build.go -no-upgrade -version "v$pkgver" build syncthing
+}
+package() {
+  cd syncthing
+  install -Dm755 syncthing "$pkgdir/usr/bin/syncthing"
+  install -Dm644 etc/linux-systemd/user/syncthing.service "$pkgdir/usr/lib/systemd/user/syncthing.service"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/syncthing/LICENSE"
+}

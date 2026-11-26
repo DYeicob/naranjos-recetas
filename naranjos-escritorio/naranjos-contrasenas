@@ -1,0 +1,12 @@
+#!/bin/bash
+# naranjos-contrasenas — tus contraseñas con KeePassXC: una base cifrada en tu disco, gratis y sin cuentas
+#   naranjos-contrasenas      abrirlo (la primera vez lo instala desde Flathub)
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+if ! flatpak info org.keepassxc.KeePassXC >/dev/null 2>&1; then
+  naranjos-notifica "KeePassXC" "$(_ 'Instalando KeePassXC (Flathub)…')"
+  flatpak install -y --user flathub org.keepassxc.KeePassXC >/dev/null 2>&1 \
+    || flatpak install -y flathub org.keepassxc.KeePassXC >/dev/null 2>&1 \
+    || { naranjos-notifica "KeePassXC" "$(_ 'No pude instalarlo: mira naranjos-apps')"; exit 1; }
+fi
+exec flatpak run org.keepassxc.KeePassXC "$@"

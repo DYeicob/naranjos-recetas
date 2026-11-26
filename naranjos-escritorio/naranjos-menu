@@ -53,6 +53,12 @@ seccion_aspecto(){
   mete "󱂬  $(_ 'Dock: mostrar / ocultar')"        "naranjos-dock alterna"
   mete "󰐃  $(_ 'Dock: fijar una app')"           "naranjos-dock fija"
   mete "󰐄  $(_ 'Dock: quitar una app')"          "naranjos-dock quita"
+  mete "󰖯  $(_ 'Barras de título: sí / no')"     "naranjos-barras alterna"
+  mete "󰕧  $(_ 'Fondo en movimiento: sí / no')"  "naranjos-fondo-video alterna"
+  mete "󰕧  $(_ 'Animación al cambiar de tema: sí / no')"  "naranjos-fondo-video intro alterna"
+  mete "中  $(_ 'Escritura: chino, japonés, coreano')"  "naranjos-escritura menu"
+  mete "󰌾  $(_ 'Contraseñas (KeePassXC)')"       "naranjos-contrasenas"
+  mete "󰓦  $(_ 'Sincronizar carpetas (Syncthing)')"  "naranjos-sincroniza abre"
   mete "󰕴  $(_ 'Modo escritorio (flotante + dock)')" "naranjos-disposicion escritorio activa"
   mete "󰕴  $(_ 'Modo mosaico')"                   "naranjos-disposicion escritorio apaga"
   mete "󰖔  $(_ 'Luz nocturna')…"                  "naranjos-noche menu"
@@ -96,6 +102,7 @@ seccion_sistema(){
   mete "󰢹  $(_ 'Programas de otro equipo (SSH)')"   "naranjos-remoto"
   mete "  $(_ 'Kernel por defecto')"                "terminal Kernel 'sudo naranjos-arranque kernel'"
   mete "󰚩  $(_ 'IA local (opcional, sin cuentas)')"  "terminal \"$(_ 'IA local')\" 'naranjos-ia estado; echo; naranjos-ia instala && naranjos-ia modelo'"
+  mete "󰚩  $(_ 'Agente de IA para programar (opencode, local)')"  "terminal \"opencode\" 'naranjos-ia agente instala'"
 }
 seccion_utilidades(){
   mete "󰅌  $(_ 'Portapapeles')"                    "naranjos-portapapeles menu"

@@ -3,6 +3,7 @@
 #   naranjos-ia instala          descargarlo (solo en tu usuario; NaranjOS no lo trae de serie)
 #   naranjos-ia modelo [nombre]  bajar un modelo (p. ej. qwen3:8b, llama3.2:3b, gemma3:4b)
 #   naranjos-ia chat [modelo]    hablar con él en la terminal
+#   naranjos-ia agente [instala|quita]   asistente para programar en la terminal (opencode) con tu IA local
 #   naranjos-ia estado | quita
 set -uo pipefail
 . /usr/lib/naranjos/naranjos-i18n.sh
@@ -11,6 +12,7 @@ die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
 D="${XDG_DATA_HOME:-$HOME/.local/share}/naranjos/ia"; BIN="$D/bin/ollama"
 U="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/naranjos-ia.service"
 URL=https://github.com/ollama/ollama/releases/latest/download
+OC_V=2.4.2; OC_URL=https://github.com/anomalyco/opencode/releases/download/v$OC_V; OC="$D/opencode/opencode"
 
 instala(){
   [ -x "$BIN" ] && { printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Ya está instalado')"; return; }
@@ -36,7 +38,43 @@ modelo(){
   [ -n "$m" ] || m=$(printf '%s\n' "qwen3:8b  · $(_ 'equilibrado (8 GB de gráfica)')" "llama3.2:3b  · $(_ 'rápido y ligero')" "gemma3:4b  · $(_ 'bueno con imágenes')" "qwen2.5-coder:7b  · $(_ 'programar')" | fuzzel --dmenu -p "$(_ 'Modelo') ❯ " | cut -d' ' -f1)
   [ -n "$m" ] && "$BIN" pull "$m"
 }
+agente(){ # opencode: gratis y sin cuentas, hablando SOLO con tu Ollama (127.0.0.1)
+  case "${1:-}" in
+    instala)
+      [ -x "$BIN" ] || die "$(_ 'Primero: naranjos-ia instala (y un modelo: naranjos-ia modelo qwen2.5-coder:7b)')"
+      if [ ! -x "$OC" ]; then
+        printf '%s %s\n' "$(_ 'Se descargará opencode') $OC_V (~130 MB) $(_ 'en:')" "$D/opencode"
+        read -rp "$(_ 'Escribe SI para seguir:') " r; [ "$r" = SI ] || exit 0
+        mkdir -p "$D/opencode"; local t="$D/opencode/descarga.tar.gz"
+        curl -fL --progress-bar -o "$t" "$OC_URL/opencode-linux-x64.tar.gz" || die "$(_ 'No pude descargarlo')"
+        curl -fsL "$OC_URL/SHA256SUMS" | awk '$2 == "opencode-linux-x64.tar.gz" {print $1"  '"$t"'"}' | sha256sum -c --quiet - \
+          || { rm -f "$t"; die "$(_ 'La descarga no coincide con su suma: no se instala')"; }
+        tar -xzf "$t" -C "$D/opencode" && rm -f "$t"
+        [ -x "$OC" ] || die "$(_ 'No pude descargarlo')"
+        mkdir -p "$HOME/.local/bin"; ln -sf "$OC" "$HOME/.local/bin/opencode"
+      fi
+      # su configuración: solo tu Ollama, sin compartir sesiones y sin actualizarse solo
+      local cf="${XDG_CONFIG_HOME:-$HOME/.config}/opencode/opencode.json"
+      if [ ! -e "$cf" ]; then
+        mkdir -p "${cf%/*}"
+        "$BIN" list 2>/dev/null | awk 'NR>1 {print $1}' | python3 -c '
+import json, sys
+ms = [l.strip() for l in sys.stdin if l.strip()] or ["qwen2.5-coder:7b"]
+c = {"$schema": "https://opencode.ai/config.json", "autoupdate": False, "share": "disabled",
+     "model": "ollama/" + ms[0],
+     "provider": {"ollama": {"npm": "@ai-sdk/openai-compatible", "name": "Ollama (NaranjOS, local)",
+                             "options": {"baseURL": "http://127.0.0.1:11434/v1"},
+                             "models": {m: {"name": m, "tools": True} for m in ms}}}}
+print(json.dumps(c, indent=2))' > "$cf"
+      fi
+      printf '%s✔%s %s %sopencode%s\n' "$G" "$Z" "$(_ 'Listo. En la carpeta de tu proyecto:')" "$O" "$Z" ;;
+    quita) rm -rf "$D/opencode" "$HOME/.local/bin/opencode"; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'opencode quitado (tu configuración sigue en ~/.config/opencode)')" ;;
+    "") [ -x "$OC" ] || die "$(_ 'Primero: naranjos-ia agente instala')"; exec "$OC" ;;
+    *) die "instala|quita" ;;
+  esac
+}
 case "${1:-estado}" in
+  agente) agente "${2:-}" ;;
   instala) instala ;;
   modelo) modelo "${2:-}" ;;
   chat)

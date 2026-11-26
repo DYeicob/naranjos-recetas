@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=nlohmann-json
+pkgver=3.12.0
+pkgrel=1
+pkgdesc='JSON para C++ moderno (solo cabeceras)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('MIT')
+depends=()
+makedepends=('cmake' 'ninja')
+source=('https://github.com/nlohmann/json/archive/v3.12.0/json-3.12.0.tar.gz')
+sha256sums=('4b92eb0c06d10683f7447ce9406cb97cd4b453be18d7279320f7b2f025c10187')
+build() { cd json-$pkgver; cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Wno-dev -DJSON_BuildTests=OFF -DJSON_Install=ON; ninja -C build; }
+package() { cd json-$pkgver; DESTDIR="$pkgdir" ninja -C build install; install -Dm644 LICENSE.MIT "$pkgdir/usr/share/licenses/nlohmann-json/LICENSE"; }

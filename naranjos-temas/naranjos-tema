@@ -164,6 +164,7 @@ pon(){
   recarga
   pon_cursor "$CURSOR"
   [ -n "$FONDO" ] && pon_fondo "$FONDO"
+  command -v naranjos-fondo-video >/dev/null && { setsid -f naranjos-fondo-video tema "$t" >/dev/null 2>&1 || true; }
   command -v notify-send >/dev/null && [ -n "${WAYLAND_DISPLAY:-}" ] && \
     notify-send -a NaranjOS -i naranjos "$(_ 'Tema'): $(nombre "$t")" "$(_ 'Las terminales nuevas ya salen con el tema.')" 2>/dev/null
   printf '%s✔%s %s %s\n' "$G" "$Z" "$(_ 'Tema puesto:')" "$(nombre "$t")"

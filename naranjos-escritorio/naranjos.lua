@@ -353,6 +353,8 @@ hl.window_rule({
 })
 naranjos_carga("espejo")         -- naranjos-pantalla espejo
 
+pcall(dofile, "/usr/share/naranjos/hypr/adornos.lua")   -- barras de título, fondo en movimiento, escritura CJK (naranjos-adornos)
+
 ---- Lo tuyo hecho con las órdenes de NaranjOS -------------------------
 naranjos_carga("ventanas")       -- naranjos-ventanas
 naranjos_carga("complementos")   -- naranjos-complementos

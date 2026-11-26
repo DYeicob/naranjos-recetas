@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=fcitx5-anthy
+pkgver=5.1.11
+pkgrel=1
+pkgdesc='Japonés en fcitx5 (anthy)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('fcitx5' 'anthy-unicode')
+makedepends=('extra-cmake-modules' 'cmake' 'ninja')
+source=('https://github.com/fcitx/fcitx5-anthy/archive/5.1.11/fcitx5-anthy-5.1.11.tar.gz')
+sha256sums=('822aeb52b631cdd273735089dc775f8c1c5cbb5a4d74d47715aaf183d5bba48b')
+build() { cd fcitx5-anthy-$pkgver; cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Wno-dev -DENABLE_TEST=Off; ninja -C build; }
+package() { cd fcitx5-anthy-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

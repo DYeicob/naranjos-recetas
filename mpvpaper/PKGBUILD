@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=mpvpaper
+pkgver=1.9
+pkgrel=1
+pkgdesc='Un vídeo como fondo de escritorio en Wayland'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('mpv' 'wayland' 'mesa')
+makedepends=('meson' 'ninja' 'wayland-protocols')
+source=('https://github.com/GhostNaN/mpvpaper/archive/1.9/mpvpaper-1.9.tar.gz')
+sha256sums=('6de941b54941cfd5d00bac62d10ef47c1338f237dac4c78a7185d0f8d30cd4d1')
+build() { cd mpvpaper-$pkgver; meson setup build --prefix=/usr --buildtype=release; meson compile -C build; }
+package() { cd mpvpaper-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

@@ -1,0 +1,25 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=libplacebo
+pkgver=7.387.0
+pkgrel=1
+pkgdesc='Procesado de vídeo en la gráfica (lo usa mpv)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('vulkan-icd-loader' 'lcms2' 'glslang' 'libglvnd')
+makedepends=('meson' 'ninja' 'python' 'python-jinja' 'python-markupsafe' 'vulkan-headers')
+source=('https://github.com/haasn/libplacebo/archive/v7.387.0/libplacebo-7.387.0.tar.gz' 'https://github.com/Dav1dde/glad/archive/73db193f853e2ee079bf3ca8a64aa2eaf6459043/glad-73db193f853e2ee079bf3ca8a64aa2eaf6459043.tar.gz' 'https://github.com/fastfloat/fast_float/archive/97b54ca9e75f5303507699d27c6b4f4efe4641a1/fast_float-97b54ca9e75f5303507699d27c6b4f4efe4641a1.tar.gz')
+sha256sums=('f9e62d3774a9c4cfd198ec3abaa88294aaade2e31c04d5ab02bcf4abc98b1df5' '33dbeae44d8315ece57e14eba4b1b4a02ac5406d1c4f49cd20048c91522a6b9a' '2b132274539286e41f37857cac22aa8441d21bd86d55de825a3342b149f66801')
+prepare() {
+  cd libplacebo-$pkgver
+  rm -rf 3rdparty/glad 3rdparty/fast_float
+  cp -r ../glad-73db193f853e2ee079bf3ca8a64aa2eaf6459043 3rdparty/glad; cp -r ../fast_float-97b54ca9e75f5303507699d27c6b4f4efe4641a1 3rdparty/fast_float
+}
+build() {
+  cd libplacebo-$pkgver
+  meson setup build --prefix=/usr --buildtype=release -D vulkan=enabled -D opengl=enabled -D glslang=enabled -D shaderc=disabled \
+    -D lcms=enabled -D demos=false -D tests=false -D d3d11=disabled -D libdovi=disabled -D xxhash=disabled -D unwind=disabled \
+    -D vulkan-registry=/usr/share/vulkan/registry/vk.xml
+  meson compile -C build
+}
+package() { cd libplacebo-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

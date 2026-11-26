@@ -1,0 +1,22 @@
+#!/bin/bash
+# naranjos-sincroniza — sincronizar carpetas entre tus equipos con Syncthing: sin nube, sin cuentas, cifrado
+#   naranjos-sincroniza activa | apaga   arrancarlo con tu sesión (o pararlo)
+#   naranjos-sincroniza [abre]           su panel (en el navegador, solo desde este equipo)
+#   naranjos-sincroniza estado
+# Para emparejar otro equipo (o el móvil, con la app Syncthing-Fork), en el panel: «Añadir dispositivo» y su ID.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+O=$'\e[1;38;5;208m'; G=$'\e[1;32m'; Z=$'\e[0m'; [ -t 1 ] || { O=; G=; Z=; }
+URL=http://127.0.0.1:8384
+case "${1:-abre}" in
+  activa)
+    systemctl --user enable --now syncthing.service || exit 1
+    printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Syncthing activo. Su panel: naranjos-sincroniza (o el menú)')"
+    printf '  %s %ssudo naranjos-peel cortafuegos abre 22000%s\n' "$(_ 'Para que los equipos de tu casa se vean directamente (más rápido):')" "$O" "$Z" ;;
+  apaga) systemctl --user disable --now syncthing.service; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Syncthing parado')" ;;
+  estado) printf '%s %s\n' "$(_ 'Syncthing:')" "$(systemctl --user is-active syncthing.service 2>/dev/null)" ;;
+  abre)
+    systemctl --user is-active --quiet syncthing.service || systemctl --user enable --now syncthing.service
+    sleep 1; xdg-open "$URL" >/dev/null 2>&1 & ;;
+  *) sed -n '2,6p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

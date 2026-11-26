@@ -75,9 +75,9 @@ menu(){
     "󱡔  $(_ 'Ventanas: opacas')" "󱡔  $(_ 'Ventanas: transparentes')" "󱡔  $(_ 'Ventanas: cristal')" \
     "󰢡  $(_ 'Esquinas: las del tema')" "󰢡  $(_ 'Esquinas: rectas')" "󰢡  $(_ 'Esquinas: redondas')" \
     "󰐊  $(_ 'Animaciones: sí')" "󰏤  $(_ 'Animaciones: no')" \
-    "󱂬  $(_ 'Dock: mostrar / ocultar')" "󰐃  $(_ 'Dock: fijar una app')" "󰐄  $(_ 'Dock: quitar una app')" "󰕴  $(_ 'Modo escritorio (flotante + dock)')" "󰕴  $(_ 'Modo mosaico')" \
+    "󱂬  $(_ 'Dock: mostrar / ocultar')" "󰐃  $(_ 'Dock: fijar una app')" "󰐄  $(_ 'Dock: quitar una app')" "󰖯  $(_ 'Barras de título: sí / no')" "󰕧  $(_ 'Fondo en movimiento: sí / no')" "󰕧  $(_ 'Animación al cambiar de tema: sí / no')" "󰕴  $(_ 'Modo escritorio (flotante + dock)')" "󰕴  $(_ 'Modo mosaico')" \
     "󰌾  $(_ 'Pantalla de bloqueo')" "󰏘  $(_ 'Crear mi tema…')" \
-    | fuzzel --dmenu -p "$(_ 'Apariencia') ❯ " --lines 21) || exit 0
+    | fuzzel --dmenu -p "$(_ 'Apariencia') ❯ " --lines 24) || exit 0
   case "$s" in
     *"$(_ 'Tema (con vista previa)')"*) tema ;;
     *"$(_ 'Fondo (con vista previa)')"*) fondo ;;
@@ -95,6 +95,9 @@ menu(){
     *"$(_ 'Dock: mostrar / ocultar')"*) naranjos-dock alterna ;;
     *"$(_ 'Dock: fijar una app')"*) naranjos-dock fija ;;
     *"$(_ 'Dock: quitar una app')"*) naranjos-dock quita ;;
+    *"$(_ 'Barras de título: sí / no')"*) naranjos-barras alterna ;;
+    *"$(_ 'Fondo en movimiento: sí / no')"*) naranjos-fondo-video alterna ;;
+    *"$(_ 'Animación al cambiar de tema: sí / no')"*) naranjos-fondo-video intro alterna ;;
     *"$(_ 'Modo escritorio (flotante + dock)')"*) naranjos-disposicion escritorio activa ;;
     *"$(_ 'Modo mosaico')"*) naranjos-disposicion escritorio apaga ;;
     *"$(_ 'Pantalla de bloqueo')"*) setsid -f foot --app-id=naranjos-tui -e "${EDITOR:-nvim}" "$HOME/.config/hypr/hyprlock.conf" ;;

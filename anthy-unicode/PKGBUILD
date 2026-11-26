@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=anthy-unicode
+pkgver=1.0.0.20260213
+pkgrel=1
+pkgdesc='Conversión de kana a kanji para escribir en japonés'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later' 'GPL-2.0-or-later')
+depends=()
+makedepends=('meson' 'ninja')
+source=('https://github.com/fujiwarat/anthy-unicode/archive/1.0.0.20260213/anthy-unicode-1.0.0.20260213.tar.gz')
+sha256sums=('136469e2288658a80684b3f05a868b596a835c4adcf3de97ab657423c0132a55')
+build() { cd anthy-unicode-$pkgver; meson setup build --prefix=/usr --sysconfdir=/etc --buildtype=release -D emacs=disabled; meson compile -C build; }
+package() { cd anthy-unicode-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

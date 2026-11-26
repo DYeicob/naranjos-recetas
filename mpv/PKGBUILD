@@ -1,0 +1,24 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=mpv
+pkgver=0.42.0
+pkgrel=1
+pkgdesc='Reproductor de vídeo (y la biblioteca libmpv de los fondos en movimiento)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-2.0-or-later')
+depends=('ffmpeg' 'libass' 'libplacebo' 'pipewire' 'wayland' 'libxkbcommon' 'mesa' 'lcms2' 'libdrm' 'zlib')
+makedepends=('meson' 'ninja' 'python' 'wayland-protocols' 'vulkan-headers')
+source=('https://github.com/mpv-player/mpv/archive/v0.42.0/mpv-0.42.0.tar.gz')
+sha256sums=('bcfebbfa2b65a6d88dc97ea18117831072373e38b5785a2afb874ed4df5070dd')
+build() {
+  cd mpv-$pkgver
+  meson setup build --prefix=/usr --buildtype=release -D libmpv=true -D cplayer=true \
+    -D lua=disabled -D javascript=disabled -D manpage-build=disabled -D html-build=disabled -D pdf-build=disabled \
+    -D x11=disabled -D wayland=enabled -D vulkan=enabled -D gl=enabled -D egl=enabled -D egl-wayland=enabled \
+    -D pipewire=enabled -D pulse=disabled -D alsa=disabled -D jack=disabled -D openal=disabled -D sdl2-audio=disabled \
+    -D libarchive=disabled -D libbluray=disabled -D dvdnav=disabled -D cdda=disabled -D lcms2=enabled -D uchardet=disabled \
+    -D rubberband=disabled -D zimg=disabled -D vapoursynth=disabled -D drm=enabled -D gbm=enabled \
+    -D vaapi=disabled -D vdpau=disabled -D cuda-hwaccel=disabled -D cuda-interop=disabled -D shaderc=disabled -D spirv-cross=disabled
+  meson compile -C build
+}
+package() { cd mpv-$pkgver; DESTDIR="$pkgdir" meson install -C build; }

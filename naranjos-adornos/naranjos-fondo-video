@@ -1,0 +1,97 @@
+#!/bin/bash
+# naranjos-fondo-video — fondo de escritorio en movimiento (mpvpaper) y animación al cambiar de tema
+#   naranjos-fondo-video activa [vídeo]   fondo en movimiento: sin vídeo, uno propio del tema (se crea la 1.ª vez)
+#   naranjos-fondo-video apaga            volver al fondo normal (imagen)
+#   naranjos-fondo-video intro activa|apaga|prueba   una animación corta al cambiar de tema
+#   naranjos-fondo-video estado
+# El vídeo se pausa solo cuando una ventana a pantalla completa lo tapa (menos gasto de batería).
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { G=; R=; Z=; }
+die(){ printf '%s✘%s %s\n' "$R" "$Z" "$1" >&2; exit 1; }
+C="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos"; ESTADO="$C/fondo-video"; INTRO="$C/intro-tema"
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/naranjos/fondos-video"
+
+colores(){ # colores [tema] → variables F (fondo), S (superficie), A (acento) del tema
+  local d="$C/tema"
+  [ -n "${1:-}" ] && [ -r "/usr/share/naranjos/temas/$1/colores" ] && d="/usr/share/naranjos/temas/$1"
+  [ -n "${1:-}" ] && [ -r "${XDG_DATA_HOME:-$HOME/.local/share}/naranjos/temas/$1/colores" ] && d="${XDG_DATA_HOME:-$HOME/.local/share}/naranjos/temas/$1"
+  F=$(sed -n 's/^COLOR_FONDO=//p' "$d/colores" 2>/dev/null); F=${F:-121212}
+  S=$(sed -n 's/^COLOR_SUP=//p' "$d/colores" 2>/dev/null); S=${S:-1e1e1e}
+  A=$(sed -n 's/^COLOR_ACENTO=//p' "$d/colores" 2>/dev/null); A=${A:-ff8700}
+  TEMA=$(basename "$(readlink -f "$d")")
+}
+mezcla(){ # mezcla <color1> <color2> <porcentaje del 2.º>: un tono intermedio (para que el acento no deslumbre)
+  python3 -c 'import sys
+a,b,p=sys.argv[1],sys.argv[2],int(sys.argv[3])/100
+print("".join("%02x" % round(int(a[i:i+2],16)*(1-p)+int(b[i:i+2],16)*p) for i in (0,2,4)))' "$1" "$2" "$3"
+}
+
+genera(){ # genera [tema] → ruta del vídeo del tema (lo crea la primera vez: unos 20 s)
+  colores "${1:-}"
+  local v="$CACHE/$TEMA.mp4" m1 m2
+  [ -s "$v" ] && { echo "$v"; return 0; }
+  mkdir -p "$CACHE"
+  m1=$(mezcla "$F" "$A" 22); m2=$(mezcla "$F" "$A" 40)
+  naranjos-notifica "$(_ 'Fondo en movimiento')" "$(_ 'Preparando el vídeo del tema (unos segundos)…')" 2>/dev/null
+  # «gradients» gira y a los 503 fotogramas vuelve al principio: el bucle no se nota
+  ffmpeg -hide_banner -loglevel error -y -f lavfi \
+    -i "gradients=s=1280x720:r=24:c0=0x$F:c1=0x$m1:c2=0x$S:c3=0x$m2:n=4:speed=0.0125:x0=320:y0=180:x1=960:y1=540:seed=7" \
+    -frames:v 503 -vf "gblur=sigma=40,noise=alls=3:allf=t,format=yuv420p" \
+    -c:v libx264 -preset veryfast -crf 30 -movflags +faststart "$v.tmp.mp4" && mv "$v.tmp.mp4" "$v" || { rm -f "$v.tmp.mp4"; return 1; }
+  echo "$v"
+}
+
+reproduce(){ # reproduce <vídeo>: mpvpaper en todas las pantallas, sin la imagen de hyprpaper debajo
+  pkill -x mpvpaper 2>/dev/null; sleep 0.2
+  setsid -f mpvpaper -p -o "no-audio loop hwdec=auto panscan=1.0 really-quiet" '*' "$1" >/dev/null 2>&1
+  sleep 1; pkill -x hyprpaper 2>/dev/null; true
+}
+quita_video(){
+  pkill -x mpvpaper 2>/dev/null
+  pgrep -x hyprpaper >/dev/null || setsid -f hyprpaper >/dev/null 2>&1
+  true
+}
+
+intro(){ # la animación corta del tema (1,6 s), a pantalla completa
+  colores "${1:-}"
+  local v="$CACHE/intro-$TEMA.mp4"
+  mkdir -p "$CACHE"
+  [ -s "$v" ] || ffmpeg -hide_banner -loglevel error -y -f lavfi \
+    -i "gradients=s=1280x720:r=30:c0=0x$A:c1=0x$F:n=2:type=radial:speed=0.08:x0=640:y0=360:x1=720:y1=400:d=1.6" \
+    -vf "zoompan=z='min(1+on*0.09\,5)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1280x720:fps=30,fade=t=in:st=0:d=0.2:color=0x$F,fade=t=out:st=1.0:d=0.6:color=0x$F,format=yuv420p" \
+    -c:v libx264 -preset veryfast -crf 26 "$v" || return 1
+  setsid -f mpv --fs --no-border --no-osc --osd-level=0 --no-input-default-bindings --input-vo-keyboard=no \
+    --really-quiet --keep-open=no --no-audio --wayland-app-id=naranjos-intro --title=naranjos-intro "$v" >/dev/null 2>&1
+}
+
+case "${1:-estado}" in
+  activa)
+    mkdir -p "$C"
+    if [ -n "${2:-}" ]; then [ -r "$2" ] || die "$(_ 'No encuentro el vídeo') $2"; readlink -f "$2" > "$ESTADO"; v=$(cat "$ESTADO")
+    else echo tema > "$ESTADO"; v=$(genera) || die "$(_ 'No pude crear el vídeo del tema')"; fi
+    reproduce "$v"; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Fondo en movimiento activado')" ;;
+  apaga) rm -f "$ESTADO"; quita_video; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Fondo normal')" ;;
+  alterna) if [ -e "$ESTADO" ]; then "$0" apaga; else "$0" activa; fi ;;
+  arranca) # al entrar en la sesión
+    [ -e "$ESTADO" ] || exit 0
+    v=$(cat "$ESTADO"); [ "$v" = tema ] && v=$(genera)
+    [ -r "$v" ] && reproduce "$v"; true ;;
+  tema) # lo llama naranjos-tema al cambiar de tema
+    [ -e "$INTRO" ] && intro "${2:-}"
+    if [ -e "$ESTADO" ] && [ "$(cat "$ESTADO")" = tema ]; then v=$(genera "${2:-}") && reproduce "$v"; fi
+    command -v naranjos-escritura >/dev/null && naranjos-escritura tema >/dev/null 2>&1
+    true ;;
+  intro)
+    case "${2:-}" in
+      activa) mkdir -p "$C"; touch "$INTRO"; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Animación al cambiar de tema: sí')" ;;
+      apaga) rm -f "$INTRO"; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Animación al cambiar de tema: no')" ;;
+      alterna) if [ -e "$INTRO" ]; then "$0" intro apaga; else "$0" intro activa; fi ;;
+      prueba) intro ;;
+      *) die "activa|apaga|prueba" ;;
+    esac ;;
+  estado)
+    if [ -e "$ESTADO" ]; then echo "$(_ 'Fondo en movimiento'): $(cat "$ESTADO")"; else echo "$(_ 'Fondo en movimiento'): $(_ 'no')"; fi
+    if [ -e "$INTRO" ]; then echo "$(_ 'Animación al cambiar de tema'): $(_ 'sí')"; else echo "$(_ 'Animación al cambiar de tema'): $(_ 'no')"; fi ;;
+  *) sed -n '2,7p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

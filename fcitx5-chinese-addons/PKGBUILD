@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=fcitx5-chinese-addons
+pkgver=5.1.15
+pkgrel=1
+pkgdesc='Chino en fcitx5: pinyin, shuangpin y tablas (sin pinyin «en la nube»)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later' 'GPL-2.0-or-later')
+depends=('fcitx5' 'libime' 'opencc')
+makedepends=('extra-cmake-modules' 'boost' 'nlohmann-json' 'cmake' 'ninja')
+source=('https://github.com/fcitx/fcitx5-chinese-addons/archive/5.1.15/fcitx5-chinese-addons-5.1.15.tar.gz')
+sha256sums=('26bb518bc269cc9d661c33bd572924e0f966b5bd8b197c24b14c5038ffea87ef')
+build() {
+  cd fcitx5-chinese-addons-$pkgver
+  cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Wno-dev -DENABLE_GUI=Off -DENABLE_BROWSER=Off -DENABLE_TEST=Off -DENABLE_CLOUDPINYIN=Off -DENABLE_OPENCC=On
+  ninja -C build
+}
+package() { cd fcitx5-chinese-addons-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

@@ -1,0 +1,20 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=fcitx5
+pkgver=5.1.23
+pkgrel=1
+pkgdesc='Métodos de entrada (chino, japonés, coreano…) para Wayland'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('cairo' 'pango' 'gdk-pixbuf2' 'librsvg' 'libxkbcommon' 'xkeyboard-config' 'iso-codes' 'expat' 'libuv' 'systemd' 'dbus' 'wayland' 'glib2' 'util-linux' 'zlib')
+makedepends=('extra-cmake-modules' 'nlohmann-json' 'wayland-protocols' 'cmake' 'ninja')
+source=('https://github.com/fcitx/fcitx5/archive/5.1.23/fcitx5-5.1.23.tar.gz' 'https://github.com/facebook/yoga/archive/042f5013152eb81c1552dec945b88f7b95ca350f/yoga-042f5013152eb81c1552dec945b88f7b95ca350f.tar.gz')
+sha256sums=('adeeafdba468111573233fb09e5cabf2e2c240cdc85e74ead498c2d702c795b8' '4742f41722a16f181e3da37abf943390db1e928f00f26402cb154662ae7f110f')
+prepare() { cd fcitx5-$pkgver; rm -rf third_party/yoga; cp -r ../yoga-042f5013152eb81c1552dec945b88f7b95ca350f third_party/yoga; }
+build() {
+  cd fcitx5-$pkgver
+  cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Wno-dev -DCMAKE_INSTALL_LIBEXECDIR=lib -DENABLE_X11=Off -DENABLE_ENCHANT=Off -DENABLE_TEST=Off -DENABLE_DOC=Off \
+    -DBUILD_SPELL_DICT=Off -DUSE_SYSTEM_PLASMA_WAYLAND_PROTOCOLS=Off -DENABLE_XDGAUTOSTART=Off
+  ninja -C build
+}
+package() { cd fcitx5-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

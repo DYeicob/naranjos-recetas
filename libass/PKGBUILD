@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=libass
+pkgver=0.17.5
+pkgrel=1
+pkgdesc='Subtítulos con estilo (lo usa mpv)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('ISC')
+depends=('freetype2' 'fribidi' 'harfbuzz' 'fontconfig')
+makedepends=('nasm')
+source=('https://github.com/libass/libass/releases/download/0.17.5/libass-0.17.5.tar.xz')
+sha256sums=('2dca25c0e0c837ddf00b52011b3f82cac1e4ddd3ad018227806b0c2288864acc')
+build() { cd libass-$pkgver; ./configure --prefix=/usr --disable-static; make; }
+package() { cd libass-$pkgver; make DESTDIR="$pkgdir" install; install -Dm644 COPYING "$pkgdir/usr/share/licenses/libass/COPYING"; }

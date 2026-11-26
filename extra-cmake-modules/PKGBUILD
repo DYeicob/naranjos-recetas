@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=extra-cmake-modules
+pkgver=6.32.0
+pkgrel=1
+pkgdesc='Módulos de CMake de KDE (los usa fcitx5)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-3-Clause')
+depends=('cmake')
+makedepends=('ninja')
+source=('https://download.kde.org/stable/frameworks/6.32/extra-cmake-modules-6.32.0.tar.xz')
+sha256sums=('305f4e2b82eb073be6ac3e50ace85578b3c0c409be262ccc51d445449e3d9312')
+build() { cd extra-cmake-modules-$pkgver; cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Wno-dev -DBUILD_TESTING=OFF -DBUILD_HTML_DOCS=OFF -DBUILD_MAN_DOCS=OFF -DBUILD_QTHELP_DOCS=OFF; ninja -C build; }
+package() { cd extra-cmake-modules-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

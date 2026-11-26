@@ -1,0 +1,18 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=naranjos-adornos
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Barras de título, fondo en movimiento, animación de tema, escritura CJK y sincronizar carpetas'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('GPL-3.0-or-later')
+depends=('hyprbars' 'mpv' 'mpvpaper' 'ffmpeg' 'fcitx5' 'fcitx5-gtk' 'fcitx5-chinese-addons' 'fcitx5-anthy' 'fcitx5-hangul' 'syncthing' 'python')
+makedepends=()
+source=('naranjos-barras' 'naranjos-fondo-video' 'naranjos-escritura' 'naranjos-sincroniza' 'adornos.lua' 'fcitx5-tema.conf' )
+sha256sums=('c9440aa56b64007caae60df6fee0e04d8966293e801f381638340d837c09a611' '70f7e979268fc1c667b729de551e64eddf0bcbddc5a7a3c40744accd13b22861' 'd41cc2e6ead1f9a53c047950c8ae35089a7d191068be94212707e9d7005cc7ca' 'c94d0b6a5ccc53952862869906da9d7aeff1680e0b3a962efc262d02f50ec36d' '24c47b3c885451def212c679cb1258330049672e97eecef11ef174228a3738e7' '8cd494b9608ab9823d8a4255f5adc3c6f1ec972221d22c9cad9d26553cad89be')
+package() {
+  local s
+  for s in naranjos-barras naranjos-fondo-video naranjos-escritura naranjos-sincroniza; do install -Dm755 "$s" "$pkgdir/usr/bin/$s"; done
+  install -Dm644 adornos.lua      "$pkgdir/usr/share/naranjos/hypr/adornos.lua"
+  install -Dm644 fcitx5-tema.conf "$pkgdir/usr/share/naranjos/fcitx5-tema.conf"
+}

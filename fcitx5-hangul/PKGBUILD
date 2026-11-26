@@ -1,0 +1,14 @@
+# Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
+pkgname=fcitx5-hangul
+pkgver=5.1.11
+pkgrel=1
+pkgdesc='Coreano en fcitx5 (hangul)'
+arch=('x86_64')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('LGPL-2.1-or-later')
+depends=('fcitx5' 'libhangul')
+makedepends=('extra-cmake-modules' 'cmake' 'ninja')
+source=('https://github.com/fcitx/fcitx5-hangul/archive/5.1.11/fcitx5-hangul-5.1.11.tar.gz')
+sha256sums=('9f9d4714517d7148159972c6f1ca042f1d114cde29ec1b9f6d3462b82dba7960')
+build() { cd fcitx5-hangul-$pkgver; cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Wno-dev -DENABLE_TEST=Off; ninja -C build; }
+package() { cd fcitx5-hangul-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }

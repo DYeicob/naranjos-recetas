@@ -1,0 +1,77 @@
+#!/bin/bash
+# naranjos-escritura — escribir en chino, japonés y coreano (fcitx5), con los colores de tu tema
+#   naranjos-escritura activa | apaga     (se aplica al volver a entrar en la sesión; activa ya la arranca)
+#   naranjos-escritura [menu]             elegir: teclado normal · chino (pinyin) · japonés (anthy) · coreano (hangul)
+#   Ctrl + Espacio cambia entre tu teclado y el último método usado
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+G=$'\e[1;32m'; Z=$'\e[0m'; [ -t 1 ] || { G=; Z=; }
+C="${XDG_CONFIG_HOME:-$HOME/.config}"; MARCA="$C/naranjos/escritura-activa"; FX="$C/fcitx5"
+TEMA_D="${XDG_DATA_HOME:-$HOME/.local/share}/fcitx5/themes/naranjos"
+
+teclado(){ # la distribución de teclado que usa Hyprland (es por defecto)
+  local k; k=$(hyprctl devices -j 2>/dev/null | python3 -c 'import json,sys
+d=json.load(sys.stdin); ks=[k for k in d.get("keyboards",[]) if k.get("main")] or d.get("keyboards",[])
+print((ks[0].get("layout") or "es").split(",")[0] if ks else "es")' 2>/dev/null)
+  echo "${k:-es}"
+}
+perfil(){ # el perfil inicial: tu teclado + pinyin + anthy + hangul (solo si no tienes uno tuyo)
+  [ -s "$FX/profile" ] && return 0
+  local k; k=$(teclado); mkdir -p "$FX/conf"
+  cat > "$FX/profile" << EOF
+[Groups/0]
+Name=NaranjOS
+Default Layout=$k
+DefaultIM=pinyin
+
+[Groups/0/Items/0]
+Name=keyboard-$k
+Layout=
+
+[Groups/0/Items/1]
+Name=pinyin
+Layout=
+
+[Groups/0/Items/2]
+Name=anthy
+Layout=
+
+[Groups/0/Items/3]
+Name=hangul
+Layout=
+
+[GroupOrder]
+0=NaranjOS
+EOF
+  [ -s "$FX/conf/classicui.conf" ] || printf 'Theme=naranjos\nDarkTheme=naranjos\nUseDarkTheme=False\nFont="JetBrainsMono Nerd Font 11"\nVertical Candidate List=False\n' > "$FX/conf/classicui.conf"
+}
+tema(){ # el tema de las ventanitas de fcitx5, con los colores del tema de NaranjOS
+  local d="$C/naranjos/tema" F S T A
+  F=$(sed -n 's/^COLOR_FONDO=//p' "$d/colores" 2>/dev/null); F=${F:-121212}
+  S=$(sed -n 's/^COLOR_SUP=//p' "$d/colores" 2>/dev/null); S=${S:-1e1e1e}
+  T=$(sed -n 's/^COLOR_TEXTO=//p' "$d/colores" 2>/dev/null); T=${T:-e6e6e6}
+  A=$(sed -n 's/^COLOR_ACENTO=//p' "$d/colores" 2>/dev/null); A=${A:-ff8700}
+  mkdir -p "$TEMA_D"
+  sed -e "s/@F@/$F/g" -e "s/@S@/$S/g" -e "s/@T@/$T/g" -e "s/@A@/$A/g" /usr/share/naranjos/fcitx5-tema.conf > "$TEMA_D/theme.conf"
+  pgrep -x fcitx5 >/dev/null && fcitx5-remote -r >/dev/null 2>&1; true
+}
+menu(){
+  pgrep -x fcitx5 >/dev/null || { naranjos-notifica "$(_ 'Escritura')" "$(_ 'Actívala primero: naranjos-escritura activa')"; exit 0; }
+  local s k; k=$(teclado)
+  s=$(printf '%s\t%s\n' "󰌌  $(_ 'Mi teclado')" "keyboard-$k" "中  $(_ 'Chino (pinyin)')" pinyin "あ  $(_ 'Japonés (anthy)')" anthy "한  $(_ 'Coreano (hangul)')" hangul \
+      | fuzzel --dmenu --with-nth=1 --accept-nth=2 -p "$(_ 'Escritura') ❯ ") || exit 0
+  [ -n "$s" ] && fcitx5-remote -s "$s"
+}
+case "${1:-menu}" in
+  activa)
+    mkdir -p "$C/naranjos"; touch "$MARCA"; perfil; tema
+    pgrep -x fcitx5 >/dev/null || setsid -f fcitx5 -d --replace >/dev/null 2>&1
+    hyprctl reload >/dev/null 2>&1
+    printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Escritura en chino, japonés y coreano activada (Ctrl + Espacio). Del todo, al volver a entrar en la sesión.')" ;;
+  apaga)  rm -f "$MARCA"; pkill -x fcitx5 2>/dev/null; hyprctl reload >/dev/null 2>&1; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Escritura CJK desactivada')" ;;
+  alterna) if [ -e "$MARCA" ]; then "$0" apaga; else "$0" activa; fi ;;
+  arranca) [ -e "$MARCA" ] && { tema; pgrep -x fcitx5 >/dev/null || setsid -f fcitx5 -d --replace >/dev/null 2>&1; }; true ;;
+  tema) [ -e "$MARCA" ] && tema; true ;;
+  menu) menu ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac

@@ -20,6 +20,7 @@ APPS=(
   "org.gnome.Calculator|$(_ 'Calculadora')|$(_ 'calculadora')"
   "org.localsend.localsend_app|LocalSend|$(_ 'pasar ficheros al móvil sin cables')"
   "org.signal.Signal|Signal|$(_ 'mensajería cifrada')"
+  "org.keepassxc.KeePassXC|KeePassXC|$(_ 'contraseñas: una base cifrada en tu disco, sin cuentas')"
   "org.gnome.gitlab.somas.Apostrophe|Apostrophe|$(_ 'escribir en Markdown sin distracciones')"
   "org.gnome.baobab|$(_ 'Uso del disco')|$(_ 'mapa de qué ocupa el disco')"
   "org.gnome.Snapshot|$(_ 'Cámara')|$(_ 'fotos y vídeos con la cámara')"

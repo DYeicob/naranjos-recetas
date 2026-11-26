@@ -1,0 +1,22 @@
+#!/bin/bash
+# naranjos-barras — barras de título en las ventanas flotantes (cerrar, maximizar, minimizar; doble clic: mosaico)
+#   naranjos-barras activa | apaga | alterna
+#   naranjos-barras arranca     al entrar en la sesión (si están activadas)
+# Es un complemento de Hyprland (hyprbars) compilado para tu versión de Hyprland.
+set -uo pipefail
+. /usr/lib/naranjos/naranjos-i18n.sh
+G=$'\e[1;32m'; R=$'\e[1;31m'; Z=$'\e[0m'; [ -t 1 ] || { G=; R=; Z=; }
+C="${XDG_CONFIG_HOME:-$HOME/.config}/naranjos"; MARCA="$C/barras-activas"
+SO=/usr/lib/hyprland/plugins/hyprbars.so
+carga(){
+  [ -r "$SO" ] || { printf '%s✘%s %s\n' "$R" "$Z" "$(_ 'Falta el complemento hyprbars')" >&2; return 1; }
+  hyprctl plugin list 2>/dev/null | grep -q hyprbars && { hyprctl reload >/dev/null 2>&1; return 0; }
+  hyprctl plugin load "$SO" >/dev/null 2>&1 || { naranjos-notifica "$(_ 'Barras de título')" "$(_ 'No se pudo cargar el complemento (¿se actualizó Hyprland? reinstala hyprland-plugins)')"; return 1; }
+}
+case "${1:-alterna}" in
+  activa)  mkdir -p "$C"; touch "$MARCA"; carga && printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Barras de título en las ventanas flotantes')" ;;
+  apaga)   rm -f "$MARCA"; hyprctl plugin unload "$SO" >/dev/null 2>&1; hyprctl reload >/dev/null 2>&1; printf '%s✔%s %s\n' "$G" "$Z" "$(_ 'Sin barras de título')" ;;
+  alterna) if [ -e "$MARCA" ]; then "$0" apaga; else "$0" activa; fi ;;
+  arranca) [ -e "$MARCA" ] && carga; true ;;
+  *) sed -n '2,5p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+esac
