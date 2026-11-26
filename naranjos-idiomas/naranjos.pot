@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: NaranjOS 0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/DYeicob/naranjos-recetas/issues\n"
-"POT-Creation-Date: 2026-11-26 00:04+0100\n"
+"POT-Creation-Date: 2026-11-26 11:02+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,123 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: adornos/naranjos-barras:12
+msgid "Falta el complemento hyprbars"
+msgstr ""
+
+#: adornos/naranjos-barras:14
+msgid "Barras de título"
+msgstr ""
+
+#: adornos/naranjos-barras:14
+msgid ""
+"No se pudo cargar el complemento (¿se actualizó Hyprland? reinstala hyprland-"
+"plugins)"
+msgstr ""
+
+#: adornos/naranjos-barras:17
+msgid "Barras de título en las ventanas flotantes"
+msgstr ""
+
+#: adornos/naranjos-barras:18
+msgid "Sin barras de título"
+msgstr ""
+
+#: adornos/naranjos-escritura:59 adornos/naranjos-escritura:62
+#: gajos/naranjos-velocidad:21
+msgid "Escritura"
+msgstr ""
+
+#: adornos/naranjos-escritura:59
+msgid "Actívala primero: naranjos-escritura activa"
+msgstr ""
+
+#: adornos/naranjos-escritura:61
+msgid "Mi teclado"
+msgstr ""
+
+#: adornos/naranjos-escritura:61
+msgid "Chino (pinyin)"
+msgstr ""
+
+#: adornos/naranjos-escritura:61
+msgid "Japonés (anthy)"
+msgstr ""
+
+#: adornos/naranjos-escritura:61
+msgid "Coreano (hangul)"
+msgstr ""
+
+#: adornos/naranjos-escritura:70
+msgid ""
+"Escritura en chino, japonés y coreano activada (Ctrl + Espacio). Del todo, "
+"al volver a entrar en la sesión."
+msgstr ""
+
+#: adornos/naranjos-escritura:71
+msgid "Escritura CJK desactivada"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:36 adornos/naranjos-fondo-video:94
+msgid "Fondo en movimiento"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:36
+msgid "Preparando el vídeo del tema (unos segundos)…"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:71
+msgid "No encuentro el vídeo"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:72
+msgid "No pude crear el vídeo del tema"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:73
+msgid "Fondo en movimiento activado"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:74
+msgid "Fondo normal"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:87
+msgid "Animación al cambiar de tema: sí"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:88
+msgid "Animación al cambiar de tema: no"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:94 adornos/naranjos-fondo-video:95
+msgid "no"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:95
+msgid "Animación al cambiar de tema"
+msgstr ""
+
+#: adornos/naranjos-fondo-video:95
+msgid "sí"
+msgstr ""
+
+#: adornos/naranjos-sincroniza:14
+msgid "Syncthing activo. Su panel: naranjos-sincroniza (o el menú)"
+msgstr ""
+
+#: adornos/naranjos-sincroniza:15
+msgid "Para que los equipos de tu casa se vean directamente (más rápido):"
+msgstr ""
+
+#: adornos/naranjos-sincroniza:16
+msgid "Syncthing parado"
+msgstr ""
+
+#: adornos/naranjos-sincroniza:17
+msgid "Syncthing:"
+msgstr ""
 
 #: arranque/naranjos-arranque:38
 msgid ""
@@ -68,11 +185,11 @@ msgstr ""
 msgid "Ajustes del firmware (UEFI)"
 msgstr ""
 
-#: arranque/naranjos-arranque:221 esc/naranjos-menu:135 esc/naranjos-sistema:5
+#: arranque/naranjos-arranque:221 esc/naranjos-menu:144 esc/naranjos-sistema:5
 msgid "Reiniciar"
 msgstr ""
 
-#: arranque/naranjos-arranque:222 esc/naranjos-menu:136 esc/naranjos-noche:86
+#: arranque/naranjos-arranque:222 esc/naranjos-menu:145 esc/naranjos-noche:86
 #: esc/naranjos-sistema:5
 msgid "Apagar"
 msgstr ""
@@ -351,158 +468,178 @@ msgid "el dock y las ventanas minimizadas"
 msgstr ""
 
 #: esc/naranjos:20
-msgid "WiFi, ping, velocidad, DNS, compartir por QR"
+msgid "barras de título en las ventanas flotantes"
 msgstr ""
 
 #: esc/naranjos:21
-msgid "dispositivos Bluetooth"
+msgid "fondo en movimiento y animación al cambiar de tema"
 msgstr ""
 
 #: esc/naranjos:22
-msgid "salidas y entradas de sonido"
+msgid "escribir en chino, japonés y coreano"
 msgstr ""
 
 #: esc/naranjos:23
-msgid "perfil de energía con cargador y con batería"
+msgid "sincronizar carpetas entre tus equipos (Syncthing)"
 msgstr ""
 
 #: esc/naranjos:24
-msgid "historial, no molestar, acciones"
+msgid "contraseñas (KeePassXC)"
 msgstr ""
 
 #: esc/naranjos:25
-msgid "capturas, grabaciones y texto de la pantalla"
+msgid "WiFi, ping, velocidad, DNS, compartir por QR"
 msgstr ""
 
 #: esc/naranjos:26
-msgid "grabar la cámara o ponerla encima de una grabación"
+msgid "dispositivos Bluetooth"
 msgstr ""
 
 #: esc/naranjos:27
-msgid "leer un QR de la pantalla o compartir la WiFi"
+msgid "salidas y entradas de sonido"
 msgstr ""
 
 #: esc/naranjos:28
-msgid "recortar un vídeo"
+msgid "perfil de energía con cargador y con batería"
 msgstr ""
 
 #: esc/naranjos:29
-msgid "presentaciones desde un Markdown"
+msgid "historial, no molestar, acciones"
 msgstr ""
 
 #: esc/naranjos:30
-msgid "dictar texto"
+msgid "capturas, grabaciones y texto de la pantalla"
 msgstr ""
 
-#: esc/naranjos:31 esc/naranjos-recuerda:57
-msgid "recordatorios"
+#: esc/naranjos:31
+msgid "grabar la cámara o ponerla encima de una grabación"
 msgstr ""
 
 #: esc/naranjos:32
-msgid "reloj mundial"
+msgid "leer un QR de la pantalla o compartir la WiFi"
 msgstr ""
 
 #: esc/naranjos:33
-msgid "el tiempo"
+msgid "recortar un vídeo"
 msgstr ""
 
 #: esc/naranjos:34
-msgid "aplicaciones recomendadas y juegos"
+msgid "presentaciones desde un Markdown"
 msgstr ""
 
 #: esc/naranjos:35
-msgid "webs como aplicaciones"
+msgid "dictar texto"
 msgstr ""
 
-#: esc/naranjos:36
-msgid "asistente de IA local (opcional, sin cuentas)"
+#: esc/naranjos:36 esc/naranjos-recuerda:57
+msgid "recordatorios"
 msgstr ""
 
 #: esc/naranjos:37
-msgid "abrir programas de otro equipo por SSH"
+msgid "reloj mundial"
 msgstr ""
 
 #: esc/naranjos:38
-msgid "servidor SSH y agente de claves"
+msgid "el tiempo"
 msgstr ""
 
 #: esc/naranjos:39
-msgid "complementos (git)"
+msgid "aplicaciones recomendadas y juegos"
 msgstr ""
 
 #: esc/naranjos:40
-msgid "guardar y recuperar el tamaño de las ventanas"
+msgid "webs como aplicaciones"
 msgstr ""
 
 #: esc/naranjos:41
-msgid "test de velocidad de la red o del disco"
+msgid "asistente de IA local (opcional, sin cuentas)"
 msgstr ""
 
 #: esc/naranjos:42
-msgid "qué ocupa el disco"
+msgid "abrir programas de otro equipo por SSH"
 msgstr ""
 
 #: esc/naranjos:43
-msgid "fotos del sistema para volver atrás"
+msgid "servidor SSH y agente de claves"
 msgstr ""
 
 #: esc/naranjos:44
-msgid "cortafuegos, AppArmor, antivirus, VPN, USB"
+msgid "complementos (git)"
 msgstr ""
 
 #: esc/naranjos:45
-msgid "huella dactilar (si hay lector)"
+msgid "guardar y recuperar el tamaño de las ventanas"
 msgstr ""
 
 #: esc/naranjos:46
-msgid "kernel que arranca por defecto"
+msgid "test de velocidad de la red o del disco"
 msgstr ""
 
 #: esc/naranjos:47
-msgid "traer lo último de NaranjOS"
+msgid "qué ocupa el disco"
 msgstr ""
 
 #: esc/naranjos:48
-msgid "los atajos de teclado"
+msgid "fotos del sistema para volver atrás"
 msgstr ""
 
 #: esc/naranjos:49
-msgid "el manual"
+msgid "cortafuegos, AppArmor, antivirus, VPN, USB"
 msgstr ""
 
 #: esc/naranjos:50
-msgid "versión de NaranjOS y del sistema"
+msgid "huella dactilar (si hay lector)"
+msgstr ""
+
+#: esc/naranjos:51
+msgid "kernel que arranca por defecto"
+msgstr ""
+
+#: esc/naranjos:52
+msgid "traer lo último de NaranjOS"
+msgstr ""
+
+#: esc/naranjos:53
+msgid "los atajos de teclado"
 msgstr ""
 
 #: esc/naranjos:54
+msgid "el manual"
+msgstr ""
+
+#: esc/naranjos:55
+msgid "versión de NaranjOS y del sistema"
+msgstr ""
+
+#: esc/naranjos:59
 msgid "la orden única"
 msgstr ""
 
-#: esc/naranjos:57
+#: esc/naranjos:62
 msgid "Con <Tab> se completan las órdenes y sus opciones."
 msgstr ""
 
-#: esc/naranjos:72
+#: esc/naranjos:77
 msgid "Queda poco espacio en el disco:"
 msgstr ""
 
-#: esc/naranjos:73
+#: esc/naranjos:78
 msgid "Libera espacio antes de actualizar (naranjos disco)."
 msgstr ""
 
-#: esc/naranjos:76
+#: esc/naranjos:81
 msgid "No encuentro ~/naranjos-recetas"
 msgstr ""
 
-#: esc/naranjos:80
+#: esc/naranjos:85
 msgid "Recetas al día."
 msgstr ""
 
-#: esc/naranjos:81
+#: esc/naranjos:86
 msgid "Para instalar lo último:"
 msgstr ""
 
-#: esc/naranjos:98
+#: esc/naranjos:103
 msgid "No conozco la orden"
 msgstr ""
 
@@ -523,7 +660,7 @@ msgid "Apariencia"
 msgstr ""
 
 #: esc/naranjos-apariencia:57 esc/naranjos-menu:46 esc/naranjos-menu:47
-#: temas/naranjos-tema:168 temas/naranjos-tema:243
+#: temas/naranjos-tema:169 temas/naranjos-tema:244
 msgid "Tema"
 msgstr ""
 
@@ -597,18 +734,38 @@ msgid "Dock: mostrar / ocultar"
 msgstr ""
 
 #: esc/naranjos-apariencia:78 esc/naranjos-apariencia:96 esc/naranjos-menu:54
-msgid "Modo escritorio (flotante + dock)"
+msgid "Dock: fijar una app"
 msgstr ""
 
 #: esc/naranjos-apariencia:78 esc/naranjos-apariencia:97 esc/naranjos-menu:55
+msgid "Dock: quitar una app"
+msgstr ""
+
+#: esc/naranjos-apariencia:78 esc/naranjos-apariencia:98 esc/naranjos-menu:56
+msgid "Barras de título: sí / no"
+msgstr ""
+
+#: esc/naranjos-apariencia:78 esc/naranjos-apariencia:99 esc/naranjos-menu:57
+msgid "Fondo en movimiento: sí / no"
+msgstr ""
+
+#: esc/naranjos-apariencia:78 esc/naranjos-apariencia:100 esc/naranjos-menu:58
+msgid "Animación al cambiar de tema: sí / no"
+msgstr ""
+
+#: esc/naranjos-apariencia:78 esc/naranjos-apariencia:101 esc/naranjos-menu:62
+msgid "Modo escritorio (flotante + dock)"
+msgstr ""
+
+#: esc/naranjos-apariencia:78 esc/naranjos-apariencia:102 esc/naranjos-menu:63
 msgid "Modo mosaico"
 msgstr ""
 
-#: esc/naranjos-apariencia:79 esc/naranjos-apariencia:98
+#: esc/naranjos-apariencia:79 esc/naranjos-apariencia:103
 msgid "Pantalla de bloqueo"
 msgstr ""
 
-#: esc/naranjos-apariencia:79 esc/naranjos-apariencia:99 esc/naranjos-menu:51
+#: esc/naranjos-apariencia:79 esc/naranjos-apariencia:104 esc/naranjos-menu:51
 msgid "Crear mi tema…"
 msgstr ""
 
@@ -673,94 +830,98 @@ msgid "mensajería cifrada"
 msgstr ""
 
 #: esc/naranjos-apps:23
+msgid "contraseñas: una base cifrada en tu disco, sin cuentas"
+msgstr ""
+
+#: esc/naranjos-apps:24
 msgid "escribir en Markdown sin distracciones"
 msgstr ""
 
-#: esc/naranjos-apps:24
+#: esc/naranjos-apps:25
 msgid "Uso del disco"
 msgstr ""
 
-#: esc/naranjos-apps:24
+#: esc/naranjos-apps:25
 msgid "mapa de qué ocupa el disco"
 msgstr ""
 
-#: esc/naranjos-apps:25 esc/naranjos-camara:18 esc/naranjos-camara:20
+#: esc/naranjos-apps:26 esc/naranjos-camara:18 esc/naranjos-camara:20
 #: esc/naranjos-camara:21 esc/naranjos-camara:26 esc/naranjos-camara:33
 msgid "Cámara"
 msgstr ""
 
-#: esc/naranjos-apps:25
+#: esc/naranjos-apps:26
 msgid "fotos y vídeos con la cámara"
 msgstr ""
 
-#: esc/naranjos-apps:26
+#: esc/naranjos-apps:27
 msgid "escritorio remoto (RDP, VNC, SSH)"
 msgstr ""
 
-#: esc/naranjos-apps:27
+#: esc/naranjos-apps:28
 msgid "jugar en streaming desde otro PC (Sunshine)"
 msgstr ""
 
-#: esc/naranjos-apps:28
+#: esc/naranjos-apps:29
 msgid "consolas clásicas"
 msgstr ""
 
-#: esc/naranjos-apps:29
+#: esc/naranjos-apps:30
 msgid "juegos de Battle.net y otros"
 msgstr ""
 
-#: esc/naranjos-apps:30
+#: esc/naranjos-apps:31
 msgid "juegos de Epic y GOG"
 msgstr ""
 
-#: esc/naranjos-apps:31
+#: esc/naranjos-apps:32
 msgid "mensajería"
 msgstr ""
 
-#: esc/naranjos-apps:32
+#: esc/naranjos-apps:33
 msgid "chat y voz"
 msgstr ""
 
-#: esc/naranjos-apps:33
+#: esc/naranjos-apps:34
 msgid "música"
 msgstr ""
 
-#: esc/naranjos-apps:34
+#: esc/naranjos-apps:35
 msgid "juegos"
 msgstr ""
 
-#: esc/naranjos-apps:35
+#: esc/naranjos-apps:36
 msgid "máquinas virtuales (también Windows)"
 msgstr ""
 
-#: esc/naranjos-apps:36
+#: esc/naranjos-apps:37
 msgid "editor de código"
 msgstr ""
 
-#: esc/naranjos-apps:37
+#: esc/naranjos-apps:38
 msgid "editor de código libre"
 msgstr ""
 
-#: esc/naranjos-apps:38
+#: esc/naranjos-apps:39
 msgid "analizar el tráfico de red"
 msgstr ""
 
-#: esc/naranjos-apps:39
+#: esc/naranjos-apps:40
 msgid "navegador (lo usan las web apps)"
 msgstr ""
 
-#: esc/naranjos-apps:53 esc/naranjos-menu:106
+#: esc/naranjos-apps:54 esc/naranjos-menu:115
 msgid "Apps recomendadas"
 msgstr ""
 
-#: esc/naranjos-apps:57 esc/naranjos-apps:59 esc/naranjos-menu:14
+#: esc/naranjos-apps:58 esc/naranjos-apps:60 esc/naranjos-menu:14
 #: esc/naranjos-qr:19 esc/naranjos-red-panel:8 esc/naranjos-tui:8
 #: esc/naranjos-tui:9 esc/naranjos-tui:10 idiomas/naranjos-idioma:124
 #: idiomas/naranjos-idioma:132
 msgid "Pulsa una tecla para cerrar…"
 msgstr ""
 
-#: esc/naranjos-apps:59
+#: esc/naranjos-apps:60
 msgid "Instalada:"
 msgstr ""
 
@@ -768,7 +929,7 @@ msgstr ""
 msgid "Atajos"
 msgstr ""
 
-#: esc/naranjos-ayuda:5 esc/naranjos-menu:129
+#: esc/naranjos-ayuda:5 esc/naranjos-menu:138
 msgid "Manual de NaranjOS"
 msgstr ""
 
@@ -794,7 +955,7 @@ msgstr ""
 msgid "Imágenes"
 msgstr ""
 
-#: esc/naranjos-captura:16 esc/naranjos-menu:144
+#: esc/naranjos-captura:16 esc/naranjos-menu:153
 msgid "Capturas"
 msgstr ""
 
@@ -873,7 +1034,7 @@ msgstr ""
 #: peel/naranjos-peel:676 peel/naranjos-peel:692 peel/naranjos-peel:728
 #: peel/naranjos-peel:869 peel/naranjos-peel:912 peel/naranjos-peel:933
 #: peel/naranjos-peel:962 peel/naranjos-peel:1016 peel/naranjos-peel:1042
-#: peel/naranjos-peel:1082 red/naranjos-red:77 temas/naranjos-tema:213 zumo:24
+#: peel/naranjos-peel:1082 red/naranjos-red:77 temas/naranjos-tema:214 zumo:24
 msgid "Uso:"
 msgstr ""
 
@@ -927,6 +1088,14 @@ msgstr ""
 
 #: esc/naranjos-complementos:55
 msgid "Complemento quitado:"
+msgstr ""
+
+#: esc/naranjos-contrasenas:7
+msgid "Instalando KeePassXC (Flathub)…"
+msgstr ""
+
+#: esc/naranjos-contrasenas:10
+msgid "No pude instalarlo: mira naranjos-apps"
 msgstr ""
 
 #: esc/naranjos-cuelgues:21
@@ -1024,11 +1193,35 @@ msgstr ""
 msgid "Desactivado: vuelve el mosaico"
 msgstr ""
 
-#: esc/naranjos-dock:25 esc/naranjos-dock:26
+#: esc/naranjos-dock:32
+msgid "Menú de NaranjOS"
+msgstr ""
+
+#: esc/naranjos-dock:32
+msgid "Clic: abrir · clic derecho: quitar del dock"
+msgstr ""
+
+#: esc/naranjos-dock:121
+msgid "Dock"
+msgstr ""
+
+#: esc/naranjos-dock:121
+msgid "No encuentro la app"
+msgstr ""
+
+#: esc/naranjos-dock:151
+msgid "Fijar en el dock"
+msgstr ""
+
+#: esc/naranjos-dock:161
+msgid "Quitar del dock"
+msgstr ""
+
+#: esc/naranjos-dock:175 esc/naranjos-dock:176
 msgid "Minimizadas"
 msgstr ""
 
-#: esc/naranjos-dock:26
+#: esc/naranjos-dock:176
 msgid "No hay ventanas minimizadas"
 msgstr ""
 
@@ -1060,72 +1253,98 @@ msgid ""
 "R"
 msgstr ""
 
-#: esc/naranjos-ia:16
+#: esc/naranjos-ia:18
 msgid "Ya está instalado"
 msgstr ""
 
-#: esc/naranjos-ia:17
+#: esc/naranjos-ia:19
 msgid ""
 "Se descargará Ollama (unos 1-2 GB, con soporte para tu gráfica NVIDIA) en:"
 msgstr ""
 
-#: esc/naranjos-ia:18
+#: esc/naranjos-ia:20 esc/naranjos-ia:47
 msgid "Escribe SI para seguir:"
 msgstr ""
 
-#: esc/naranjos-ia:22
+#: esc/naranjos-ia:24 esc/naranjos-ia:51
 msgid "La descarga no coincide con su suma: no se instala"
 msgstr ""
 
-#: esc/naranjos-ia:27
+#: esc/naranjos-ia:29 esc/naranjos-ia:49 esc/naranjos-ia:53
 msgid "No pude descargarlo"
 msgstr ""
 
-#: esc/naranjos-ia:31
+#: esc/naranjos-ia:33
 msgid "Instalado. Ahora baja un modelo:"
 msgstr ""
 
-#: esc/naranjos-ia:34 esc/naranjos-ia:43
+#: esc/naranjos-ia:36 esc/naranjos-ia:81
 msgid "Primero: naranjos-ia instala"
 msgstr ""
 
-#: esc/naranjos-ia:36
+#: esc/naranjos-ia:38
 msgid "equilibrado (8 GB de gráfica)"
 msgstr ""
 
-#: esc/naranjos-ia:36
+#: esc/naranjos-ia:38
 msgid "rápido y ligero"
 msgstr ""
 
-#: esc/naranjos-ia:36
+#: esc/naranjos-ia:38
 msgid "bueno con imágenes"
 msgstr ""
 
-#: esc/naranjos-ia:36
+#: esc/naranjos-ia:38
 msgid "programar"
 msgstr ""
 
-#: esc/naranjos-ia:36
+#: esc/naranjos-ia:38
 msgid "Modelo"
 msgstr ""
 
 #: esc/naranjos-ia:44
+msgid ""
+"Primero: naranjos-ia instala (y un modelo: naranjos-ia modelo qwen2.5-"
+"coder:7b)"
+msgstr ""
+
+#: esc/naranjos-ia:46
+msgid "Se descargará opencode"
+msgstr ""
+
+#: esc/naranjos-ia:46
+msgid "en:"
+msgstr ""
+
+#: esc/naranjos-ia:70
+msgid "Listo. En la carpeta de tu proyecto:"
+msgstr ""
+
+#: esc/naranjos-ia:71
+msgid "opencode quitado (tu configuración sigue en ~/.config/opencode)"
+msgstr ""
+
+#: esc/naranjos-ia:72
+msgid "Primero: naranjos-ia agente instala"
+msgstr ""
+
+#: esc/naranjos-ia:82
 msgid "Baja antes un modelo: naranjos-ia modelo"
 msgstr ""
 
-#: esc/naranjos-ia:47
+#: esc/naranjos-ia:85
 msgid "IA local instalada"
 msgstr ""
 
-#: esc/naranjos-ia:48
+#: esc/naranjos-ia:86
 msgid "No está instalada (es opcional): naranjos-ia instala"
 msgstr ""
 
-#: esc/naranjos-ia:50
+#: esc/naranjos-ia:88
 msgid "Se borrarán Ollama y tus modelos. Escribe SI:"
 msgstr ""
 
-#: esc/naranjos-ia:52
+#: esc/naranjos-ia:90
 msgid "IA local quitada"
 msgstr ""
 
@@ -1201,374 +1420,390 @@ msgstr ""
 msgid "Apariencia (todo)"
 msgstr ""
 
-#: esc/naranjos-menu:56 esc/naranjos-noche:82 esc/naranjos-noche:88
-msgid "Luz nocturna"
-msgstr ""
-
-#: esc/naranjos-menu:57
-msgid "Mostrar / ocultar la barra"
-msgstr ""
-
-#: esc/naranjos-menu:58
-msgid "Pantalla, texto y barra"
-msgstr ""
-
 #: esc/naranjos-menu:59
-msgid "Temas en VS Code"
+msgid "Escritura: chino, japonés, coreano"
 msgstr ""
 
 #: esc/naranjos-menu:60
-msgid "Restablecer una configuración"
+msgid "Contraseñas (KeePassXC)"
 msgstr ""
 
-#: esc/naranjos-menu:65 esc/naranjos-tui:7
-msgid "Sonido"
+#: esc/naranjos-menu:61
+msgid "Sincronizar carpetas (Syncthing)"
+msgstr ""
+
+#: esc/naranjos-menu:64 esc/naranjos-noche:82 esc/naranjos-noche:88
+msgid "Luz nocturna"
+msgstr ""
+
+#: esc/naranjos-menu:65
+msgid "Mostrar / ocultar la barra"
 msgstr ""
 
 #: esc/naranjos-menu:66
-msgid "Energía (cargador / batería)"
+msgid "Pantalla, texto y barra"
 msgstr ""
 
 #: esc/naranjos-menu:67
+msgid "Temas en VS Code"
+msgstr ""
+
+#: esc/naranjos-menu:68
+msgid "Restablecer una configuración"
+msgstr ""
+
+#: esc/naranjos-menu:73 esc/naranjos-tui:7
+msgid "Sonido"
+msgstr ""
+
+#: esc/naranjos-menu:74
+msgid "Energía (cargador / batería)"
+msgstr ""
+
+#: esc/naranjos-menu:75
 msgid "Avisos: no molestar, historial"
 msgstr ""
 
-#: esc/naranjos-menu:68 esc/naranjos-reloj:19
+#: esc/naranjos-menu:76 esc/naranjos-reloj:19
 msgid "Reloj mundial"
 msgstr ""
 
-#: esc/naranjos-menu:69
+#: esc/naranjos-menu:77
 msgid "Huella dactilar"
 msgstr ""
 
-#: esc/naranjos-menu:69
+#: esc/naranjos-menu:77
 msgid "Huella"
 msgstr ""
 
-#: esc/naranjos-menu:70 esc/naranjos-tui:11 idiomas/naranjos-idioma:117
+#: esc/naranjos-menu:78 esc/naranjos-tui:11 idiomas/naranjos-idioma:117
 #: idiomas/naranjos-idioma:124
 msgid "Idioma"
 msgstr ""
 
-#: esc/naranjos-menu:71
+#: esc/naranjos-menu:79
 msgid "El tiempo: elegir ciudad"
 msgstr ""
 
-#: esc/naranjos-menu:72
+#: esc/naranjos-menu:80
 msgid "Llave de seguridad (FIDO2)"
 msgstr ""
 
-#: esc/naranjos-menu:72
+#: esc/naranjos-menu:80
 msgid "Llave"
 msgstr ""
 
-#: esc/naranjos-menu:73
+#: esc/naranjos-menu:81
 msgid "Mi configuración de Hyprland (avanzado)"
 msgstr ""
 
-#: esc/naranjos-menu:76
+#: esc/naranjos-menu:84
 msgid "Estado de la seguridad"
 msgstr ""
 
-#: esc/naranjos-menu:77
+#: esc/naranjos-menu:85
 msgid "VPN: conectar / desconectar"
 msgstr ""
 
-#: esc/naranjos-menu:78
+#: esc/naranjos-menu:86
 msgid "Permitir un USB bloqueado"
 msgstr ""
 
-#: esc/naranjos-menu:79
+#: esc/naranjos-menu:87
 msgid "Vaciar la cuarentena del antivirus"
 msgstr ""
 
-#: esc/naranjos-menu:79
+#: esc/naranjos-menu:87
 msgid "Cuarentena"
 msgstr ""
 
-#: esc/naranjos-menu:82
+#: esc/naranjos-menu:90
 msgid "Tailscale (red entre tus equipos)"
 msgstr ""
 
-#: esc/naranjos-menu:83
+#: esc/naranjos-menu:91
 msgid "Inicio: bonito (bloqueado) / clásico"
 msgstr ""
 
-#: esc/naranjos-menu:83
+#: esc/naranjos-menu:91
 msgid "Inicio"
 msgstr ""
 
-#: esc/naranjos-menu:84
+#: esc/naranjos-menu:92
 msgid "Actualizar NaranjOS"
 msgstr ""
 
-#: esc/naranjos-menu:84 esc/naranjos-menu:88
+#: esc/naranjos-menu:92 esc/naranjos-menu:96
 msgid "Actualizar"
 msgstr ""
 
-#: esc/naranjos-menu:85
+#: esc/naranjos-menu:93
 msgid "Fotos del sistema"
 msgstr ""
 
-#: esc/naranjos-menu:85 esc/naranjos-menu:86
+#: esc/naranjos-menu:93 esc/naranjos-menu:94
 msgid "Fotos"
 msgstr ""
 
-#: esc/naranjos-menu:86
+#: esc/naranjos-menu:94
 msgid "Hacer una foto del sistema ahora"
 msgstr ""
 
-#: esc/naranjos-menu:86
+#: esc/naranjos-menu:94
 msgid "desde el menú"
 msgstr ""
 
-#: esc/naranjos-menu:87
+#: esc/naranjos-menu:95
 msgid "Limpiar paquetes que sobran"
 msgstr ""
 
-#: esc/naranjos-menu:87
+#: esc/naranjos-menu:95
 msgid "Limpiar"
 msgstr ""
 
-#: esc/naranjos-menu:88
+#: esc/naranjos-menu:96
 msgid "Traer lo último de NaranjOS"
 msgstr ""
 
-#: esc/naranjos-menu:89
+#: esc/naranjos-menu:97
 msgid "Qué ocupa el disco"
 msgstr ""
 
-#: esc/naranjos-menu:89
+#: esc/naranjos-menu:97
 msgid "Disco"
 msgstr ""
 
-#: esc/naranjos-menu:90 gajos/naranjos-velocidad:20
+#: esc/naranjos-menu:98 gajos/naranjos-velocidad:20
 msgid "Velocidad del disco"
 msgstr ""
 
-#: esc/naranjos-menu:90 esc/naranjos-menu:91 esc/naranjos-red-panel:102
+#: esc/naranjos-menu:98 esc/naranjos-menu:99 esc/naranjos-red-panel:102
 msgid "Velocidad"
 msgstr ""
 
-#: esc/naranjos-menu:91 gajos/naranjos-velocidad:11
+#: esc/naranjos-menu:99 gajos/naranjos-velocidad:11
 msgid "Velocidad de la red"
 msgstr ""
 
-#: esc/naranjos-menu:92
+#: esc/naranjos-menu:100
 msgid "Servidor SSH (solo con clave)"
 msgstr ""
 
-#: esc/naranjos-menu:93
+#: esc/naranjos-menu:101
 msgid "Agente de claves SSH"
 msgstr ""
 
-#: esc/naranjos-menu:94
+#: esc/naranjos-menu:102
 msgid "Programas de otro equipo (SSH)"
 msgstr ""
 
-#: esc/naranjos-menu:95
+#: esc/naranjos-menu:103
 msgid "Kernel por defecto"
 msgstr ""
 
-#: esc/naranjos-menu:96
+#: esc/naranjos-menu:104
 msgid "IA local (opcional, sin cuentas)"
 msgstr ""
 
-#: esc/naranjos-menu:96
+#: esc/naranjos-menu:104
 msgid "IA local"
 msgstr ""
 
-#: esc/naranjos-menu:99 esc/naranjos-portapapeles:43
+#: esc/naranjos-menu:105
+msgid "Agente de IA para programar (opencode, local)"
+msgstr ""
+
+#: esc/naranjos-menu:108 esc/naranjos-portapapeles:43
 #: esc/naranjos-portapapeles:44
 msgid "Portapapeles"
 msgstr ""
 
-#: esc/naranjos-menu:100
+#: esc/naranjos-menu:109
 msgid "Emojis"
 msgstr ""
 
-#: esc/naranjos-menu:101
+#: esc/naranjos-menu:110
 msgid "Dictar (voz a texto)"
 msgstr ""
 
-#: esc/naranjos-menu:102
+#: esc/naranjos-menu:111
 msgid "Nuevo recordatorio"
 msgstr ""
 
-#: esc/naranjos-menu:103
+#: esc/naranjos-menu:112
 msgid "Mis recordatorios"
 msgstr ""
 
-#: esc/naranjos-menu:103
+#: esc/naranjos-menu:112
 msgid "Recordatorios"
 msgstr ""
 
-#: esc/naranjos-menu:104
+#: esc/naranjos-menu:113
 msgid "Nueva web app"
 msgstr ""
 
-#: esc/naranjos-menu:105
+#: esc/naranjos-menu:114
 msgid "Complementos"
 msgstr ""
 
-#: esc/naranjos-menu:107
+#: esc/naranjos-menu:116
 msgid "Juegos: Steam, RetroArch, Lutris, Heroic"
 msgstr ""
 
-#: esc/naranjos-menu:107
+#: esc/naranjos-menu:116
 msgid "Juegos"
 msgstr ""
 
-#: esc/naranjos-menu:108
+#: esc/naranjos-menu:117
 msgid "Webs de servicios (Microsoft 365, Slack…)"
 msgstr ""
 
-#: esc/naranjos-menu:109
+#: esc/naranjos-menu:118
 msgid "Presentación desde un Markdown"
 msgstr ""
 
-#: esc/naranjos-menu:109
+#: esc/naranjos-menu:118
 msgid "Presentación"
 msgstr ""
 
-#: esc/naranjos-menu:109
+#: esc/naranjos-menu:118
 msgid "Fichero .md:"
 msgstr ""
 
-#: esc/naranjos-menu:110
+#: esc/naranjos-menu:119
 msgid "Recortar un vídeo"
 msgstr ""
 
-#: esc/naranjos-menu:112
+#: esc/naranjos-menu:121
 msgid "Mantener despierto (sí / no)"
 msgstr ""
 
-#: esc/naranjos-menu:113
+#: esc/naranjos-menu:122
 msgid "Salvapantallas"
 msgstr ""
 
-#: esc/naranjos-menu:114
+#: esc/naranjos-menu:123
 msgid "Contenedores (lazydocker)"
 msgstr ""
 
-#: esc/naranjos-menu:115
+#: esc/naranjos-menu:124
 msgid "Git (lazygit)"
 msgstr ""
 
-#: esc/naranjos-menu:118
+#: esc/naranjos-menu:127
 msgid "Captura de una zona"
 msgstr ""
 
-#: esc/naranjos-menu:119
+#: esc/naranjos-menu:128
 msgid "Captura de la pantalla"
 msgstr ""
 
-#: esc/naranjos-menu:120
+#: esc/naranjos-menu:129
 msgid "Grabar una zona (otra vez: parar)"
 msgstr ""
 
-#: esc/naranjos-menu:121
+#: esc/naranjos-menu:130
 msgid "Grabar la pantalla (otra vez: parar)"
 msgstr ""
 
-#: esc/naranjos-menu:122
+#: esc/naranjos-menu:131
 msgid "Copiar el texto de una zona"
 msgstr ""
 
-#: esc/naranjos-menu:123
+#: esc/naranjos-menu:132
 msgid "Leer un QR de la pantalla"
 msgstr ""
 
-#: esc/naranjos-menu:124
+#: esc/naranjos-menu:133
 msgid "Grabar la cámara (otra vez: parar)"
 msgstr ""
 
-#: esc/naranjos-menu:125
+#: esc/naranjos-menu:134
 msgid "La cámara encima de todo"
 msgstr ""
 
-#: esc/naranjos-menu:128
+#: esc/naranjos-menu:137
 msgid "Atajos de teclado"
 msgstr ""
 
-#: esc/naranjos-menu:132 esc/naranjos-sistema:5
+#: esc/naranjos-menu:141 esc/naranjos-sistema:5
 msgid "Bloquear"
 msgstr ""
 
-#: esc/naranjos-menu:133 esc/naranjos-sistema:5
+#: esc/naranjos-menu:142 esc/naranjos-sistema:5
 msgid "Cerrar sesión"
 msgstr ""
 
-#: esc/naranjos-menu:134 esc/naranjos-sistema:5
+#: esc/naranjos-menu:143 esc/naranjos-sistema:5
 msgid "Suspender"
 msgstr ""
 
-#: esc/naranjos-menu:142
+#: esc/naranjos-menu:151
 msgid "Aplicaciones"
 msgstr ""
 
-#: esc/naranjos-menu:142
+#: esc/naranjos-menu:151
 msgid "Utilidades"
 msgstr ""
 
-#: esc/naranjos-menu:142
+#: esc/naranjos-menu:151
 msgid "Aspecto"
 msgstr ""
 
-#: esc/naranjos-menu:143
+#: esc/naranjos-menu:152
 msgid "Ajustes"
 msgstr ""
 
-#: esc/naranjos-menu:143 esc/naranjos-tui:8
+#: esc/naranjos-menu:152 esc/naranjos-tui:8
 msgid "Seguridad"
 msgstr ""
 
-#: esc/naranjos-menu:144
+#: esc/naranjos-menu:153
 msgid "Sistema"
 msgstr ""
 
-#: esc/naranjos-menu:145
+#: esc/naranjos-menu:154
 msgid "Ayuda"
 msgstr ""
 
-#: esc/naranjos-menu:145 gajos/naranjos-energia:42 gajos/naranjos-energia:44
+#: esc/naranjos-menu:154 gajos/naranjos-energia:42 gajos/naranjos-energia:44
 #: gajos/naranjos-energia:45
 msgid "Energía"
 msgstr ""
 
-#: esc/naranjos-menu:151
+#: esc/naranjos-menu:160
 msgid "Nombre del tema"
 msgstr ""
 
-#: esc/naranjos-menu:152
+#: esc/naranjos-menu:161
 msgid "naranja"
 msgstr ""
 
-#: esc/naranjos-menu:152
+#: esc/naranjos-menu:161
 msgid "violeta"
 msgstr ""
 
-#: esc/naranjos-menu:152
+#: esc/naranjos-menu:161
 msgid "turquesa"
 msgstr ""
 
-#: esc/naranjos-menu:152
+#: esc/naranjos-menu:161
 msgid "frambuesa"
 msgstr ""
 
-#: esc/naranjos-menu:152
+#: esc/naranjos-menu:161
 msgid "pizarra"
 msgstr ""
 
-#: esc/naranjos-menu:153
+#: esc/naranjos-menu:162
 msgid "Color (o escribe uno, p. ej. 3d9bff)"
 msgstr ""
 
-#: esc/naranjos-menu:154 temas/naranjos-tema:217
+#: esc/naranjos-menu:163 temas/naranjos-tema:218
 msgid "No pude crear el tema"
 msgstr ""
 
-#: esc/naranjos-menu:169
+#: esc/naranjos-menu:178
 msgid "Volver"
 msgstr ""
 
@@ -2563,10 +2798,6 @@ msgstr ""
 
 #: gajos/naranjos-velocidad:17
 msgid "Subida"
-msgstr ""
-
-#: gajos/naranjos-velocidad:21
-msgid "Escritura"
 msgstr ""
 
 #: gajos/naranjos-velocidad:23
@@ -3791,65 +4022,65 @@ msgstr ""
 msgid "Dime qué tema:"
 msgstr ""
 
-#: temas/naranjos-tema:153 temas/naranjos-tema:194
+#: temas/naranjos-tema:153 temas/naranjos-tema:195
 msgid "No existe el tema"
 msgstr ""
 
-#: temas/naranjos-tema:168
+#: temas/naranjos-tema:169
 msgid "Las terminales nuevas ya salen con el tema."
 msgstr ""
 
-#: temas/naranjos-tema:169
+#: temas/naranjos-tema:170
 msgid "Tema puesto:"
 msgstr ""
 
-#: temas/naranjos-tema:179
+#: temas/naranjos-tema:180
 msgid "No encuentro fondos en"
 msgstr ""
 
-#: temas/naranjos-tema:184
+#: temas/naranjos-tema:185
 msgid "Fondo:"
 msgstr ""
 
-#: temas/naranjos-tema:207
+#: temas/naranjos-tema:208
 msgid "No encuentro VS Code ni VSCodium en tu usuario"
 msgstr ""
 
-#: temas/naranjos-tema:213
+#: temas/naranjos-tema:214
 msgid "Mi tema"
 msgstr ""
 
-#: temas/naranjos-tema:215
+#: temas/naranjos-tema:216
 msgid "Ese nombre no vale"
 msgstr ""
 
-#: temas/naranjos-tema:216
+#: temas/naranjos-tema:217
 msgid "Ya hay un tema de NaranjOS con ese nombre"
 msgstr ""
 
-#: temas/naranjos-tema:218
+#: temas/naranjos-tema:219
 msgid "claro"
 msgstr ""
 
-#: temas/naranjos-tema:219
+#: temas/naranjos-tema:220
 msgid "Tema creado:"
 msgstr ""
 
-#: temas/naranjos-tema:220
+#: temas/naranjos-tema:221
 msgid ""
 "Retócalo a tu gusto: cambia los COLOR_… de «colores» y los demás ficheros de "
 "esa carpeta."
 msgstr ""
 
-#: temas/naranjos-tema:225
+#: temas/naranjos-tema:226
 msgid "No tienes un tema con ese nombre"
 msgstr ""
 
-#: temas/naranjos-tema:227
+#: temas/naranjos-tema:228
 msgid "Tema borrado"
 msgstr ""
 
-#: temas/naranjos-tema:260
+#: temas/naranjos-tema:261
 msgid "Todo sigue el tema."
 msgstr ""
 

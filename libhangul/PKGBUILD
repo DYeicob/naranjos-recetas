@@ -1,7 +1,7 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6q3.sh
 pkgname=libhangul
 pkgver=0.2.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Biblioteca para escribir en coreano (hangul)'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
@@ -11,4 +11,9 @@ makedepends=('cmake' 'ninja')
 source=('https://github.com/libhangul/libhangul/archive/libhangul-0.2.0/libhangul-0.2.0.tar.gz')
 sha256sums=('db9a256ff1e2c639ea8168f5e8741dae95ad7ea563f257b1dbd098afd8e48487')
 build() { cd libhangul-libhangul-$pkgver; cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Wno-dev -DENABLE_UNIT_TEST=OFF; ninja -C build; }
-package() { cd libhangul-libhangul-$pkgver; DESTDIR="$pkgdir" ninja -C build install; }
+package() {
+  cd libhangul-libhangul-$pkgver; DESTDIR="$pkgdir" ninja -C build install
+  # con CMake no se instala libhangul.pc (y fcitx5-hangul lo busca): lo escribimos
+  install -d "$pkgdir/usr/lib/pkgconfig"
+  printf 'prefix=/usr\nexec_prefix=${prefix}\nlibdir=${prefix}/lib\nincludedir=${prefix}/include/hangul-1.0\n\nName: libhangul\nDescription: Hangul hanja input support\nVersion: %s\nLibs: -L${libdir} -lhangul\nCflags: -I${includedir}\n' "$pkgver" > "$pkgdir/usr/lib/pkgconfig/libhangul.pc"
+}

@@ -3,6 +3,7 @@
 NaranjOS es una distribución de Linux hecha desde cero (Linux From Scratch). Casi todo lo que trae es software
 libre de otros proyectos, cada uno con su licencia; NaranjOS solo lo compila y lo empaqueta.
 
+- **Autoría:** NaranjOS es un proyecto personal de Jacobo Montero Naranjo ([DYeicob](https://github.com/DYeicob)): idea, diseño, identidad visual, construcción, integración y pruebas en hardware real.
 - **Licencias:** cada paquete guarda las suyas en `/usr/share/licenses/` (o en `naranjos-licencias`). Lista completa:
   [LICENCIAS.md](LICENCIAS.md). `zumo licencia <paquete>` las enseña.
 - **Código fuente:** el de cada versión publicada está en la Release `naranjos-fuentes` de este repositorio
@@ -13,5 +14,5 @@ libre de otros proyectos, cada uno con su licencia; NaranjOS solo lo compila y l
   dueños. NaranjOS no incluye Firefox ni Chromium: se instalan desde Flathub cuando tú lo pides.
 - **Datos de terceros:** emojis de Unicode CLDR (licencia Unicode-3.0); modelo de voz de whisper.cpp (MIT); datos de
   reconocimiento de texto de Tesseract (Apache-2.0); el tiempo, de Open-Meteo (CC BY 4.0) solo si eliges una ciudad.
-- **Arte de NaranjOS** (logotipo, fondos, cursores y temas): CC BY-SA 4.0.
+- **Arte de NaranjOS:** los cursores y los temas, bajo CC BY-SA 4.0. El logotipo y los fondos están generados con inteligencia artificial; en la medida en que tengan derechos de autor, se ofrecen con la misma licencia.
 - **Sin garantía:** NaranjOS se ofrece tal cual, sin garantía de ningún tipo.
