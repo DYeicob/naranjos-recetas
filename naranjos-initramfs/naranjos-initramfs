@@ -32,8 +32,10 @@ MODULOS_SUELTOS="dm_mod dm_crypt dm_integrity dm_snapshot raid1 raid0 raid456 cr
   loop sd_mod sr_mod usb_storage uas usbhid hid_generic xhci_pci ehci_pci ohci_pci
   vmd ahci nvme virtio_blk virtio_scsi virtio_pci"
 # Programas del initramfs (los que no existan en el sistema, se saltan)
+# (dmsetup, desde la 0.6.3: las reglas de udev de device-mapper lo llaman; sin él, «cryptsetup open» se queda
+#  esperando a udev para siempre y luego faltan los enlaces /dev/disk/by-uuid del disco cifrado)
 PROGRAMAS="bash sh mount umount switch_root setsid blkid modprobe kmod insmod udevadm
-  sleep cat mkdir ls ln readlink uname dmesg grep sed cryptsetup e2fsck fsck.ext4 btrfs loadkeys
+  sleep cat mkdir ls ln readlink uname dmesg grep sed cryptsetup dmsetup e2fsck fsck.ext4 btrfs loadkeys
   /usr/lib/systemd/systemd-udevd"
 # Reglas de udev que hacen falta para encontrar el disco
 REGLAS="50-udev-default.rules 60-block.rules 60-persistent-storage.rules 60-persistent-storage-dm.rules
