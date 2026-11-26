@@ -1,7 +1,7 @@
 # Receta de NaranjOS — generada por naranjos-tanda-6f12.sh
 pkgname=gcc
 pkgver=16.2.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Compilador de C y C++ (GCC), con sus librerías'
 arch=('x86_64')
 url='https://github.com/DYeicob/naranjos-recetas'
@@ -28,6 +28,9 @@ package() {
   cd gcc-$pkgver/build
   make DESTDIR="$pkgdir" install
   ln -s gcc "$pkgdir/usr/bin/cc"
+  # los programas del compilador, sin símbolos de depuración (las librerías, como estaban)
+  find "$pkgdir/usr/libexec/gcc" "$pkgdir/usr/bin" -type f -perm -u+x ! -name '*.so*' -print0 \
+    | xargs -0 -r -n1 sh -c 'strip --strip-all "$0" 2>/dev/null || true'
   ln -sr "$pkgdir/usr/bin/cpp" "$pkgdir/usr/lib/cpp"
   ln -s gcc.1 "$pkgdir/usr/share/man/man1/cc.1"
   install -dm755 "$pkgdir/usr/lib/bfd-plugins"

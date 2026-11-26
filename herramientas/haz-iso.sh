@@ -25,6 +25,8 @@ mapfile -t EXCLUIR < <(grep -v '^\s*#' "$DATOS/excluir.txt" | grep -v '^\s*$')
 for c in pacman mksquashfs xorriso mkfs.fat sbsign sbverify grub-mkimage; do command -v "$c" >/dev/null || die "Falta $c (lanza la tanda 7b)"; done
 for f in "$SHIM/shimx64.efi" "$SHIM/mmx64.efi" "$ARR/sbat.csv"; do [ -r "$f" ] || die "Falta $f"; done
 sudo test -r "$MOK/MOK.priv" || die "Falta la clave MOK en $MOK (con ella se firman GRUB y el kernel)"
+# lo que dejó una ISO anterior (a medias o no) no cuenta: se borra antes de mirar el sitio libre
+if [ -d "$T" ]; then say "Borrando la raíz de trabajo anterior ($T)…"; sudo rm -rf "$T"; fi
 libre=$(df --output=avail -k /var/tmp | tail -n1)
 [ "$libre" -gt $((14 * 1024 * 1024)) ] || die "Hacen falta unos 14 GB libres en /var/tmp (hay $((libre / 1024 / 1024)) GB): bash herramientas/libera-espacio.sh"
 say "NaranjOS $VERSION · ISO en vivo · etiqueta $ETIQUETA"
@@ -34,17 +36,32 @@ MONTAJES=()
 desmonta(){ local i; for ((i=${#MONTAJES[@]}-1; i>=0; i--)); do sudo umount -l "${MONTAJES[$i]}" 2>/dev/null || true; done; MONTAJES=(); }
 trap desmonta EXIT
 monta(){ sudo mount "$@"; MONTAJES+=("${!#}"); }
+CH(){ sudo chroot "$RZ" /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin HOME=/root "$@"; }
 
 # --- 1. la raíz con los paquetes ---------------------------------------------------------------------
 sudo rm -rf "$T"; sudo mkdir -p "$T"; sudo chown "$(id -u):$(id -g)" "$T"   # $T es tuyo (logs); la raíz y la ISO, de root
 sudo mkdir -p "$RZ" "$ISO"; mkdir -p "$SAL"
 sudo mkdir -p "$RZ"/{dev,proc,run,tmp,etc,var/lib/pacman,var/cache/pacman/pkg}
 sudo chmod 1777 "$RZ/tmp"
+# la forma de la raíz que no es de ningún paquete (LFS): /bin, /sbin, /lib → usr/… y /lib64 con el cargador
+# de programas (ld-linux). Sin esto, dentro de la raíz no arranca ningún programa (ni los scripts de pacman)
+sin_dueno(){ ! pacman -Qqo "$1" >/dev/null 2>&1; }   # lo que es de un paquete ya lo pondrá pacman
+for d in bin sbin lib lib64 usr/lib64; do
+  if [ -L "/$d" ]; then
+    sudo mkdir -p "$RZ/$(dirname "$d")"; sudo ln -sfn "$(readlink "/$d")" "$RZ/$d"
+  elif [ -d "/$d" ]; then
+    sudo mkdir -p "$RZ/$d"
+    for f in "/$d"/*; do [ -L "$f" ] || [ -f "$f" ] || continue; sin_dueno "$f" && sudo cp -a "$f" "$RZ/$d/"; done
+  fi
+done
 # sin /sys a propósito: así los ganchos que tocan el arranque (EFI) no ven la del equipo y no hacen nada
 monta --bind /dev "$RZ/dev"; monta -t proc proc "$RZ/proc"; monta -t tmpfs -o mode=0755 run "$RZ/run"
 # pacman.conf del equipo, pero sin documentación ni páginas man (la ISO tiene que caber en 2 GB)
 sed -e '/^NoExtract/d' /etc/pacman.conf > "$T/pacman.conf"
 sed -i '/^\[options\]/a NoExtract = usr/share/doc/* usr/share/man/* usr/share/info/* usr/share/gtk-doc/*' "$T/pacman.conf"
+# firmware que en un PC normal no hace falta (servidores, móviles ARM, y el de nouveau, que NaranjOS bloquea): ~700 MB
+FW_FUERA="usr/lib/firmware/qcom/* usr/lib/firmware/nvidia/* usr/lib/firmware/mellanox/* usr/lib/firmware/mrvl/* usr/lib/firmware/qed/* usr/lib/firmware/netronome/* usr/lib/firmware/dpaa2/* usr/lib/firmware/cxgb4/* usr/lib/firmware/liquidio/*"
+sed -i "/^\[options\]/a NoExtract = $FW_FUERA" "$T/pacman.conf"
 sudo pacman --root "$RZ" --config "$T/pacman.conf" --gpgdir /etc/pacman.d/gnupg -Sy >/dev/null || die "pacman no pudo leer el repositorio naranjos-core"
 pacman --root "$RZ" --config "$T/pacman.conf" -Slq | sort -u > "$T/en-repo"
 mapfile -t TODO < <(pacman -Qq)
@@ -60,7 +77,7 @@ sudo pacman --root "$RZ" --config "$T/pacman.conf" --cachedir /var/cache/pacman/
 for p in "${EXCLUIR[@]}"; do
   pacman --root "$RZ" -Qq "$p" >/dev/null 2>&1 && echo "${D}  (entró $p porque otro paquete lo necesita)${Z}"
 done
-ok "paquetes instalados ($(sudo du -sh "$RZ" | cut -f1))"
+ok "paquetes instalados ($(sudo du -shx "$RZ" | cut -f1))"
 
 # --- 2. lo que no es de ningún paquete: /etc de NaranjOS (sin nada tuyo ni secreto) -------------------
 say "Copiando la configuración de NaranjOS (sin datos personales)…"
@@ -83,10 +100,10 @@ sudo awk -F: -v OFS=: 'NR==FNR { u[$1]=1; next } ($1 in u) { $2="!*"; print }' "
 sudo awk -F: -v OFS=: 'NR==FNR { g[$1]=1; next } ($1 in g) { $2="!*"; $4=""; print }' "$RZ/etc/group" /etc/gshadow | sudo tee "$RZ/etc/gshadow" >/dev/null
 sudo sed -i 's/^root:[^:]*:/root:!:/' "$RZ/etc/shadow"
 sudo chmod 600 "$RZ/etc/shadow" "$RZ/etc/gshadow"
-sudo chroot "$RZ" /usr/bin/naranjos-sysusers >/dev/null 2>&1 || true
-sudo chroot "$RZ" useradd -m -u 1000 -U -G wheel,video,audio,input,storage,plugdev -s /usr/bin/zsh -c "NaranjOS (en vivo)" naranjos 2>/dev/null \
-  || sudo chroot "$RZ" useradd -m -u 1000 -U -G wheel -s /bin/bash -c "NaranjOS (en vivo)" naranjos
-sudo chroot "$RZ" passwd -d naranjos >/dev/null
+CH /usr/bin/naranjos-sysusers >/dev/null 2>&1 || true
+CH useradd -m -u 1000 -U -G wheel,video,audio,input,storage,plugdev -s /usr/bin/zsh -c "NaranjOS (en vivo)" naranjos 2>/dev/null \
+  || CH useradd -m -u 1000 -U -G wheel -s /bin/bash -c "NaranjOS (en vivo)" naranjos
+CH passwd -d naranjos >/dev/null
 echo 'naranjos ALL=(ALL:ALL) NOPASSWD: ALL' | sudo tee "$RZ/etc/sudoers.d/90-naranjos-vivo" >/dev/null
 sudo chmod 440 "$RZ/etc/sudoers.d/90-naranjos-vivo"
 printf 'naranjos:100000:65536\n' | sudo tee "$RZ/etc/subuid" "$RZ/etc/subgid" >/dev/null
@@ -108,6 +125,7 @@ sudo ln -sf ../naranjos-llavero.service "$RZ/etc/systemd/system/multi-user.targe
 sudo rm -rf "$RZ/etc/pacman.d/gnupg"             # cada equipo crea su propio llavero al arrancar
 # el sistema que salga de la ISO tampoco instala documentación (como la ISO): mismo NoExtract
 sudo sed -i -e '/^NoExtract/d' -e '/^\[options\]/a NoExtract = usr/share/doc/* usr/share/man/* usr/share/info/* usr/share/gtk-doc/*' "$RZ/etc/pacman.conf"
+sudo sed -i "/^\[options\]/a # firmware fuera de la ISO (si tu PC lo necesita: borra esta línea y reinstala linux-firmware)\nNoExtract = $FW_FUERA" "$RZ/etc/pacman.conf"
 sudo rm -f "$RZ"/etc/ssh/ssh_host_* "$RZ/var/lib/systemd/random-seed"
 sudo rm -rf "$RZ/var/cache/pacman/pkg"/* "$RZ/var/lib/pacman/sync"/* "$RZ/var/log"/* "$RZ/root/.bash_history"
 ok "greetd entra solo como «naranjos»; llavero de pacman nuevo en cada arranque"
@@ -115,13 +133,13 @@ ok "greetd entra solo como «naranjos»; llavero de pacman nuevo en cada arranqu
 # --- 5. cachés y el arranque de la ISO ---------------------------------------------------------------
 say "Preparando cachés, initramfs y kernel firmado…"
 K=$(ls "$RZ/usr/lib/modules" | head -n1)
-sudo chroot "$RZ" /bin/bash -c "ldconfig; depmod -a '$K'; update-mime-database /usr/share/mime >/dev/null 2>&1; \
+CH /bin/bash -c "ldconfig; depmod -a '$K'; update-mime-database /usr/share/mime >/dev/null 2>&1; \
   glib-compile-schemas /usr/share/glib-2.0/schemas 2>/dev/null; gtk-update-icon-cache -q -t -f /usr/share/icons/hicolor 2>/dev/null; \
   fc-cache -s >/dev/null 2>&1; systemd-tmpfiles --create >/dev/null 2>&1; true"
-sudo chroot "$RZ" /usr/bin/naranjos-kernel instala >/dev/null 2>&1 || true
+CH /usr/bin/naranjos-kernel instala >/dev/null 2>&1 || true
 [ -e "$RZ/boot/vmlinuz-linux-naranjos" ] || sudo cp "$RZ/usr/lib/modules/$K/vmlinuz" "$RZ/boot/vmlinuz-linux-naranjos"
 printf 'MODULOS="isofs squashfs overlay loop sr_mod cdrom usb_storage uas"\nMICROCODIGO=todos\n' | sudo tee "$RZ/etc/naranjos/initramfs.conf" >/dev/null
-sudo chroot "$RZ" /usr/bin/naranjos-initramfs --todos > "$T/initramfs.log" 2>&1 || { tail -20 "$T/initramfs.log"; die "No pude hacer el initramfs"; }
+CH /usr/bin/naranjos-initramfs --todos > "$T/initramfs.log" 2>&1 || { tail -20 "$T/initramfs.log"; die "No pude hacer el initramfs"; }
 sudo mkdir -p "$ISO/boot/grub" "$ISO/naranjos/x86_64"
 sudo sbsign --key "$MOK/MOK.priv" --cert "$MOK/MOK.pem" --output "$ISO/boot/vmlinuz-linux-naranjos" "$RZ/boot/vmlinuz-linux-naranjos" >/dev/null 2>&1 \
   || die "No pude firmar el kernel"
@@ -138,16 +156,16 @@ ok "raiz.sfs: $(du -h "$ISO/naranjos/x86_64/raiz.sfs" | cut -f1)"
 
 # --- 7. GRUB firmado y la partición EFI de la ISO ----------------------------------------------------
 say "GRUB firmado y partición EFI…"
-G=$T/grub; mkdir -p "$G/md/fonts"
-printf 'search --no-floppy --label %s --set=root\nset prefix=($root)/boot/grub\nconfigfile $prefix/grub.cfg\necho "NaranjOS: no encuentro el medio %s"\nsleep 15\n' "$ETIQUETA" "$ETIQUETA" > "$G/inicio.cfg"
-cp "$ARR"/fuentes/*.pf2 "$G/md/fonts/" 2>/dev/null || true
-tar -C "$G/md" -cf "$G/memdisk.tar" fonts
+GD=$T/grub; mkdir -p "$GD/md/fonts"
+printf 'search --no-floppy --label %s --set=root\nset prefix=($root)/boot/grub\nconfigfile $prefix/grub.cfg\necho "NaranjOS: no encuentro el medio %s"\nsleep 15\n' "$ETIQUETA" "$ETIQUETA" > "$GD/inicio.cfg"
+cp "$ARR"/fuentes/*.pf2 "$GD/md/fonts/" 2>/dev/null || true
+tar -C "$GD/md" -cf "$GD/memdisk.tar" fonts
 MODS="part_gpt part_msdos fat iso9660 normal boot linux chain configfile search search_label search_fs_uuid search_fs_file
 echo test true sleep reboot halt efi_gop efi_uga all_video video_fb gzio minicmd ls cat help efifwsetup regexp gfxterm font memdisk tar"
 # shellcheck disable=SC2086
-grub-mkimage -O x86_64-efi -d "$GRUBDIR" -p /boot/grub -c "$G/inicio.cfg" --sbat "$ARR/sbat.csv" -m "$G/memdisk.tar" \
-  -o "$G/grubx64.sinfirmar" $MODS || die "grub-mkimage falló"
-sudo sbsign --key "$MOK/MOK.priv" --cert "$MOK/MOK.pem" --output "$G/grubx64.efi" "$G/grubx64.sinfirmar" >/dev/null 2>&1 || die "No pude firmar GRUB"
+grub-mkimage -O x86_64-efi -d "$GRUBDIR" -p /boot/grub -c "$GD/inicio.cfg" --sbat "$ARR/sbat.csv" -m "$GD/memdisk.tar" \
+  -o "$GD/grubx64.sinfirmar" $MODS || die "grub-mkimage falló"
+sudo sbsign --key "$MOK/MOK.priv" --cert "$MOK/MOK.pem" --output "$GD/grubx64.efi" "$GD/grubx64.sinfirmar" >/dev/null 2>&1 || die "No pude firmar GRUB"
 sed -e "s/@ETIQUETA@/$ETIQUETA/g" -e "s/@VERSION@/$VERSION/g" "$DATOS/grub.cfg" | sudo tee "$ISO/boot/grub/grub.cfg" >/dev/null
 # la partición EFI (FAT) que lleva dentro la ISO: shim → GRUB firmado; MokManager y la clave pública de NaranjOS
 EFI=$T/efiboot.img; truncate -s 16M "$EFI"; mkfs.fat -n NARANJOSEFI "$EFI" >/dev/null
@@ -155,7 +173,7 @@ mkdir -p "$T/efi"; sudo mount -o loop "$EFI" "$T/efi"
 sudo mkdir -p "$T/efi/EFI/BOOT"
 sudo cp "$SHIM/shimx64.efi" "$T/efi/EFI/BOOT/BOOTX64.EFI"
 sudo cp "$SHIM/mmx64.efi" "$T/efi/EFI/BOOT/mmx64.efi"
-sudo cp "$G/grubx64.efi" "$T/efi/EFI/BOOT/grubx64.efi"
+sudo cp "$GD/grubx64.efi" "$T/efi/EFI/BOOT/grubx64.efi"
 sudo cp "$MOK/MOK.der" "$T/efi/NARANJOS-MOK.der"           # la clave PÚBLICA: para registrarla en MokManager
 sudo umount "$T/efi"
 sudo cp "$MOK/MOK.der" "$ISO/NARANJOS-MOK.der"

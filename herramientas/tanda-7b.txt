@@ -4,3 +4,4 @@ libisofs
 libisoburn
 dosfstools
 naranjos-initramfs
+gcc
