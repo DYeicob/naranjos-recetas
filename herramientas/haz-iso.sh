@@ -25,6 +25,9 @@ NOMBRE="naranjos-$VERSION-x86_64"; ETIQUETA=NARANJOS_VIVO
 T=/var/tmp/naranjos-iso; RZ=$T/raiz; ISO=$T/iso; SAL=$HOME/naranjos-iso
 MOK=/etc/naranjos/mok; SHIM=/usr/share/naranjos/shim; GRUBDIR=/usr/lib/grub/x86_64-efi; ARR=/usr/share/naranjos/arranque
 RAPIDA=0; [ "${1:-}" = --rapida ] && RAPIDA=1
+# el shim de la ISO: el 16.1 (naranjos-shim16) si está; con él GRUB carga el kernel con el protocolo de carga de
+# shim, que funciona en firmwares estrictos (protección de memoria NX). El 15.8 de Ubuntu se queda para el sistema instalado
+[ -r /usr/share/naranjos/shim16/shimx64.efi ] && [ -r /usr/share/naranjos/shim16/mmx64.efi ] && SHIM=/usr/share/naranjos/shim16
 # la raíz de trabajo: subvolumen Btrfs comprimido (si /var/tmp es Btrfs) o una carpeta normal
 BTRFS=0; [ "$(findmnt -no FSTYPE -T /var/tmp 2>/dev/null)" = btrfs ] && command -v btrfs >/dev/null && BTRFS=1
 borra_trabajo(){
@@ -221,7 +224,9 @@ sudo cp "$MOK/MOK.der" "$T/efi/NARANJOS-MOK.der"           # la clave PÚBLICA: 
 sudo umount "$T/efi"
 sudo cp "$MOK/MOK.der" "$ISO/NARANJOS-MOK.der"
 sudo install -Dm644 "$DATOS/LEEME.txt" "$ISO/LEEME.txt"
-ok "shim (Canonical/Microsoft) → GRUB firmado con la MOK de NaranjOS"
+case "$SHIM" in */shim16) ok "shim 16.1 (Debian/Microsoft) → GRUB firmado con la MOK de NaranjOS" ;;
+  *) ok "shim 15.8 (Canonical/Microsoft) → GRUB firmado con la MOK de NaranjOS"
+     echo "${D}  (con el shim 15.8, en firmwares estrictos la ISO se queda en «Arrancando NaranjOS…» con Secure Boot: instala naranjos-shim16)${Z}" ;; esac
 
 # --- 8. la ISO híbrida (DVD y USB) -------------------------------------------------------------------
 say "Escribiendo la ISO…"

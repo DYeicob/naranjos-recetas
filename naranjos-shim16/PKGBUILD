@@ -1,0 +1,33 @@
+# Receta de NaranjOS — generada por naranjos-tanda-7b3.sh
+pkgname=naranjos-shim16
+pkgver=16.1
+pkgrel=1
+pkgdesc='Shim 16.1 firmado por Microsoft (de Debian), para la ISO de NaranjOS con Secure Boot'
+arch=('any')
+url='https://github.com/DYeicob/naranjos-recetas'
+license=('BSD-2-Clause')
+depends=()
+makedepends=()
+source=('https://deb.debian.org/debian/pool/main/s/shim-signed/shim-signed_1.51+16.1-2_amd64.deb' 'https://deb.debian.org/debian/pool/main/s/shim-helpers-amd64-signed/shim-helpers-amd64-signed_1+16.1+2_amd64.deb')
+sha256sums=('993868c31cca3eab054a0c51c124a4a8b3904f49fb002feb4b09cb9415200e74' '6a6d340710ffc067198af33785d1e04836b2cc0d259ec4b080a06604d333a8cb')
+noextract=('shim-signed_1.51+16.1-2_amd64.deb' 'shim-helpers-amd64-signed_1+16.1+2_amd64.deb')
+options=('!strip' '!debug')
+package() {
+  local d="$srcdir/deb" f s m
+  rm -rf "$d"; mkdir -p "$d"
+  for f in shim-signed_1.51+16.1-2_amd64.deb shim-helpers-amd64-signed_1+16.1+2_amd64.deb; do
+    ( cd "$d" && bsdtar -xf "$srcdir/$f" && bsdtar -xf data.tar.* && rm -f data.tar.* control.tar.* debian-binary )
+  done
+  # shim firmado por Microsoft (shim-signed) y MokManager firmado por Debian (shim-helpers-amd64-signed)
+  s=$(find "$d" -type f -name 'shimx64.efi.signed*' | sort | head -n1); m=$(find "$d" -type f -name 'mmx64.efi.signed*' | sort | head -n1)
+  [ -n "$s" ] && [ -n "$m" ] || { echo "No encuentro shimx64.efi.signed / mmx64.efi.signed en los paquetes de Debian" >&2; find "$d" -name '*.efi*' >&2; return 1; }
+  install -Dm644 "$s" "$pkgdir/usr/share/naranjos/shim16/shimx64.efi"
+  install -Dm644 "$m" "$pkgdir/usr/share/naranjos/shim16/mmx64.efi"
+  f=$(find "$d" -path '*/doc/shim-signed/copyright' | head -n1)
+  [ -n "$f" ] && install -Dm644 "$f" "$pkgdir/usr/share/licenses/$pkgname/copyright"
+  install -Dm644 /dev/stdin "$pkgdir/usr/share/licenses/$pkgname/LEEME" << "TXT"
+Shim 16.1 (https://github.com/rhboot/shim, licencia BSD-2-Clause), tal cual lo publica Debian
+(shim-signed 1.51+16.1-2, firmado por Microsoft; MokManager de shim-helpers-amd64-signed 1+16.1+2,
+firmado por Debian). NaranjOS solo lo copia a la ISO en vivo; no lo modifica.
+TXT
+}
